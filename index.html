@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AmadoPlay - Plataforma Educacional</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            animation: gradientShift 12s ease-in-out infinite alternate;
+        }
+
+        @keyframes gradientShift {
+            0% { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); }
+            25% { background: linear-gradient(135deg, #764ba2 0%, #f093fb 50%, #667eea 100%); }
+            50% { background: linear-gradient(135deg, #f093fb 0%, #667eea 50%, #764ba2 100%); }
+            75% { background: linear-gradient(135deg, #667eea 0%, #f093fb 50%, #764ba2 100%); }
+            100% { background: linear-gradient(135deg, #764ba2 0%, #667eea 50%, #f093fb 100%); }
+        }
+
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            animation: float 25s infinite linear;
+        }
+
+        .shape:nth-child(1) { width: 100px; height: 100px; left: 5%; animation-delay: 0s; }
+        .shape:nth-child(2) { width: 60px; height: 60px; left: 25%; animation-delay: 3s; }
+        .shape:nth-child(3) { width: 120px; height: 120px; left: 70%; animation-delay: 6s; }
+        .shape:nth-child(4) { width: 80px; height: 80px; left: 85%; animation-delay: 9s; }
+        .shape:nth-child(5) { width: 140px; height: 140px; left: 45%; animation-delay: 12s; }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-150px) rotate(360deg); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: slideDown 1.2s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-80px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .logo {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 25px;
+            background: linear-gradient(45deg, #fff, #f8f8f8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            color: #667eea;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            animation: logoFloat 4s ease-in-out infinite;
+            border: 4px solid rgba(255,255,255,0.3);
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-10px) scale(1.05); }
+        }
+
+        h1 {
+            color: white;
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.95);
+            font-size: 1.6rem;
+            font-weight: 300;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 35px;
+            margin-bottom: 60px;
+        }
+
+        .tool-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.12);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            animation: cardAppear 0.8s ease-out;
+            animation-fill-mode: both;
+            height: 300px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tool-card:nth-child(1) { animation-delay: 0.1s; }
+        .tool-card:nth-child(2) { animation-delay: 0.2s; }
+        .tool-card:nth-child(3) { animation-delay: 0.3s; }
+        .tool-card:nth-child(4) { animation-delay: 0.4s; }
+        .tool-card:nth-child(5) { animation-delay: 0.5s; }
+        .tool-card:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes cardAppear {
+            from { 
+                transform: translateY(60px) scale(0.8); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateY(0) scale(1); 
+                opacity: 1; 
+            }
+        }
+
+        .tool-card:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 35px 80px rgba(0,0,0,0.20);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+
+        .tool-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 180px;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-image1 {
+            width: 100%;
+            height: 180px;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-image img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          background: #f5f5f5;     
+          transform: scale(2.0);
+          transition: transform 0.4s ease;
+        }
+
+        .card-image1 img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          background: #f5f5f5;     
+          transform: scale(1.5);
+          transition: transform 0.4s ease;
+        }
+        .tool-card:hover .card-image img {
+          transform: scale(1.1);
+        }
+
+
+        .card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tool-card:hover .card-overlay {
+            opacity: 1;
+        }
+
+        .play-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: #667eea;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .tool-card:hover .play-icon {
+            transform: scale(1);
+        }
+
+        .card-content {
+            padding: 25px;
+            position: relative;
+            z-index: 2;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .tool-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .tool-description {
+            color: #7f8c8d;
+            font-size: 1rem;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        /* Cores específicas para cada card */
+        .card-abaco .card-image { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-material .card-image { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .card-alfabeto .card-image { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .card-piramide-alimentar .card-image { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .card-mapa-brasil .card-image { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .card-tres-poderes .card-image { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+
+        .youtube-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 50px;
+            text-align: center;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.12);
+            animation: cardAppear 1s ease-out 0.8s both;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .youtube-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #ff0000, #ff4444, #ff0000);
+        }
+
+        .youtube-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            background: linear-gradient(45deg, #ff0000, #cc0000);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            color: white;
+            box-shadow: 0 20px 40px rgba(255,0,0,0.25);
+            animation: youtubeFloat 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        @keyframes youtubeFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-8px) rotate(2deg); }
+            66% { transform: translateY(8px) rotate(-2deg); }
+        }
+
+        .youtube-icon::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid rgba(255,0,0,0.2);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+
+        .youtube-title {
+            font-size: 2.4rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .youtube-description {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 35px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 15px 35px rgba(102,126,234,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 45px rgba(102,126,234,0.4);
+            background: linear-gradient(45deg, #5a67d8, #6b46c1);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 3rem;
+            }
+
+            .subtitle {
+                font-size: 1.3rem;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .tool-card {
+                height: 280px;
+            }
+
+            .youtube-section {
+                padding: 35px 25px;
+            }
+
+            .youtube-title {
+                font-size: 2rem;
+            }
+
+            .youtube-description {
+                font-size: 1.1rem;
+            }
+        }
+        /*Botão Quem somos*/
+        .floating-about-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 15px 35px rgba(102,126,234,0.3);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .floating-about-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 20px 45px rgba(102,126,234,0.4);
+    }
+
+    /* Modal Quem Somos */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(5px);
+        z-index: 2000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .modal-content {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 28px;
+        max-width: 800px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+        transform: scale(0.8) translateY(50px);
+        transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active .modal-content {
+        transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+        padding: 40px 40px 0;
+        text-align: center;
+        position: relative;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 25px;
+        background: none;
+        border: none;
+        font-size: 28px;
+        color: #7f8c8d;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .about-logo__img {
+        max-width: 100%;
+        height: auto;
+        width: 80px; 
+        object-fit: contain;
+        }
+
+    .modal-close:hover {
+        color: #2c3e50;
+    }
+
+    .about-logo {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 20px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        color: white;
+        box-shadow: 0 15px 35px rgba(102,126,234,0.3);
+    }
+
+    .about-title {
+        font-size: 2.5rem;
+        color: #2c3e50;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+
+    .about-subtitle {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+        font-weight: 300;
+        margin-bottom: 30px;
+    }
+
+    .modal-body {
+        padding: 0 40px 40px;
+    }
+
+    .about-section {
+        margin-bottom: 30px;
+    }
+
+    .about-text {
+        color: #2c3e50;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin-bottom: 20px;
+        text-align: justify;
+    }
+
+    .highlight-box {
+        background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+        border-left: 4px solid #667eea;
+        padding: 25px;
+        border-radius: 12px;
+        margin: 25px 0;
+    }
+
+    .highlight-title {
+        font-size: 1.3rem;
+        color: #667eea;
+        font-weight: 600;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 30px 0;
+    }
+
+    .service-item {
+        background: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        border-radius: 16px;
+        text-align: center;
+        border: 1px solid rgba(102,126,234,0.2);
+        transition: all 0.3s ease;
+    }
+
+    .service-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(102,126,234,0.2);
+    }
+
+    .service-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .service-title {
+        font-size: 1.1rem;
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .service-desc {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+        .floating-about-btn {
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+        }
+        
+        .modal-content {
+            margin: 10px;
+            border-radius: 20px;
+        }
+        
+        .modal-header, .modal-body {
+            padding: 25px 25px;
+        }
+        
+        .about-title {
+            font-size: 2rem;
+        }
+        
+        .services-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="container">
+      <header>
+        <img src="images/Diyogo-02.png" alt="Logo principal diyogo"
+            style="width: 120px; height: auto;">
+        <h1>AmadoPlay</h1>
+        <p class="subtitle">Ferramentas Educacionais Interativas</p>
+      </header>
+
+
+        <div class="tools-grid">
+            <div class="tool-card card-abaco" onclick="acessarFerramenta('abaco')">
+                <div class="card-image">
+                    <img src="images\abaco_digital1.png" alt="Ábaco Digital">
+                    <div class="card-overlay">
+                        <div class="play-icon">🧮</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="tool-title">Ábaco Digital</h3>
+                    <p class="tool-description">Aprenda matemática de forma visual com nosso ábaco interativo e desenvolva habilidades numéricas.</p>
+                </div>
+            </div>
+
+            <div class="tool-card card-material" onclick="acessarFerramenta('material-dourado')">
+                <div class="card-image">
+                    <img src="images/material_dourado4.png" alt="Material Dourado">
+                    <div class="card-overlay">
+                        <div class="play-icon">🟨</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="tool-title">Material Dourado</h3>
+                    <p class="tool-description">Explore o sistema decimal com blocos virtuais interativos e compreenda melhor os números.</p>
+                </div>
+            </div>
+
+            <div class="tool-card card-alfabeto" onclick="acessarFerramenta('alfabeto-movel')">
+                <div class="card-image">
+                    <img src="images/alfabeto_movel1.png" alt="Alfabeto Móvel">
+                    <div class="card-overlay">
+                        <div class="play-icon">🔤</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="tool-title">Alfabeto Móvel</h3>
+                    <p class="tool-description">Forme palavras e desenvolva habilidades de leitura de forma lúdica e interativa.</p>
+                </div>
+            </div>
+
+            <div class="tool-card card-piramide-alimentar" onclick="acessarFerramenta('piramide-alimentar')">
+                <div class="card-image1">
+                    <img src="images/piramide_alimentar1.png" alt="Jogos Interativos">
+                    <div class="card-overlay">
+                        <div class="play-icon">🥗</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="tool-title">Pirâmide alimentar</h3>
+                    <p class="tool-description">Pirâmide alimentar: Organize os alimentos nos níveis corretos da pirâmide.</p>
+                </div>
+            </div>
+
+            <div class="tool-card card-mapa-brasil" onclick="acessarFerramenta('mapa-brasil')">
+                <div class="card-image1">
+                    <img src="images/mapa_brasil1.png" alt="Quebra-cabeças">
+                    <div class="card-overlay">
+                        <div class="play-icon">🗺️</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="tool-title">Mapa do Brasil</h3>
+                    <p class="tool-description">Mapa do Brasil: Identifique estados e regiões interativamente.</p>
+                </div>
+            </div>
+
+            <div class="tool-card card-tres-poderes" onclick="acessarFerramenta('tres-poderes')">
+                <div class="card-image1">
+                    <img src="images/tres_poderes1.png" alt="Palavras Cruzadas">
+                    <div class="card-overlay">
+                        <div class="play-icon">⚖️</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="tool-title">Três poderes do Brasil</h3>
+                    <p class="tool-description">Três poderes do Brasil: Aprenda sobre Executivo, Legislativo e Judiciário.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="youtube-section">
+            <div class="youtube-icon">▶️</div>
+            <h2 class="youtube-title">Canal de Karaokê Educativo</h2>
+            <p class="youtube-description">
+                Cante e aprenda com nosso canal especial! Músicas educativas e karaokê infantil para tornar o aprendizado ainda mais divertido e memorável.
+            </p>
+        <a href="#"
+        class="btn"
+        onclick="acessarYoutube(); return false;">
+        🎵 Acessar Canal
+        </a>
+        </div>
+    </div>
+
+    <script>
+        function acessarFerramenta(ferramenta) {
+            switch(ferramenta) {
+                case 'abaco':
+                    window.open('Abaco_digital.html', '_blank');
+                    break;
+                case 'material-dourado':
+                    window.open('Material_dourado.html', '_blank');
+                    break;
+                case 'alfabeto-movel':
+                    window.open('Alfabeto_movel.html', '_blank');
+                    break;
+                case 'piramide-alimentar':
+                    window.open('https://wordwall.net/pt/resource/10629829/jogo-da-pir%C3%A2mide-alimentar', '_blank');
+                    break;
+                case 'mapa-brasil':
+                    window.open('https://wordwall.net/pt/resource/16532524/mapa-do-brasil', '_blank');
+                    break;
+                case 'tres-poderes':
+                    window.open('https://wordwall.net/pt/resource/3946124/os-tr%C3%AAs-poderes', '_blank');
+                    break;
+                    
+            }
+        }
+
+        function acessarYoutube() {
+        window.open(
+            'https://www.youtube.com/channel/UCMsQNXla0kQU5337ipRj1eQ',
+            '_blank'
+        );
+        }
+
+
+        // Efeitos interativos aprimorados
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.tool-card');
+            
+            // Adiciona efeito de hover mais suave
+            cards.forEach((card, index) => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.zIndex = '10';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.zIndex = '1';
+                });
+
+                // Animação de entrada escalonada
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Cria efeito de partículas flutuantes
+            const shapesContainer = document.querySelector('.floating-shapes');
+            setInterval(() => {
+                const shape = document.createElement('div');
+                shape.className = 'shape';
+                shape.style.width = Math.random() * 80 + 30 + 'px';
+                shape.style.height = shape.style.width;
+                shape.style.left = Math.random() * 100 + '%';
+                shape.style.animationDuration = Math.random() * 10 + 15 + 's';
+                shapesContainer.appendChild(shape);
+
+                // Remove a forma após a animação
+                setTimeout(() => {
+                    if (shapesContainer.contains(shape)) {
+                        shapesContainer.removeChild(shape);
+                    }
+                }, 25000);
+            }, 3000);
+        });
+    </script>
+
+    <!-- Botão Flutuante Quem Somos -->
+    <button class="floating-about-btn" onclick="openAboutModal()" title="Quem Somos">
+        ℹ️
+    </button>
+
+    <!-- Modal Quem Somos -->
+    <div class="modal-overlay" id="aboutModal" onclick="closeAboutModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeAboutModal()">&times;</button>
+                <img src="images/logo-amado.png" alt="Logo Amado Maker" class="about-logo__img" />
+                <h2 class="about-title">Amado Maker</h2>
+                <p class="about-subtitle">Cultura Maker na Educação Pública</p>
+            </div>
+            
+
+            <div class="modal-body">
+                <div class="about-section">
+                    <p class="about-text">
+                        A <strong>Amado Maker</strong> é uma empresa que facilita a implementação do ecossistema da cultura maker aplicada à educação pública. É especializada na elaboração de material didático direcionado para a Cultura Maker, implementação de tecnologia educacional e instalação de Laboratórios Makers.
+                    </p>
+                    
+                    <p class="about-text">
+                        Atende alunos e professores desde a <strong>Educação Infantil até a EJA</strong>, proporcionando uma experiência completa de aprendizado através da metodologia maker.
+                    </p>
+                </div>
+
+                <div class="highlight-box">
+                    <div class="highlight-title">
+                        <span>👨‍🏫</span>
+                        Capacitação Profissional
+                    </div>
+                    <p class="about-text" style="margin-bottom: 0;">
+                        Para o corpo docente, a Amado Maker disponibiliza um <strong>treinamento técnico e pedagógico robusto</strong>, com mestres e doutores na área da Educação Maker, visando capacitar o educador para a apropriação das metodologias ativas de ensino e mantém a assessoria durante todo processo de aplicação e execução do projeto.
+                    </p>
+                </div>
+
+                <div class="services-grid">
+                    <div class="service-item">
+                        <span class="service-icon">📚</span>
+                        <div class="service-title">Material Didático</div>
+                        <p class="service-desc">Elaboração de conteúdo especializado para Cultura Maker</p>
+                    </div>
+                    
+                    <div class="service-item">
+                        <span class="service-icon">💻</span>
+                        <div class="service-title">Tecnologia Educacional</div>
+                        <p class="service-desc">Implementação de soluções tecnológicas inovadoras</p>
+                    </div>
+                    
+                    <div class="service-item">
+                        <span class="service-icon">🔬</span>
+                        <div class="service-title">Laboratórios Makers</div>
+                        <p class="service-desc">Instalação completa de espaços maker educacionais</p>
+                    </div>
+                    
+                    <div class="service-item">
+                        <span class="service-icon">🎓</span>
+                        <div class="service-title">Treinamento</div>
+                        <p class="service-desc">Capacitação técnica e pedagógica para educadores</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+    // Funções do Modal Quem Somos
+    function openAboutModal() {
+        const modal = document.getElementById('aboutModal');
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeAboutModal(event) {
+        if (!event || event.target === event.currentTarget) {
+            const modal = document.getElementById('aboutModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    // Fechar modal com ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeAboutModal();
+        }
+    });
+    </script>
+</body>
+</html>
