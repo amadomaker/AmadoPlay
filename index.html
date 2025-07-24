@@ -688,7 +688,7 @@
 
     <div class="container">
       <header>
-        <img src="images/Diyogo-02.png" alt="Logo principal diyogo"
+        <img src="src/assets/images/Diyogo-02.png" alt="Logo principal diyogo"
             style="width: 120px; height: auto;">
         <h1>AmadoPlay</h1>
         <p class="subtitle">Ferramentas Educacionais Interativas</p>
@@ -698,7 +698,7 @@
         <div class="tools-grid">
             <div class="tool-card card-abaco" onclick="acessarFerramenta('abaco')">
                 <div class="card-image">
-                    <img src="images\abaco_digital1.png" alt="Ábaco Digital">
+                    <img src="src/assets/images/abaco_digital1.png" alt="Ábaco Digital">
                     <div class="card-overlay">
                         <div class="play-icon">🧮</div>
                     </div>
@@ -711,7 +711,7 @@
 
             <div class="tool-card card-material" onclick="acessarFerramenta('material-dourado')">
                 <div class="card-image">
-                    <img src="images/material_dourado4.png" alt="Material Dourado">
+                    <img src="src/assets/images/material_dourado4.png" alt="Material Dourado">
                     <div class="card-overlay">
                         <div class="play-icon">🟨</div>
                     </div>
@@ -724,7 +724,7 @@
 
             <div class="tool-card card-alfabeto" onclick="acessarFerramenta('alfabeto-movel')">
                 <div class="card-image">
-                    <img src="images/Alfabeto_movel1.png" alt="Alfabeto Móvel">
+                    <img src="src/assets/images/Alfabeto_movel1.png" alt="Alfabeto Móvel">
                     <div class="card-overlay">
                         <div class="play-icon">🔤</div>
                     </div>
@@ -737,7 +737,7 @@
 
             <div class="tool-card card-piramide-alimentar" onclick="acessarFerramenta('piramide-alimentar')">
                 <div class="card-image1">
-                    <img src="images/piramide_alimentar1.png" alt="Jogos Interativos">
+                    <img src="src/assets/images/piramide_alimentar1.png" alt="Jogos Interativos">
                     <div class="card-overlay">
                         <div class="play-icon">🥗</div>
                     </div>
@@ -750,7 +750,7 @@
 
             <div class="tool-card card-mapa-brasil" onclick="acessarFerramenta('mapa-brasil')">
                 <div class="card-image1">
-                    <img src="images/mapa_brasil1.png" alt="Quebra-cabeças">
+                    <img src="src/assets/images/mapa_brasil1.png" alt="Quebra-cabeças">
                     <div class="card-overlay">
                         <div class="play-icon">🗺️</div>
                     </div>
@@ -763,7 +763,7 @@
 
             <div class="tool-card card-tres-poderes" onclick="acessarFerramenta('tres-poderes')">
                 <div class="card-image1">
-                    <img src="images/tres_poderes1.png" alt="Palavras Cruzadas">
+                    <img src="src/assets/images/tres_poderes1.png" alt="Palavras Cruzadas">
                     <div class="card-overlay">
                         <div class="play-icon">⚖️</div>
                     </div>
@@ -793,13 +793,13 @@
         function acessarFerramenta(ferramenta) {
             switch(ferramenta) {
                 case 'abaco':
-                    window.open('Abaco_digital.html', '_blank');
+                    window.open('pages/Abaco_digital.html', '_blank');
                     break;
                 case 'material-dourado':
-                    window.open('Material_dourado.html', '_blank');
+                    window.open('pages/Material_dourado.html', '_blank');
                     break;
                 case 'alfabeto-movel':
-                    window.open('Alfabeto_movel.html', '_blank');
+                    window.open('pages/Alfabeto_movel.html', '_blank');
                     break;
                 case 'piramide-alimentar':
                     window.open('https://wordwall.net/pt/resource/10629829/jogo-da-pir%C3%A2mide-alimentar', '_blank');
@@ -874,7 +874,7 @@
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <button class="modal-close" onclick="closeAboutModal()">&times;</button>
-                <img src="images/logo-amado.png" alt="Logo Amado Maker" class="about-logo__img" />
+                <img src="src/assets/images/logo-amado.png" alt="Logo Amado Maker" class="about-logo__img" />
                 <h2 class="about-title">Amado Maker</h2>
                 <p class="about-subtitle">Cultura Maker na Educação Pública</p>
             </div>
