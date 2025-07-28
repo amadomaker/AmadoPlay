@@ -15,7 +15,7 @@ const BrMap = (() => {
 		cssFill: {
 			shape: "#D8D6D6",
 			icon_state: "#BBBBBB",
-			label_icon_state: "#777777",
+			label_icon_state: "#000000ff",
 			label_state: "#FFFFFF",
 			selected: "#0b0f42ff"
 		},
@@ -134,7 +134,7 @@ const BrMap = (() => {
 		
 		let style = document.createElement("style");
 		let stylesheet = "";
-		stylesheet += ".state { font-family:arial,sans-serif; font-size:14px; }";
+		stylesheet += ".state { font-family:arial,sans-serif; font-size:9px; }";
 		stylesheet += ".state .shape { fill: " + _options.cssFill.shape + "; }";
 		stylesheet += ".state .icon_state { fill: " + _options.cssFill.icon_state + "; }";
 		stylesheet += ".state .label_icon_state { fill: " + _options.cssFill.label_icon_state + "; }";
