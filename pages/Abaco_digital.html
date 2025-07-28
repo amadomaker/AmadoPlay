@@ -132,12 +132,21 @@
         }
 
         .place-labels {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            font-weight: bold;
-            font-size: 1.2em;
+        display: flex;
+        flex-wrap: wrap;           /* permite quebrar linha */
+        gap: 8px;                  /* espaçamento entre itens */
+        justify-content: space-between;
+        margin-bottom: 20px;
+        font-weight: bold;
+        font-size: 1.2em;
         }
+
+        .place-labels button {
+        flex: 1 1 100px;          
+        min-width: 80px;           
+        padding: 0.5em 1em;
+        }
+
 
         .place-label {
             text-align: center;

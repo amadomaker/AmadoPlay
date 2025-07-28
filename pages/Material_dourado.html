@@ -93,6 +93,20 @@
             margin-bottom: 20px;
             backdrop-filter: blur(10px);
         }
+        @media (max-width: 990px) {
+            .input-section {
+                display: flex;
+                flex-direction: column; /* ou row, conforme o layout desejado */
+                gap: 16px;             /* define o espaçamento entre os filhos */
+                background: rgba(255, 255, 255, 0.95);
+                padding: 20px;
+                border-radius: 20px;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+                text-align: center;
+                margin-bottom: 20px;
+                backdrop-filter: blur(10px);
+                }
+                }
 
         .number-input {
             font-size: 2em;
@@ -104,7 +118,7 @@
             background: white;
             color: #764ba2;
             font-weight: bold;
-            width: 200px;
+            width: auto;
         }
 
         .generate-btn, .check-btn, .reset-btn {
@@ -143,10 +157,43 @@
 
         .main-area {
             display: grid;
-            grid-template-columns: 1fr 1fr;
             gap: 20px;
             max-width: 1200px;
             margin: 0 auto;
+            padding: 10px; /* Adiciona padding para evitar colagem nas bordas */
+            
+            /* Layout responsivo por breakpoints */
+            grid-template-columns: 1fr; /* Mobile: uma coluna */
+        }
+
+        /* Tablet e desktop */
+        @media (min-width: 768px) {
+            .main-area {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                padding: 20px;
+            }
+        }
+
+        /* Ajustes específicos para telas muito pequenas */
+        @media (max-width: 480px) {
+            .main-area {
+                gap: 15px;
+                padding: 8px;
+            }
+            
+            /* Se você tem elementos filhos com largura fixa, ajuste aqui */
+            .main-area > * {
+                min-width: 0; /* Permite que os elementos encolham */
+                max-width: 100%; /* Evita overflow */
+            }
+        }
+
+        /* Para telas grandes */
+        @media (min-width: 1024px) {
+            .main-area {
+                padding: 30px;
+                gap: 30px;
+            }
         }
 
         .materials-bank {
@@ -169,6 +216,11 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
+        }
+        @media (max-width: 480px) {
+            .materials-grid {
+                grid-template-columns: repeat(1, 1fr);
+            }
         }
 
         .material-type {
