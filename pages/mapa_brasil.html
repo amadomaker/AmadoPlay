@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mapa Interativo do Brasil</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="../src/css/mapBr.css" />
+</head>
+<body>
+  <!-- Tooltip -->
+  <div class="tooltip" id="tooltip"></div>
+
+  <div class="container">
+    <div class="header">
+      <h1 class="title">Mapa do Brasil!</h1>
+      <p class="subtitle">Explore nosso país de forma informativa</p>
+    </div>
+
+    <div class="controls">
+      <button class="btn" onclick="toggleCapitals()" id="capitalsBtn">🏛️ Mostrar Capitais</button>
+      <button class="btn regions" onclick="highlightRegions()" id="regionsBtn">🗺️ Destacar Regiões</button>
+      <button class="btn reset" onclick="resetMap()" id="resetBtn">🔄 Resetar</button>
+    </div>
+
+    <div class="main-content">
+      <!-- MAPA -->
+      <div class="map-container">
+        <div id="mapWrapper"></div>
+      </div>
+
+      <!-- PAINEL LATERAL -->
+      <div class="info-panel">
+        <div class="stats">
+          <h3>📊 Suas Estatísticas</h3>
+          <div class="stat-item">
+            <span>Estados Visitados:</span>
+            <span id="visitedCount">0/27</span>
+          </div>
+          <div class="stat-item">
+            <span>Região Atual:</span>
+            <span id="currentRegion">-</span>
+          </div>
+        </div>
+
+        <div id="stateInfo">
+          <h3>ℹ️ Informações</h3>
+          <p>Passe o mouse sobre os estados para ver informações rápidas, ou clique para detalhes completos!</p>
+        </div>
+
+        <div class="legend">
+          <h4>Legenda das Regiões:</h4>
+          <div class="legend-item">
+            <div class="legend-color" style="background:#32CD32;"></div><span>Norte</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background:#FF6347;"></div><span>Nordeste</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background:#FFD700;"></div><span>Centro-Oeste</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background:#4169E1;"></div><span>Sudeste</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background:#9370DB;"></div><span>Sul</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div id="stateModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2 id="modalTitle">Estado</h2>
+      <div id="modalContent" class="modal-info"></div>
+    </div>
+  </div>
+
+  <!-- Scripts (ordem importa!) -->
+  <script src="../src/js/vendor/brmap.js"></script>
+  <script src="../src/js/mapBr.js"></script>
+</body>
+</html>
