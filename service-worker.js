@@ -1,12 +1,12 @@
 const CACHE_NAME = 'amado-cache-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/pages/Abaco_digital.html',
-  '/pages/Alfabeto_movel.html',
-  '/pages/Material_dourado.html',
-  '/src/assets/images/icon-192.png',
-  '/src/assets/images/icon-512.png'
+  '/AmadoPlay/',
+  '/AmadoPlay/index.html',
+  '/AmadoPlay/pages/Abaco_digital.html',
+  '/AmadoPlay/pages/Alfabeto_movel.html',
+  '/AmadoPlay/pages/Material_dourado.html',
+  '/AmadoPlay/src/assets/images/icon-192.png',
+  '/AmadoPlay/src/assets/images/icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {

@@ -956,12 +956,11 @@
         }
     });
     </script>
-        <script>
-        // Registrar o Service Worker
+    <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('service-worker.js')
             .then(reg => console.log('Service Worker registrado:', reg))
-            .catch(err => console.error('Erro ao registrar SW:', err));
+            .catch(err => console.error('Erro ao registrar o Service Worker:', err));
         }
     </script>
 </body>

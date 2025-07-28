@@ -1,10 +1,16 @@
 {
   "name": "AmadoPlay",
   "short_name": "AmadoPlay",
-  "start_url": "index.html",
+  "description": "AmadoPlay é uma plataforma de ferramentas educacionais interativas para o aprendizado de matemática e alfabetização.",
+  "start_url": "./index.html",
+  "id": "/AmadoPlay/",
   "display": "standalone",
   "background_color": "#d73fd8",
   "theme_color": "#8a078b",
+  "orientation": "portrait",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
   "icons": [
     {
       "src": "src/assets/images/icon-192.png",
@@ -18,16 +24,16 @@
     }
   ],
   "screenshots": [
-  {
-    "src": "src/assets/images/screenshot1.png",
-    "sizes": "1280x720",
-    "type": "image/png",
-    "form_factor": "wide"
-  },
-  {
-    "src": "src/assets/images/screenshot2.png",
-    "sizes": "720x1280",
-    "type": "image/png"
-  }
-]
+    {
+      "src": "src/assets/images/screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "src/assets/images/screenshot2.png",
+      "sizes": "720x1280",
+      "type": "image/png"
+    }
+  ]
 }
