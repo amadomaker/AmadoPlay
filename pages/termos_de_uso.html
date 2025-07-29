@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
+    <title>Termos de Uso - AMADOTEC</title>
+    <style>
+        /* Reset e configurações básicas */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            padding: 40px;
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            color: #667eea;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(-3px);
+        }
+
+        /* Título principal */
+        h1 {
+            color: #1a202c;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+            margin-top: 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        /* Títulos de seção */
+        h2 {
+            color: #2d3748;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        /* Subtítulos */
+        h3 {
+            color: #4a5568;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+        }
+
+        /* Parágrafos */
+        p {
+            margin-bottom: 1rem;
+            text-align: justify;
+            color: #4a5568;
+            font-size: 1rem;
+        }
+
+        /* Listas ordenadas */
+        ol {
+            counter-reset: item;
+            padding-left: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        ol > li {
+            display: block;
+            margin-bottom: 2rem;
+            position: relative;
+            padding-left: 40px;
+        }
+
+        ol > li::before {
+            content: counter(item);
+            counter-increment: item;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Listas não ordenadas */
+        ul {
+            padding-left: 20px;
+            margin-bottom: 1rem;
+        }
+
+        ul li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 10px;
+        }
+
+        ul li::before {
+            content: '•';
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            left: -10px;
+            font-size: 1.2rem;
+        }
+
+        /* Links */
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: #764ba2;
+            border-bottom-color: #764ba2;
+        }
+
+        /* Texto em negrito e itálico */
+        strong {
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        em {
+            color: #667eea;
+            font-style: italic;
+        }
+
+        strong em {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .last-updated {
+            text-align: center;
+            font-style: italic;
+            color: #64748b;
+            margin-bottom: 2rem;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 15px;
+            }
+            
+            .container {
+                padding: 25px 20px;
+                border-radius: 12px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+                margin-top: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            h3 {
+                font-size: 1.1rem;
+            }
+            
+            p {
+                font-size: 0.95rem;
+            }
+            
+            ol > li {
+                padding-left: 35px;
+            }
+            
+            ol > li::before {
+                width: 24px;
+                height: 24px;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px 10px;
+            }
+            
+            .container {
+                padding: 20px 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            ol > li {
+                padding-left: 30px;
+            }
+            
+            ol > li::before {
+                width: 22px;
+                height: 22px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-btn" onclick="history.back()" title="Voltar">
+            ←
+        </button>
+
+        <h1>Termos de Uso</h1>
+        
+        <div class="last-updated">
+            Última atualização: Julho de 2025
+        </div>
+
+        <p>Bem-vindo à plataforma da <strong><em>AMADO TECNOLOGIA LTDA (AMADOTEC)</em></strong>. Estes Termos de Uso estabelecem as condições gerais para utilização de nossas ferramentas educacionais digitais. Ao acessar e usar nossa plataforma, você concorda em cumprir estes termos.</p>
+
+        <ol>
+            <li>
+                <h2>Aceitação dos Termos</h2>
+                <p>Ao acessar nossa plataforma, você declara ter lido, compreendido e aceito todos os termos e condições aqui estabelecidos, bem como nossa Política de Privacidade.</p>
+                
+                <div class="highlight-box">
+                    <strong>Importante:</strong> Se você não concordar com qualquer parte destes termos, não deve utilizar nossos serviços.
+                </div>
+            </li>
+
+            <li>
+                <h2>Descrição do Serviço</h2>
+                <p>Nossa plataforma oferece um conjunto diversificado de ferramentas educacionais digitais interativas para apoio ao ensino e aprendizagem. Os serviços incluem:</p>
+                <ul>
+                    <li>Materiais pedagógicos digitais interativos</li>
+                    <li>Recursos educacionais para diferentes áreas do conhecimento</li>
+                    <li>Ferramentas de apoio ao processo de ensino-aprendizagem</li>
+                    <li>Conteúdos educativos acessíveis via navegador web</li>
+                </ul>
+            </li>
+
+            <li>
+                <h2>Acesso e Utilização</h2>
+                <p>Nossa plataforma é de acesso livre e gratuito. Para utilizar nossos serviços, você deve:</p>
+                <ul>
+                    <li>Ter acesso à internet e um dispositivo compatível</li>
+                    <li>Utilizar as ferramentas de forma responsável</li>
+                    <li>Respeitar os direitos de propriedade intelectual</li>
+                    <li>Não tentar comprometer o funcionamento da plataforma</li>
+                </ul>
+            </li>
+
+            <li>
+                <h2>Uso Adequado da Plataforma</h2>
+                <p>Você se compromete a:</p>
+                <ul>
+                    <li>Utilizar a plataforma apenas para fins educacionais e legais</li>
+                    <li>Não interferir no funcionamento normal dos serviços</li>
+                    <li>Não tentar acessar áreas restritas ou sistemas protegidos</li>
+                    <li>Não compartilhar conteúdo inadequado ou ofensivo</li>
+                    <li>Respeitar os direitos de propriedade intelectual</li>
+                </ul>
+            </li>
+
+            <li>
+                <h2>Propriedade Intelectual</h2>
+                <p>Todo o conteúdo da plataforma, incluindo textos, gráficos, logos, jogos, software e design, é propriedade da <strong><em>AMADO TECNOLOGIA LTDA (AMADOTEC)</em></strong> e está protegido pelas leis de direitos autorais e propriedade intelectual.</p>
+                
+                <h3>Uso Permitido</h3>
+                <p>Você pode utilizar o conteúdo exclusivamente para fins educacionais pessoais, sendo proibida a reprodução, distribuição ou uso comercial sem autorização expressa.</p>
+            </li>
+
+            <li>
+                <h2>Limitações de Responsabilidade</h2>
+                <p>A <strong><em>AMADO TECNOLOGIA LTDA (AMADOTEC)</em></strong> não se responsabiliza por:</p>
+                <ul>
+                    <li>Interrupções temporárias ou falhas no serviço</li>
+                    <li>Problemas decorrentes de conexão com a internet</li>
+                    <li>Incompatibilidade com determinados dispositivos ou navegadores</li>
+                    <li>Uso inadequado das ferramentas educacionais</li>
+                </ul>
+            </li>
+
+            <li>
+                <h2>Modificações nos Serviços</h2>
+                <p>Reservamo-nos o direito de modificar, suspender ou descontinuar qualquer aspecto de nossos serviços a qualquer momento, com ou sem aviso prévio, por razões técnicas, comerciais ou operacionais.</p>
+            </li>
+
+            <li>
+                <h2>Interrupção dos Serviços</h2>
+                <p>Embora nossa plataforma seja de acesso livre, reservamo-nos o direito de interromper temporariamente o acesso para:</p>
+                <ul>
+                    <li>Manutenção técnica e atualizações</li>
+                    <li>Correção de problemas de segurança</li>
+                    <li>Melhorias nas ferramentas educacionais</li>
+                    <li>Questões de força maior</li>
+                </ul>
+            </li>
+
+            <li>
+                <h2>Lei Aplicável e Foro</h2>
+                <p>Estes termos são regidos pelas leis brasileiras. Fica eleito o foro da comarca onde está situada a sede da <strong><em>AMADO TECNOLOGIA LTDA (AMADOTEC)</em></strong> para dirimir eventuais controvérsias.</p>
+            </li>
+
+            <li>
+                <h2>Alterações nos Termos</h2>
+                <p>Reservamos o direito de alterar estes Termos de Uso a qualquer momento. As alterações entrarão em vigor imediatamente após sua publicação na plataforma.</p>
+                
+                <div class="highlight-box">
+                    <strong>Recomendação:</strong> Revise periodicamente estes termos para se manter informado sobre eventuais mudanças.
+                </div>
+            </li>
+
+            <li>
+                <h2>Contato</h2>
+                <p>Para dúvidas sobre estes Termos de Uso, entre em contato conosco:</p>
+                <ul>
+                    <li><strong>E-mail:</strong> <a href="mailto:contato@amadomaker.com">contato@amadomaker.com</a></li>
+                    <li><strong>Empresa:</strong> AMADO TECNOLOGIA LTDA (AMADOTEC)</li>
+                    <li><strong>CNPJ:</strong> 21.580.609/0001-57</li>
+                </ul>
+            </li>
+        </ol>
+
+        <div class="highlight-box">
+            <p><strong>Declaração de Aceite:</strong> Ao continuar usando nossa plataforma, você confirma que leu, compreendeu e aceita estar vinculado a estes Termos de Uso.</p>
+        </div>
+    </div>
+</body>
+</html>

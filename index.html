@@ -965,5 +965,92 @@
             .catch(err => console.error('Erro ao registrar SW:', err));
         }
     </script>
+    <!-- Rodapé -->
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-links">
+            <a href="pages/privacidade.html">Política de Privacidade</a>
+            <span class="separator">•</span>
+            <a href="pages/termos_de_uso.html">Termos de Uso</a>
+            <span class="separator">•</span>
+            <a href="pages/contato.html">Contato</a>
+        </div>
+        <div class="footer-copyright">
+            <p>&copy; 2025 AMADO TECNOLOGIA LTDA (AMADOTEC). Todos os direitos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<style>
+.footer {
+    background: linear-gradient(135deg, #1e293b, #334155);
+    color: white;
+    padding: 30px 20px;
+    margin-top: 50px;
+    text-align: center;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-links {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.footer-links a {
+    color: #e2e8f0;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.separator {
+    color: #64748b;
+    font-weight: bold;
+    margin: 0 5px;
+}
+
+.footer-copyright {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    padding-top: 15px;
+    border-top: 1px solid #475569;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .footer-links {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .separator {
+        display: none;
+    }
+    
+    .footer-links a {
+        display: block;
+        width: auto;
+    }
+    
+    .footer-copyright {
+        font-size: 0.8rem;
+    }
+}
+</style>
 </body>
 </html>
