@@ -959,11 +959,14 @@
     </script>
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
-            .then(reg => console.log('Service Worker registrado:', reg))
-            .catch(err => console.error('Erro ao registrar o Service Worker:', err));
+            window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/AmadoPlay/service-worker.js')
+                .then(reg => console.log('Service Worker registrado:', reg))
+                .catch(err => console.error('Erro ao registrar o Service Worker:', err));
+            });
         }
     </script>
+
     <!-- Rodapé -->
 <footer class="footer">
     <div class="footer-content">
