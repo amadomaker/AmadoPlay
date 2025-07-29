@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato - AMADOTEC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 300% 100%;
+            animation: gradient 3s ease infinite;
+        }
+
+        @keyframes gradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            color: #667eea;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(-3px);
+        }
+
+        h1 {
+            color: #1a202c;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            margin-top: 5px;
+            border-left: 4px solid #dc2626;
+            display: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .contact-info {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .contact-info h3 {
+            color: #374151;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+            color: #4b5563;
+        }
+
+        .contact-item i {
+            margin-right: 8px;
+            color: #667eea;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .back-btn {
+                top: 15px;
+                left: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 25px 15px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-btn" onclick="history.back()" title="Voltar">
+            ← 
+        </button>
+        
+        <h1>Fale Conosco</h1>
+        <p class="subtitle">Estamos aqui para ajudar! Entre em contato conosco.</p>
+        
+        
+        <script data-b24-form="inline/58/7s9otu"
+            data-skip-moving="true">
+            (function(w,d,u){
+              var s=d.createElement('script');
+              s.async=true;
+              s.src=u+'?'+(Date.now()/180000|0);
+              var h=d.getElementsByTagName('script')[0];
+              h.parentNode.insertBefore(s,h);
+              })(window,document,'https://cdn.bitrix24.com.br/b31192597/crm/form/loader_58.js');
+          </script>
+
+        <div class="contact-info">
+            <h3>Outras formas de contato</h3>
+            <div class="contact-item">
+                <span>📧</span>
+                <span>contato@amadomaker.com</span>
+            </div>
+            <div class="contact-item">
+                <span>🏢</span>
+                <span>AMADO TECNOLOGIA LTDA (AMADOTEC)</span>
+            </div>
+            <div class="contact-item">
+                <span>📄</span>
+                <span>CNPJ: 21.580.609/0001-57</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validação simples
+            const requiredFields = ['firstName', 'lastName', 'phone', 'email', 'city'];
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                const input = document.getElementById(field);
+                const error = document.getElementById(field + 'Error');
+                
+                if (!input.value.trim()) {
+                    error.style.display = 'block';
+                    input.style.borderColor = '#dc2626';
+                    isValid = false;
+                } else {
+                    error.style.display = 'none';
+                    input.style.borderColor = '#e5e7eb';
+                }
+            });
+
+            if (isValid) {o
+                
+                alert('Mensagem enviada com sucesso! Entraremos em contato em breve.');
+                this.reset();
+            }
+        });
+
+        // Máscara para telefone
+        document.getElementById('phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{2})(\d)/, '($1) $2');
+            value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
