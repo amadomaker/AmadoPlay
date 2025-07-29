@@ -4,13 +4,28 @@
   "description": "AmadoPlay é uma plataforma de ferramentas educacionais interativas para o aprendizado de matemática e alfabetização.",
   "start_url": "./index.html",
   "id": "/AmadoPlay/",
+  "scope": "/AmadoPlay/",
+  "scope_extensions": [
+    {
+      "origin": "https://amadomaker.github.io"
+    }
+  ],
   "display": "standalone",
   "background_color": "#d73fd8",
   "theme_color": "#8a078b",
   "orientation": "portrait",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "iarc_rating_id": "e12345678", 
+  "categories": [
+    "education",
+    "kids",
+    "puzzle"
+  ],
   "launch_handler": {
     "client_mode": "navigate-existing"
   },
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "src/assets/images/icon-192.png",
