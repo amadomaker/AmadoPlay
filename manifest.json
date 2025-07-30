@@ -17,7 +17,7 @@
   "protocol_handlers": [
     {
       "protocol": "web+amadoplay",
-      "url": "https://amadomaker.github.io/AmadoPlay/?track=%s"
+      "url": "/AmadoPlay/?track=%s"
     }
   ],
   "lang": "pt-BR",
