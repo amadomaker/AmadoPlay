@@ -7,8 +7,11 @@
   "background_color": "#667eea",
   "theme_color": "#667eea",
   "orientation": "portrait-primary",
+  "id": "/AmadoPlay/",
   "scope": "./",
   "lang": "pt-BR",
+  "dir": "ltr",
+  "iarc_rating_id": "e12345678",
   "icons": [
     {
       "src": "./src/assets/images/icon-192.png",
@@ -24,6 +27,9 @@
     }
   ],
   "categories": ["education", "kids", "utilities"],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
   "screenshots": [
     {
       "src": "./src/assets/images/screenshot1.png",
