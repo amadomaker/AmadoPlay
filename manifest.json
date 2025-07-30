@@ -1,54 +1,69 @@
 {
-  "name": "AmadoPlay",
+  "name": "AmadoPlay - Plataforma Educacional",
   "short_name": "AmadoPlay",
-  "description": "AmadoPlay é uma plataforma de ferramentas educacionais interativas para o aprendizado de matemática e alfabetização.",
-  "start_url": "./index.html",
-  "id": "/AmadoPlay/",
-  "scope": "/AmadoPlay/",
-  "scope_extensions": [
-    {
-      "origin": "https://amadomaker.github.io"
-    }
-  ],
+  "description": "Plataforma de ferramentas educacionais interativas para o aprendizado de matemática e alfabetização",
+  "start_url": "./",
   "display": "standalone",
-  "background_color": "#d73fd8",
-  "theme_color": "#8a078b",
-  "orientation": "portrait",
+  "background_color": "#667eea",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "scope": "./",
   "lang": "pt-BR",
-  "dir": "ltr",
-  "iarc_rating_id": "e12345678", 
-  "categories": [
-    "education",
-    "kids",
-    "puzzle"
-  ],
-  "launch_handler": {
-    "client_mode": "navigate-existing"
-  },
-  "prefer_related_applications": false,
   "icons": [
     {
-      "src": "src/assets/images/icon-192.png",
+      "src": "./src/assets/images/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "src/assets/images/icon-512.png",
+      "src": "./src/assets/images/icon-512.png", 
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
+  "categories": ["education", "kids", "utilities"],
   "screenshots": [
     {
-      "src": "src/assets/images/screenshot1.png",
+      "src": "./src/assets/images/screenshot1.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide"
     },
     {
-      "src": "src/assets/images/screenshot2.png",
-      "sizes": "720x1280",
-      "type": "image/png"
+      "src": "./src/assets/images/screenshot2.png", 
+      "sizes": "640x1136",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Ábaco Digital",
+      "short_name": "Ábaco",
+      "description": "Aprenda matemática com o ábaco interativo",
+      "url": "./pages/Abaco_digital.html",
+      "icons": [
+        {
+          "src": "./src/assets/images/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Material Dourado", 
+      "short_name": "Material",
+      "description": "Explore o sistema decimal com blocos virtuais",
+      "url": "./pages/Material_dourado.html",
+      "icons": [
+        {
+          "src": "./src/assets/images/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

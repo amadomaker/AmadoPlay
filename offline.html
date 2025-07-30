@@ -1,24 +1,214 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AmadoPlay Offline</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AmadoPlay - Offline</title>
   <style>
-    body {
-      text-align: center;
-      font-family: sans-serif;
-      background-color: #f1f1f1;
-      padding: 2rem;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    img {
-      max-width: 200px;
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      color: white;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      padding: 50px 30px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.12);
+      color: #2c3e50;
+    }
+
+    .offline-icon {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 30px;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 50px;
+      color: white;
+      box-shadow: 0 20px 40px rgba(102,126,234,0.25);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    p {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      color: #7f8c8d;
+    }
+
+    .retry-btn {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      box-shadow: 0 10px 25px rgba(102,126,234,0.3);
+    }
+
+    .retry-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px rgba(102,126,234,0.4);
+    }
+
+    .features-list {
+      margin-top: 30px;
+      text-align: left;
+    }
+
+    .features-list h3 {
+      color: #2c3e50;
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+    }
+
+    .features-list ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .features-list li {
+      padding: 8px 0;
+      color: #7f8c8d;
+      display: flex;
+      align-items: center;
+    }
+
+    .features-list li::before {
+      content: "🔸";
+      margin-right: 10px;
+    }
+
+    .connection-status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 12px;
+      background: rgba(255, 193, 7, 0.1);
+      border-left: 4px solid #ffc107;
+    }
+
+    .connection-status.online {
+      background: rgba(40, 167, 69, 0.1);
+      border-left-color: #28a745;
+    }
+
+    .connection-status.offline {
+      background: rgba(220, 53, 69, 0.1);
+      border-left-color: #dc3545;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 35px 25px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      p {
+        font-size: 1.1rem;
+      }
     }
   </style>
 </head>
 <body>
-  <img src="src/assets/images/icon-192.png" alt="AmadoPlay Logo">
-  <h1>Você está offline</h1>
-  <p>Sem conexão com a internet. Tente novamente mais tarde.</p>
+  <div class="container">
+    <div class="offline-icon">📵</div>
+    
+    <h1>Você está offline</h1>
+    
+    <p>Não foi possível conectar com a internet. Verifique sua conexão e tente novamente.</p>
+    
+    <button class="retry-btn" onclick="window.location.reload()">
+      🔄 Tentar Novamente
+    </button>
+    
+    <div class="connection-status" id="connectionStatus">
+      <strong>Status:</strong> <span id="statusText">Verificando conexão...</span>
+    </div>
+    
+    <div class="features-list">
+      <h3>Recursos disponíveis quando online:</h3>
+      <ul>
+        <li>Ábaco Digital Interativo</li>
+        <li>Material Dourado Virtual</li>
+        <li>Alfabeto Móvel</li>
+        <li>Pirâmide Alimentar</li>
+        <li>Mapa do Brasil</li>
+        <li>Três Poderes do Brasil</li>
+        <li>Canal de Karaokê Educativo</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Monitora o status da conexão
+    function updateConnectionStatus() {
+      const statusElement = document.getElementById('connectionStatus');
+      const statusText = document.getElementById('statusText');
+      
+      if (navigator.onLine) {
+        statusElement.className = 'connection-status online';
+        statusText.textContent = 'Conectado - Clique em "Tentar Novamente"';
+      } else {
+        statusElement.className = 'connection-status offline';
+        statusText.textContent = 'Desconectado - Verifique sua internet';
+      }
+    }
+    
+    // Verifica status inicial
+    updateConnectionStatus();
+    
+    // Escuta mudanças na conexão
+    window.addEventListener('online', updateConnectionStatus);
+    window.addEventListener('offline', updateConnectionStatus);
+    
+    // Auto-reload quando voltar online (opcional)
+    window.addEventListener('online', () => {
+      setTimeout(() => {
+        if (confirm('Conexão restaurada! Deseja recarregar a página?')) {
+          window.location.reload();
+        }
+      }, 1000);
+    });
+    
+    // Detecta se é um PWA instalado
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      console.log('Executando como PWA');
+    }
+  </script>
 </body>
 </html>
