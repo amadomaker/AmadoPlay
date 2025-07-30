@@ -14,10 +14,12 @@
       "origin": "https://amadomaker.github.io"
     }
   ],
-  "protocol_handlers": [{
-    "protocol": "amadoplay",
-    "web_url": "https://amadomaker.github.io/AmadoPlay/"
-  }],
+  "protocol_handlers": [
+    {
+      "protocol": "web+amadoplay",
+      "url": "https://amadomaker.github.io/AmadoPlay/?track=%s"
+    }
+  ],
   "lang": "pt-BR",
   "dir": "ltr",
   "iarc_rating_id": "e12345678",
