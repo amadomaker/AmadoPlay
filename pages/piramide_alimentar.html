@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pirâmide Alimentar Interativa - Sistema Educativo</title>
+    <link rel="stylesheet" href="../src/css/piramide_alimentar.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Tela Inicial de Navegação -->
+        <div id="main-menu" class="screen active">
+            <header class="menu-header">
+                <h1>🥗 Pirâmide Alimentar Interativa</h1>
+                <p>Aprenda sobre alimentação saudável de forma divertida!</p>
+            </header>
+            
+            <div class="menu-options">
+                <button class="menu-btn learn-btn" onclick="startLearning()">
+                    <div class="btn-icon">📚</div>
+                    <h3>Aprender</h3>
+                    <p>Descubra os grupos alimentares</p>
+                </button>
+                
+                <button class="menu-btn play-btn" onclick="startGame()">
+                    <div class="btn-icon">🎮</div>
+                    <h3>Desafio</h3>
+                    <p>Desafio da pirâmide alimentar</p>
+                </button>
+                
+                <button class="menu-btn progress-btn" onclick="showProgress()">
+                    <div class="btn-icon">📊</div>
+                    <h3>Meu Progresso</h3>
+                    <p>Veja seu aprendizado</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sistema de Lições -->
+        <div id="learning-system" class="screen">
+            <!-- Navegação das Lições -->
+            <div class="lesson-nav">
+                <button class="back-btn" onclick="showMainMenu()">← Voltar</button>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="lesson-progress"></div>
+                </div>
+                <div class="lesson-counter" id="lesson-counter">Lição 1 de 6</div>
+            </div>
+
+            <!-- Conteúdo das Lições -->
+            <div class="lesson-content" id="lesson-content">
+                <!-- O conteúdo será inserido dinamicamente pelo JavaScript -->
+            </div>
+
+            <!-- Controles das Lições -->
+            <div class="lesson-controls">
+                <button id="prev-lesson" class="control-btn" onclick="previousLesson()" disabled>
+                    ⬅️ Anterior
+                </button>
+                <button id="next-lesson" class="control-btn primary" onclick="nextLesson()">
+                    Próximo ➡️
+                </button>
+            </div>
+        </div>
+
+        <!-- Tela de Progresso -->
+        <div id="progress-screen" class="screen">
+            <div class="progress-header">
+                <button class="back-btn" onclick="showMainMenu()">← Voltar</button>
+                <h2>📊 Seu Progresso de Aprendizado</h2>
+            </div>
+            
+            <div class="progress-content">
+                <div class="overall-progress">
+                    <h3>Progresso Geral</h3>
+                    <div class="circular-progress">
+                        <div class="progress-circle" id="overall-circle">
+                            <span id="overall-percentage">0%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lessons-progress">
+                    <h3>Lições Completadas</h3>
+                    <div class="lessons-grid" id="lessons-grid">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                </div>
+                
+                <div class="achievements-section">
+                    <h3>🏆 Conquistas</h3>
+                    <div class="achievements-progress" id="achievements-progress">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jogo Principal (Mantido do código anterior) -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <button class="back-btn" onclick="showMainMenu()">← Menu Principal</button>
+                <h1>🥗 Desafio da Pirâmide Alimentar</h1>
+                <p>Agora é hora de testar seus conhecimentos!</p>
+                <div class="score-board">
+                    <span>Pontuação: <strong id="score">0</strong></span>
+                    <span>Acertos: <strong id="correct-count">0</strong></span>
+                    <button id="reset-btn">🔄 Recomeçar</button>
+                </div>
+            </div>
+
+            <main class="game-container">
+                <!-- Área dos Alimentos -->
+                <section class="food-bank">
+                    <h3>🍎 Arraste os alimentos para o grupo correto</h3>
+                    <div class="food-items">
+                        <!-- Energéticos (Carboidratos) -->
+                        <div class="food-item" draggable="true" data-group="energeticos" data-name="Arroz">
+                            <div class="food-icon">🍚</div>
+                            <span>Arroz</span>
+                        </div>
+                        <div class="food-item" draggable="true" data-group="energeticos" data-name="Pão">
+                            <div class="food-icon">🍞</div>
+                            <span>Pão</span>
+                        </div>
+                        <div class="food-item" draggable="true" data-group="energeticos" data-name="Batata">
+                            <div class="food-icon">🥔</div>
+                            <span>Batata</span>
+                        </div>
+                        <div class="food-item" draggable="true" data-group="energeticos" data-name="Macarrão">
+                            <div class="food-icon">🍝</div>
+                            <span>Macarrão</span>
+                        </div>
+
+                        <!-- Reguladores (Vitaminas e Minerais) -->
+                        <div class="food-item" draggable="true" data-group="reguladores" data-name="Alface">
+                            <div class="food-icon">🥬</div>
+                            <span>Alface</span>
+                        </div>
+                        <div class="food-item" draggable="true" data-group="reguladores" data-name="Cenoura">
+                            <div class="food-icon">🥕</div>
+                            <span>Cenoura</span>
+                        </div>
+                        <div class="food-item" draggable="true" data-group="reguladores" data-name="Maçã">
+                            <div class="food-icon">🍎</div>
+                            <span>Maçã</span>
+                        </div>
+                        <div class="food-item" draggable="true" data-group="reguladores" data-name="Banana">
+                            <div class="food-icon">🍌</div>
+                            <span>Banana</span>
+                        </div>
+
+                        <!-- Construtores (Proteínas) -->
+                        <div class="food-item" draggable="true" data-group="construtores" data-name="Frango">
+                            <div class="food-icon">🍗</div>
+                            <span>Frango</span>
+                        </div>
+                        <div class="food-item" draggable="true" data-group="construtores" data-name="Feijão">
+                            <div class="food-icon">🫘</div>
+                            <span>Feijão</span>
+                        </div>
+                        <div class="food-item" draggable="true" data-group="construtores" data-name="Ovo">
+                            <div class="food-icon">🥚</div>
+                            <span>Ovo</span>
+                        </div>
+                        <div class="food-item" draggable="true" data-group="construtores" data-name="Leite">
+                            <div class="food-icon">🥛</div>
+                            <span>Leite</span>
+                        </div>
+
+                        <!-- Energéticos Extras -->
+                        <div class="food-item" draggable="true" data-group="energeticos-extras" data-name="Brigadeiro">
+                            <div class="food-icon">🧁</div>
+                            <span>Brigadeiro</span>
+                        </div>
+                        <div class="food-item" draggable="true" data-group="energeticos-extras" data-name="Refrigerante">
+                            <div class="food-icon">🥤</div>
+                            <span>Refrigerante</span>
+                        </div>
+                        <div class="food-item" draggable="true" data-group="energeticos-extras" data-name="Chocolate">
+                            <div class="food-icon">🍫</div>
+                            <span>Chocolate</span>
+                        </div>
+                        <div class="food-item" draggable="true" data-group="energeticos-extras" data-name="Batata Frita">
+                            <div class="food-icon">🍟</div>
+                            <span>Batata Frita</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Pirâmide Alimentar -->
+                <section class="pyramid-section">
+                    <div class="pyramid-container">
+                        <!-- Nível 1: Energéticos Extras (Topo) -->
+                        <div class="pyramid-level level-1" data-group="energeticos-extras">
+                            <div class="level-header">
+                                <h4>Energéticos Extras</h4>
+                                <span class="subtitle">Lipídeos/Açúcares</span>
+                            </div>
+                            <div class="level-content">
+                                <div class="drop-zone" id="drop-energeticos-extras">
+                                    <p class="drop-hint">Arraste aqui</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nível 2: Construtores -->
+                        <div class="pyramid-level level-2" data-group="construtores">
+                            <div class="level-header">
+                                <h4>Construtores</h4>
+                                <span class="subtitle">Proteínas</span>
+                            </div>
+                            <div class="level-content">
+                                <div class="drop-zone" id="drop-construtores">
+                                    <p class="drop-hint">Arraste aqui</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nível 3: Reguladores -->
+                        <div class="pyramid-level level-3" data-group="reguladores">
+                            <div class="level-header">
+                                <h4>Reguladores</h4>
+                                <span class="subtitle">Vitaminas e Minerais</span>
+                            </div>
+                            <div class="level-content">
+                                <div class="drop-zone" id="drop-reguladores">
+                                    <p class="drop-hint">Arraste aqui</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nível 4: Energéticos (Base) -->
+                        <div class="pyramid-level level-4" data-group="energeticos">
+                            <div class="level-header">
+                                <h4>Energéticos</h4>
+                                <span class="subtitle">Carboidratos</span>
+                            </div>
+                            <div class="level-content">
+                                <div class="drop-zone" id="drop-energeticos">
+                                    <p class="drop-hint">Arraste aqui</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- Modal de Informações -->
+        <div id="info-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3 id="modal-title"></h3>
+                <div id="modal-body"></div>
+            </div>
+        </div>
+
+        <!-- Quiz Modal -->
+        <div id="quiz-modal" class="modal">
+            <div class="modal-content quiz-content">
+                <h3 id="quiz-title"></h3>
+                <div id="quiz-question"></div>
+                <div id="quiz-options"></div>
+                <div id="quiz-feedback"></div>
+                <button id="quiz-next" class="control-btn primary" style="display: none;">Continuar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../src/js/piramide_alimentar.js"></script>
+</body>
+</html>
