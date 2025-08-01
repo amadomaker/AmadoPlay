@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roleta de Formação de Perguntas em Português</title>
+    <meta name="description" content="Ferramenta educacional interativa para ensinar estrutura de perguntas em português com três discos concêntricos">
+    
+    <!-- Preload para melhor performance -->
+    <link rel="preload" href="../src/css/roleta.css" as="style">
+    <link rel="preload" href="../src/js/roleta.js" as="script">
+    
+    <!-- Links para CSS e JS externos -->
+    <link rel="stylesheet" href="../src/css/roleta.css">
+    
+    <!-- Favicon e ícones para diferentes dispositivos -->
+    <meta name="theme-color" content="#8b5cf6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+    <!-- Skip link para acessibilidade -->
+    <a href="#main-content" class="skip-link">Pular para conteúdo principal</a>
+    
+    <!-- Header -->
+    <header class="header" role="banner">
+        <div class="container">
+            <h1 class="header-title">
+                <span class="header-icon" aria-hidden="true"></span>
+                Roleta de Formação de Perguntas em Português
+            </h1>
+            <p class="header-subtitle">Ferramenta interativa para ensinar português</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content" role="main">
+        <div class="container">
+            
+            <!-- Controles Gerais -->
+            <section class="controls-section" aria-labelledby="controls-title">
+                <h2 id="controls-title" class="section-title">Controles</h2>
+                
+                <div class="controls-grid">
+                    <!-- Controle de Velocidade -->
+                    <div class="control-group">
+                        <label for="speed-control" class="control-label">
+                            Velocidade da Rotação
+                        </label>
+                        <input 
+                            type="range" 
+                            id="speed-control" 
+                            class="speed-slider"
+                            min="1" 
+                            max="5" 
+                            value="3"
+                            aria-describedby="speed-description"
+                        >
+                        <p id="speed-description" class="control-description">
+                            Ajuste a velocidade: 1 (lento) a 5 (rápido)
+                        </p>
+                    </div>
+
+                    <!-- Toggle de Som -->
+                    <div class="control-group">
+                        <button 
+                            id="sound-toggle" 
+                            class="toggle-button" 
+                            type="button"
+                            aria-pressed="true"
+                            aria-describedby="sound-description"
+                        >
+                            <span class="toggle-icon" aria-hidden="true">🔊</span>
+                            <span class="toggle-text">Som Ativado</span>
+                        </button>
+                        <p id="sound-description" class="control-description">
+                            Liga/desliga os efeitos sonoros
+                        </p>
+                    </div>
+
+                    <!-- Instruções -->
+                    <div class="control-group">
+                        <div class="instruction-card">
+                            <h3 class="instruction-title">Como usar:</h3>
+                            <p class="instruction-text">
+                                Gire os anéis para formar perguntas em português. 
+                                Combine pronomes interrogativos + verbos + pronomes pessoais.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Área da Roleta -->
+            <section class="wheel-section" aria-labelledby="wheel-title">
+                <h2 id="wheel-title" class="section-title">Roleta de Formação de Perguntas em Português</h2>
+                
+                <div class="wheel-container">
+                    <!-- Indicadores/Ponteiros para cada anel -->
+                    <div class="wheel-pointers">
+                        <div class="pointer outer-pointer" aria-hidden="true">
+                            <div class="pointer-triangle"></div>
+                            <span class="pointer-label">Pron</span>
+                        </div>
+                        <div class="pointer middle-pointer" aria-hidden="true">
+                            <div class="pointer-triangle"></div>
+                            <span class="pointer-label">Verb</span>
+                        </div>
+                        <div class="pointer inner-pointer" aria-hidden="true">
+                            <div class="pointer-triangle"></div>
+                            <span class="pointer-label">Pess</span>
+                        </div>
+                    </div>
+                    
+                    <!-- SVG da Roleta com 3 discos -->
+                    <div class="wheel-wrapper">
+                        <svg 
+                            class="wheel-svg" 
+                            viewBox="0 0 400 400" 
+                            role="img"
+                            aria-labelledby="wheel-svg-title wheel-svg-desc"
+                        >
+                            <title id="wheel-svg-title">Roleta de três anéis para formação de perguntas em português</title>
+                            <desc id="wheel-svg-desc">
+                                Três discos concêntricos: anel externo com pronomes interrogativos, 
+                                anel intermediário com verbos e tempos verbais e anel interno com pronomes pessoais
+                            </desc>
+                            
+                            <!-- Anel Externo (Pronomes Interrogativos) -->
+                            <g id="outer-ring" class="ring outer-ring">
+                                <!-- Seções serão geradas dinamicamente pelo JavaScript -->
+                            </g>
+                            
+                            <!-- Anel Intermediário (Verbos) -->
+                            <g id="middle-ring" class="ring middle-ring">
+                                <!-- Seções serão geradas dinamicamente pelo JavaScript -->
+                            </g>
+                            
+                            <!-- Anel Interno (Pronomes Pessoais) -->
+                            <g id="inner-ring" class="ring inner-ring">
+                                <!-- Seções serão geradas dinamicamente pelo JavaScript -->
+                            </g>
+                            
+                            <!-- Centro da roleta -->
+                            <circle 
+                                cx="200" 
+                                cy="200" 
+                                r="25" 
+                                class="wheel-center"
+                                fill="#4ade80"
+                                stroke="#166534" 
+                                stroke-width="3"
+                            />
+                            
+                            <text 
+                                x="200" 
+                                y="205" 
+                                text-anchor="middle" 
+                                class="wheel-center-text"
+                                fill="white"
+                                font-weight="bold"
+                                font-size="10"
+                            >
+                                PORT
+                            </text>
+                        </svg>
+                    </div>
+                    
+                    <!-- Controles específicos para cada anel -->
+                    <div class="ring-controls">
+                        <div class="control-group">
+                            <button id="spin-outer" class="ring-button outer-button" type="button">
+                                <span class="button-icon" aria-hidden="true">🔄</span>
+                                <span class="button-text">Girar Pronomes</span>
+                            </button>
+                            <p class="button-description">Pronomes interrogativos</p>
+                        </div>
+                        
+                        <div class="control-group">
+                            <button id="spin-middle" class="ring-button middle-button" type="button">
+                                <span class="button-icon" aria-hidden="true">🔄</span>
+                                <span class="button-text">Girar Verbos</span>
+                            </button>
+                            <p class="button-description">Verbos/Tempos verbais</p>
+                        </div>
+                        
+                        <div class="control-group">
+                            <button id="spin-inner" class="ring-button inner-button" type="button">
+                                <span class="button-icon" aria-hidden="true">🔄</span>
+                                <span class="button-text">Girar Pessoais</span>
+                            </button>
+                            <p class="button-description">Pronomes pessoais</p>
+                        </div>
+                        
+                        <div class="control-group">
+                            <button id="spin-all" class="ring-button all-button" type="button">
+                                <span class="button-icon" aria-hidden="true">🎲</span>
+                                <span class="button-text">Girar Todos</span>
+                            </button>
+                            <p class="button-description">Gira os 3 anéis</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Área de Resultado - Pergunta Formada -->
+            <section class="result-section" aria-labelledby="result-title">
+                <h2 id="result-title" class="section-title">Pergunta Formada</h2>
+                
+                <div class="result-container">
+                    <div 
+                        id="question-display" 
+                        class="question-display"
+                        role="status"
+                        aria-live="polite"
+                        aria-atomic="true"
+                    >
+                        <div class="question-content">
+                            <div class="question-parts">
+                                <span id="wh-result" class="question-part wh-part">O quê</span>
+                                <span id="subject-result" class="question-part subject-part">ela</span>
+                                <span id="aux-result" class="question-part aux-part">faz</span>
+                                <span class="question-part complement">?</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Exemplos de Uso -->
+                    <div class="examples-section">
+                        <h3 class="examples-title">Exemplos de Perguntas:</h3>
+                        <div class="examples-grid" id="examples-grid">
+                            <div class="example-item">
+                                <span class="example-question">"Onde vocês vão?"</span>
+                                <span class="example-description">Pergunta sobre localização futura</span>
+                            </div>
+                            <div class="example-item">
+                                <span class="example-question">"Por que ele está triste?"</span>  
+                                <span class="example-description">Pergunta sobre causa/motivo</span>
+                            </div>
+                            <div class="example-item">
+                                <span class="example-question">"O que ela fez?"</span>
+                                <span class="example-description">Pergunta sobre ação no passado</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Histórico de perguntas geradas -->
+                    <div class="history-container">
+                        <h3 class="history-title">Últimas Perguntas Geradas</h3>
+                        <ul id="question-history" class="question-history" aria-label="Lista das últimas perguntas formadas">
+                            <!-- Histórico será preenchido dinamicamente -->
+                        </ul>
+                        
+                        <button 
+                            id="clear-history" 
+                            class="clear-button"
+                            type="button"
+                        >
+                            <span class="button-icon" aria-hidden="true">🗑️</span>
+                            Limpar Histórico
+                        </button>
+                    </div>
+                    
+                    <!-- Configurações das palavras -->
+                    <div class="words-config">
+                        <button id="config-words" class="config-button" type="button">
+                            <span class="button-icon" aria-hidden="true">⚙️</span>
+                            Configurar Palavras
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seção Educacional -->
+            <section class="education-section" aria-labelledby="education-title">
+                <h2 id="education-title" class="section-title">Aprenda a Estrutura</h2>
+                
+                <div class="education-content">
+                    <div class="structure-explanation">
+                        <h3>Estrutura das Perguntas em Português:</h3>
+                        <div class="structure-formula">
+                            <span class="formula-part wh-formula">Pronome Interrogativo</span>
+                            <span class="formula-operator">+</span>
+                            <span class="formula-part subject-formula">Pronome Pessoal</span>
+                            <span class="formula-operator">+</span>
+                            <span class="formula-part aux-formula">Verbo/Tempo</span>
+                            <span class="formula-operator">+</span>
+                            <span class="formula-part complement-formula">Complemento?</span>
+                        </div>
+                    </div>
+                    
+                    <div class="rings-explanation">
+                        <div class="ring-info">
+                            <h4 class="ring-title">Anel Externo (Branco)</h4>
+                            <p class="ring-description">Pronomes interrogativos</p>
+                            <div class="ring-examples">O quê, Quando, Onde, Quem, Por que, Como, Qual, Com que frequência</div>
+                        </div>
+                        
+                        <div class="ring-info">
+                            <h4 class="ring-title">Anel Intermediário (Colorido)</h4>
+                            <p class="ring-description">Verbos auxiliares e tempos verbais</p>
+                            <div class="ring-examples">é/são, foi/eram, está/estavam, vai/vão, faz/fez, pode/podem, deve/deveriam</div>
+                        </div>
+                        
+                        <div class="ring-info">
+                            <h4 class="ring-title">Anel Interno (Verde)</h4>
+                            <p class="ring-description">Pronomes pessoais</p>
+                            <div class="ring-examples">eu, tu, ele/ela, nós, vocês, eles/elas</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+  
+
+    <!-- Loading overlay -->
+    <div id="loading-overlay" class="loading-overlay" aria-hidden="true">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p class="loading-text">Preparando roleta...</p>
+        </div>
+    </div>
+
+    <!-- Modal de configuração de palavras -->
+    <div 
+        id="config-modal" 
+        class="modal" 
+        role="dialog" 
+        aria-labelledby="config-modal-title"
+        aria-hidden="true"
+    >
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 id="config-modal-title" class="modal-title">
+                    Configurar Palavras dos Anéis
+                </h2>
+                <button 
+                    id="close-config-modal" 
+                    class="modal-close"
+                    type="button"
+                    aria-label="Fechar modal"
+                >
+                    <span aria-hidden="true">×</span>
+                </button>
+            </header>
+            
+            <div class="modal-body">
+                <div class="config-rings">
+                    <div class="config-ring-section">
+                        <h3>Anel Externo - Pronomes Interrogativos</h3>
+                        <div class="config-inputs" id="outer-config">
+                            <!-- Inputs serão gerados dinamicamente -->
+                        </div>
+                    </div>
+                    
+                    <div class="config-ring-section">
+                        <h3>Anel Intermediário - Verbos e Tempos Verbais</h3>
+                        <div class="config-inputs" id="middle-config">
+                            <!-- Inputs serão gerados dinamicamente -->
+                        </div>
+                    </div>
+                    
+                    <div class="config-ring-section">
+                        <h3>Anel Interno - Pronomes Pessoais</h3>
+                        <div class="config-inputs" id="inner-config">
+                            <!-- Inputs serão gerados dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="config-actions">
+                    <button id="save-config" class="action-button" type="button">
+                        <span class="button-icon" aria-hidden="true">💾</span>
+                        Salvar Configurações
+                    </button>
+                    <button id="reset-config" class="action-button secondary" type="button">
+                        <span class="button-icon" aria-hidden="true">↩️</span>
+                        Restaurar Padrão
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de acessibilidade -->
+    <div 
+        id="accessibility-modal" 
+        class="modal" 
+        role="dialog" 
+        aria-labelledby="accessibility-modal-title"
+        aria-hidden="true"
+    >
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 id="accessibility-modal-title" class="modal-title">
+                    Informações de Acessibilidade
+                </h2>
+                <button 
+                    id="close-modal" 
+                    class="modal-close"
+                    type="button"
+                    aria-label="Fechar modal"
+                >
+                    <span aria-hidden="true">×</span>
+                </button>
+            </header>
+            
+            <div class="modal-body">
+                <h3>Atalhos de Teclado:</h3>
+                <ul>
+                    <li><kbd>1</kbd>: Girar anel externo (Pronomes interrogativos)</li>
+                    <li><kbd>2</kbd>: Girar anel intermediário (Verbos)</li>
+                    <li><kbd>3</kbd>: Girar anel interno (Pronomes pessoais)</li>
+                    <li><kbd>Espaço</kbd>: Girar todos os anéis</li>
+                    <li><kbd>S</kbd>: Alternar som</li>
+                    <li><kbd>C</kbd>: Configurar palavras</li>
+                    <li><kbd>H</kbd>: Limpar histórico</li>
+                    <li><kbd>Esc</kbd>: Fechar modais</li>
+                </ul>
+                
+                <h3>Recursos de Acessibilidade:</h3>
+                <ul>
+                    <li>Compatível com leitores de tela</li>
+                    <li>Navegação completa por teclado</li>
+                    <li>Alto contraste disponível</li>
+                    <li>Anúncios de resultado via aria-live</li>
+                    <li>Descrições detalhadas dos elementos</li>
+                    <li>Suporte a modo escuro</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botão de acessibilidade -->
+    <button 
+        id="accessibility-button" 
+        class="accessibility-button"
+        type="button"
+        aria-label="Abrir informações de acessibilidade"
+        title="Informações de Acessibilidade"
+    >
+        <span aria-hidden="true">♿</span>
+    </button>
+
+    <!-- Script principal -->
+    <script src="../src/js/roleta.js"></script>
+</body>
+</html>
