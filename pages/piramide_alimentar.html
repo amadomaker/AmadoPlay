@@ -60,39 +60,7 @@
             </div>
         </div>
 
-        <!-- Tela de Progresso -->
-        <div id="progress-screen" class="screen">
-            <div class="progress-header">
-                <button class="back-btn" onclick="showMainMenu()">← Voltar</button>
-                <h2>📊 Seu Progresso de Aprendizado</h2>
-            </div>
-            
-            <div class="progress-content">
-                <div class="overall-progress">
-                    <h3>Progresso Geral</h3>
-                    <div class="circular-progress">
-                        <div class="progress-circle" id="overall-circle">
-                            <span id="overall-percentage">0%</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="lessons-progress">
-                    <h3>Lições Completadas</h3>
-                    <div class="lessons-grid" id="lessons-grid">
-                        <!-- Será preenchido dinamicamente -->
-                    </div>
-                </div>
-                
-                <div class="achievements-section">
-                    <h3>🏆 Conquistas</h3>
-                    <div class="achievements-progress" id="achievements-progress">
-                        <!-- Será preenchido dinamicamente -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        
         <!-- Jogo Principal (Mantido do código anterior) -->
         <div id="game-screen" class="screen">
             <div class="game-header">
@@ -102,7 +70,6 @@
                 <div class="score-board">
                     <span>Pontuação: <strong id="score">0</strong></span>
                     <span>Acertos: <strong id="correct-count">0</strong></span>
-                    <button id="reset-btn">🔄 Recomeçar</button>
                 </div>
             </div>
 
@@ -187,6 +154,11 @@
 
                 <!-- Pirâmide Alimentar -->
                 <section class="pyramid-section">
+                    <div id="container-botoes">
+                        <button id="reset-btn">🔄 Recomeçar</button>
+                        <button class="show-placed-btn"><span>👁</span> Visualizar piramide</button>
+                    </div>
+
                     <div class="pyramid-container">
                         <!-- Nível 1: Energéticos Extras (Topo) -->
                         <div class="pyramid-level level-1" data-group="energeticos-extras">

@@ -313,17 +313,17 @@ class NutritionEducationSystem {
                     <div class="pyramid-preview">
                         <h3>🏛️ A Estrutura da Pirâmide</h3>
                         <div class="pyramid-explanation">
-                            <div class="pyramid-mini level-4-mini">
-                                <span>🍚 Base: Energéticos (Mais quantidade)</span>
-                            </div>
-                            <div class="pyramid-mini level-3-mini">
-                                <span>🥬 Reguladores (Bastante)</span>
+                            <div class="pyramid-mini level-1-mini">
+                                <span>🍫 Extras (Pouco)</span>
                             </div>
                             <div class="pyramid-mini level-2-mini">
                                 <span>🥚 Construtores (Moderado)</span>
                             </div>
-                            <div class="pyramid-mini level-1-mini">
-                                <span>🍫 Extras (Pouco)</span>
+                            <div class="pyramid-mini level-3-mini">
+                                <span>🥬 Reguladores (Bastante)</span>
+                            </div>
+                            <div class="pyramid-mini level-4-mini">
+                                <span>🍚 Base: Energéticos (Mais quantidade)</span>
                             </div>
                         </div>
                     </div>
@@ -472,61 +472,7 @@ class NutritionEducationSystem {
         }
     }
 
-    // ===== SISTEMA DE PROGRESSO =====
-    updateProgressScreen() {
-        // Progresso geral
-        const overallProgress = Math.round((this.lessonsCompleted.length / this.lessons.length) * 100);
-        document.getElementById('overall-percentage').textContent = `${overallProgress}%`;
-        
-        // Atualizar círculo de progresso
-        const circle = document.getElementById('overall-circle');
-        const degrees = (overallProgress / 100) * 360;
-        circle.style.background = `conic-gradient(#4ECDC4 ${degrees}deg, rgba(255,255,255,0.2) ${degrees}deg)`;
-
-        // Lições completadas
-        const lessonsGrid = document.getElementById('lessons-grid');
-        lessonsGrid.innerHTML = this.lessons.map((lesson, index) => `
-            <div class="lesson-progress-item ${this.lessonsCompleted.includes(index) ? 'completed' : ''}">
-                <span class="lesson-icon">${this.getLessonIcon(lesson.group)}</span>
-                <div class="lesson-name">${lesson.title.replace(' - ', '<br>')}</div>
-            </div>
-        `).join('');
-
-        // Conquistas
-        this.updateAchievementsDisplay();
-    }
-
-    getLessonIcon(group) {
-        const icons = {
-            'intro': '📚',
-            'energeticos': '🍚',
-            'reguladores': '🥬',
-            'construtores': '🥚',
-            'gorduras': '🥑',
-            'energeticos-extras': '🍫'
-        };
-        return icons[group] || '📖';
-    }
-
-    updateAchievementsDisplay() {
-        const achievementsContainer = document.getElementById('achievements-progress');
-        const achievements = [
-            { id: 'lesson-master', name: 'Mestre das Lições', icon: '🎓', desc: 'Complete todas as lições' },
-            { id: 'quiz-expert', name: 'Expert em Quiz', icon: '🧠', desc: 'Acerte 3 ou mais quizzes' },
-            { id: 'first-correct', name: 'Primeiro Acerto', icon: '🎯', desc: 'Acerte o primeiro alimento' },
-            { id: 'perfect-score', name: 'Pontuação Perfeita', icon: '⭐', desc: 'Complete o jogo perfeitamente' }
-        ];
-
-        achievementsContainer.innerHTML = achievements.map(achievement => `
-            <div class="achievement-progress ${this.gameData.achievements[achievement.id] ? 'unlocked' : ''}">
-                <span class="achievement-icon">${achievement.icon}</span>
-                <div class="achievement-info">
-                    <strong>${achievement.name}</strong>
-                    <p>${achievement.desc}</p>
-                </div>
-            </div>
-        `).join('');
-    }
+    
 
     // ===== JOGO PRINCIPAL (Adaptado do código original) =====
     initializeGame() {
@@ -946,24 +892,7 @@ class NutritionEducationSystem {
         }
     }
 
-    // ===== SISTEMA DE CONQUISTAS =====
-    unlockAchievement(achievementId) {
-        if (!this.gameData.achievements[achievementId]) {
-            this.gameData.achievements[achievementId] = true;
-            this.showNotification(this.getAchievementMessage(achievementId), 'achievement');
-            this.saveProgress();
-        }
-    }
 
-    getAchievementMessage(achievementId) {
-        const messages = {
-            'first-correct': '🎯 Primeira resposta correta! Continue assim!',
-            'perfect-score': '⭐ Parabéns! Você é um expert em nutrição!',
-            'lesson-master': '🎓 Mestre das Lições! Você completou todo o aprendizado!',
-            'quiz-expert': '🧠 Expert em Quiz! Você domina o conhecimento!'
-        };
-        return messages[achievementId] || 'Conquista desbloqueada!';
-    }
 
     // ===== UTILITÁRIOS =====
     showNotification(message, type) {
@@ -1097,24 +1026,30 @@ const additionalStyles = `
         text-align: center;
         font-weight: 600;
         font-size: 0.9rem;
+        color: #fff;
     }
-    
-    .level-4-mini { 
-        background: linear-gradient(135deg, #45B7D1, #96CEB4);
-        width: 90%; 
+
+    .level-4-mini { /* Energéticos - azul vibrante */
+        background: linear-gradient(135deg, #659fed, #3364c5);
+        width: 90%;
+        color: #fff;
     }
-    .level-3-mini { 
-        background: linear-gradient(135deg, #4ECDC4, #44A08D);
-        width: 75%; 
+
+    .level-3-mini { /* Reguladores - VERDE bem diferenciado */
+        background: linear-gradient(135deg, #5bd18d, #2f8b57);
+        width: 75%;
     }
-    .level-2-mini { 
-        background: linear-gradient(135deg, #FF6B9D, #E85A8A);
-        width: 60%; 
+
+    .level-2-mini { /* Construtores - vermelho/rosa */
+        background: linear-gradient(135deg, #f07167, #ad322f);
+        width: 60%;
     }
-    .level-1-mini { 
-        background: linear-gradient(135deg, #FFB347, #FF8C42);
-        width: 45%; 
+
+    .level-1-mini { /* Extras - laranja vibrante */
+        background: linear-gradient(135deg, #f1a54c, #c96e1e);
+        width: 45%;
     }
+
     
     .pyramid-explanation {
         margin: 20px 0;
@@ -1170,5 +1105,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mostrar mensagem de boas-vindas
     setTimeout(() => {
         nutrition.showNotification('👋 Bem-vindos ao sistema educativo da pirâmide alimentar! Escolha "Aprender" para começar ou "Jogar" se já souber tudo!', 'welcome');
-    }, 1000);
+    }, 1500);
 });
