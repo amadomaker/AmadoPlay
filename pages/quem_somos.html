@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Quem Somos | AmadoPlay</title>
+  <link rel="stylesheet" href="../src/css/main1.css" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #6c63ff 0%, #7c4dff 35%, #9c27b0 70%, #673ab7 100%);
+      min-height: 100vh;
+    }
+    .about-container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: rgba(255,255,255,0.95);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(100,50,180,0.16);
+      padding: 40px 30px;
+      backdrop-filter: blur(8px);
+    }
+    .about-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .about-logo__img {
+      width: 90px;
+      margin-bottom: 15px;
+    }
+    .about-title {
+      font-size: 2.4rem;
+      background: linear-gradient(135deg,#6c63ff,#9c27b0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+    .about-subtitle {
+      color: #764ba2;
+      font-size: 1.2rem;
+      margin-bottom: 18px;
+    }
+    .about-section {
+      margin-bottom: 26px;
+    }
+    .about-text {
+      color: #2d3436;
+      font-size: 1.14rem;
+      line-height: 1.7;
+      margin-bottom: 16px;
+      text-align: justify;
+    }
+    .highlight-box {
+      background: linear-gradient(135deg,rgba(108,99,255,0.09),rgba(200,140,250,0.12));
+      border-left: 4px solid #6c63ff;
+      padding: 18px 22px;
+      border-radius: 12px;
+      margin: 28px 0 34px 0;
+    }
+    .highlight-title {
+      font-size: 1.18rem;
+      color: #6c63ff;
+      font-weight: 700;
+      margin-bottom: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(210px,1fr));
+      gap: 22px;
+      margin-top: 18px;
+    }
+    .service-item {
+      background: #f7f2fa;
+      padding: 19px 12px;
+      border-radius: 14px;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(108,99,255,0.06);
+      border: 1px solid #e6e6fa;
+      transition: box-shadow 0.3s;
+    }
+    .service-item:hover {
+      box-shadow: 0 10px 32px rgba(108,99,255,0.08);
+    }
+    .service-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .service-title {
+      font-size: 1.15rem;
+      color: #673ab7;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .service-desc {
+      font-size: 1rem;
+      color: #764ba2;
+    }
+    @media (max-width: 600px) {
+      .about-container {padding: 20px 8px;}
+    }
+  </style>
+</head>
+<body>
+<!-- HEADER -->
+  <header class="main-header">
+    <div class="header-top">
+      <div class="header-container">
+        <!-- Logo -->
+        <div class="logo-section">
+          <img src="../src/assets/images/Diyogo-02.png" alt="Logo AmadoPlay" />
+          <div class="logo-text">
+            <h1>AmadoPlay</h1>
+            <p>Plataforma Educacional Interativa</p>
+          </div>
+        </div>
+
+        <!-- Ações topo -->
+        <div class="nav-actions">
+          <div class="search-bar">
+            <input type="text" placeholder="Buscar ferramentas, atividades…" />
+            <button>🔍</button>
+          </div>
+          <div class="user-menu">
+            <button class="btn-login">Entrar</button>
+          </div>
+        </div>
+
+        <!-- Botão mobile -->
+        <button class="mobile-menu-toggle">☰</button>
+      </div>
+    </div>
+
+    <!-- MENU PRINCIPAL -->
+    <nav class="main-nav">
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="../index1.html" class="nav-link"><span class="nav-icon">🏠</span><span>Início</span></a>
+        </li>
+
+        <!-- Ferramentas -->
+        <li class="nav-item">
+          <a class="nav-link">
+            <span class="nav-icon">🧩</span><span>Ferramentas</span><span class="arrow">▼</span>
+          </a>
+          <div class="dropdown">
+            <a href="#" class="dropdown-item"><span class="dropdown-icon">🧮</span><span>Ábaco Digital</span></a>
+            <a href="#" class="dropdown-item"><span class="dropdown-icon">🟨</span><span>Material Dourado</span></a>
+            <a href="#" class="dropdown-item"><span class="dropdown-icon">🔤</span><span>Alfabeto Móvel</span></a>
+            <a href="#" class="dropdown-item"><span class="dropdown-icon">🥗</span><span>Pirâmide Alimentar</span></a>
+            <a href="#" class="dropdown-item"><span class="dropdown-icon">🗺️</span><span>Mapa do Brasil</span></a>
+            <a href="#" class="dropdown-item"><span class="dropdown-icon">⚖️</span><span>Três Poderes</span></a>
+          </div>
+        </li>
+
+        <!-- Atividades -->
+        <li class="nav-item">
+          <a class="nav-link"><span class="nav-icon">📚</span><span>Atividades</span><span class="arrow">▼</span></a>
+          <div class="dropdown">
+            <a href="#" class="dropdown-item"><span class="dropdown-icon">👶</span><span>Educação Infantil</span></a>
+            <a href="#" class="dropdown-item"><span class="dropdown-icon">🎒</span><span>Fundamental I</span></a>
+            <a href="#" class="dropdown-item"><span class="dropdown-icon">📖</span><span>Fundamental II</span></a>
+            <a href="#" class="dropdown-item"><span class="dropdown-icon">🎓</span><span>EJA</span></a>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a href="#" class="nav-link"><span class="nav-icon">👨‍🏫</span><span>Para Professores</span></a>
+        </li>
+        <li class="nav-item">
+          <a href="../pages/quem_somos.html" class="nav-link"><span class="nav-icon">ℹ️</span><span>Quem Somos</span></a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+
+  <main>
+    <div class="about-container">
+      <div class="about-header">
+        <img src="../src/assets/images/logo-amado.png" alt="Logo Amado Maker" class="about-logo__img" />
+        <h2 class="about-title">Amado Maker</h2>
+        <p class="about-subtitle">Cultura Maker na Educação Pública</p>
+      </div>
+      <div class="about-section">
+        <p class="about-text">
+          A <strong>Amado Maker</strong> é uma empresa que facilita a implementação do ecossistema da cultura maker aplicada à educação pública. É especializada na elaboração de material didático direcionado para a Cultura Maker, implementação de tecnologia educacional e instalação de Laboratórios Makers.
+        </p>
+        <p class="about-text">
+          Atende alunos e professores desde a <strong>Educação Infantil até a EJA</strong>, proporcionando uma experiência completa de aprendizado através da metodologia maker.
+        </p>
+      </div>
+      <div class="highlight-box">
+        <div class="highlight-title">
+          <span>👨‍🏫</span>
+          Capacitação Profissional
+        </div>
+        <p class="about-text" style="margin-bottom: 0;">
+          Para o corpo docente, a Amado Maker disponibiliza um <strong>treinamento técnico e pedagógico robusto</strong>, com mestres e doutores na área da Educação Maker, visando capacitar o educador para a apropriação das metodologias ativas de ensino e mantém a assessoria durante todo processo de aplicação e execução do projeto.
+        </p>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-item">
+          <span class="service-icon">📚</span>
+          <div class="service-title">Material Didático</div>
+          <p class="service-desc">Elaboração de conteúdo especializado para Cultura Maker</p>
+        </div>
+        <div class="service-item">
+          <span class="service-icon">💻</span>
+          <div class="service-title">Tecnologia Educacional</div>
+          <p class="service-desc">Implementação de soluções tecnológicas inovadoras</p>
+        </div>
+        <div class="service-item">
+          <span class="service-icon">🔬</span>
+          <div class="service-title">Laboratórios Makers</div>
+          <p class="service-desc">Instalação completa de espaços maker educacionais</p>
+        </div>
+        <div class="service-item">
+          <span class="service-icon">🎓</span>
+          <div class="service-title">Treinamento</div>
+          <p class="service-desc">Capacitação técnica e pedagógica para educadores</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
