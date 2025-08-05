@@ -410,9 +410,9 @@ body {
 /* ===== Desafio PRINCIPAL ===== */
 .game-header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     background: #fff;                 /* Fundo branco sólido */
-    padding: 25px;
+    padding: 10px;
     border-radius: 20px;
     border: 1.5px solid #eceafd;
     box-shadow: 0 8px 32px rgba(120,110,180,0.1);
@@ -431,7 +431,7 @@ body {
 
 .game-header p {
     font-size: 1.2rem;
-    margin-bottom: 24px;
+    margin-bottom: 5px;
     color: #463d6b;                  /* Roxo escuro */
     opacity: 1;
 }
@@ -455,31 +455,13 @@ body {
     background: linear-gradient(95deg, #6659ff, #d673ff 70%);
 }
 
-/* Score-board */
-.score-board {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    z-index: 2;
-    position: relative;
-}
-.score-board span {
-    background: #edeaff;
-    color: #5f56a8;
-    box-shadow: 0 3px 14px rgba(44, 31, 109, 0.18);
-    padding: 9px 20px;
-    border-radius: 20px;
-    font-weight: 600;
-}
 
 
 /* Container dos botões na pirâmide */
 #container-botoes {
   position: absolute;
   top: 20px;
-  right: 32px;
+  right: 35px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -490,7 +472,7 @@ body {
 /* Botões estilizados iguais, degradê roxo */
 #container-botoes button {
   width: 170px;
-  padding: 10px 0;
+  padding: 13px 0;
   font-size: 1rem;
   font-weight: 600;
   border-radius: 22px;
@@ -499,7 +481,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 4px;
   border: none;
   color: #fff;
   background: linear-gradient(95deg, #7b62ff 20%, #a082ff 100%);
@@ -756,6 +738,8 @@ body {
 .close:hover {
     color: #FFD700;
 }
+
+/*Botão visualizar piramide   /*
 
 /* ===== FEEDBACK VISUAL ===== */
 .feedback {

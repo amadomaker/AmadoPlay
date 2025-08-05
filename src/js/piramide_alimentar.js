@@ -241,6 +241,12 @@ class NutritionEducationSystem {
         this.loadProgress();
         this.setupEventListeners();
         this.showScreen('main-menu');
+        const btnVisualizar = document.querySelector('.show-placed-btn');
+        if (btnVisualizar) {
+            btnVisualizar.addEventListener('click', () => {
+                this.showPyramidProjection();
+            });
+        }
     }
 
     // ===== GERENCIAMENTO DE TELAS =====
@@ -293,7 +299,7 @@ class NutritionEducationSystem {
         // Atualizar botões
         document.getElementById('prev-lesson').disabled = lessonIndex === 0;
         document.getElementById('next-lesson').textContent = 
-            lessonIndex === this.lessons.length - 1 ? 'Ir para o Jogo! 🎮' : 'Próximo ➡️';
+            lessonIndex === this.lessons.length - 1 ? 'Ir para o Desafio! 🎮' : 'Próximo ➡️';
 
         this.currentLesson = lessonIndex;
     }
@@ -376,6 +382,9 @@ class NutritionEducationSystem {
         } else {
             // Completou todas as lições, ir para o jogo
             this.completeAllLessons();
+            // Embaralha os cards para o jogo
+            this.restoreFoodItems();
+
             this.showScreen('game-screen');
         }
     }
@@ -388,7 +397,6 @@ class NutritionEducationSystem {
 
     completeAllLessons() {
         this.userProgress.lessonsCompleted = this.lessons.length;
-        this.unlockAchievement('lesson-master');
         this.saveProgress();
         this.showNotification('🎓 Parabéns! Você completou todas as lições!', 'success');
     }
@@ -465,71 +473,97 @@ class NutritionEducationSystem {
             this.lessonsCompleted.push(lessonIndex);
             this.userProgress.lessonsCompleted = this.lessonsCompleted.length;
             this.saveProgress();
-            
-            if (this.lessonsCompleted.length >= 3) {
-                this.unlockAchievement('quiz-expert');
-            }
+
         }
     }
 
     
 
-    // ===== JOGO PRINCIPAL (Adaptado do código original) =====
+    // ===== JOGO PRINCIPAL =====
     initializeGame() {
         this.setupGameEventListeners();
         this.updateGameUI();
+        
     }
 
     setupGameEventListeners() {
-        const foodItems = document.querySelectorAll('.food-item');
-        const dropZones = document.querySelectorAll('.drop-zone');
-        const resetBtn = document.getElementById('reset-btn');
-        const modal = document.getElementById('info-modal');
-        const closeModal = document.querySelector('.close');
+    const foodItems = document.querySelectorAll('.food-item');
+    const dropZones = document.querySelectorAll('.drop-zone');
+    const resetBtn = document.getElementById('reset-btn');
+    const modal = document.getElementById('info-modal');
+    const closeModal = document.querySelector('.close');
 
-        // Limpar listeners existentes
-        foodItems.forEach(item => {
-            item.replaceWith(item.cloneNode(true));
-        });
 
-        // Reselecionar após clonagem
-        const newFoodItems = document.querySelectorAll('.food-item');
-        
-        newFoodItems.forEach(item => {
-            item.addEventListener('dragstart', (e) => this.handleDragStart(e));
-            item.addEventListener('dragend', (e) => this.handleDragEnd(e));
-            
-            // Touch events para mobile
-            item.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
-            item.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
-            item.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: false });
-        });
+    // Configurar eventos diretamente nos elementos existentes
+    foodItems.forEach(item => {
+        // Remover listeners antigos para evitar duplicação
+        item.removeEventListener('dragstart', this.boundHandleDragStart);
+        item.removeEventListener('dragend', this.boundHandleDragEnd);
+        item.removeEventListener('touchstart', this.boundHandleTouchStart);
+        item.removeEventListener('touchmove', this.boundHandleTouchMove);
+        item.removeEventListener('touchend', this.boundHandleTouchEnd);
 
-        dropZones.forEach(zone => {
-            zone.addEventListener('dragover', (e) => this.handleDragOver(e));
-            zone.addEventListener('drop', (e) => this.handleDrop(e));
-            zone.addEventListener('dragenter', (e) => this.handleDragEnter(e));
-            zone.addEventListener('dragleave', (e) => this.handleDragLeave(e));
-        });
-
-        if (resetBtn) {
-            resetBtn.onclick = () => this.resetGame();
+        // Criar funções bound se não existem
+        if (!this.boundHandleDragStart) {
+            this.boundHandleDragStart = (e) => this.handleDragStart(e);
+            this.boundHandleDragEnd = (e) => this.handleDragEnd(e);
+            this.boundHandleTouchStart = (e) => this.handleTouchStart(e);
+            this.boundHandleTouchMove = (e) => this.handleTouchMove(e);
+            this.boundHandleTouchEnd = (e) => this.handleTouchEnd(e);
         }
 
-        if (closeModal) {
-            closeModal.onclick = () => modal.style.display = 'none';
+        // Adicionar novos listeners
+        item.addEventListener('dragstart', this.boundHandleDragStart);
+        item.addEventListener('dragend', this.boundHandleDragEnd);
+        item.addEventListener('touchstart', this.boundHandleTouchStart, { passive: false });
+        item.addEventListener('touchmove', this.boundHandleTouchMove, { passive: false });
+        item.addEventListener('touchend', this.boundHandleTouchEnd, { passive: false });
+    });
+
+    dropZones.forEach(zone => {
+        zone.removeEventListener('dragover', this.boundHandleDragOver);
+        zone.removeEventListener('drop', this.boundHandleDrop);
+        zone.removeEventListener('dragenter', this.boundHandleDragEnter);
+        zone.removeEventListener('dragleave', this.boundHandleDragLeave);
+
+        if (!this.boundHandleDragOver) {
+            this.boundHandleDragOver = (e) => this.handleDragOver(e);
+            this.boundHandleDrop = (e) => this.handleDrop(e);
+            this.boundHandleDragEnter = (e) => this.handleDragEnter(e);
+            this.boundHandleDragLeave = (e) => this.handleDragLeave(e);
         }
 
-        if (modal) {
-            modal.onclick = (e) => {
-                if (e.target === modal) modal.style.display = 'none';
-            };
-        }
+        zone.addEventListener('dragover', this.boundHandleDragOver);
+        zone.addEventListener('drop', this.boundHandleDrop);
+        zone.addEventListener('dragenter', this.boundHandleDragEnter);
+        zone.addEventListener('dragleave', this.boundHandleDragLeave);
+    });
+
+    if (resetBtn) {
+        resetBtn.onclick = () => {
+            console.log('[DEBUG] Botão reset clicado');
+            this.resetGame();
+        };
     }
+
+    if (closeModal) {
+        closeModal.onclick = () => modal.style.display = 'none';
+    }
+
+    if (modal) {
+        modal.onclick = (e) => {
+            if (e.target === modal) modal.style.display = 'none';
+        };
+    }
+
+    console.log('[DEBUG] Eventos configurados para', foodItems.length, 'cards');
+}
+
 
     // Drag and Drop (mantido do código original)
     handleDragStart(e) {
         const item = e.target;
+        this.draggedItem = item;  // ADICIONE ESTA LINHA - armazena elemento sendo arrastado
         item.classList.add('dragging');
         e.dataTransfer.setData('text/plain', item.dataset.group);
         e.dataTransfer.setData('application/json', JSON.stringify({
@@ -540,6 +574,7 @@ class NutritionEducationSystem {
         
         this.highlightCompatibleZones(item.dataset.group);
     }
+
 
     handleDragEnd(e) {
         e.target.classList.remove('dragging');
@@ -565,27 +600,29 @@ class NutritionEducationSystem {
     }
 
     handleDrop(e) {
-        e.preventDefault();
-        const dropZone = e.currentTarget;
-        const levelGroup = dropZone.closest('.pyramid-level').dataset.group;
+    e.preventDefault();
+    const dropZone = e.currentTarget;
+    const levelGroup = dropZone.closest('.pyramid-level').dataset.group;
+    
+    try {
+        const itemData = JSON.parse(e.dataTransfer.getData('application/json'));
+        const draggedGroup = itemData.group;
         
-        try {
-            const itemData = JSON.parse(e.dataTransfer.getData('application/json'));
-            const draggedGroup = itemData.group;
-            
-            dropZone.classList.remove('drag-over');
-            
-            if (this.validateDrop(draggedGroup, levelGroup)) {
-                this.handleCorrectDrop(dropZone, itemData, e);
-            } else {
-                this.handleIncorrectDrop(dropZone, itemData.name);
-            }
-        } catch (error) {
-            console.error('Erro no drop:', error);
+        dropZone.classList.remove('drag-over');
+        
+        if (this.validateDrop(draggedGroup, levelGroup)) {
+            // MUDE ESTA LINHA - usar this.draggedItem em vez de e
+            this.handleCorrectDrop(dropZone, itemData, this.draggedItem);
+            this.draggedItem = null; // limpar referência
+        } else {
+            this.handleIncorrectDrop(dropZone, itemData.name);
         }
-        
-        this.removeAllHighlights();
+    } catch (error) {
+        console.error('Erro no drop:', error);
     }
+    
+    this.removeAllHighlights();
+}
 
     // Touch Support para Mobile
     handleTouchStart(e) {
@@ -630,37 +667,39 @@ class NutritionEducationSystem {
     }
 
     handleTouchEnd(e) {
-        if (!this.touchData) return;
-        
-        const touch = e.changedTouches[0];
-        const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-        const dropZone = elementBelow?.closest('.drop-zone');
-        
-        if (dropZone) {
-            const levelGroup = dropZone.closest('.pyramid-level').dataset.group;
-            const itemGroup = this.touchData.item.dataset.group;
-            const itemName = this.touchData.item.dataset.name;
-            
-            if (this.validateDrop(itemGroup, levelGroup)) {
-                const itemData = {
-                    group: itemGroup,
-                    name: itemName,
-                    element: this.touchData.item.outerHTML
-                };
-                this.handleCorrectDrop(dropZone, itemData, { target: this.touchData.item });
-            } else {
-                this.handleIncorrectDrop(dropZone, itemName);
-            }
+    if (!this.touchData) return;
+
+    const touch = e.changedTouches[0];
+    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+    const dropZone = elementBelow?.closest('.drop-zone');
+
+    if (dropZone) {
+        const levelGroup = dropZone.closest('.pyramid-level').dataset.group;
+        const itemGroup = this.touchData.item.dataset.group;
+        const itemName = this.touchData.item.dataset.name;
+
+        console.log(`[DEBUG] Touch drop - Item: ${itemName}, Grupo: ${itemGroup} -> ${levelGroup}`);
+
+        if (this.validateDrop(itemGroup, levelGroup)) {
+            const itemData = {
+                group: itemGroup,
+                name: itemName,
+                element: this.touchData.item.outerHTML
+            };
+            this.handleCorrectDrop(dropZone, itemData, this.touchData.item);
+        } else {
+            this.handleIncorrectDrop(dropZone, itemName);
         }
-        
-        this.touchData.item.classList.remove('dragging');
-        if (this.touchClone) {
-            this.touchClone.remove();
-            this.touchClone = null;
-        }
-        this.touchData = null;
-        this.removeAllHighlights();
     }
+
+    this.touchData.item.classList.remove('dragging');
+    if (this.touchClone) {
+        this.touchClone.remove();
+        this.touchClone = null;
+    }
+    this.touchData = null;
+    this.removeAllHighlights();
+}
 
     createTouchClone(item, touch) {
         const clone = item.cloneNode(true);
@@ -681,43 +720,115 @@ class NutritionEducationSystem {
         return itemGroup === levelGroup;
     }
 
-    handleCorrectDrop(dropZone, itemData, originalEvent) {
-        const originalItem = originalEvent.target.closest('.food-item');
-        if (originalItem && originalItem.parentNode) {
-            originalItem.remove();
-        }
-        
-        const placedItem = document.createElement('div');
-        placedItem.innerHTML = itemData.element;
-        const foodElement = placedItem.firstElementChild;
-        foodElement.classList.add('placed');
-        foodElement.removeAttribute('draggable');
-        
-        dropZone.appendChild(foodElement);
-        
-        this.gameData.score += 10;
-        this.gameData.correctCount++;
-        this.gameData.placedItems.push(itemData);
-        
-        this.showFeedback(dropZone, true, itemData.name);
-        this.playSound('success');
-        this.animateSuccess(foodElement);
-        
-        // Verificar conquistas
-        if (this.gameData.correctCount === 1 && !this.gameData.achievements['first-correct']) {
-            this.unlockAchievement('first-correct');
-        }
-        
-        if (this.gameData.correctCount === this.gameData.totalItems && !this.gameData.achievements['perfect-score']) {
-            this.unlockAchievement('perfect-score');
-        }
-        
-        this.updateGameUI();
-        
-        if (this.gameData.correctCount === this.gameData.totalItems) {
-            setTimeout(() => this.showVictoryMessage(), 500);
+    handleCorrectDrop(dropZone, itemData, originalItem) {
+    console.log('[DEBUG] Removendo card:', originalItem ? originalItem.dataset.name : 'item não encontrado');
+    
+    if (originalItem && originalItem.parentNode) {
+        originalItem.parentNode.removeChild(originalItem);
+        console.log('[DEBUG] Card removido da lista:', originalItem.dataset.name);
+    } else {
+        console.warn('[DEBUG] Elemento para remoção não encontrado!');
+    }
+
+    const placedItem = document.createElement('div');
+    placedItem.innerHTML = itemData.element;
+    const foodElement = placedItem.firstElementChild;
+    foodElement.classList.add('placed');
+    foodElement.removeAttribute('draggable');
+
+    dropZone.appendChild(foodElement);
+
+    this.gameData.score += 10;
+    this.gameData.correctCount++;
+    this.gameData.placedItems.push(itemData);
+
+    this.showFeedback(dropZone, true, itemData.name);
+    this.playSound('success');
+    this.animateSuccess(foodElement);
+    this.updateGameUI();
+
+    if (this.gameData.correctCount === this.gameData.totalItems) {
+        setTimeout(() => this.showVictoryMessage(), 500);
+    }
+}
+
+
+
+
+    showPyramidProjection() {
+    const modal = document.getElementById('info-modal');
+    const title = document.getElementById('modal-title');
+    const body = document.getElementById('modal-body');
+
+    title.textContent = '📊 Visualização dos Alimentos na Pirâmide';
+
+    // Agrupar itens colocados por nível
+    const grouped = this.gameData.placedItems.reduce((acc, item) => {
+        if (!acc[item.group]) acc[item.group] = [];
+        acc[item.group].push(item);
+        return acc;
+    }, {});
+
+    // Criar HTML exibindo cada grupo e seus alimentos
+    let html = '';
+    const groupNames = {
+        'energeticos-extras': 'Energéticos Extras (Topo)',
+        'construtores': 'Construtores',
+        'reguladores': 'Reguladores',
+        'energeticos': 'Energéticos (Base)'
+    };
+
+    for (const groupKey of ['energeticos-extras', 'construtores', 'reguladores', 'energeticos']) {
+        const items = grouped[groupKey] || [];
+        html += `<h4>${groupNames[groupKey]}</h4>`;
+
+        if (items.length === 0) {
+            html += `<p style="opacity: 0.7;">Nenhum alimento colocado ainda.</p>`;
+        } else {
+            html += '<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">';
+
+            items.forEach(item => {
+                // Criar mini card simples para visualização
+                html += `
+                    <div style="
+                        background: #f0f0f0;
+                        color: #333;
+                        padding: 10px 16px;
+                        border-radius: 12px;
+                        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        font-weight: 600;
+                        min-width: 150px;
+                    ">
+                        <span style="font-size: 1.8rem;">${item.element.match(/>(.*?)<\/div>/)[1]}</span>
+                        <span>${item.name}</span>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
         }
     }
+
+    body.innerHTML = html;
+
+    modal.style.display = 'block';
+
+    const closeModal = modal.querySelector('.close');
+    closeModal.onclick = () => {
+        modal.style.display = 'none';
+    };
+
+    // Fecha o modal clicando fora do conteúdo também
+    modal.onclick = e => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    };
+}
+
 
     handleIncorrectDrop(dropZone, itemName) {
         this.showFeedback(dropZone, false, itemName);
@@ -796,32 +907,48 @@ class NutritionEducationSystem {
         this.updateGameUI();
         this.showNotification('🔄 Jogo reiniciado!', 'info');
     }
+    shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
 
-    restoreFoodItems() {
-        const foodBank = document.querySelector('.food-items');
-        const originalFoods = [
-            { group: 'energeticos', name: 'Arroz', icon: '🍚' },
-            { group: 'energeticos', name: 'Pão', icon: '🍞' },
-            { group: 'energeticos', name: 'Batata', icon: '🥔' },
-            { group: 'energeticos', name: 'Macarrão', icon: '🍝' },
-            { group: 'reguladores', name: 'Alface', icon: '🥬' },
-            { group: 'reguladores', name: 'Cenoura', icon: '🥕' },
-            { group: 'reguladores', name: 'Maçã', icon: '🍎' },
-            { group: 'reguladores', name: 'Banana', icon: '🍌' },
-            { group: 'construtores', name: 'Frango', icon: '🍗' },
-            { group: 'construtores', name: 'Feijão', icon: '🫘' },
-            { group: 'construtores', name: 'Ovo', icon: '🥚' },
-            { group: 'construtores', name: 'Leite', icon: '🥛' },
-            { group: 'energeticos-extras', name: 'Brigadeiro', icon: '🧁' },
-            { group: 'energeticos-extras', name: 'Refrigerante', icon: '🥤' },
-            { group: 'energeticos-extras', name: 'Chocolate', icon: '🍫' },
-            { group: 'energeticos-extras', name: 'Batata Frita', icon: '🍟' }
-        ];
-        
-        if (foodBank) {
-            foodBank.innerHTML = '';
-            
-            originalFoods.forEach(food => {
+
+restoreFoodItems() {
+    const foodBank = document.querySelector('.food-items');
+    const originalFoods = [
+        { group: 'energeticos', name: 'Arroz', icon: '🍚' },
+        { group: 'energeticos', name: 'Pão', icon: '🍞' },
+        { group: 'energeticos', name: 'Batata', icon: '🥔' },
+        { group: 'energeticos', name: 'Macarrão', icon: '🍝' },
+        { group: 'energeticos', name: 'Aveia', icon: '🥣' },
+        { group: 'reguladores', name: 'Alface', icon: '🥬' },
+        { group: 'reguladores', name: 'Cenoura', icon: '🥕' },
+        { group: 'reguladores', name: 'Maçã', icon: '🍎' },
+        { group: 'reguladores', name: 'Banana', icon: '🍌' },
+        { group: 'reguladores', name: 'Laranja', icon: '🍊' },
+        { group: 'construtores', name: 'Frango', icon: '🍗' },
+        { group: 'construtores', name: 'Feijão', icon: '🫘' },
+        { group: 'construtores', name: 'Ovo', icon: '🥚' },
+        { group: 'construtores', name: 'Leite', icon: '🥛' },
+        { group: 'energeticos-extras', name: 'Brigadeiro', icon: '🧁' },
+        { group: 'energeticos-extras', name: 'Refrigerante', icon: '🥤' },
+        { group: 'energeticos-extras', name: 'Chocolate', icon: '🍫' },
+        { group: 'energeticos-extras', name: 'Batata Frita', icon: '🍟' }
+    ];
+    // Embaralha a lista
+    this.shuffleArray(originalFoods);
+
+    if (foodBank) {
+        foodBank.innerHTML = '';
+
+        // Obter nomes dos cards já usados para não recriar
+        const usedNames = this.gameData.placedItems.map(item => item.name);
+
+        originalFoods.forEach(food => {
+            if (!usedNames.includes(food.name)) {
                 const foodElement = document.createElement('div');
                 foodElement.className = 'food-item';
                 foodElement.draggable = true;
@@ -831,14 +958,16 @@ class NutritionEducationSystem {
                     <div class="food-icon">${food.icon}</div>
                     <span>${food.name}</span>
                 `;
-                
                 foodBank.appendChild(foodElement);
-            });
-            
-            this.setupGameEventListeners();
-        }
-    }
+            }
+        });
 
+        // Reconfigurar eventos drag & drop para os cards novos
+        this.setupGameEventListeners();
+    }
+}
+
+    /*
     showVictoryMessage() {
         const modal = document.getElementById('info-modal');
         const title = document.getElementById('modal-title');
@@ -847,8 +976,6 @@ class NutritionEducationSystem {
         title.textContent = '🎉 Parabéns! Você completou a Pirâmide Alimentar!';
         body.innerHTML = `
             <div class="victory-content">
-                <p>🏆 <strong>Pontuação Final:</strong> ${this.gameData.score} pontos</p>
-                <p>✅ <strong>Acertos:</strong> ${this.gameData.correctCount}/${this.gameData.totalItems}</p>
                 <p>🎯 Você demonstrou excelente conhecimento sobre alimentação saudável!</p>
                 <div class="tip-box">
                     <p><strong>💡 Lembre-se:</strong> Uma alimentação equilibrada inclui alimentos de todos os grupos da pirâmide, nas quantidades adequadas.</p>
@@ -891,7 +1018,7 @@ class NutritionEducationSystem {
             }, i * 100);
         }
     }
-
+*/
 
 
     // ===== UTILITÁRIOS =====
@@ -998,6 +1125,7 @@ function startLearning() {
 
 function startGame() {
     nutrition.showScreen('game-screen');
+    nutrition.restoreFoodItems();
 }
 
 function showProgress() {
