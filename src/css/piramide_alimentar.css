@@ -126,6 +126,11 @@ body {
 
 
 /* ===== NAVEGAÇÃO GERAL ===== */
+/* Esconde qualquer .back-btn genérico no #game-screen */
+#game-screen .back-btn:not(.back-btn-main) {
+  display: none !important;
+}
+
 .back-btn {
     background: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -412,7 +417,7 @@ body {
     text-align: center;
     margin-bottom: 20px;
     background: #fff;                 /* Fundo branco sólido */
-    padding: 10px;
+    padding: 25px;
     border-radius: 20px;
     border: 1.5px solid #eceafd;
     box-shadow: 0 8px 32px rgba(120,110,180,0.1);
@@ -897,49 +902,118 @@ body {
         width: 95%;
     }
 }
+.pyramid-section {
+    position: relative;
+}
 
-@media (max-width: 480px) {
-    .menu-header h1, .game-header h1 {
-        font-size: 1.5rem;
-    }
-    
-    .menu-header p, .game-header p {
-        font-size: 1rem;
-    }
-    
-    .food-items {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .pyramid-level {
-        margin-bottom: 8px;
-    }
-    
-    .level-content {
-        padding: 15px;
-    }
-    
-    .menu-btn {
-        padding: 30px 20px;
-    }
-    
-    .menu-btn .btn-icon {
-        font-size: 3rem;
-    }
-    
-    .lesson-content {
-        padding: 25px;
-        min-height: auto;
-    }
-    
-    .group-title {
-        font-size: 1.5rem;
-    }
-    
-    .lessons-grid {
-        grid-template-columns: repeat(2, 1fr);
+.back-btn-left {
+    position: absolute !important;
+    left: 15px;
+    top: 20px;
+    z-index: 10;
+    max-width: 140px;
+    font-size: 0.9rem;
+
+    /* Garantir visibilidade */
+    background: linear-gradient(95deg, #7b62ff 20%, #a082ff 100%);
+    box-shadow: 0 3px 13px rgba(110, 92, 255, 0.4);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    color: white !important;             
+    border: none !important;              
+    opacity: 1 !important;                
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2) !important; 
+}
+
+
+@media (max-width: 768px) {
+    .back-btn-left {
+        left: 10px;
+        top: 10px;
+        max-width: 120px;
+        font-size: 0.85rem;
     }
 }
+
+@media (max-width: 430px) {
+  /* Container pirâmide como referência */
+  .pyramid-section {
+    position: relative;
+  }
+  .level-header {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+  
+      /* Ajustar título do card laranja */
+    .level-1 .level-header h4 {
+        font-size: 0.83rem;          /* fonte menor */
+        line-height: 1.1;            /* linha mais compacta */
+        white-space: normal;         /* permitir quebra de linha */
+        word-break: break-word;
+        margin: 0;                   /* remover margens */
+        padding: 0 1px;              /* menos espaço nas laterais */
+        text-align: center;          /* centralizado para boa leitura */
+    }
+
+    /* Ajustar subtítulo para melhor leitura */
+    .level-1 .subtitle {
+        font-size: 0.65rem;         /* fonte menor */
+        padding: 0 2px;
+        opacity: 1;                 /* mais visível */
+        line-height: 1.2;
+        word-break: break-word;
+    }
+
+    /* Reduzir padding de conteúdo para ocupar menos espaço */
+    .level-1 .level-content {
+        padding: 10px 10px;
+        min-height: auto;           /* deixar o tamanho mínimo flexível */
+    }
+
+  /* Botão Menu Principal */
+  .back-btn-left {
+    position: absolute !important;
+    top: 10px;
+    left: 10px;
+    width: 100px;
+    font-size: 0.8rem;
+    padding: 8px 10px;
+    border-radius: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    background: linear-gradient(95deg, #7b62ff 20%, #a082ff 100%);
+    box-shadow: 0 3px 13px rgba(110, 92, 255, 0.4);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    color: white;
+    border: none;
+    opacity: 1;
+    z-index: 10;
+  }
+
+  /* Botões direitos empilhados */
+  #container-botoes {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 10;
+  }
+
+  #container-botoes button {
+    width: 110px;
+    padding: 8px 0;
+    font-size: 0.75rem;
+    border-radius: 18px;
+  }
+
+  /* Espaço extra para a pirâmide ficar limpa */
+  .pyramid-content, .pyramid-body, .pyramid-level:first-child {
+    margin-top: 60px !important; /* dá espaço para os botões em cima */
+  }
+}
+
 
 /* ===== ANIMAÇÕES ESPECIAIS ===== */
 @keyframes slideInUp {
@@ -1064,4 +1138,9 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(135deg, #44A08D, #4ECDC4);
+}
+
+/* Voltar aparece só via JS */
+#btn-back-learn {
+  display: none;
 }

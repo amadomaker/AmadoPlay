@@ -1,4 +1,11 @@
 // Sistema Completo de Pirâmide Alimentar Educativa
+// Exibe/oculta o Voltar só em Aprender
+function controlBackBtnLearn(screenName) {
+  const btn = document.getElementById('btn-back-learn');
+  if (!btn) return;
+  btn.style.display = (screenName === 'learning-system') ? 'inline-block' : 'none';
+}
+
 class NutritionEducationSystem {
     constructor() {
         // Estado do sistema
@@ -248,61 +255,81 @@ class NutritionEducationSystem {
             });
         }
     }
+    // Move o .back-btn dependendo da largura da janela
+    relocateBackBtn() {
+        const backBtn   = document.querySelector('.back-btn');          // botão Menu Principal
+        const header    = document.querySelector('.game-header');       // onde ele fica no desktop
+        const pyramid   = document.querySelector('.pyramid-section');   // container da pirâmide
+
+        if (!backBtn || !header || !pyramid) return;
+
+        if (window.innerWidth <= 1070) {
+            if (backBtn.parentNode !== pyramid) {
+                pyramid.appendChild(backBtn);            // move para a pirâmide
+                backBtn.classList.add('back-btn--left'); // aplica estilo lateral
+            }
+        } else {
+            if (backBtn.parentNode !== header) {
+                header.appendChild(backBtn);             // volta para o header
+                backBtn.classList.remove('back-btn--left');
+            }
+        }
+    }
 
     // ===== GERENCIAMENTO DE TELAS =====
     showScreen(screenName) {
-        // Esconder todas as telas
-        document.querySelectorAll('.screen').forEach(screen => {
-            screen.classList.remove('active');
-        });
-        
-        // Mostrar tela selecionada
-        const targetScreen = document.getElementById(screenName);
-        if (targetScreen) {
-            targetScreen.classList.add('active');
-            this.currentScreen = screenName;
-        }
+  // 1. Esconder todas as telas
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
 
-        // Ações específicas por tela
-        switch(screenName) {
-            case 'learning-system':
-                this.showLesson(this.currentLesson);
-                break;
-            case 'progress-screen':
-                this.updateProgressScreen();
-                break;
-            case 'game-screen':
-                this.initializeGame();
-                break;
-        }
-    }
+  // 2. Exibir a tela selecionada
+  const target = document.getElementById(screenName);
+  if (target) target.classList.add('active');
+
+  // 3. Atualizar estado interno
+  this.currentScreen = screenName;
+
+  // 4. Ações específicas por tela
+  switch (screenName) {
+    case 'learning-system':
+      this.showLesson(this.currentLesson);
+      break;
+    case 'progress-screen':
+      this.updateProgressScreen();
+      break;
+    case 'game-screen':
+      this.initializeGame();
+      this.relocateBackBtn(); // seu botão Menu Principal
+      break;
+  }
+
+  // 5. Controlar exibição do botão Voltar em Aprender
+  controlBackBtnLearn(screenName);
+}
+
+
 
     // ===== SISTEMA DE LIÇÕES =====
     showLesson(lessonIndex) {
-        if (lessonIndex < 0 || lessonIndex >= this.lessons.length) return;
-
-        const lesson = this.lessons[lessonIndex];
-        const content = document.getElementById('lesson-content');
-        
-        // Atualizar navegação
-        document.getElementById('lesson-counter').textContent = 
+        // Atualiza contador e barra
+        document.getElementById('lesson-counter').textContent =
             `Lição ${lessonIndex + 1} de ${this.lessons.length}`;
-        
-        // Atualizar barra de progresso
-        const progressFill = document.getElementById('lesson-progress');
-        const progressPercent = ((lessonIndex + 1) / this.lessons.length) * 100;
-        progressFill.style.width = `${progressPercent}%`;
+        document.getElementById('lesson-progress').style.width =
+            `${((lessonIndex + 1) / this.lessons.length) * 100}%`;
 
-        // Gerar conteúdo da lição
-        content.innerHTML = this.generateLessonHTML(lesson);
+        // Renderiza só em #lesson-content
+        const content = document.getElementById('lesson-content');
+        content.innerHTML = this.generateLessonHTML(this.lessons[lessonIndex]);
 
-        // Atualizar botões
+        // Atualiza botões Prev/Next
         document.getElementById('prev-lesson').disabled = lessonIndex === 0;
-        document.getElementById('next-lesson').textContent = 
+        document.getElementById('next-lesson').textContent =
             lessonIndex === this.lessons.length - 1 ? 'Ir para o Desafio! 🎮' : 'Próximo ➡️';
 
+        // Define novo índice
         this.currentLesson = lessonIndex;
-    }
+        }
+
+
 
     generateLessonHTML(lesson) {
         let html = `
@@ -1235,3 +1262,40 @@ document.addEventListener('DOMContentLoaded', () => {
         nutrition.showNotification('👋 Bem-vindos ao sistema educativo da pirâmide alimentar! Escolha "Aprender" para começar ou "Jogar" se já souber tudo!', 'welcome');
     }, 1500);
 });
+
+// Move o Menu Principal entre header e pirâmide
+function relocateBackBtnMain() {
+  const btn = document.querySelector('.back-btn-main');
+  const header = document.querySelector('.game-header');
+  const pyramid = document.querySelector('.pyramid-section');
+  if (!btn || !header || !pyramid) return;
+  if (window.innerWidth <= 1070) {
+    if (btn.parentNode !== pyramid) {
+      pyramid.appendChild(btn);
+      btn.classList.add('back-btn-left');
+    }
+  } else {
+    if (btn.parentNode !== header) {
+      header.appendChild(btn);
+      btn.classList.remove('back-btn-left');
+    }
+  }
+}
+
+// Mostra/esconde o Voltar só na tela de Aprender
+function controlBackBtnLearn(screenName) {
+  console.log('controlBackBtnLearn:', screenName);
+  const btn = document.querySelector('#learning-system .lesson-nav .back-btn');
+  if (!btn) return;
+  btn.style.display = (screenName === 'learning-system') ? 'inline-block' : 'none';
+}
+
+// Centraliza controle de ambos
+function updateBackButtons(screenName) {
+  relocateBackBtnMain();
+  controlBackBtnLearn(screenName);
+}
+
+// Responsividade do Menu Principal
+window.addEventListener('load', relocateBackBtnMain);
+window.addEventListener('resize', relocateBackBtnMain);

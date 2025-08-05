@@ -35,36 +35,35 @@
 
         <!-- Sistema de Lições -->
         <div id="learning-system" class="screen">
-            <!-- Navegação das Lições -->
+        <!-- Navigation wrapper sempre presente -->
+        <div id="learning-nav-wrapper">
             <div class="lesson-nav">
-                <button class="back-btn" onclick="showMainMenu()">← Voltar</button>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="lesson-progress"></div>
-                </div>
-                <div class="lesson-counter" id="lesson-counter">Lição 1 de 6</div>
+            <button id="btn-back-learn" class="back-btn" onclick="showMainMenu()">← Voltar</button>
+            <div class="progress-bar">
+            <div class="progress-fill" id="lesson-progress"></div>
             </div>
-
-            <!-- Conteúdo das Lições -->
-            <div class="lesson-content" id="lesson-content">
-                <!-- O conteúdo será inserido dinamicamente pelo JavaScript -->
-            </div>
-
-            <!-- Controles das Lições -->
-            <div class="lesson-controls">
-                <button id="prev-lesson" class="control-btn" onclick="previousLesson()" disabled>
-                    ⬅️ Anterior
-                </button>
-                <button id="next-lesson" class="control-btn primary" onclick="nextLesson()">
-                    Próximo ➡️
-                </button>
+            <div class="lesson-counter" id="lesson-counter">Lição 1 de 6</div>
             </div>
         </div>
+
+        <!-- Conteúdo dinâmico isolado -->
+        <div id="lesson-content" class="lesson-content"></div>
+
+        <div class="lesson-controls">
+            <button id="prev-lesson" class="control-btn" onclick="previousLesson()" disabled>⬅️ Anterior</button>
+            <button id="next-lesson" class="control-btn primary" onclick="nextLesson()">Próximo ➡️</button>
+        </div>
+        </div>
+
+
 
         
         <!-- Jogo Principal (Mantido do código anterior) -->
         <div id="game-screen" class="screen">
             <div class="game-header">
-                <button class="back-btn" onclick="showMainMenu()">← Menu Principal</button>
+                <button class="back-btn back-btn-main" onclick="showMainMenu()">
+                    Menu Principal
+                </button>
                 <h1>🥗 Desafio da Pirâmide Alimentar</h1>
                 <p>Agora é hora de testar seus conhecimentos!</p>
             </div>
