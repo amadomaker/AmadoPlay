@@ -1,0 +1,905 @@
+/* styles.css - Estilos do Jogo dos Três Poderes */
+
+/* Reset e Configurações Globais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Cores dos Poderes */
+    --executivo-color: #3498db;
+    --executivo-light: #5dade2;
+    --executivo-dark: #2874a6;
+    
+    --legislativo-color: #27ae60;
+    --legislativo-light: #52be80;
+    --legislativo-dark: #1e8449;
+    
+    --judiciario-color: #9b59b6;
+    --judiciario-light: #bb8fce;
+    --judiciario-dark: #7d3c98;
+    
+    /* Cores Gerais */
+    --primary-color: #f39c12;
+    --success-color: #2ecc71;
+    --error-color: #e74c3c;
+    --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --text-dark: #2c3e50;
+    --text-light: #7f8c8d;
+    
+    /* Sombras */
+    --shadow-sm: 0 2px 10px rgba(0,0,0,0.1);
+    --shadow-md: 0 5px 20px rgba(0,0,0,0.15);
+    --shadow-lg: 0 10px 40px rgba(0,0,0,0.2);
+    --shadow-xl: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--background);
+    min-height: 100vh;
+    color: var(--text-dark);
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Container Principal */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Telas do Jogo */
+.screen {
+    display: none;
+    animation: fadeIn 0.5s ease;
+    width: 100%;
+}
+
+.screen.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tela de Carregamento */
+#loading-screen {
+    text-align: center;
+}
+
+.loader {
+    display: inline-block;
+    padding: 40px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+}
+
+.loader-circle {
+    width: 60px;
+    height: 60px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Tela Inicial */
+.hero-section {
+    text-align: center;
+    padding: 40px;
+    background: var(--card-bg);
+    border-radius: 30px;
+    box-shadow: var(--shadow-xl);
+    position: relative;
+    overflow: hidden;
+}
+
+.floating-icons {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.floating-icons .icon {
+    position: absolute;
+    font-size: 40px;
+    opacity: 0.1;
+    animation: float 20s infinite ease-in-out;
+}
+
+.floating-icons .icon:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+.floating-icons .icon:nth-child(2) { top: 20%; right: 10%; animation-delay: 5s; }
+.floating-icons .icon:nth-child(3) { bottom: 10%; left: 15%; animation-delay: 10s; }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-20px) rotate(5deg); }
+    50% { transform: translateY(0) rotate(-5deg); }
+    75% { transform: translateY(20px) rotate(3deg); }
+}
+
+.main-title {
+    font-size: 3em;
+    background: linear-gradient(45deg, var(--executivo-color), var(--legislativo-color), var(--judiciario-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    animation: titleGlow 3s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.2); }
+}
+
+.intro-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 30px;
+    border-radius: 20px;
+    margin: 30px 0;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    z-index: 1;
+}
+
+.intro-card p {
+    margin: 15px 0;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.power-tag {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-weight: bold;
+    color: white;
+    animation: pulse 2s infinite;
+}
+
+.power-tag.executivo { background: var(--executivo-color); }
+.power-tag.legislativo { background: var(--legislativo-color); }
+.power-tag.judiciario { background: var(--judiciario-color); }
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Botões */
+.btn-primary, .btn-secondary, .btn-continue {
+    padding: 15px 40px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px;
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, var(--primary-color), #f1c40f);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+    background: white;
+    color: var(--text-dark);
+    border: 2px solid var(--primary-color);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-3px);
+}
+
+.btn-icon {
+    font-size: 1.3em;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Tela do Jogo */
+.game-header {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-md);
+}
+
+.progress-bar {
+    flex: 1;
+    height: 30px;
+    background: #ecf0f1;
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+    margin-right: 20px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--executivo-color), var(--legislativo-color), var(--judiciario-color));
+    border-radius: 15px;
+    transition: width 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.progress-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
+    color: var(--text-dark);
+    z-index: 1;
+}
+
+.score-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.3em;
+    font-weight: bold;
+    background: linear-gradient(45deg, #f39c12, #f1c40f);
+    padding: 10px 20px;
+    border-radius: 25px;
+    color: white;
+}
+
+.score-icon {
+    font-size: 1.5em;
+    animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Cards de Situação */
+.situation-card {
+    background: var(--card-bg);
+    border-radius: 30px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.situation-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+    opacity: 0.05;
+    animation: rotate 30s linear infinite;
+}
+
+.situation-number {
+    display: inline-block;
+    background: var(--primary-color);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.situation-title {
+    font-size: 2em;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+}
+
+.situation-image {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5em;
+}
+
+.situation-text {
+    font-size: 1.1em;
+    line-height: 1.8;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.situation-question {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: var(--text-dark);
+    margin: 20px 0;
+    text-align: center;
+}
+
+/* Opções de Escolha */
+.options-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.option-card {
+    background: white;
+    border: 3px solid transparent;
+    border-radius: 20px;
+    padding: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.option-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    transition: height 0.3s ease;
+}
+
+.option-card.executivo::before { background: var(--executivo-color); }
+.option-card.legislativo::before { background: var(--legislativo-color); }
+.option-card.judiciario::before { background: var(--judiciario-color); }
+
+.option-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: var(--shadow-xl);
+}
+
+.option-card:hover::before {
+    height: 100%;
+    opacity: 0.1;
+}
+
+.option-card.executivo:hover { border-color: var(--executivo-color); }
+.option-card.legislativo:hover { border-color: var(--legislativo-color); }
+.option-card.judiciario:hover { border-color: var(--judiciario-color); }
+
+.option-icon {
+    font-size: 3em;
+    margin-bottom: 15px;
+    display: block;
+    text-align: center;
+}
+
+.option-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.option-card.executivo .option-title { color: var(--executivo-color); }
+.option-card.legislativo .option-title { color: var(--legislativo-color); }
+.option-card.judiciario .option-title { color: var(--judiciario-color); }
+
+.option-description {
+    color: var(--text-light);
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* Modal de Feedback */
+.feedback-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.feedback-modal.show {
+    display: flex;
+}
+
+.feedback-content {
+    background: white;
+    border-radius: 30px;
+    padding: 40px;
+    max-width: 600px;
+    width: 90%;
+    text-align: center;
+    animation: slideUp 0.5s ease;
+    box-shadow: var(--shadow-xl);
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.feedback-icon {
+    font-size: 5em;
+    display: block;
+    margin-bottom: 20px;
+    animation: iconPop 0.5s ease;
+}
+
+@keyframes iconPop {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.feedback-icon.correct { color: var(--success-color); }
+.feedback-icon.wrong { color: var(--error-color); }
+
+#feedback-title {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+#feedback-text {
+    font-size: 1.1em;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.feedback-explanation {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: left;
+    margin: 20px 0;
+    border-left: 4px solid var(--primary-color);
+}
+
+.feedback-explanation ul {
+    list-style: none;
+    padding: 0;
+}
+
+.feedback-explanation li {
+    padding: 8px 0;
+    padding-left: 25px;
+    position: relative;
+}
+
+.feedback-explanation li:before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--success-color);
+    font-weight: bold;
+}
+
+/* Tela de Resumo dos Poderes */
+.powers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin: 30px 0;
+}
+
+.power-card {
+    background: white;
+    border-radius: 25px;
+    padding: 30px;
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.power-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+}
+
+.executivo-card::before { background: var(--executivo-color); }
+.legislativo-card::before { background: var(--legislativo-color); }
+.judiciario-card::before { background: var(--judiciario-color); }
+
+.power-card:hover {
+    transform: translateY(-10px);
+}
+
+.power-icon {
+    font-size: 4em;
+    text-align: center;
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.power-card h3 {
+    font-size: 1.8em;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.executivo-card h3 { color: var(--executivo-color); }
+.legislativo-card h3 { color: var(--legislativo-color); }
+.judiciario-card h3 { color: var(--judiciario-color); }
+
+.power-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.power-card li {
+    padding: 10px 0;
+    padding-left: 30px;
+    position: relative;
+}
+
+.power-card li:before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+.executivo-card li:before { color: var(--executivo-color); }
+.legislativo-card li:before { color: var(--legislativo-color); }
+.judiciario-card li:before { color: var(--judiciario-color); }
+
+.power-members {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 15px;
+    margin-top: 20px;
+}
+
+.power-members strong {
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* Tela Final */
+.end-content {
+    background: var(--card-bg);
+    border-radius: 30px;
+    padding: 50px;
+    text-align: center;
+    box-shadow: var(--shadow-xl);
+    position: relative;
+    overflow: hidden;
+}
+
+.trophy-animation {
+    font-size: 6em;
+    margin-bottom: 30px;
+    animation: trophyBounce 1s ease;
+}
+
+@keyframes trophyBounce {
+    0% { transform: scale(0) rotate(0deg); }
+    50% { transform: scale(1.2) rotate(180deg); }
+    100% { transform: scale(1) rotate(360deg); }
+}
+
+.trophy {
+    display: inline-block;
+    animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% { filter: drop-shadow(0 0 20px gold); }
+    50% { filter: drop-shadow(0 0 40px gold); }
+}
+
+.end-content h2 {
+    font-size: 3em;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+}
+
+.end-message {
+    font-size: 1.3em;
+    color: var(--text-light);
+    margin-bottom: 30px;
+}
+
+.final-score {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 20px;
+    margin: 30px 0;
+}
+
+.score-display-large {
+    font-size: 4em;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+.score-max {
+    font-size: 0.5em;
+    opacity: 0.8;
+}
+
+.score-stars {
+    font-size: 3em;
+    margin: 20px 0;
+}
+
+.star {
+    display: inline-block;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+}
+
+.star.filled {
+    color: gold;
+    animation: starPop 0.5s ease;
+}
+
+@keyframes starPop {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+.star.empty {
+    color: #ddd;
+}
+
+.performance-message {
+    font-size: 1.2em;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 15px;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+.end-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+/* Partículas de Fundo */
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.particle {
+    position: absolute;
+    background: rgba(255,255,255,0.5);
+    border-radius: 50%;
+    animation: particleFloat 15s infinite ease-in-out;
+}
+
+@keyframes particleFloat {
+    0%, 100% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100vh) translateX(100px);
+        opacity: 0;
+    }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .main-title {
+        font-size: 2em;
+    }
+    
+    .hero-section {
+        padding: 20px;
+    }
+    
+    .situation-card {
+        padding: 20px;
+    }
+    
+    .options-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .powers-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .end-content {
+        padding: 30px;
+    }
+    
+    .score-display-large {
+        font-size: 3em;
+    }
+    
+    .game-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .progress-bar {
+        margin-right: 0;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-title {
+        font-size: 1.5em;
+    }
+    
+    .btn-primary, .btn-secondary {
+        padding: 12px 25px;
+        font-size: 1em;
+    }
+    
+    .situation-title {
+        font-size: 1.5em;
+    }
+    
+    .feedback-content {
+        padding: 20px;
+    }
+    
+    .feedback-icon {
+        font-size: 3em;
+    }
+}
+
+/* Animações de Entrada */
+.slide-in-left {
+    animation: slideInLeft 0.5s ease;
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.slide-in-right {
+    animation: slideInRight 0.5s ease;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Efeitos de Hover Adicionais */
+.option-card:active {
+    transform: scale(0.98);
+}
+
+.btn-primary:active, .btn-secondary:active {
+    transform: scale(0.95);
+}
+
+/* Indicador de Seleção */
+.option-card.selected {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    box-shadow: 0 0 30px rgba(243, 156, 18, 0.3);
+}
+
+/* Animação de Confetti */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: var(--primary-color);
+    animation: confettiFall 3s linear;
+    z-index: 2000;
+}
+
+@keyframes confettiFall {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}

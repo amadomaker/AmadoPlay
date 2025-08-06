@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio dos Três Poderes</title>
+    <link rel="stylesheet" href="../src/css/tres_poderes.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Tela de Carregamento -->
+        <div id="loading-screen" class="screen active">
+            <div class="loader">
+                <div class="loader-circle"></div>
+                <p>Carregando o Desafio...</p>
+            </div>
+        </div>
+
+        <!-- Tela Inicial -->
+        <div id="start-screen" class="screen">
+            <div class="hero-section">
+                <div class="floating-icons">
+                    <span class="icon">⚖️</span>
+                    <span class="icon">🏛️</span>
+                    <span class="icon">📜</span>
+                </div>
+                <h1 class="main-title">Desafio dos Três Poderes</h1>
+                <div class="intro-card">
+                    <p>Você e sua turma foram convidados a participar do <strong>Conselho Cidadão Jovem</strong>, um grupo especial de estudantes que ajuda a resolver os problemas da cidade!</p>
+                    <p>Seu desafio é analisar situações reais e decidir quem deve agir: o <span class="power-tag executivo">Executivo</span>, o <span class="power-tag legislativo">Legislativo</span> ou o <span class="power-tag judiciario">Judiciário</span>.</p>
+                    <p>Cada escolha trará uma consequência. Vocês estão prontos para tomar decisões importantes?</p>
+                </div>
+                <button class="btn-primary" onclick="startGame()">
+                    <span>Começar o Desafio</span>
+                    <span class="btn-icon">🚀</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tela de Jogo -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                    <span class="progress-text" id="progress-text">Situação 1 de 6</span>
+                </div>
+                <div class="score-display">
+                    <span class="score-icon">⭐</span>
+                    <span id="score">0</span> pontos
+                </div>
+            </div>
+
+            <div class="situation-card">
+                <div class="situation-number" id="situation-number">Situação 1</div>
+                <h2 class="situation-title" id="situation-title"></h2>
+                <div class="situation-image" id="situation-image"></div>
+                <p class="situation-text" id="situation-text"></p>
+                <p class="situation-question" id="situation-question"></p>
+            </div>
+
+            <div class="options-container" id="options-container">
+                <!-- As opções serão inseridas dinamicamente -->
+            </div>
+
+            <div id="feedback-modal" class="feedback-modal">
+                <div class="feedback-content">
+                    <span class="feedback-icon" id="feedback-icon"></span>
+                    <h3 id="feedback-title"></h3>
+                    <p id="feedback-text"></p>
+                    <div class="feedback-explanation" id="feedback-explanation"></div>
+                    <button class="btn-continue" onclick="nextSituation()">Continuar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Resumo dos Poderes -->
+        <div id="powers-summary" class="screen">
+            <h2>Resumo dos Três Poderes</h2>
+            <div class="powers-grid">
+                <div class="power-card executivo-card">
+                    <div class="power-icon">🏢</div>
+                    <h3>Poder Executivo</h3>
+                    <p><strong>Função:</strong> Administra e governa</p>
+                    <ul>
+                        <li>Executa as leis</li>
+                        <li>Realiza obras públicas</li>
+                        <li>Presta serviços à população</li>
+                    </ul>
+                    <div class="power-members">
+                        <strong>Quem faz parte:</strong>
+                        <span>Presidente, Governadores, Prefeitos</span>
+                    </div>
+                </div>
+
+                <div class="power-card legislativo-card">
+                    <div class="power-icon">📜</div>
+                    <h3>Poder Legislativo</h3>
+                    <p><strong>Função:</strong> Cria leis e fiscaliza</p>
+                    <ul>
+                        <li>Elabora e vota leis</li>
+                        <li>Fiscaliza o Executivo</li>
+                        <li>Aprova orçamentos</li>
+                    </ul>
+                    <div class="power-members">
+                        <strong>Quem faz parte:</strong>
+                        <span>Deputados, Senadores, Vereadores</span>
+                    </div>
+                </div>
+
+                <div class="power-card judiciario-card">
+                    <div class="power-icon">⚖️</div>
+                    <h3>Poder Judiciário</h3>
+                    <p><strong>Função:</strong> Aplica e interpreta as leis</p>
+                    <ul>
+                        <li>Julga conflitos</li>
+                        <li>Garante a justiça</li>
+                        <li>Protege direitos</li>
+                    </ul>
+                    <div class="power-members">
+                        <strong>Quem faz parte:</strong>
+                        <span>Juízes, Desembargadores, Ministros</span>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="backToMenu()">Voltar ao Menu</button>
+        </div>
+
+        <!-- Tela Final -->
+        <div id="end-screen" class="screen">
+            <div class="end-content">
+                <div class="trophy-animation">
+                    <span class="trophy">🏆</span>
+                </div>
+                <h2>Parabéns!</h2>
+                <p class="end-message">Você completou o desafio dos Três Poderes!</p>
+                
+                <div class="final-score">
+                    <h3>Sua Pontuação Final</h3>
+                    <div class="score-display-large">
+                        <span id="final-score">0</span>
+                        <span class="score-max">/ 600</span>
+                    </div>
+                    <div class="score-stars" id="score-stars"></div>
+                </div>
+
+                <div class="performance-message" id="performance-message"></div>
+
+                <div class="end-buttons">
+                    <button class="btn-secondary" onclick="showPowersSummary()">
+                        <span>📚</span> Ver Resumo dos Poderes
+                    </button>
+                    <button class="btn-primary" onclick="restartGame()">
+                        <span>🔄</span> Jogar Novamente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Efeitos de Partículas -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Sons do Jogo (opcional) -->
+    <audio id="correct-sound" preload="auto">
+        <source src="correct.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="wrong-sound" preload="auto">
+        <source src="wrong.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="complete-sound" preload="auto">
+        <source src="complete.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="../src/js/tres_poderes.js"></script>
+</body>
+</html>

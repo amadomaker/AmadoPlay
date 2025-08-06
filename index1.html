@@ -126,8 +126,7 @@
 
       <div class="cards-grid">
         <!-- Ferramenta 1 -->
-         
-        <div class="tool-card">
+        <div class="tool-card" onclick="acessarFerramenta('abaco')">
           <div class="card-image">
             <img src="src/assets/images/abaco_digital1.png" alt="Ábaco Digital" />
             <span class="card-badge">Popular</span>
@@ -139,9 +138,10 @@
             </div>
           </div>
         </div>
+   
 
         <!-- Ferramenta 2 -->
-        <div class="tool-card">
+        <div class="tool-card" onclick="acessarFerramenta('material-dourado')">
           <div class="card-image">
             <img src="src/assets/images/material_dourado4.png" alt="Material Dourado" />
             <span class="card-badge">Popular</span>
@@ -155,7 +155,7 @@
         </div>
 
         <!-- Ferramenta 3 -->
-        <div class="tool-card">
+        <div class="tool-card" onclick="acessarFerramenta('alfabeto-movel')">
           <div class="card-image">
             <img src="src/assets/images/Alfabeto_movel1.png" alt="Alfabeto Móvel" />
           </div>
@@ -168,7 +168,7 @@
         </div>
 
         <!-- Ferramenta 4 -->
-        <div class="tool-card">
+        <div class="tool-card" onclick="acessarFerramenta('piramide-alimentar')">
           <div class="card-image">
             <img src="src/assets/images/piramide_alimentar1.png" alt="Pirâmide Alimentar" />
             <span class="card-badge">Novo</span>
@@ -182,7 +182,7 @@
         </div>
 
         <!-- Ferramenta 5 -->
-        <div class="tool-card">
+        <div class="tool-card" onclick="acessarFerramenta('mapa-brasil')">
           <div class="card-image">
             <img src="src/assets/images/mapa_brasil1.png" alt="Mapa do Brasil" />
           </div>
@@ -223,10 +223,32 @@
       </div>
     </section>
     
-  
     <script>
+        function acessarFerramenta(ferramenta) {
+            switch(ferramenta) {
+                case 'abaco':
+                    window.open('pages/Abaco_digital.html', '_blank');
+                    break;
+                case 'material-dourado':
+                    window.open('pages/Material_dourado.html', '_blank');
+                    break;
+                case 'alfabeto-movel':
+                    window.open('pages/Alfabeto_movel.html', '_blank');
+                    break;
+                case 'piramide-alimentar':
+                    window.open('pages/piramide_alimentar.html', '_blank');
+                    break;
+                case 'mapa-brasil':
+                    window.open('pages/mapa_brasil.html', '_blank');
+                    break;
+                case 'tres-poderes':
+                    window.open('https://wordwall.net/pt/resource/3946124/os-tr%C3%AAs-poderes', '_blank');
+                    break;
+                    
+            }
+        }
+    </script>  
 
-    </script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
