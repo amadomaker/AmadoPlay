@@ -52,8 +52,8 @@ class NutritionEducationSystem {
                 title: "Energéticos - Nossa Base de Energia",
                 group: "energeticos",
                 content: {
-                    intro: "Os alimentos energéticos são como o combustível do nosso corpo! Eles nos dão energia para brincar, estudar e crescer.",
-                    description: "Fornecem energia necessária para as atividades diárias e o funcionamento do organismo. São ricos em carboidratos, nossa principal fonte de energia.",
+                    intro: "Os alimentos energéticos fornecem energia necessária para as atividades diárias e o funcionamento do organismo. São ricos em carboidratos, nossa principal fonte de energia.",
+                    description: "",
                     foods: [
                         { name: "Arroz", emoji: "🍚", benefit: "Energia duradoura" },
                         { name: "Pão", emoji: "🍞", benefit: "Energia rápida" },
@@ -88,8 +88,8 @@ class NutritionEducationSystem {
                 title: "Reguladores - Os Protetores do Corpo",
                 group: "reguladores",
                 content: {
-                    intro: "Os alimentos reguladores são como os super-heróis do nosso corpo! Eles nos protegem de doenças e fazem tudo funcionar direitinho.",
-                    description: "Ricos em vitaminas, minerais e fibras. Auxiliam na regulação das funções do organismo e fortalecem o sistema imunológico.",
+                    intro: "Os alimentos reguladores fornecem nutrientes Ricos em vitaminas, minerais e fibras. Auxiliam na regulação das funções do organismo e fortalecem o sistema imunológico.",
+                    description: "",
                     foods: [
                         { name: "Maçã", emoji: "🍎", benefit: "Vitamina C + fibras" },
                         { name: "Banana", emoji: "🍌", benefit: "Potássio para músculos" },
@@ -108,7 +108,7 @@ class NutritionEducationSystem {
                     ]
                 },
                 quiz: {
-                    question: "Por que devemos 'comer o arco-íris' (frutas e vegetais coloridos)?",
+                    question: 'Por que devemos "comer o arco-íris" (frutas e vegetais coloridos)?',
                     options: [
                         "Para deixar o prato bonito",
                         "Porque cada cor tem nutrientes diferentes",
@@ -124,8 +124,8 @@ class NutritionEducationSystem {
                 title: "Construtores - Os Construtores do Corpo",
                 group: "construtores",
                 content: {
-                    intro: "Os alimentos construtores são como os tijolos de uma construção! Eles ajudam nosso corpo a crescer forte e saudável.",
-                    description: "São fontes de proteínas e atuam na formação e manutenção dos tecidos do corpo, como músculos e ossos.",
+                    intro: "Os alimentos construtores são fontes de proteínas e atuam na formação e manutenção dos tecidos do corpo, como músculos e ossos.",
+                    description: "",
                     foods: [
                         { name: "Leite", emoji: "🥛", benefit: "Cálcio para ossos" },
                         { name: "Queijo", emoji: "🧀", benefit: "Proteína + cálcio" },
@@ -160,8 +160,8 @@ class NutritionEducationSystem {
                 title: "Gorduras e Óleos - Os Auxiliares Especiais",
                 group: "gorduras",
                 content: {
-                    intro: "As gorduras são como ajudantes especiais! Em pequenas quantidades, elas fazem coisas muito importantes no nosso corpo.",
-                    description: "Ajudam na absorção de vitaminas e fornecem energia, mas devem ser consumidos com moderação.",
+                    intro: "Ajudam na absorção de vitaminas e fornecem energia, mas devem ser consumidos com moderação.",
+                    description: "",
                     foods: [
                         { name: "Azeite", emoji: "🫒", benefit: "Gordura boa para coração" },
                         { name: "Abacate", emoji: "🥑", benefit: "Gorduras saudáveis" },
@@ -194,8 +194,8 @@ class NutritionEducationSystem {
                 title: "Doces e Açúcares - Os Convidados Especiais",
                 group: "energeticos-extras",
                 content: {
-                    intro: "Os doces são como convidados especiais numa festa - são gostosos, mas não podem aparecer toda hora! Vamos aprender quando e como consumi-los.",
-                    description: "Oferecem energia rápida, mas não possuem muitos nutrientes. Seu consumo deve ser ocasional e sempre acompanhado de atividade física.",
+                    intro: "Oferecem energia rápida, mas não possuem muitos nutrientes. Seu consumo deve ser ocasional e sempre acompanhado de atividade física.",
+                    description: "",
                     foods: [
                         { name: "Chocolate", emoji: "🍫", benefit: "Energia rápida (ocasional)" },
                         { name: "Bolo", emoji: "🍰", benefit: "Para celebrações" },
@@ -365,7 +365,7 @@ class NutritionEducationSystem {
         } else if (lesson.content.foods) {
             html += `
                 <div class="food-group-display ${lesson.group}">
-                    <h3 class="group-title">Alimentos do Grupo</h3>
+                    <h3 class="group-title">Alimentos do Grupo:</h3>
                     <p class="group-description">${lesson.content.description}</p>
                     
                     <div class="food-examples">
