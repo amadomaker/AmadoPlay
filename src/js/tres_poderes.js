@@ -1,732 +1,783 @@
-// ===== SISTEMA EDUCATIVO DOS TRÊS PODERES - JAVASCRIPT CORRIGIDO =====
-
-class ThreePowersEducationSystem {
-    constructor() {
-        // Estado do sistema
-        this.currentScreen = 'loading-screen';
-        this.currentStoryNode = 'start';
-        this.totalDecisions = 0;
-        this.correctChoices = 0;
-        this.learningPoints = 0;
-        
-        // Dados do usuário
-        this.userProgress = {
-            completedIntro: false,
-            decisionsPath: [],
-            achievements: [],
-            startTime: null,
-            endTime: null
-        };
-
-        // História interativa - Situação dos Celulares (Sistema Narrativo Completo)
-        this.storyNodes = {
-            start: {
-                chapter: 1,
-                title: "O Problema Surge na Escola",
-                emoji: "🏫",
-                narrator: "Narrador do Sistema",
-                text: "Na Escola Municipal Esperança, a diretora Carla observa uma cena que se repete todos os dias: alunos completamente distraídos com celulares durante as aulas. Os professores estão preocupados, pois os estudantes não prestam atenção nas explicações e o rendimento está caindo.",
-                character: {
-                    name: "Diretora Carla",
-                    avatar: "👩‍💼",
-                    dialogue: "Essa situação não pode continuar! Os celulares estão prejudicando o aprendizado dos nossos alunos. Mas eu preciso resolver isso da forma correta, seguindo os princípios democráticos. Qual caminho devo tomar?"
-                },
-                info: "Esta é uma situação real que acontece em muitas escolas do Brasil. Como cidadãos, precisamos saber qual é a forma correta e democrática de resolver problemas como este!",
-                choices: [
-                    {
-                        id: "choice_start_1",
-                        power: "executivo",
-                        icon: "🏢",
-                        title: "Decisão Imediata",
-                        description: "A diretora deve proibir os celulares imediatamente usando sua autoridade!",
-                        nextNode: "executive_hasty"
-                    },
-                    {
-                        id: "choice_start_2", 
-                        power: "legislativo",
-                        title: "Consulta Democrática",
-                        icon: "📜",
-                        description: "Vamos conversar com pais, alunos e professores para criar regras em conjunto.",
-                        nextNode: "legislative_discussion"
-                    },
-                    {
-                        id: "choice_start_3",
-                        power: "judiciario",
-                        icon: "⚖️",
-                        title: "Buscar Orientação Legal",
-                        description: "Vamos consultar um advogado para saber nossos direitos legais.",
-                        nextNode: "judiciary_consultation"
-                    }
-                ]
+// ===== DADOS DAS SITUAÇÕES ===== //
+const gameData = {
+    situations: [
+        {
+            id: 1,
+            title: "Celular nas salas de aula",
+            description: "Na Escola Municipal Esperança, os professores estão enfrentando dificuldades com o uso excessivo de celulares pelos alunos. A diretora convocou uma reunião com a comunidade escolar. Alguns pais sugeriram a criação de uma lei para regular o uso do celular em sala de aula.",
+            question: "Quem deve tomar a iniciativa para criar essa lei?",
+            options: {
+                executivo: "O prefeito assina uma lei proibindo o celular.",
+                legislativo: "A câmara de vereadores discute e vota o projeto de lei.",
+                judiciario: "O juiz decide que celulares não são permitidos nas escolas."
             },
-
-            executive_hasty: {
-                chapter: 2,
-                title: "A Decisão Autoritária",
-                emoji: "⚠️",
-                narrator: "Consequência da Escolha",
-                text: "A diretora Carla decide resolver o problema sozinha. No dia seguinte, ela coloca cartazes por toda escola: 'PROIBIDO USAR CELULAR - DECISÃO DA DIREÇÃO'. Também envia um comunicado aos pais informando a nova regra, sem consulta prévia.",
-                character: {
-                    name: "João - Pai de Aluno",
-                    avatar: "😡",
-                    dialogue: "Isso é um absurdo! Quem disse que a diretora pode decidir sozinha sobre isso? E se meu filho tiver uma emergência médica? Eu trabalho longe e preciso me comunicar com ele! Não concordo com essa imposição!"
-                },
-                info: "Quando uma pessoa toma decisões importantes sozinha, sem consultar os afetados, pode gerar revolta e resistência na comunidade.",
-                choices: [
-                    {
-                        id: "choice_exec_1",
-                        power: "legislativo",
-                        icon: "📜",
-                        title: "Reconsiderar e Consultar",
-                        description: "A diretora percebe o erro e decide ouvir a comunidade escolar.",
-                        nextNode: "executive_learns"
-                    },
-                    {
-                        id: "choice_exec_2",
-                        power: "executivo",
-                        icon: "🏢", 
-                        title: "Manter a Autoridade",
-                        description: "A diretora mantém a decisão mesmo com as reclamações da comunidade.",
-                        nextNode: "executive_conflict"
-                    }
-                ]
-            },
-
-            executive_learns: {
-                chapter: 3,
-                title: "Aprendendo com os Erros",
-                emoji: "💡",
-                narrator: "Crescimento e Reflexão",
-                text: "A diretora Carla reconhece que agiu de forma precipitada e autoritária. Ela remove todos os cartazes e envia um novo comunicado pedindo desculpas. Em seguida, convoca uma grande assembleia na escola com pais, alunos, professores e funcionários.",
-                character: {
-                    name: "Diretora Carla",
-                    avatar: "👩‍💼",
-                    dialogue: "Peço sinceras desculpas pela minha atitude autoritária. Percebi que estava agindo contra os princípios democráticos que devemos ensinar aos nossos alunos. Vamos resolver isso juntos, da forma correta, ouvindo todas as vozes!"
-                },
-                info: "Reconhecer erros e corrigi-los é uma qualidade fundamental em líderes democráticos. A humildade para recuar e buscar soluções participativas fortalece a democracia.",
-                choices: [
-                    {
-                        id: "choice_learn_1",
-                        power: "legislativo",
-                        icon: "📜",
-                        title: "Processo Democrático",
-                        description: "Organizar discussões abertas e criar regras com participação de todos.",
-                        nextNode: "democratic_assembly"
-                    }
-                ]
-            },
-
-            executive_conflict: {
-                chapter: 3,
-                title: "O Conflito se Intensifica",
-                emoji: "⚔️",
-                narrator: "Tensão na Comunidade",
-                text: "A diretora mantém sua posição autoritária, ignorando as reclamações. Os pais se organizam e fazem um protesto na porta da escola. Alguns alunos fazem 'greve', recusando-se a entregar os celulares. A situação se torna um verdadeiro caos e ganha até a mídia local!",
-                character: {
-                    name: "Ana - Representante dos Pais",
-                    avatar: "👩‍👧‍👦",
-                    dialogue: "Não podemos aceitar esse autoritarismo! Nossos filhos estão aprendendo que decisões podem ser impostas sem diálogo. Vamos buscar nossos direitos na Secretaria de Educação e, se necessário, na Justiça!"
-                },
-                info: "Decisões autoritárias frequentemente geram conflitos maiores e podem ter consequências legais. A falta de diálogo cria divisões na comunidade.",
-                choices: [
-                    {
-                        id: "choice_conflict_1",
-                        power: "judiciario",
-                        icon: "⚖️",
-                        title: "Intervenção Judicial",
-                        description: "Os pais processam a escola por decisão arbitrária e violação de direitos.",
-                        nextNode: "legal_intervention"
-                    },
-                    {
-                        id: "choice_conflict_2",
-                        power: "legislativo",
-                        icon: "📜",
-                        title: "Mediação Institucional",
-                        description: "A Secretaria de Educação intervém para mediar o conflito democraticamente.",
-                        nextNode: "institutional_mediation"
-                    }
-                ]
-            },
-
-            legislative_discussion: {
-                chapter: 2,
-                title: "A Voz de Toda a Comunidade",
-                emoji: "🗣️",
-                narrator: "Democracia em Ação",
-                text: "A diretora Carla convoca uma grande assembleia na escola. O auditório fica lotado com pais, alunos de diferentes idades, professores, funcionários e até representantes da comunidade local. Cada grupo tem tempo para apresentar sua opinião sobre o uso de celulares na escola.",
-                character: {
-                    name: "Maria - Representante dos Estudantes",
-                    avatar: "🧑‍🎓",
-                    dialogue: "Nós entendemos que os celulares podem atrapalhar as aulas, mas eles também são importantes para nossa segurança e comunicação com a família. Que tal criarmos horários específicos e regras que todos concordem? Nós queremos participar dessa decisão!"
-                },
-                info: "A participação democrática permite que todos os afetados sejam ouvidos e contribuam para a solução. Isso gera maior aceitação e cumprimento das regras.",
-                choices: [
-                    {
-                        id: "choice_legis_1",
-                        power: "legislativo",
-                        icon: "📜",
-                        title: "Comissão Participativa",
-                        description: "Formar uma comissão com representantes de todos os grupos para elaborar as regras.",
-                        nextNode: "collaborative_committee"
-                    },
-                    {
-                        id: "choice_legis_2",
-                        power: "executivo",
-                        icon: "🏢",
-                        title: "Decisão Baseada nas Opiniões",
-                        description: "A direção toma a decisão final baseada nas opiniões coletadas.",
-                        nextNode: "executive_decision_informed"
-                    }
-                ]
-            },
-
-            collaborative_committee: {
-                chapter: 4,
-                title: "Construindo Juntos a Solução",
-                emoji: "👥",
-                narrator: "Cooperação Democrática",
-                text: "Uma comissão é formada com 2 pais, 2 alunos (um do fundamental e outro do médio), 2 professores, 1 funcionário e a diretora. Durante três semanas, eles se reúnem duas vezes por semana, estudam o problema, pesquisam soluções de outras escolas e até consultam especialistas em educação.",
-                character: {
-                    name: "Lucas - Aluno do 9º ano",
-                    avatar: "👦",
-                    dialogue: "Nunca imaginei que participar de decisões da escola fosse tão interessante! Estamos criando regras que fazem sentido para todos. Aprendemos sobre responsabilidade, democracia e até sobre como funciona o governo do país!"
-                },
-                info: "O processo democrático pode demorar mais tempo, mas gera soluções mais criativas, aceitas e eficazes.",
-                choices: [
-                    {
-                        id: "choice_committee_1",
-                        power: "legislativo",
-                        icon: "📜",
-                        title: "Votação Democrática",
-                        description: "Apresentar a proposta final para votação de toda a comunidade escolar.",
-                        nextNode: "democratic_vote"
-                    }
-                ]
-            },
-
-            democratic_vote: {
-                chapter: 5,
-                title: "A Grande Votação Democrática",
-                emoji: "🗳️",
-                narrator: "Vitória da Democracia",
-                text: "A proposta criada pela comissão é apresentada a toda comunidade escolar em uma nova assembleia. Após esclarecimentos e debates, uma votação secreta é realizada. Com 89% de aprovação, as novas regras sobre celulares são oficialmente aprovadas por todos!",
-                character: {
-                    name: "Diretora Carla",
-                    avatar: "👩‍💼",
-                    dialogue: "Que orgulho! Em apenas dois meses, transformamos um problema em uma lição de democracia. As regras que criamos são justas, práticas e todos ajudaram a construir. Esta é a verdadeira educação cidadã!"
-                },
-                info: "Quando as pessoas participam da criação das regras, elas tendem a respeitá-las mais e se sentem co-responsáveis pelos resultados.",
-                choices: [
-                    {
-                        id: "choice_vote_1",
-                        power: "executivo",
-                        icon: "🏢",
-                        title: "Implementar as Regras",
-                        description: "A direção coloca em prática as regras aprovadas democraticamente.",
-                        nextNode: "successful_implementation"
-                    }
-                ]
-            },
-
-            successful_implementation: {
-                chapter: 6,
-                title: "O Sucesso da Democracia",
-                emoji: "🎉",
-                narrator: "Final Inspirador",
-                text: "Seis meses depois, a Escola Municipal Esperança se tornou exemplo para outras instituições da região. As regras sobre celulares funcionam perfeitamente, os alunos respeitam os acordos porque ajudaram a criá-los, e até desenvolveram projetos educativos usando a tecnologia de forma responsável!",
-                character: {
-                    name: "Secretário Municipal de Educação",
-                    avatar: "👨‍💼",
-                    dialogue: "Parabéns a toda comunidade escolar! Vocês mostraram como a democracia funciona na prática e será um modelo para todas as escolas do município. Esta experiência será documentada e compartilhada como exemplo de gestão democrática!"
-                },
-                info: "A democracia participativa não apenas resolve problemas, mas também educa e fortalece a comunidade para futuros desafios.",
-                choices: [
-                    {
-                        id: "choice_success_1",
-                        power: "final",
-                        icon: "🏆",
-                        title: "Completar a Jornada",
-                        description: "Finalizar com o aprendizado sobre democracia participativa!",
-                        nextNode: "ending_democracy_triumph"
-                    }
-                ]
-            },
-
-            // Outros nós da história...
-            ending_democracy_triumph: {
-                chapter: 7,
-                title: "Triunfo da Democracia Participativa",
-                emoji: "🏆",
-                narrator: "Conclusão Perfeita",
-                text: "Vocês escolheram o caminho perfeito da democracia participativa! A situação do celular foi resolvida de forma exemplar, com todos participando, aprendendo e crescendo juntos como comunidade democrática.",
-                learning: [
-                    "O Poder Legislativo cria regras através de discussão e participação popular",
-                    "A democracia participativa gera soluções mais aceitas e duradouras", 
-                    "O Poder Executivo implementa as decisões tomadas democraticamente",
-                    "Quando todos participam, toda a comunidade se beneficia",
-                    "A educação democrática prepara cidadãos conscientes e participativos"
-                ],
-                finalMessage: "Parabéns! Vocês demonstraram excelente compreensão sobre como a democracia funciona na prática!"
+            correct: "legislativo",
+            explanation: "O Legislativo é o poder responsável por elaborar, discutir e aprovar leis. O Executivo só pode sancionar ou vetar a lei após a aprovação. O Judiciário só atua se houver conflitos ou necessidade de interpretar a lei.",
+            consequence: {
+                correct: "✅ O Conselho indicou o Legislativo. A proposta foi levada para a câmara de vereadores, que discutiu o tema com a população e aprovou a nova lei sobre uso de celulares. A escola agora tem regras claras, construídas com participação da comunidade.",
+                incorrect: "❌ O Conselho indicou o poder errado. No entanto, sem a aprovação da câmara, a proposta não pode se tornar lei. O problema continua sem solução clara."
             }
-        };
+        },
+        {
+            id: 2,
+            title: "Reforma de um hospital",
+            description: "O Hospital Municipal Vida Nova apresenta goteiras, salas sem ventilação e falta de materiais. Moradores estão preocupados com a qualidade do atendimento e pedem que providências sejam tomadas com urgência.",
+            question: "Quem é o responsável por executar essa reforma?",
+            options: {
+                executivo: "A prefeitura organiza a obra e contrata a empresa.",
+                legislativo: "Os vereadores aprovam o orçamento para a reforma.",
+                judiciario: "O juiz determina que o hospital seja reformado."
+            },
+            correct: "executivo",
+            explanation: "O Executivo executa ações e políticas públicas, como obras e serviços. O Legislativo aprova o orçamento, mas não realiza obras. O Judiciário só age se houver problemas legais no processo.",
+            consequence: {
+                correct: "✅ O Conselho indicou o Executivo. A prefeitura contratou uma empresa e iniciou a reforma. A população está sendo atendida com mais segurança e conforto.",
+                incorrect: "❌ O Conselho escolheu o poder errado. Sem a ação do Executivo, a reforma não pode ser feita. O hospital continua com problemas."
+            }
+        },
+        {
+            id: 3,
+            title: "Melhoria na merenda escolar",
+            description: "Famílias e professores de uma escola municipal reclamam da falta de variedade na merenda escolar. Um grupo de pais deseja apresentar um projeto de lei que garanta alimentos mais saudáveis e diversificados.",
+            question: "Quem deve discutir e aprovar essa proposta de lei?",
+            options: {
+                executivo: "O prefeito faz mudanças na merenda por decreto.",
+                legislativo: "Os vereadores analisam e votam o projeto.",
+                judiciario: "Um juiz decide sobre o cardápio da merenda."
+            },
+            correct: "legislativo",
+            explanation: "O Legislativo é o responsável por aprovar leis como essa. O Executivo só aplica a lei aprovada. O Judiciário não cria ou aprova leis.",
+            consequence: {
+                correct: "✅ O Conselho indicou o Legislativo. A proposta foi discutida na câmara e virou lei. Agora as escolas têm uma merenda mais saudável e variada.",
+                incorrect: "❌ A proposta foi encaminhada ao poder errado e não pôde ser votada como lei. A mudança não aconteceu."
+            }
+        },
+        {
+            id: 4,
+            title: "Corrupção em obra pública",
+            description: "Durante a construção de uma creche, moradores descobriram que o valor cobrado por materiais era muito maior do que o preço real. Foi feito um boletim de ocorrência e entregue às autoridades.",
+            question: "Quem deve investigar e julgar esse caso?",
+            options: {
+                executivo: "A prefeitura investiga e pune os responsáveis.",
+                legislativo: "Os vereadores julgam os envolvidos.",
+                judiciario: "O caso é analisado por um juiz ou tribunal."
+            },
+            correct: "judiciario",
+            explanation: "O Judiciário é o poder que julga se houve crime e aplica as penas previstas. O Executivo pode investigar internamente, mas não julga. O Legislativo pode fiscalizar, mas também não julga.",
+            consequence: {
+                correct: "✅ O Conselho indicou o Judiciário. O caso foi julgado por um tribunal e os responsáveis foram punidos conforme a lei.",
+                incorrect: "❌ O poder escolhido não tem autoridade para julgar crimes. O caso precisa ser levado ao Judiciário para ser resolvido legalmente."
+            }
+        },
+        {
+            id: 5,
+            title: "Praça sem iluminação",
+            description: "A principal praça do bairro está sem iluminação há semanas. Crianças deixaram de brincar no local e os moradores estão com medo de andar por lá à noite. A comunidade quer uma solução rápida.",
+            question: "Quem deve agir para resolver esse problema?",
+            options: {
+                executivo: "A prefeitura organiza o conserto da iluminação.",
+                legislativo: "Os vereadores contratam a empresa elétrica.",
+                judiciario: "Um juiz manda trocar as lâmpadas."
+            },
+            correct: "executivo",
+            explanation: "O Executivo realiza ações como essa, cuidando da manutenção dos espaços públicos. O Legislativo aprova recursos, mas não executa obras. O Judiciário só atua se a prefeitura descumprir suas responsabilidades legais.",
+            consequence: {
+                correct: "✅ O Conselho indicou o Executivo. A prefeitura agiu e a praça foi iluminada novamente. As famílias voltaram a frequentar o espaço com segurança.",
+                incorrect: "❌ O poder escolhido não tem essa função. Sem a ação do Executivo, o problema continua."
+            }
+        },
+        {
+            id: 6,
+            title: "Lei injusta contra pessoas com deficiência",
+            description: "Foi aprovada uma nova lei proibindo a entrada de pessoas com cães-guia em locais públicos. Organizações de direitos humanos dizem que essa lei fere os direitos das pessoas com deficiência.",
+            question: "Quem pode cancelar essa lei por ser injusta?",
+            options: {
+                executivo: "O prefeito decide anular a lei.",
+                legislativo: "Os vereadores mudam de ideia e cancelam a lei.",
+                judiciario: "Um tribunal julga a lei inconstitucional."
+            },
+            correct: "judiciario",
+            explanation: "O Judiciário pode considerar uma lei inválida se ela for contrária à Constituição. O Executivo e o Legislativo não podem, sozinhos, anular uma lei já aprovada.",
+            consequence: {
+                correct: "✅ O Conselho indicou o Judiciário. O tribunal analisou o caso e decidiu que a lei era inconstitucional. As pessoas com deficiência voltaram a ter seus direitos garantidos.",
+                incorrect: "❌ A lei continua em vigor porque não foi questionada no Judiciário, que é o único com poder para anulá-la nesse caso."
+            }
+        },
+        {
+            id: 7,
+            title: "Construção de uma nova escola",
+            description: "No bairro Jardim Esperança, a população cresceu muito e as escolas estão lotadas. A comunidade pediu a construção de uma nova escola para atender as crianças da região.",
+            question: "Quem deve planejar e executar essa obra?",
+            options: {
+                executivo: "A prefeitura organiza a construção da escola.",
+                legislativo: "A câmara aprova o orçamento para a obra.",
+                judiciario: "O juiz determina a construção da escola."
+            },
+            correct: "executivo",
+            explanation: "O Executivo é responsável por executar obras públicas e garantir a infraestrutura necessária. O Legislativo aprova os recursos, mas não executa as obras. O Judiciário só intervém se houver disputas legais.",
+            consequence: {
+                correct: "✅ O Conselho indicou o Executivo. A prefeitura iniciou a construção da nova escola, atendendo a demanda da população.",
+                incorrect: "❌ O poder indicado não tem responsabilidade direta pela execução da obra. A construção não avançou e as escolas permanecem lotadas."
+            }
+        },
+        {
+            id: 8,
+            title: "Proposta de lei para redução do horário escolar",
+            description: "Na rede municipal, um grupo de pais sugeriu uma lei para reduzir o horário das aulas, permitindo mais tempo para atividades extracurriculares. A ideia foi apresentada durante uma reunião da comunidade escolar.",
+            question: "Quem deve discutir e aprovar essa proposta?",
+            options: {
+                executivo: "O prefeito decreta a mudança.",
+                legislativo: "Os vereadores analisam e votam a proposta de lei.",
+                judiciario: "O juiz decide se o horário escolar pode mudar."
+            },
+            correct: "legislativo",
+            explanation: "O Legislativo é responsável por elaborar e aprovar leis. O Executivo executa as leis. O Judiciário interpreta as leis se houver conflitos.",
+            consequence: {
+                correct: "✅ O Conselho indicou o Legislativo. A proposta foi discutida e aprovada pela câmara, permitindo a mudança no horário escolar.",
+                incorrect: "❌ Sem a aprovação do Legislativo, a mudança não foi possível. O horário escolar continuou o mesmo."
+            }
+        },
+        {
+            id: 9,
+            title: "Denúncia de abuso de poder na prefeitura",
+            description: "Funcionários da prefeitura denunciaram que um secretário municipal está usando recursos públicos em benefício próprio. A denúncia foi registrada e encaminhada às autoridades.",
+            question: "Quem deve investigar e julgar esse caso?",
+            options: {
+                executivo: "A prefeitura realiza investigação interna.",
+                legislativo: "A câmara fiscaliza e pode abrir processo contra o secretário.",
+                judiciario: "O tribunal julga e condena, se houver crime."
+            },
+            correct: "judiciario",
+            explanation: "O Judiciário é o poder que julga crimes e irregularidades. O Legislativo fiscaliza, mas não julga. O Executivo pode investigar, mas não condena.",
+            consequence: {
+                correct: "✅ O Conselho indicou o Judiciário. O tribunal analisou as provas e decidiu sobre o caso, garantindo justiça.",
+                incorrect: "❌ Sem a atuação do Judiciário, o caso não foi julgado e a denúncia não avançou."
+            }
+        },
+        {
+            id: 10,
+            title: "Criação de um parque público",
+            description: "Moradores se reuniram para pedir a criação de um parque para lazer e preservação ambiental em uma área abandonada do bairro. Eles querem que a proposta vire uma política pública.",
+            question: "Quem deve propor e aprovar a criação do parque?",
+            options: {
+                executivo: "A prefeitura planeja, executa e mantém o parque.",
+                legislativo: "Os vereadores propõem, discutem e aprovam a lei e o orçamento para criação do parque.",
+                judiciario: "Tribunal decide sobre o parque."
+            },
+            correct: "legislativo",
+            explanation: "O Legislativo cria leis e aprova os recursos necessários para obras públicas. O Executivo executa os projetos aprovados. O Judiciário só atua se houver disputas legais.",
+            consequence: {
+                correct: "✅ O Conselho indicou o Legislativo. A proposta foi aprovada, e o Executivo iniciou a criação do parque.",
+                incorrect: "❌ Sem a aprovação do Legislativo, o parque não pode ser criado oficialmente."
+            }
+        },
+        {
+            id: 11,
+            title: "Controle da poluição sonora em bairros residenciais",
+            description: "Moradores estão incomodados com o barulho constante de festas e comércios durante a noite em áreas residenciais. Eles se reuniram e pediram a criação de uma lei para limitar o barulho em determinados horários.",
+            question: "Quem deve criar essa lei?",
+            options: {
+                executivo: "O prefeito decide regulamentar o barulho.",
+                legislativo: "A câmara elabora e aprova a lei.",
+                judiciario: "O Juiz impõe restrições ao barulho."
+            },
+            correct: "legislativo",
+            explanation: "O Legislativo tem o papel de criar leis para regulamentar situações como essa. O Executivo aplica a lei, mas não a cria sozinho. O Judiciário só age se houver conflito legal.",
+            consequence: {
+                correct: "✅ O Conselho indicou o Legislativo. A lei foi aprovada, e o Executivo fiscaliza o cumprimento.",
+                incorrect: "❌ Sem a lei aprovada, o problema do barulho não foi resolvido."
+            }
+        },
+        {
+            id: 12,
+            title: "Suspensão de um projeto por violar direitos humanos",
+            description: "A Câmara Municipal aprovou um projeto de lei que altera regras de moradia popular. Organizações sociais afirmam que a nova medida impede o acesso de famílias de baixa renda à habitação, violando direitos humanos básicos. Representantes da comunidade acionaram a Justiça para impedir que a lei comece a valer.",
+            question: "Quem deve agir nesse caso?",
+            options: {
+                executivo: "O prefeito suspende o projeto.",
+                legislativo: "Os vereadores revogam o projeto.",
+                judiciario: "O tribunal analisa a constitucionalidade e pode suspender a aplicação."
+            },
+            correct: "judiciario",
+            explanation: "O Judiciário é responsável por garantir que leis e ações estejam de acordo com a Constituição e os direitos fundamentais. O Executivo aplica as leis, mas não pode invalidar sozinho uma lei aprovada. O Legislativo pode propor mudanças ou revogar leis, mas o efeito não é imediato como uma decisão judicial.",
+            consequence: {
+                correct: "✅ O Conselho indicou o Judiciário. O tribunal suspendeu a aplicação da lei até que sua legalidade seja analisada. As famílias seguem com acesso à moradia durante o processo.",
+                incorrect: "❌ O poder escolhido não tem autoridade para suspender o projeto de forma imediata. A medida continua valendo."
+            }
+        }
+    ]
+};
 
+// ===== CONTROLE DO JOGO ===== //
+class TresPoderesGame {
+    constructor() {
+        this.currentSituation = 0;
+        this.selectedAnswer = null;
+        this.isAnswered = false;
+        
+        // Caminhos das imagens dos personagens
+        this.characterImages = {
+            'idle': '../src/assets/images/Amado_Idle.gif',
+            'correct': '../src/assets/images/Amado_Acerto.gif',
+            'incorrect': '../src/assets/images/Amado_Erro.gif',
+            'marcelo': '../src/assets/images/Marcelo.gif'
+        };
+        
         this.init();
     }
 
-    // ===== INICIALIZAÇÃO =====
     init() {
-        this.loadProgress();
+        this.hideLoadingScreen();
         this.setupEventListeners();
-        this.createParticles();
-        
-        // Simular carregamento e ir direto para a introdução
-        setTimeout(() => {
-            this.showScreen('introduction-screen');
-        }, 2000);
+        this.showCharacterGuide();
+        this.preloadImages();
+        this.updateCharacter('idle', 'Olá! Eu sou o Amado, seu guia nesta aventura de aprendizado!');
     }
 
-    setupEventListeners() {
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                this.closeAllModals();
-            }
-        });
-
-        window.addEventListener('resize', () => {
-            this.handleResize();
+    // ===== PRELOAD DE IMAGENS ===== //
+    preloadImages() {
+        Object.values(this.characterImages).forEach(src => {
+            const img = new Image();
+            img.src = src;
         });
     }
 
-    // ===== GERENCIAMENTO DE TELAS =====
-    showScreen(screenName) {
-        // Verificar se o elemento existe primeiro
-        const targetScreen = document.getElementById(screenName);
-        if (!targetScreen) {
-            console.error(`❌ Tela não encontrada: ${screenName}`);
-            // Tentar mostrar a primeira tela disponível como fallback
-            const firstScreen = document.querySelector('.screen');
-            if (firstScreen) {
-                console.log('🔄 Usando fallback:', firstScreen.id);
-                screenName = firstScreen.id;
-            } else {
-                console.error('❌ Nenhuma tela encontrada!');
-                return;
-            }
-        }
-
-        // Esconder todas as telas
+    // ===== CONTROLE DE TELAS ===== //
+    showScreen(screenId) {
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
         });
-
-        // Mostrar tela selecionada
-        const screen = document.getElementById(screenName);
-        screen.classList.add('active');
-        this.currentScreen = screenName;
-
-        // Ações específicas por tela
-        switch(screenName) {
-            case 'story-screen':
-                this.displayStoryNode(this.currentStoryNode);
-                break;
-            case 'powers-summary':
-                this.animatePowerCards();
-                break;
-            case 'end-screen':
-                this.showFinalResults();
-                break;
-        }
-
-        // Animação de entrada
-        screen.style.animation = 'fadeIn 0.5s ease-out';
-    }
-
-    // ===== SISTEMA DE HISTÓRIA INTERATIVA =====
-    displayStoryNode(nodeId) {
-        const node = this.storyNodes[nodeId];
-        if (!node) {
-            console.error('Nó da história não encontrado:', nodeId);
-            return;
-        }
-
-        // Verificar se os elementos existem antes de tentar atualizá-los
-        const elements = {
-            chapterNumber: document.getElementById('chapter-number'),
-            chapterTitle: document.getElementById('chapter-title'),
-            progressFill: document.getElementById('progress-fill-story'),
-            progressText: document.getElementById('progress-text-story'),
-            decisionsMade: document.getElementById('decisions-made'),
-            sceneEmoji: document.getElementById('scene-emoji'),
-            storyNarrator: document.getElementById('story-narrator'),
-            storyText: document.getElementById('story-text'),
-            characterDialogue: document.getElementById('character-dialogue'),
-            characterAvatar: document.getElementById('character-avatar'),
-            characterName: document.getElementById('character-name'),
-            dialogueText: document.getElementById('dialogue-text'),
-            storyInfo: document.getElementById('story-info'),
-            infoText: document.getElementById('info-text')
-        };
-
-        // Atualizar apenas elementos que existem
-        if (elements.chapterNumber) elements.chapterNumber.textContent = `Capítulo ${node.chapter}`;
-        if (elements.chapterTitle) elements.chapterTitle.textContent = node.title;
+        document.getElementById(screenId).classList.add('active');
         
-        // Atualizar progresso
-        if (elements.progressFill) {
-            const progressPercent = (node.chapter / 7) * 100;
-            elements.progressFill.style.width = `${progressPercent}%`;
-        }
-        if (elements.progressText) {
-            elements.progressText.textContent = 
-                node.chapter === 7 ? 'História Concluída!' : `Capítulo ${node.chapter} de 7`;
-        }
-
-        // Atualizar decisões tomadas
-        if (elements.decisionsMade) elements.decisionsMade.textContent = this.totalDecisions;
-
-        // Atualizar cena
-        if (elements.sceneEmoji) elements.sceneEmoji.textContent = node.emoji;
-
-        // Atualizar texto da história
-        if (elements.storyNarrator) elements.storyNarrator.textContent = node.narrator;
-        if (elements.storyText) elements.storyText.textContent = node.text;
-
-        // Mostrar diálogo do personagem se existir
-        if (node.character && elements.characterDialogue) {
-            if (elements.characterAvatar) elements.characterAvatar.textContent = node.character.avatar;
-            if (elements.characterName) elements.characterName.textContent = node.character.name;
-            if (elements.dialogueText) elements.dialogueText.textContent = node.character.dialogue;
-            elements.characterDialogue.style.display = 'flex';
-        } else if (elements.characterDialogue) {
-            elements.characterDialogue.style.display = 'none';
-        }
-
-        // Mostrar informação educativa se existir
-        if (node.info && elements.storyInfo && elements.infoText) {
-            elements.infoText.textContent = node.info;
-            elements.storyInfo.style.display = 'flex';
-        } else if (elements.storyInfo) {
-            elements.storyInfo.style.display = 'none';
-        }
-
-        // Criar escolhas
-        this.createStoryChoices(node.choices);
-
-        // Salvar estado atual
-        this.currentStoryNode = nodeId;
+        // Log para debug
+        this.logGameEvent('Screen Changed', screenId);
     }
 
-    createStoryChoices(choices) {
-        const container = document.getElementById('story-choices');
-        if (!container) {
-            console.warn('Container de escolhas não encontrado');
-            return;
+    hideLoadingScreen() {
+        setTimeout(() => {
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('mainContainer').style.opacity = '1';
+        }, 1500);
+    }
+
+    // ===== CONTROLE DO PERSONAGEM ===== //
+    updateCharacter(state, message) {
+        const characterImage = document.getElementById('characterImage');
+        const characterText = document.getElementById('characterText');
+        
+        // Atualizar imagem do personagem no canto
+        if (this.characterImages[state]) {
+            characterImage.src = this.characterImages[state];
         }
+        
+        characterText.textContent = message;
+        this.showCharacterSpeech();
+    }
 
-        container.innerHTML = '';
+    showCharacterGuide() {
+        document.getElementById('characterGuide').classList.add('active');
+    }
 
-        if (!choices || choices.length === 0) {
-            return; // Nó final
-        }
+    showCharacterSpeech() {
+        const speech = document.querySelector('.character-speech');
+        speech.classList.add('active');
+        
+        // Esconder após 5 segundos
+        setTimeout(() => {
+            speech.classList.remove('active');
+        }, 5000);
+    }
 
-        choices.forEach((choice, index) => {
-            const choiceCard = document.createElement('div');
-            choiceCard.className = `choice-card ${choice.power}-choice`;
-            choiceCard.innerHTML = `
-                <div class="choice-header">
-                    <span class="choice-icon">${choice.icon}</span>
-                    <h4 class="choice-power">Poder ${this.capitalizeFirst(choice.power)}</h4>
-                </div>
-                <h5>${choice.title}</h5>
-                <p class="choice-description">${choice.description}</p>
-                <small class="choice-consequence">Clique para ver a consequência...</small>
-            `;
-
-            choiceCard.addEventListener('click', () => {
-                this.makeChoice(choice, index);
-            });
-
-            // Animação de entrada escalonada
-            choiceCard.style.animation = `fadeInUp 0.6s ease-out ${index * 0.1}s both`;
+    // ===== GIF EM TELA CHEIA ===== //
+    showFullScreenGif(state, duration = 2500) {
+        const fullScreenGif = document.getElementById('fullScreenGif');
+        const gifImage = document.getElementById('fullScreenGifImage');
+        
+        if (this.characterImages[state]) {
+            gifImage.src = this.characterImages[state];
+            fullScreenGif.classList.add('active');
             
-            container.appendChild(choiceCard);
-        });
-    }
-
-    makeChoice(choice, index) {
-        this.totalDecisions++;
-        this.userProgress.decisionsPath.push({
-            nodeId: this.currentStoryNode,
-            choice: choice.id,
-            power: choice.power,
-            timestamp: new Date().toISOString()
-        });
-
-        // Determinar se a escolha foi correta
-        const isCorrect = this.evaluateChoice(choice);
-        if (isCorrect) {
-            this.correctChoices++;
-            this.learningPoints += 10;
-        } else {
-            this.learningPoints += 5;
-        }
-
-        // Mostrar consequência
-        this.showConsequence(choice, isCorrect);
-        this.saveProgress();
-    }
-
-    evaluateChoice(choice) {
-        const correctChoices = {
-            'start': 'legislativo',
-            'executive_hasty': 'legislativo',
-            'executive_conflict': 'legislativo',
-            'legislative_discussion': 'legislativo'
-        };
-
-        return correctChoices[this.currentStoryNode] === choice.power;
-    }
-
-    showConsequence(choice, isCorrect) {
-        const modal = document.getElementById('consequence-modal');
-        if (!modal) {
-            console.warn('Modal de consequência não encontrado');
-            return;
-        }
-
-        const icon = document.getElementById('consequence-icon');
-        const title = document.getElementById('consequence-title');
-        const text = document.getElementById('consequence-text');
-        const educationalContent = document.getElementById('educational-content');
-
-        if (icon && title && text && educationalContent) {
-            // Configurar ícone e título
-            if (isCorrect) {
-                icon.textContent = '✅';
-                title.textContent = 'Excelente Escolha!';
-                icon.style.color = '#2ECC71';
-            } else {
-                icon.textContent = '💭';
-                title.textContent = 'Vamos Aprender!';
-                icon.style.color = '#F39C12';
-            }
-
-            // Texto da consequência
-            text.textContent = this.getConsequenceText(choice, isCorrect);
-
-            // Conteúdo educativo
-            educationalContent.innerHTML = this.getEducationalContent(choice);
-
-            // Mostrar modal
-            modal.classList.add('show');
-        }
-    }
-
-    getConsequenceText(choice, isCorrect) {
-        const messages = {
-            correct: {
-                'executivo': 'Você entendeu que o Poder Executivo deve implementar decisões tomadas democraticamente!',
-                'legislativo': 'Perfeito! O Poder Legislativo é responsável por criar regras através da discussão e participação de todos.',
-                'judiciario': 'Correto! O Poder Judiciário atua quando há conflitos legais ou violação de direitos.'
-            },
-            learning: {
-                'executivo': 'O Executivo é importante, mas decisões unilaterais podem gerar conflitos. É melhor quando há participação democrática.',
-                'legislativo': 'O caminho democrático é sempre melhor, mas às vezes precisamos considerar o contexto específico.',
-                'judiciario': 'O Judiciário tem sua função, mas nem sempre é a primeira opção para resolver conflitos sociais.'
-            }
-        };
-
-        return isCorrect ? 
-            messages.correct[choice.power] : 
-            messages.learning[choice.power];
-    }
-
-    getEducationalContent(choice) {
-        const educationalTexts = {
-            'executivo': `
-                <strong>Sobre o Poder Executivo:</strong>
-                <ul>
-                    <li>Administra e governa o país, estados e municípios</li>
-                    <li>Executa as leis criadas pelo Legislativo</li>
-                    <li>Presta serviços públicos à população</li>
-                    <li>Deve ser democrático e transparente em suas ações</li>
-                </ul>
-            `,
-            'legislativo': `
-                <strong>Sobre o Poder Legislativo:</strong>
-                <ul>
-                    <li>Cria leis através de discussão e votação</li>
-                    <li>Representa a vontade popular</li>
-                    <li>Fiscaliza as ações do Executivo</li>
-                    <li>Promove debates públicos sobre questões importantes</li>
-                </ul>
-            `,
-            'judiciario': `
-                <strong>Sobre o Poder Judiciário:</strong>
-                <ul>
-                    <li>Interpreta e aplica as leis</li>
-                    <li>Resolve conflitos entre pessoas e instituições</li>
-                    <li>Garante que a Constituição seja respeitada</li>
-                    <li>Protege direitos fundamentais dos cidadãos</li>
-                </ul>
-            `
-        };
-
-        return educationalTexts[choice.power] || 'Conteúdo educativo não disponível.';
-    }
-
-    continueStory() {
-        const modal = document.getElementById('consequence-modal');
-        if (modal) modal.classList.remove('show');
-
-        // Ir para o próximo nó
-        if (this.userProgress.decisionsPath.length > 0) {
-            const lastChoice = this.userProgress.decisionsPath[this.userProgress.decisionsPath.length - 1];
-            const choice = this.findChoiceById(lastChoice.choice);
-            
-            if (choice && choice.nextNode) {
-                if (choice.nextNode.startsWith('ending_')) {
-                    this.showScreen('end-screen');
-                } else {
-                    this.displayStoryNode(choice.nextNode);
-                }
-            }
-        }
-    }
-
-    findChoiceById(choiceId) {
-        for (let nodeId in this.storyNodes) {
-            const node = this.storyNodes[nodeId];
-            if (node.choices) {
-                const found = node.choices.find(c => c.id === choiceId);
-                if (found) return found;
-            }
-        }
-        return null;
-    }
-
-    // ===== UTILITÁRIOS =====
-    capitalizeFirst(str) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
-    createParticles() {
-        const container = document.getElementById('particles');
-        if (!container) return;
-
-        for (let i = 0; i < 20; i++) {
+            // Remover após a duração especificada
             setTimeout(() => {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + 'vw';
-                particle.style.width = particle.style.height = Math.random() * 4 + 2 + 'px';
-                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
-                container.appendChild(particle);
-
-                setTimeout(() => {
-                    if (particle.parentNode) {
-                        particle.parentNode.removeChild(particle);
-                    }
-                }, 20000);
-            }, i * 200);
+                fullScreenGif.classList.remove('active');
+            }, duration);
         }
     }
 
-    closeAllModals() {
-        document.querySelectorAll('.modal, .consequence-modal').forEach(modal => {
-            modal.classList.remove('show');
-            modal.style.display = 'none';
+    // ===== EVENT LISTENERS ===== //
+    setupEventListeners() {
+        // Botões da tela inicial
+        document.getElementById('learnFirstBtn').addEventListener('click', () => {
+            this.showIntroduction();
+        });
+
+        document.getElementById('startGameBtn').addEventListener('click', () => {
+            this.startGame();
+        });
+
+        // Botões da tela de introdução
+        document.getElementById('startGameFromIntroBtn').addEventListener('click', () => {
+            this.startGame();
+        });
+
+        document.getElementById('backToStartBtn').addEventListener('click', () => {
+            this.showScreen('startScreen');
+            this.updateCharacter('idle', 'Vamos decidir como começar nossa aventura de aprendizado!');
+        });
+
+        // Botões de opção
+        document.querySelectorAll('.option-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                this.selectOption(e.currentTarget);
+            });
+        });
+
+        // Botão de ajuda
+        document.getElementById('helpBtn').addEventListener('click', () => {
+            this.showHelpModal();
+        });
+
+        // Botão próxima questão
+        document.getElementById('nextQuestionBtn').addEventListener('click', () => {
+            this.nextSituation();
+        });
+
+        // Botão discussão
+        document.getElementById('discussBtn').addEventListener('click', () => {
+            this.pauseForDiscussion();
+        });
+
+        // Botão recomeçar
+        document.getElementById('restartGameBtn').addEventListener('click', () => {
+            this.restartGame();
+        });
+
+        // Botão resumo
+        document.getElementById('summaryBtn').addEventListener('click', () => {
+            this.showSummaryModal();
+        });
+
+        // Fechar modais
+        document.getElementById('closeHelpBtn').addEventListener('click', () => {
+            this.closeModal('helpModal');
+        });
+
+        document.getElementById('closeSummaryBtn').addEventListener('click', () => {
+            this.closeModal('summaryModal');
+        });
+
+        // Fechar modal clicando fora
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    this.closeModal(modal.id);
+                }
+            });
+        });
+
+        // Personagem clicável
+        document.getElementById('characterImage').addEventListener('click', () => {
+            this.showCharacterSpeech();
+        });
+
+        // Teclas de atalho
+        document.addEventListener('keydown', (e) => {
+            this.handleKeyboardShortcuts(e);
         });
     }
 
-    handleResize() {
-        // Implementar ajustes responsivos se necessário
-    }
-
-    animatePowerCards() {
-        const cards = document.querySelectorAll('.power-detailed-card');
-        cards.forEach((card, index) => {
-            card.style.animation = `fadeInUp 0.6s ease-out ${index * 0.2}s both`;
-        });
-    }
-
-    showFinalResults() {
-        console.log('Mostrando resultados finais...');
-        // Implementar lógica de resultados finais
-    }
-
-    saveProgress() {
-        try {
-            const progressData = {
-                userProgress: this.userProgress,
-                currentStoryNode: this.currentStoryNode,
-                totalDecisions: this.totalDecisions,
-                correctChoices: this.correctChoices,
-                learningPoints: this.learningPoints
-            };
-            localStorage.setItem('three-powers-progress', JSON.stringify(progressData));
-        } catch (error) {
-            console.warn('Erro ao salvar progresso:', error);
+    // ===== ATALHOS DE TECLADO ===== //
+    handleKeyboardShortcuts(e) {
+        // ESC fecha modais
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal.active').forEach(modal => {
+                modal.classList.remove('active');
+                document.body.classList.remove('no-scroll');
+            });
         }
-    }
+        
+        // Enter em botões focados
+        if (e.key === 'Enter' && document.activeElement.classList.contains('btn')) {
+            document.activeElement.click();
+        }
 
-    loadProgress() {
-        try {
-            const saved = localStorage.getItem('three-powers-progress');
-            if (saved) {
-                const data = JSON.parse(saved);
-                this.userProgress = { ...this.userProgress, ...data.userProgress };
-                this.currentStoryNode = data.currentStoryNode || 'start';
-                this.totalDecisions = data.totalDecisions || 0;
-                this.correctChoices = data.correctChoices || 0;
-                this.learningPoints = data.learningPoints || 0;
+        // Números 1-3 para selecionar opções (apenas na tela de questões)
+        if (document.getElementById('questionScreen').classList.contains('active')) {
+            if (e.key === '1' && !this.isAnswered) {
+                this.selectOption(document.getElementById('option1'));
+            } else if (e.key === '2' && !this.isAnswered) {
+                this.selectOption(document.getElementById('option2'));
+            } else if (e.key === '3' && !this.isAnswered) {
+                this.selectOption(document.getElementById('option3'));
             }
-        } catch (error) {
-            console.warn('Erro ao carregar progresso:', error);
         }
     }
-}
 
-// ===== FUNÇÕES GLOBAIS =====
-let threePowers;
+    // ===== CONTROLE DO JOGO ===== //
+    showIntroduction() {
+        this.showScreen('introScreen');
+        this.updateCharacter('idle', 'Ótima escolha! Vamos conhecer os Três Poderes antes de começar o desafio. Prestem atenção nas explicações!');
+    }
 
-function startChallenge() {
-    if (threePowers) threePowers.showScreen('challenge-intro');
-}
+    startGame() {
+        this.currentSituation = 0;
+        this.updateCharacter('idle', 'Vamos começar! Leiam cada situação com atenção e discutam antes de escolher.');
+        this.loadSituation();
+        this.showScreen('questionScreen');
+        this.updateProgress();
+    }
 
-function startStory() {
-    if (threePowers) {
-        threePowers.userProgress.startTime = new Date().toISOString();
-        threePowers.currentStoryNode = 'start';
-        threePowers.showScreen('story-screen');
+    loadSituation() {
+        const situation = gameData.situations[this.currentSituation];
+        
+        // Atualizar conteúdo da situação
+        document.getElementById('currentQuestion').textContent = `Situação ${situation.id}`;
+        document.getElementById('situationTitle').textContent = situation.title;
+        document.getElementById('situationText').textContent = situation.description;
+        document.getElementById('questionPrompt').textContent = situation.question;
+        
+        // Atualizar opções
+        document.getElementById('optionText1').textContent = situation.options.executivo;
+        document.getElementById('optionText2').textContent = situation.options.legislativo;
+        document.getElementById('optionText3').textContent = situation.options.judiciario;
+        
+        // Reset das opções
+        document.querySelectorAll('.option-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        
+        this.selectedAnswer = null;
+        this.isAnswered = false;
+
+        // Scroll para o topo
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    selectOption(optionCard) {
+        if (this.isAnswered) return;
+        
+        // Remove seleção anterior
+        document.querySelectorAll('.option-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        
+        // Seleciona nova opção
+        optionCard.classList.add('selected');
+        this.selectedAnswer = optionCard.dataset.power;
+        
+        // Feedback visual imediato
+        this.animateSelection(optionCard);
+        
+        // Processa a resposta após um breve delay
+        setTimeout(() => {
+            this.processAnswer();
+        }, 1000);
+    }
+
+    animateSelection(optionCard) {
+        optionCard.style.transform = 'scale(1.02)';
+        setTimeout(() => {
+            optionCard.style.transform = '';
+        }, 200);
+    }
+
+    processAnswer() {
+        if (!this.selectedAnswer) return;
+        
+        const situation = gameData.situations[this.currentSituation];
+        const isCorrect = this.selectedAnswer === situation.correct;
+        
+        this.isAnswered = true;
+        
+        // Mostrar GIF em tela cheia primeiro
+        if (isCorrect) {
+            this.showFullScreenGif('correct', 2500);
+            setTimeout(() => {
+                this.showFeedback(isCorrect, situation);
+            }, 2500);
+        } else {
+            this.showFullScreenGif('incorrect', 2500);
+            setTimeout(() => {
+                this.showFeedback(isCorrect, situation);
+            }, 2500);
+        }
+
+        // Log do resultado
+        this.logGameEvent('Answer Submitted', {
+            situation: situation.id,
+            selected: this.selectedAnswer,
+            correct: situation.correct,
+            isCorrect: isCorrect
+        });
+    }
+
+    showFeedback(isCorrect, situation) {
+        // Atualizar ícone e título do resultado
+        const resultIcon = document.getElementById('resultIcon');
+        const resultTitle = document.getElementById('resultTitle');
+        
+        if (isCorrect) {
+            resultIcon.className = 'result-icon correct';
+            resultIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+            resultTitle.textContent = 'Muito Bem!';
+            resultTitle.className = 'result-title correct';
+            this.updateCharacter('correct', 'Parabéns! Vocês escolheram o poder correto. Que tal discutir por que essa foi a melhor escolha?');
+        } else {
+            resultIcon.className = 'result-icon incorrect';
+            resultIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
+            resultTitle.textContent = 'Vamos Aprender!';
+            resultTitle.className = 'result-title incorrect';
+            this.updateCharacter('incorrect', 'Não se preocupem! Errar faz parte do aprendizado. Vamos ver por que a outra opção era melhor.');
+        }
+        
+        // Atualizar explicação
+        document.getElementById('feedbackExplanation').textContent = situation.explanation;
+        
+        // Atualizar consequência
+        const consequenceText = document.getElementById('consequenceText');
+        if (isCorrect) {
+            consequenceText.textContent = situation.consequence.correct;
+            consequenceText.className = 'consequence-text correct';
+        } else {
+            consequenceText.textContent = situation.consequence.incorrect;
+            consequenceText.className = 'consequence-text incorrect';
+        }
+        
+        // Atualizar botão próxima questão
+        const nextBtn = document.getElementById('nextQuestionBtn');
+        if (this.currentSituation < gameData.situations.length - 1) {
+            nextBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Próxima Situação';
+        } else {
+            nextBtn.innerHTML = '<i class="fas fa-flag-checkered"></i> Ver Resultado Final';
+        }
+        
+        this.showScreen('feedbackScreen');
+        
+        // Scroll para o topo
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    nextSituation() {
+        if (this.currentSituation < gameData.situations.length - 1) {
+            this.currentSituation++;
+            this.loadSituation();
+            this.updateProgress();
+            this.showScreen('questionScreen');
+            
+            // Mensagem do personagem baseada no progresso
+            const progress = this.currentSituation + 1;
+            if (progress === 5) {
+                this.updateCharacter('marcelo', `Olá! Sou o Marcelo. Vocês estão indo muito bem! Já passaram de ${progress} situações.`);
+            } else if (progress === 9) {
+                this.updateCharacter('idle', `Uau! Vocês estão quase terminando. Faltam apenas ${gameData.situations.length - progress} situações!`);
+            } else if (progress === gameData.situations.length) {
+                this.updateCharacter('correct', 'Esta é a última situação! Vocês chegaram longe, parabéns!');
+            } else {
+                this.updateCharacter('idle', `Ótimo! Vamos para a situação ${progress}. Continuem discutindo antes de escolher!`);
+            }
+        } else {
+            this.showFinalScreen();
+        }
+    }
+
+    pauseForDiscussion() {
+        this.updateCharacter('idle', 'Aproveitem este momento para discutir sobre a situação. O que vocês aprenderam? Como isso se relaciona com a vida real?');
+        
+        // Adicionar um pequeno delay antes de permitir continuar
+        const nextBtn = document.getElementById('nextQuestionBtn');
+        nextBtn.disabled = true;
+        nextBtn.textContent = '⏱️ Momento de discussão...';
+        
+        setTimeout(() => {
+            nextBtn.disabled = false;
+            if (this.currentSituation < gameData.situations.length - 1) {
+                nextBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Próxima Situação';
+            } else {
+                nextBtn.innerHTML = '<i class="fas fa-flag-checkered"></i> Ver Resultado Final';
+            }
+        }, 3000);
+    }
+
+    updateProgress() {
+        const progress = ((this.currentSituation + 1) / gameData.situations.length) * 100;
+        document.getElementById('progressFill').style.width = `${progress}%`;
+        document.getElementById('progressText').textContent = `${this.currentSituation + 1}/${gameData.situations.length}`;
+    }
+
+    // ===== TELA FINAL ===== //
+    showFinalScreen() {
+        this.showFullScreenGif('correct', 3000);
+        
+        setTimeout(() => {
+            this.updateCharacter('correct', 'Parabéns! Vocês completaram todas as situações e aprenderam muito sobre os Três Poderes!');
+            this.showScreen('finalScreen');
+            
+            // Scroll para o topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Log de conclusão
+            this.logGameEvent('Game Completed', {
+                totalSituations: gameData.situations.length,
+                completed: true
+            });
+        }, 3000);
+    }
+
+    restartGame() {
+        this.currentSituation = 0;
+        this.selectedAnswer = null;
+        this.isAnswered = false;
+        this.updateProgress();
+        this.showScreen('startScreen');
+        this.updateCharacter('idle', 'Prontos para mais um desafio? Vamos aprender ainda mais sobre os Três Poderes!');
+        
+        // Scroll para o topo
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // Log de reinício
+        this.logGameEvent('Game Restarted', {
+            previousProgress: this.currentSituation
+        });
+    }
+
+    // ===== MODAIS ===== //
+    showHelpModal() {
+        document.getElementById('helpModal').classList.add('active');
+        document.body.classList.add('no-scroll');
+    }
+
+    showSummaryModal() {
+        document.getElementById('summaryModal').classList.add('active');
+        document.body.classList.add('no-scroll');
+    }
+
+    closeModal(modalId) {
+        document.getElementById(modalId).classList.remove('active');
+        document.body.classList.remove('no-scroll');
+    }
+
+    // ===== ANALYTICS E DEBUG ===== //
+    logGameEvent(event, data) {
+        if (window.console) {
+            console.log(`[Três Poderes] ${event}:`, data);
+        }
+        
+        // Aqui você pode integrar com analytics reais se necessário
+        // Google Analytics, Firebase, etc.
     }
 }
 
-function continueStory() {
-    if (threePowers) threePowers.continueStory();
+// ===== FUNÇÕES UTILITÁRIAS ===== //
+
+// Detectar dispositivo móvel
+function isMobile() {
+    return window.innerWidth <= 768;
 }
 
-function showPowersSummary() {
-    if (threePowers) threePowers.showScreen('powers-summary');
+// Smooth scroll para elementos
+function smoothScrollTo(element) {
+    element.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+    });
 }
 
-function backToIntroduction() {
-    if (threePowers) threePowers.showScreen('introduction-screen');
+// Adicionar classe de animação
+function animateElement(element, animationClass, duration = 1000) {
+    element.classList.add(animationClass);
+    setTimeout(() => {
+        element.classList.remove(animationClass);
+    }, duration);
 }
 
-function restartExperience() {
-    if (threePowers && confirm('Tem certeza que deseja recomeçar?')) {
-        threePowers.currentStoryNode = 'start';
-        threePowers.totalDecisions = 0;
-        threePowers.correctChoices = 0;
-        threePowers.learningPoints = 0;
-        threePowers.userProgress.decisionsPath = [];
-        threePowers.showScreen('introduction-screen');
+// Detectar se o usuário está usando teclado para navegação
+function setupAccessibility() {
+    document.querySelectorAll('.btn, .option-card').forEach(element => {
+        element.setAttribute('tabindex', '0');
+        
+        // Adicionar indicadores visuais para navegação por teclado
+        element.addEventListener('focus', (e) => {
+            e.target.classList.add('keyboard-focus');
+        });
+        
+        element.addEventListener('blur', (e) => {
+            e.target.classList.remove('keyboard-focus');
+        });
+    });
+}
+
+// ===== EVENTOS GLOBAIS ===== //
+
+// Prevenir zoom no iOS
+document.addEventListener('touchstart', function(event) {
+    if (event.touches.length > 1) {
+        event.preventDefault();
     }
-}
-
-// ===== INICIALIZAÇÃO =====
-document.addEventListener('DOMContentLoaded', () => {
-    threePowers = new ThreePowersEducationSystem();
-    window.threePowers = threePowers; // Para debug
 });
+
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function(event) {
+    const now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+    }
+    lastTouchEnd = now;
+}, false);
+
+// ===== SERVICE WORKER (OPCIONAL) ===== //
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(registration) {
+                console.log('[Três Poderes] ServiceWorker registered:', registration.scope);
+            })
+            .catch(function(error) {
+                console.log('[Três Poderes] ServiceWorker registration failed:', error);
+            });
+    });
+}
+
+// ===== INICIALIZAÇÃO ===== //
+
+// Aguardar DOM carregar
+document.addEventListener('DOMContentLoaded', function() {
+    // Setup de acessibilidade
+    setupAccessibility();
+    
+    // Inicializar o jogo
+    window.game = new TresPoderesGame();
+    
+    // Log de inicialização
+    console.log('[Três Poderes] Game initialized successfully!', {
+        situations: gameData.situations.length,
+        device: isMobile() ? 'mobile' : 'desktop',
+        timestamp: new Date().toISOString()
+    });
+    
+    // Mostrar informações da versão no console
+    console.log(`
+    🏛️ DESAFIO DOS TRÊS PODERES 🏛️
+    ================================
+    📚 Situações: ${gameData.situations.length}
+    🎮 Versão: 2.0.0
+    📱 Dispositivo: ${isMobile() ? 'Mobile' : 'Desktop'}
+    ⚡ Status: Carregado com sucesso!
+    ================================
+    `);
+});
+
+// ===== TRATAMENTO DE ERROS ===== //
+window.addEventListener('error', function(event) {
+    console.error('[Três Poderes] Erro capturado:', {
+        message: event.message,
+        filename: event.filename,
+        line: event.lineno,
+        column: event.colno,
+        error: event.error
+    });
+});
+
+// ===== EXPORTS (se usar módulos) ===== //
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { TresPoderesGame, gameData };
+}

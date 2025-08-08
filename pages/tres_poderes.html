@@ -3,434 +3,519 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desafio dos Três Poderes - Sistema Educativo</title>
+    <title>Desafio dos Três Poderes - Ferramenta Educacional</title>
     <link rel="stylesheet" href="../src/css/tres_poderes.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Tela de Carregamento -->
-        <div id="loading-screen" class="screen active">
-            <div class="loader">
-                <div class="loader-circle"></div>
-                <p>Carregando o Sistema Educativo...</p>
-            </div>
-        </div>
-
-        <!-- Tela de Apresentação dos Três Poderes -->
-        <div id="introduction-screen" class="screen">
-            <div class="intro-section">
-                <div class="floating-icons">
-                    <span class="icon">🏛️</span>
-                    <span class="icon">⚖️</span>
-                    <span class="icon">📜</span>
-                </div>
-                
-                <h1 class="main-title">Os Três Poderes do Brasil</h1>
-                
-                <div class="intro-text">
-                    <p class="highlight-text">O Brasil é um país <strong>republicano</strong> e <strong>democrático</strong>. Isso quer dizer que as decisões importantes são tomadas com a participação do povo e com respeito às leis.</p>
-                    
-                    <p>Para que isso aconteça de forma organizada, o governo é dividido em três partes, chamadas de <strong>Três Poderes</strong>. Cada um tem uma função diferente, e todos precisam trabalhar juntos com equilíbrio e responsabilidade.</p>
-                </div>
-
-                <div class="powers-preview">
-                    <div class="power-preview executivo">
-                        <div class="power-icon">🏢</div>
-                        <h3>Poder Executivo</h3>
-                        <p>Administra, governa e coloca as leis em prática</p>
-                        <div class="members-preview">Presidente • Governadores • Prefeitos</div>
-                    </div>
-                    
-                    <div class="power-preview legislativo">
-                        <div class="power-icon">📜</div>
-                        <h3>Poder Legislativo</h3>
-                        <p>Cria leis e fiscaliza o trabalho do Executivo</p>
-                        <div class="members-preview">Deputados • Senadores • Vereadores</div>
-                    </div>
-                    
-                    <div class="power-preview judiciario">
-                        <div class="power-icon">⚖️</div>
-                        <h3>Poder Judiciário</h3>
-                        <p>Interpreta e aplica as leis com justiça</p>
-                        <div class="members-preview">Juízes • Desembargadores • Ministros</div>
-                    </div>
-                </div>
-
-                <div class="importance-section">
-                    <h3>🎯 Por que esses três poderes são importantes?</h3>
-                    <div class="importance-points">
-                        <div class="point">
-                            <span class="point-icon">⚖️</span>
-                            <p>Cada poder tem um papel específico, mas todos precisam trabalhar de forma equilibrada e independente.</p>
-                        </div>
-                        <div class="point">
-                            <span class="point-icon">🛡️</span>
-                            <p>Isso evita que uma única pessoa ou grupo tenha poder demais e garante que o país funcione com mais justiça e organização.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <button class="btn-primary" onclick="startChallenge()">
-                    <span>Vamos ao Desafio!</span>
-                    <span class="btn-icon">🚀</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Tela de Apresentação do Desafio -->
-        <div id="challenge-intro" class="screen">
-            <div class="challenge-section">
-                <div class="badge">🏛️ Conselho Cidadão Jovem</div>
-                
-                <h2 class="challenge-title">Bem-vindos ao Desafio!</h2>
-                
-                <div class="challenge-intro-card">
-                    <p>Vocês foram convidados para participar do <strong>Conselho Cidadão Jovem</strong>, um grupo especial de estudantes que ajuda a resolver problemas reais da nossa cidade! 👥</p>
-                    
-                    <div class="scenario-setup">
-                        <h4>📱 Situação Real: O Caso dos Celulares na Escola</h4>
-                        <p>Hoje vamos enfrentar uma situação que acontece em muitas escolas: <strong>como regular o uso de celulares em sala de aula?</strong></p>
-                        <p>Vocês tomarão decisões importantes e verão as consequências de cada escolha. Cada decisão pode levar a caminhos diferentes!</p>
-                    </div>
-                    
-                    <div class="challenge-rules">
-                        <h4>🎮 Como Funciona:</h4>
-                        <ul>
-                            <li>Vocês lerão situações reais</li>
-                            <li>Escolherão qual dos Três Poderes deve agir</li>
-                            <li>Verão as consequências de suas escolhas</li>
-                            <li>Seguirão diferentes caminhos baseados nas decisões</li>
-                            <li>Aprenderão na prática como funciona a democracia!</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <button class="btn-primary" onclick="startStory()">
-                    <span>Começar a História</span>
-                    <span class="btn-icon">📖</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Tela Principal do Jogo Narrativo -->
-        <div id="story-screen" class="screen">
-            <div class="story-header">
-                <div class="progress-indicator">
-                    <div class="chapter-info">
-                        <span class="chapter-number" id="chapter-number">Capítulo 1</span>
-                        <span class="chapter-title" id="chapter-title">O Problema Surge</span>
-                    </div>
-                    <div class="story-progress">
-                        <div class="progress-bar-story">
-                            <div class="progress-fill-story" id="progress-fill-story"></div>
-                        </div>
-                        <span class="progress-text-story" id="progress-text-story">Início da História</span>
-                    </div>
-                </div>
-                
-                <div class="decision-tracker">
-                    <span class="decisions-made" id="decisions-made">0</span>
-                    <span class="decisions-label">decisões tomadas</span>
-                </div>
-            </div>
-
-            <div class="story-content">
-                <div class="story-image" id="story-image">
-                    <div class="scene-emoji" id="scene-emoji">🏫</div>
-                </div>
-                
-                <div class="story-text-card">
-                    <div class="story-narrator" id="story-narrator"></div>
-                    <div class="story-text" id="story-text"></div>
-                </div>
-
-                <div class="character-dialogue" id="character-dialogue" style="display: none;">
-                    <div class="character-avatar" id="character-avatar"></div>
-                    <div class="dialogue-content">
-                        <div class="character-name" id="character-name"></div>
-                        <div class="dialogue-text" id="dialogue-text"></div>
-                    </div>
-                </div>
-
-                <div class="story-choices" id="story-choices">
-                    <!-- As escolhas serão inseridas dinamicamente -->
-                </div>
-
-                <div class="story-info" id="story-info" style="display: none;">
-                    <div class="info-icon">💡</div>
-                    <div class="info-text" id="info-text"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal de Consequências -->
-        <div id="consequence-modal" class="consequence-modal">
-            <div class="consequence-content">
-                <div class="consequence-header">
-                    <span class="consequence-icon" id="consequence-icon"></span>
-                    <h3 id="consequence-title"></h3>
-                </div>
-                
-                <div class="consequence-body">
-                    <div class="consequence-text" id="consequence-text"></div>
-                    
-                    <div class="educational-box" id="educational-box">
-                        <h4>📚 Aprendendo:</h4>
-                        <div class="educational-content" id="educational-content"></div>
-                    </div>
-
-                    <div class="impact-meter" id="impact-meter" style="display: none;">
-                        <h4>📊 Impacto da Decisão:</h4>
-                        <div class="impact-bars">
-                            <div class="impact-bar">
-                                <span class="impact-label">Participação Popular:</span>
-                                <div class="impact-bar-fill" id="participation-bar"></div>
-                            </div>
-                            <div class="impact-bar">
-                                <span class="impact-label">Efetividade:</span>
-                                <div class="impact-bar-fill" id="effectiveness-bar"></div>
-                            </div>
-                            <div class="impact-bar">
-                                <span class="impact-label">Velocidade:</span>
-                                <div class="impact-bar-fill" id="speed-bar"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="consequence-actions">
-                    <button class="btn-continue" onclick="continueStory()">
-                        <span>Continuar História</span>
-                        <span class="btn-icon">➡️</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tela de Resumo dos Poderes (melhorada) -->
-        <div id="powers-summary" class="screen">
-            <div class="summary-header">
-                <h2>📚 Guia Completo dos Três Poderes</h2>
-                <p>Entenda como cada poder funciona e suas responsabilidades</p>
-            </div>
-            
-            <div class="powers-detailed-grid">
-                <div class="power-detailed-card executivo-card">
-                    <div class="power-header">
-                        <div class="power-icon-large">🏢</div>
-                        <h3>Poder Executivo</h3>
-                        <div class="power-motto">"Quem governa e executa"</div>
-                    </div>
-                    
-                    <div class="power-content">
-                        <div class="power-function">
-                            <h4>🎯 Função Principal:</h4>
-                            <p>Administrar, governar e colocar as leis em prática</p>
-                        </div>
-                        
-                        <div class="power-responsibilities">
-                            <h4>📋 Responsabilidades:</h4>
-                            <ul>
-                                <li>Executar as leis aprovadas</li>
-                                <li>Realizar obras públicas</li>
-                                <li>Prestar serviços à população</li>
-                                <li>Administrar recursos públicos</li>
-                                <li>Cuidar da segurança e saúde</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="power-members-detailed">
-                            <h4>👥 Quem faz parte:</h4>
-                            <div class="members-list">
-                                <div class="member-item">
-                                    <strong>Presidente da República</strong>
-                                    <span>Governa o país inteiro</span>
-                                </div>
-                                <div class="member-item">
-                                    <strong>Governadores</strong>
-                                    <span>Cuidam dos estados</span>
-                                </div>
-                                <div class="member-item">
-                                    <strong>Prefeitos</strong>
-                                    <span>Administram os municípios</span>
-                                </div>
-                                <div class="member-item">
-                                    <strong>Ministros</strong>
-                                    <span>Auxiliam em áreas específicas</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="power-detailed-card legislativo-card">
-                    <div class="power-header">
-                        <div class="power-icon-large">📜</div>
-                        <h3>Poder Legislativo</h3>
-                        <div class="power-motto">"Quem cria e fiscaliza"</div>
-                    </div>
-                    
-                    <div class="power-content">
-                        <div class="power-function">
-                            <h4>🎯 Função Principal:</h4>
-                            <p>Criar leis e fiscalizar o trabalho do Poder Executivo</p>
-                        </div>
-                        
-                        <div class="power-responsibilities">
-                            <h4>📋 Responsabilidades:</h4>
-                            <ul>
-                                <li>Elaborar, discutir e votar leis</li>
-                                <li>Fiscalizar o Poder Executivo</li>
-                                <li>Aprovar orçamentos públicos</li>
-                                <li>Representar a vontade do povo</li>
-                                <li>Debater questões importantes</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="power-members-detailed">
-                            <h4>👥 Quem faz parte:</h4>
-                            <div class="members-list">
-                                <div class="member-item">
-                                    <strong>Deputados Federais</strong>
-                                    <span>Criam leis para o país - Câmara dos Deputados</span>
-                                </div>
-                                <div class="member-item">
-                                    <strong>Senadores</strong>
-                                    <span>Representam os estados - Senado Federal</span>
-                                </div>
-                                <div class="member-item">
-                                    <strong>Deputados Estaduais</strong>
-                                    <span>Criam leis para os estados</span>
-                                </div>
-                                <div class="member-item">
-                                    <strong>Vereadores</strong>
-                                    <span>Criam leis para os municípios</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="power-detailed-card judiciario-card">
-                    <div class="power-header">
-                        <div class="power-icon-large">⚖️</div>
-                        <h3>Poder Judiciário</h3>
-                        <div class="power-motto">"Quem julga e protege"</div>
-                    </div>
-                    
-                    <div class="power-content">
-                        <div class="power-function">
-                            <h4>🎯 Função Principal:</h4>
-                            <p>Interpretar e aplicar as leis, garantindo que sejam cumpridas com justiça</p>
-                        </div>
-                        
-                        <div class="power-responsibilities">
-                            <h4>📋 Responsabilidades:</h4>
-                            <ul>
-                                <li>Julgar conflitos e crimes</li>
-                                <li>Interpretar as leis</li>
-                                <li>Proteger direitos dos cidadãos</li>
-                                <li>Garantir que a Constituição seja respeitada</li>
-                                <li>Resolver disputas entre pessoas e Estado</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="power-members-detailed">
-                            <h4>👥 Quem faz parte:</h4>
-                            <div class="members-list">
-                                <div class="member-item">
-                                    <strong>Juízes</strong>
-                                    <span>Analisam casos e tomam decisões</span>
-                                </div>
-                                <div class="member-item">
-                                    <strong>Desembargadores</strong>
-                                    <span>Revisam decisões em tribunais</span>
-                                </div>
-                                <div class="member-item">
-                                    <strong>Ministros (do Judiciário)</strong>
-                                    <span>Julgam casos nos tribunais superiores</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="summary-actions">
-                <button class="btn-secondary" onclick="backToIntroduction()">
-                    <span>📖</span> Voltar à Introdução
-                </button>
-                <button class="btn-primary" onclick="startChallenge()">
-                    <span>🎮</span> Ir para o Desafio
-                </button>
-            </div>
-        </div>
-
-        <!-- Tela Final -->
-        <div id="end-screen" class="screen">
-            <div class="end-content">
-                <div class="trophy-animation">
-                    <span class="trophy">🎓</span>
-                </div>
-                <h2>Parabéns, Jovem Conselheiro!</h2>
-                <p class="end-message">Você completou com sucesso o desafio dos Três Poderes!</p>
-                
-                <div class="final-summary">
-                    <h3>📊 Resumo da sua Jornada</h3>
-                    <div class="journey-stats">
-                        <div class="stat-item">
-                            <div class="stat-number" id="total-decisions">0</div>
-                            <div class="stat-label">Decisões Tomadas</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number" id="correct-choices">0</div>
-                            <div class="stat-label">Escolhas Acertadas</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number" id="learning-points">0</div>
-                            <div class="stat-label">Pontos de Aprendizado</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="key-learnings">
-                    <h3>🎯 Principais Aprendizados</h3>
-                    <div class="learning-cards" id="learning-cards">
-                        <!-- Será preenchido dinamicamente -->
-                    </div>
-                </div>
-
-                <div class="citizenship-message">
-                    <h3>🏛️ Agora você sabe:</h3>
-                    <p>Como cidadão, você pode participar da democracia conhecendo o papel de cada poder e exercendo seus direitos e deveres. Continue estudando e participando da vida política do seu país!</p>
-                </div>
-
-                <div class="end-buttons">
-                    <button class="btn-secondary" onclick="showPowersSummary()">
-                        <span>📚</span> Revisar os Poderes
-                    </button>
-                    <button class="btn-primary" onclick="restartExperience()">
-                        <span>🔄</span> Explorar Outras Escolhas
-                    </button>
-                </div>
-            </div>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h2>Carregando o Desafio...</h2>
         </div>
     </div>
 
-    <!-- Efeitos Visuais -->
-    <div class="particles" id="particles"></div>
-    
-    <!-- Sounds (opcional) -->
-    <audio id="decision-sound" preload="auto">
-        <source src="sounds/decision.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="success-sound" preload="auto">
-        <source src="sounds/success.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="complete-sound" preload="auto">
-        <source src="sounds/complete.mp3" type="audio/mpeg">
-    </audio>
+    <!-- Full Screen GIF Display -->
+    <div id="fullScreenGif" class="fullscreen-gif">
+        <img id="fullScreenGifImage" src="" alt="Personagem Reação">
+    </div>
 
+    <!-- Main Container -->
+    <div id="mainContainer" class="main-container">
+        
+        <!-- Header -->
+        <header class="game-header">
+            <div class="header-content">
+                <h1><i class="fas fa-balance-scale"></i> Desafio dos Três Poderes</h1>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill"></div>
+                    </div>
+                    <span id="progressText">0/12</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Character Guide -->
+        <div id="characterGuide" class="character-guide">
+            <div class="character-container">
+                <img id="characterImage" src="../src/assets/images/Amado_Idle.gif" alt="Personagem Guia" class="character-img">
+                <div class="character-speech">
+                    <div id="characterText" class="character-text">
+                        Olá! Eu sou o Amado, seu guia nesta aventura de aprendizado!
+                    </div>
+                    <div class="speech-arrow"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="game-screen">
+            
+            <!-- Start Screen -->
+            <div id="startScreen" class="screen active">
+                <div class="start-content">
+                    <div class="title-section">
+                        <h2 class="main-title">Desafio dos Três Poderes</h2>
+                        <div class="subtitle-decoration">
+                            <div class="power-icons">
+                                <div class="power-icon executive">
+                                    <i class="fas fa-user-tie"></i>
+                                    <span>Executivo</span>
+                                </div>
+                                <div class="power-icon legislative">
+                                    <i class="fas fa-university"></i>
+                                    <span>Legislativo</span>
+                                </div>
+                                <div class="power-icon judiciary">
+                                    <i class="fas fa-balance-scale"></i>
+                                    <span>Judiciário</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="intro-text">
+                        <p>🏛️ Você e sua turma foram convidados a participar do <strong>Conselho Cidadão Jovem</strong>, um grupo especial de estudantes que ajuda a resolver os problemas da cidade.</p>
+                        
+                        <p>🎯 Seu desafio é analisar situações reais e decidir quem deve agir: o <span class="highlight-executive">Executivo</span>, o <span class="highlight-legislative">Legislativo</span> ou o <span class="highlight-judiciary">Judiciário</span>.</p>
+                        
+                        <p>⚡ Cada escolha trará uma consequência. Vocês estão prontos para tomar decisões importantes?</p>
+                    </div>
+                    
+                    <div class="action-buttons-start">
+                        <button id="learnFirstBtn" class="btn btn-secondary btn-large">
+                            <i class="fas fa-book"></i> Primeiro, vamos aprender sobre os Três Poderes
+                        </button>
+                        <button id="startGameBtn" class="btn btn-primary btn-large pulse">
+                            <i class="fas fa-play"></i> Ir direto para o Desafio
+                        </button>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h3>📚 Como funciona:</h3>
+                        <ul>
+                            <li>Leiam cada situação com atenção</li>
+                            <li>Discutam em grupo qual poder deve agir</li>
+                            <li>Façam sua escolha e vejam o resultado</li>
+                            <li>Aprendam com o feedback de cada decisão</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Introduction Screen -->
+            <div id="introScreen" class="screen">
+                <div class="intro-content">
+                    <div class="intro-header">
+                        <h2><i class="fas fa-graduation-cap"></i> Os Três Poderes</h2>
+                        <p class="intro-subtitle">Vamos conhecer como o Brasil se organiza democraticamente</p>
+                    </div>
+                    
+                    <div class="intro-explanation">
+                        <div class="explanation-card">
+                            <h3>🏛️ Por que Três Poderes?</h3>
+                            <p>O Brasil é um país republicano e democrático. Isso quer dizer que as decisões importantes são tomadas com a participação do povo e com respeito às leis.</p>
+                            <p>Para que isso aconteça de forma organizada, o governo é dividido em três partes, chamadas de <strong>Três Poderes</strong>. Cada um tem uma função diferente, e todos precisam trabalhar juntos com equilíbrio e responsabilidade.</p>
+                        </div>
+                        
+                        <div class="powers-grid">
+                            <div class="power-card executive">
+                                <div class="power-card-header">
+                                    <i class="fas fa-user-tie"></i>
+                                    <h3>Poder Executivo</h3>
+                                </div>
+                                <div class="power-card-content">
+                                    <h4>Função:</h4>
+                                    <p>Administrar, governar e <strong>colocar as leis em prática</strong></p>
+                                    
+                                    <h4>Quem faz parte:</h4>
+                                    <ul>
+                                        <li><strong>Presidente da República</strong> - governa o país</li>
+                                        <li><strong>Governadores</strong> - cuidam dos estados</li>
+                                        <li><strong>Prefeitos</strong> - administram os municípios</li>
+                                        <li><strong>Ministros</strong> - auxiliam em áreas específicas</li>
+                                    </ul>
+                                    
+                                    <h4>O que fazem:</h4>
+                                    <p>Organizam serviços públicos e cuidam do que é necessário para a população, como saúde, transporte, educação e segurança.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="power-card legislative">
+                                <div class="power-card-header">
+                                    <i class="fas fa-university"></i>
+                                    <h3>Poder Legislativo</h3>
+                                </div>
+                                <div class="power-card-content">
+                                    <h4>Função:</h4>
+                                    <p><strong>Criar leis</strong> e fiscalizar o trabalho do Poder Executivo</p>
+                                    
+                                    <h4>Quem faz parte:</h4>
+                                    <ul>
+                                        <li><strong>Deputados Federais</strong> - criam leis para o país</li>
+                                        <li><strong>Senadores</strong> - representam os estados</li>
+                                        <li><strong>Deputados Estaduais</strong> - criam leis estaduais</li>
+                                        <li><strong>Vereadores</strong> - criam leis municipais</li>
+                                    </ul>
+                                    
+                                    <h4>O que fazem:</h4>
+                                    <p>São representantes eleitos pelo povo que discutem, votam e aprovam as leis que todos devem seguir.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="power-card judiciary">
+                                <div class="power-card-header">
+                                    <i class="fas fa-balance-scale"></i>
+                                    <h3>Poder Judiciário</h3>
+                                </div>
+                                <div class="power-card-content">
+                                    <h4>Função:</h4>
+                                    <p><strong>Interpretar e aplicar as leis</strong>, garantindo que sejam cumpridas com justiça</p>
+                                    
+                                    <h4>Quem faz parte:</h4>
+                                    <ul>
+                                        <li><strong>Juízes</strong> - analisam casos e tomam decisões</li>
+                                        <li><strong>Desembargadores</strong> - revisam decisões dos juízes</li>
+                                        <li><strong>Ministros do Judiciário</strong> - julgam casos importantes</li>
+                                    </ul>
+                                    
+                                    <h4>O que fazem:</h4>
+                                    <p>Resolvem conflitos entre pessoas e entre cidadãos e o Estado, sempre respeitando a Constituição e as leis brasileiras.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="importance-section">
+                            <h3><i class="fas fa-balance-scale"></i> Por que esses três poderes são importantes?</h3>
+                            <div class="importance-points">
+                                <div class="importance-point">
+                                    <i class="fas fa-check-circle"></i>
+                                    <p>Cada poder tem um papel específico, mas todos precisam trabalhar de forma equilibrada e independente</p>
+                                </div>
+                                <div class="importance-point">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <p>Isso evita que uma única pessoa ou grupo tenha poder demais</p>
+                                </div>
+                                <div class="importance-point">
+                                    <i class="fas fa-heart"></i>
+                                    <p>Garante que o país funcione com mais justiça e organização</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="intro-actions">
+                        <button id="startGameFromIntroBtn" class="btn btn-primary btn-large pulse">
+                            <i class="fas fa-rocket"></i> Agora vamos praticar com situações reais!
+                        </button>
+                        <button id="backToStartBtn" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Voltar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Screen -->
+            <div id="questionScreen" class="screen">
+                <div class="question-content">
+                    <div class="question-header">
+                        <div class="question-number">
+                            <span id="currentQuestion">Situação 1</span>
+                        </div>
+                        <div class="situation-badge">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Situação Problema</span>
+                        </div>
+                    </div>
+                    
+                    <div class="situation-card">
+                        <h3 id="situationTitle" class="situation-title"></h3>
+                        <div id="situationText" class="situation-description"></div>
+                        <div class="question-prompt">
+                            <strong id="questionPrompt"></strong>
+                        </div>
+                    </div>
+                    
+                    <div class="options-container">
+                        <div id="option1" class="option-card executive enhanced" data-power="executivo">
+                            <div class="option-header">
+                                <div class="option-icon">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <div class="option-badge">
+                                    <span>Executa</span>
+                                </div>
+                            </div>
+                            <div class="option-content">
+                                <h4>Poder Executivo</h4>
+                                <p id="optionText1"></p>
+                            </div>
+                            <div class="option-footer">
+                                <small>Administra e governa</small>
+                            </div>
+                        </div>
+                        
+                        <div id="option2" class="option-card legislative enhanced" data-power="legislativo">
+                            <div class="option-header">
+                                <div class="option-icon">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <div class="option-badge">
+                                    <span>Cria Leis</span>
+                                </div>
+                            </div>
+                            <div class="option-content">
+                                <h4>Poder Legislativo</h4>
+                                <p id="optionText2"></p>
+                            </div>
+                            <div class="option-footer">
+                                <small>Elabora e aprova leis</small>
+                            </div>
+                        </div>
+                        
+                        <div id="option3" class="option-card judiciary enhanced" data-power="judiciario">
+                            <div class="option-header">
+                                <div class="option-icon">
+                                    <i class="fas fa-balance-scale"></i>
+                                </div>
+                                <div class="option-badge">
+                                    <span>Julga</span>
+                                </div>
+                            </div>
+                            <div class="option-content">
+                                <h4>Poder Judiciário</h4>
+                                <p id="optionText3"></p>
+                            </div>
+                            <div class="option-footer">
+                                <small>Interpreta e aplica leis</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button id="helpBtn" class="btn btn-secondary">
+                            <i class="fas fa-question-circle"></i> Preciso de Ajuda
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback Screen -->
+            <div id="feedbackScreen" class="screen">
+                <div class="feedback-content">
+                    <div class="result-header">
+                        <div id="resultIcon" class="result-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h2 id="resultTitle" class="result-title">Muito Bem!</h2>
+                    </div>
+                    
+                    <div class="feedback-card">
+                        <div class="feedback-section">
+                            <h3><i class="fas fa-lightbulb"></i> Por que essa é a resposta?</h3>
+                            <div id="feedbackExplanation" class="explanation-text"></div>
+                        </div>
+                        
+                        <div class="consequence-section">
+                            <h3><i class="fas fa-arrow-right"></i> Consequência da escolha:</h3>
+                            <div id="consequenceText" class="consequence-text"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button id="nextQuestionBtn" class="btn btn-primary">
+                            <i class="fas fa-arrow-right"></i> Próxima Situação
+                        </button>
+                        <button id="discussBtn" class="btn btn-secondary">
+                            <i class="fas fa-comments"></i> Momento de Discussão
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help Modal -->
+            <div id="helpModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-info-circle"></i> Lembrete dos Três Poderes</h3>
+                        <button id="closeHelpBtn" class="close-btn">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="power-help">
+                            <div class="power-item">
+                                <div class="power-icon-help executive">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <div>
+                                    <h4>Poder Executivo</h4>
+                                    <p>Administra, governa e <strong>executa</strong> as leis. Presidente, governadores, prefeitos e ministros.</p>
+                                </div>
+                            </div>
+                            <div class="power-item">
+                                <div class="power-icon-help legislative">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <div>
+                                    <h4>Poder Legislativo</h4>
+                                    <p><strong>Cria leis</strong> e fiscaliza o Executivo. Deputados, senadores e vereadores.</p>
+                                </div>
+                            </div>
+                            <div class="power-item">
+                                <div class="power-icon-help judiciary">
+                                    <i class="fas fa-balance-scale"></i>
+                                </div>
+                                <div>
+                                    <h4>Poder Judiciário</h4>
+                                    <p><strong>Interpreta e aplica</strong> as leis, resolve conflitos. Juízes, desembargadores e ministros.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Screen -->
+            <div id="finalScreen" class="screen">
+                <div class="final-content">
+                    <div class="celebration">
+                        <div class="trophy-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h2>🎉 Parabéns! 🎉</h2>
+                        <p>Você completou o <strong>Desafio dos Três Poderes</strong> e aprendeu como cada um age em diferentes situações!</p>
+                    </div>
+                    
+                    <div class="completion-message">
+                        <div class="message-card">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>Desafio Concluído!</h3>
+                            <p>Agora você conhece melhor as funções dos Três Poderes e como eles trabalham para organizar nosso país de forma justa e democrática.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="final-actions">
+                        <button id="restartGameBtn" class="btn btn-primary">
+                            <i class="fas fa-redo"></i> Recomeçar o Jogo
+                        </button>
+                        <button id="summaryBtn" class="btn btn-secondary">
+                            <i class="fas fa-book"></i> Ver Resumo dos Poderes
+                        </button>
+                    </div>
+                    
+                    <div class="educational-note">
+                        <h3>💡 Para o Professor:</h3>
+                        <p>Agora é um ótimo momento para:</p>
+                        <ul>
+                            <li>Discutir as situações que geraram mais dúvidas</li>
+                            <li>Relacionar os exemplos com situações locais</li>
+                            <li>Aprofundar conceitos específicos</li>
+                            <li>Propor novas situações para análise</li>
+                            <li>Conectar o conteúdo com a realidade dos alunos</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Modal -->
+            <div id="summaryModal" class="modal">
+                <div class="modal-content large">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-book"></i> Resumo dos Três Poderes</h3>
+                        <button id="closeSummaryBtn" class="close-btn">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="summary-grid">
+                            <div class="summary-card executive">
+                                <div class="card-header">
+                                    <i class="fas fa-user-tie"></i>
+                                    <h4>Poder Executivo</h4>
+                                </div>
+                                <div class="card-content">
+                                    <h5>Função:</h5>
+                                    <p>Administrar, governar e executar as leis</p>
+                                    <h5>Quem faz parte:</h5>
+                                    <ul>
+                                        <li>Presidente da República</li>
+                                        <li>Governadores</li>
+                                        <li>Prefeitos</li>
+                                        <li>Ministros de Estado</li>
+                                    </ul>
+                                    <h5>Exemplos de ação:</h5>
+                                    <ul>
+                                        <li>Construir hospitais e escolas</li>
+                                        <li>Organizar serviços públicos</li>
+                                        <li>Executar obras públicas</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="summary-card legislative">
+                                <div class="card-header">
+                                    <i class="fas fa-university"></i>
+                                    <h4>Poder Legislativo</h4>
+                                </div>
+                                <div class="card-content">
+                                    <h5>Função:</h5>
+                                    <p>Criar leis e fiscalizar o Executivo</p>
+                                    <h5>Quem faz parte:</h5>
+                                    <ul>
+                                        <li>Deputados Federais</li>
+                                        <li>Senadores</li>
+                                        <li>Deputados Estaduais</li>
+                                        <li>Vereadores</li>
+                                    </ul>
+                                    <h5>Exemplos de ação:</h5>
+                                    <ul>
+                                        <li>Aprovar novas leis</li>
+                                        <li>Votar orçamentos</li>
+                                        <li>Fiscalizar gastos públicos</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="summary-card judiciary">
+                                <div class="card-header">
+                                    <i class="fas fa-balance-scale"></i>
+                                    <h4>Poder Judiciário</h4>
+                                </div>
+                                <div class="card-content">
+                                    <h5>Função:</h5>
+                                    <p>Interpretar e aplicar as leis, resolver conflitos</p>
+                                    <h5>Quem faz parte:</h5>
+                                    <ul>
+                                        <li>Juízes</li>
+                                        <li>Desembargadores</li>
+                                        <li>Ministros do Judiciário</li>
+                                    </ul>
+                                    <h5>Exemplos de ação:</h5>
+                                    <ul>
+                                        <li>Julgar crimes e conflitos</li>
+                                        <li>Verificar se leis são justas</li>
+                                        <li>Garantir direitos dos cidadãos</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="important-note">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p><strong>Lembre-se:</strong> Os três poderes trabalham de forma independente e equilibrada, garantindo que nenhum tenha poder demais e que o país funcione com justiça e organização.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="game-footer">
+            <p>Ferramenta Educacional - Os Três Poderes | Desenvolvido para apoio ao ensino em sala de aula</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript -->
     <script src="../src/js/tres_poderes.js"></script>
 </body>
 </html>
