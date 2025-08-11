@@ -47,7 +47,7 @@
 
 body {
     font-family: 'Open Sans', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #6c63ff 0%, #7c4dff 35%, #9c27b0 70%, #673ab7 100%);
     min-height: 100vh;
     color: var(--text-primary);
     overflow-x: hidden;
@@ -140,66 +140,6 @@ body {
     to { opacity: 1; }
 }
 
-/* ===== HEADER ===== */
-.game-header {
-    background: var(--secondary-bg);
-    padding: 1rem 2rem;
-    box-shadow: var(--shadow-light);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.header-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.game-header h1 {
-    font-family: 'Fredoka One', cursive;
-    color: var(--text-primary);
-    font-size: 1.8rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.game-header h1 i {
-    color: var(--judiciary-color);
-}
-
-.progress-container {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.progress-bar {
-    width: 200px;
-    height: 8px;
-    background: var(--accent-bg);
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--executive-color), var(--legislative-color), var(--judiciary-color));
-    width: 0%;
-    transition: width var(--transition-medium);
-}
-
-#progressText {
-    font-weight: 600;
-    color: var(--text-secondary);
-    white-space: nowrap;
-}
-
 /* ===== PERSONAGEM GUIA ===== */
 .character-guide {
     position: fixed;
@@ -224,8 +164,8 @@ body {
 }
 
 .character-img {
-    width: 80px;
-    height: 130px;
+    width: 200px;
+    height: 300px;
     border-radius: 50%;
     border: 3px solid var(--secondary-bg);
     box-shadow: var(--shadow-medium);
@@ -238,10 +178,10 @@ body {
 }
 
 .character-speech {
-    margin-bottom: 55px;
+    margin-bottom: 240px;
     position: absolute;
     bottom: 90px;
-    right: 0;
+    right: 80px;
     max-width: 250px;
     background: var(--secondary-bg);
     padding: 1rem;
@@ -380,11 +320,86 @@ body {
 .highlight-legislative { color: var(--legislative-color); font-weight: 600; }
 .highlight-judiciary { color: var(--judiciary-color); font-weight: 600; }
 
+/* ===== CARDS QUADRADOS DA TELA INICIAL ===== */
 .action-buttons-start {
+    margin-bottom: 2rem;
+}
+
+.start-options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.btn-start-option {
+    background: var(--secondary-bg);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-align: center;
+    box-shadow: var(--shadow-medium);
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 1rem;
-    margin-bottom: 2rem;
+    min-height: 200px;
+    justify-content: center;
+}
+
+.btn-start-option:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-heavy);
+}
+
+.btn-start-option.learn-option:hover {
+    border-color: var(--info-color);
+    background: rgba(52, 152, 219, 0.05);
+}
+
+.btn-start-option.challenge-option:hover {
+    border-color: var(--executive-color);
+    background: rgba(44, 90, 160, 0.05);
+}
+
+.btn-start-option .option-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.learn-option .option-icon {
+    background: var(--info-color);
+}
+
+.challenge-option .option-icon {
+    background: var(--executive-color);
+}
+
+.btn-start-option .option-icon i {
+    font-size: 2rem;
+    color: var(--text-light);
+}
+
+.btn-start-option h3 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin: 0;
+    font-weight: 700;
+}
+
+.btn-start-option p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.4;
 }
 
 .info-section {
@@ -604,60 +619,6 @@ body {
     flex-wrap: wrap;
 }
 
-/* ===== BOTÕES ===== */
-.btn {
-    border: none;
-    padding: 1rem 2rem;
-    border-radius: var(--border-radius);
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-    font-family: inherit;
-}
-
-.btn-primary {
-    background: var(--executive-color);
-    color: var(--text-light);
-    box-shadow: var(--shadow-medium);
-}
-
-.btn-primary:hover {
-    background: var(--executive-dark);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-heavy);
-}
-
-.btn-secondary {
-    background: var(--accent-bg);
-    color: var(--text-primary);
-    border: 2px solid var(--text-secondary);
-}
-
-.btn-secondary:hover {
-    background: var(--text-secondary);
-    color: var(--text-light);
-}
-
-.btn-large {
-    padding: 1.5rem 3rem;
-    font-size: 1.2rem;
-}
-
-.pulse {
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(44, 90, 160, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(44, 90, 160, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(44, 90, 160, 0); }
-}
-
 /* ===== TELA DE QUESTÕES ===== */
 .question-content {
     max-width: 900px;
@@ -671,6 +632,36 @@ body {
     margin-bottom: 2rem;
     flex-wrap: wrap;
     gap: 1rem;
+}
+
+.question-info-with-button {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn-back {
+    background: var(--accent-bg);
+    color: var(--text-primary);
+    border: 2px solid var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-family: inherit;
+}
+
+.btn-back:hover {
+    background: var(--text-secondary);
+    color: var(--text-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
 }
 
 .question-number {
@@ -690,6 +681,40 @@ body {
     align-items: center;
     gap: 0.5rem;
     font-weight: 600;
+}
+
+/* ===== BARRA DE PROGRESSO INLINE ===== */
+.progress-container-inline {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: rgba(255,255,255,0.1);
+    border-radius: var(--border-radius);
+    backdrop-filter: blur(10px);
+}
+
+.progress-bar {
+    width: 200px;
+    height: 8px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--executive-color), var(--legislative-color), var(--judiciary-color));
+    width: 0%;
+    transition: width var(--transition-medium);
+}
+
+#progressText {
+    font-weight: 600;
+    color: var(--text-light);
+    white-space: nowrap;
 }
 
 .situation-card {
@@ -723,15 +748,15 @@ body {
     border-left: 4px solid var(--executive-color);
 }
 
-/* ===== OPÇÕES DE RESPOSTA MELHORADAS ===== */
-.options-container {
+/* ===== CARDS DE RESPOSTA COMPACTOS ===== */
+.options-container-improved {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
     margin-bottom: 2rem;
 }
 
-.option-card.enhanced {
+.option-card-compact {
     background: var(--secondary-bg);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-light);
@@ -739,56 +764,58 @@ body {
     transition: all var(--transition-fast);
     border: 2px solid transparent;
     overflow: hidden;
-    position: relative;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
 }
 
-.option-card.enhanced:hover {
+.option-card-compact:hover {
     transform: translateY(-3px);
-    box-shadow: var(--shadow-heavy);
+    box-shadow: var(--shadow-medium);
 }
 
-.option-card.enhanced.executive:hover { 
+.option-card-compact.executive:hover { 
     border-color: var(--executive-color);
-    box-shadow: 0 8px 25px rgba(44, 90, 160, 0.3);
+    box-shadow: 0 6px 20px rgba(44, 90, 160, 0.3);
 }
-.option-card.enhanced.legislative:hover { 
+.option-card-compact.legislative:hover { 
     border-color: var(--legislative-color);
-    box-shadow: 0 8px 25px rgba(142, 68, 173, 0.3);
+    box-shadow: 0 6px 20px rgba(142, 68, 173, 0.3);
 }
-.option-card.enhanced.judiciary:hover { 
+.option-card-compact.judiciary:hover { 
     border-color: var(--judiciary-color);
-    box-shadow: 0 8px 25px rgba(192, 57, 43, 0.3);
+    box-shadow: 0 6px 20px rgba(192, 57, 43, 0.3);
 }
 
-.option-card.enhanced.selected {
+.option-card-compact.selected {
     transform: translateY(-3px);
     box-shadow: var(--shadow-heavy);
 }
 
-.option-card.enhanced.executive.selected { 
+.option-card-compact.executive.selected { 
     border-color: var(--executive-color); 
     background: rgba(44, 90, 160, 0.05); 
 }
-.option-card.enhanced.legislative.selected { 
+.option-card-compact.legislative.selected { 
     border-color: var(--legislative-color); 
     background: rgba(142, 68, 173, 0.05); 
 }
-.option-card.enhanced.judiciary.selected { 
+.option-card-compact.judiciary.selected { 
     border-color: var(--judiciary-color); 
     background: rgba(192, 57, 43, 0.05); 
 }
 
-.option-header {
+.option-header-compact {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
+    gap: 1rem;
+    padding: 1rem;
     border-bottom: 1px solid var(--accent-bg);
 }
 
-.option-icon {
-    width: 50px;
-    height: 50px;
+.option-icon-compact {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -796,53 +823,34 @@ body {
     flex-shrink: 0;
 }
 
-.option-card.enhanced.executive .option-icon { background: var(--executive-color); }
-.option-card.enhanced.legislative .option-icon { background: var(--legislative-color); }
-.option-card.enhanced.judiciary .option-icon { background: var(--judiciary-color); }
+.option-card-compact.executive .option-icon-compact { background: var(--executive-color); }
+.option-card-compact.legislative .option-icon-compact { background: var(--legislative-color); }
+.option-card-compact.judiciary .option-icon-compact { background: var(--judiciary-color); }
 
-.option-icon i {
-    font-size: 1.2rem;
+.option-icon-compact i {
+    font-size: 1rem;
     color: var(--text-light);
 }
 
-.option-badge {
-    padding: 0.3rem 0.8rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-light);
-}
-
-.option-card.enhanced.executive .option-badge { background: var(--executive-light); }
-.option-card.enhanced.legislative .option-badge { background: var(--legislative-light); }
-.option-card.enhanced.judiciary .option-badge { background: var(--judiciary-light); }
-
-.option-content {
-    padding: 1.5rem;
-}
-
-.option-content h4 {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
+.option-header-compact h4 {
+    font-size: 1rem;
+    margin: 0;
     color: var(--text-primary);
+    font-weight: 600;
 }
 
-.option-content p {
+.option-content-compact {
+    padding: 1rem;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.option-content-compact p {
     color: var(--text-secondary);
     line-height: 1.4;
-    font-size: 1rem;
-}
-
-.option-footer {
-    padding: 0.8rem 1.5rem;
-    background: var(--primary-bg);
-    border-top: 1px solid var(--accent-bg);
-}
-
-.option-footer small {
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    font-style: italic;
+    font-size: 0.9rem;
+    margin: 0;
 }
 
 /* ===== TELA DE FEEDBACK ===== */
@@ -850,6 +858,39 @@ body {
     max-width: 800px;
     margin: 0 auto;
     text-align: center;
+}
+
+/* Card da situação na tela de feedback */
+.situation-card-feedback {
+    background: rgba(255,255,255,0.1);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    text-align: left;
+}
+
+.situation-card-feedback .situation-title {
+    color: var(--text-light);
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.situation-card-feedback .situation-description {
+    color: rgba(255,255,255,0.9);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.situation-card-feedback .question-prompt {
+    color: var(--text-light);
+    font-weight: 600;
+    padding: 0.8rem;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    border-left: 4px solid var(--warning-color);
 }
 
 .result-header {
@@ -940,6 +981,60 @@ body {
     justify-content: center;
     gap: 1rem;
     flex-wrap: wrap;
+}
+
+/* ===== BOTÕES ===== */
+.btn {
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-family: inherit;
+}
+
+.btn-primary {
+    background: var(--executive-color);
+    color: var(--text-light);
+    box-shadow: var(--shadow-medium);
+}
+
+.btn-primary:hover {
+    background: var(--executive-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-heavy);
+}
+
+.btn-secondary {
+    background: var(--accent-bg);
+    color: var(--text-primary);
+    border: 2px solid var(--text-secondary);
+}
+
+.btn-secondary:hover {
+    background: var(--text-secondary);
+    color: var(--text-light);
+}
+
+.btn-large {
+    padding: 1.5rem 3rem;
+    font-size: 1.2rem;
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(44, 90, 160, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(44, 90, 160, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(44, 90, 160, 0); }
 }
 
 /* ===== MODAIS ===== */
@@ -1261,6 +1356,20 @@ body {
     margin-top: auto;
 }
 
+/* ===== UTILITÁRIOS ===== */
+.hidden {
+    display: none !important;
+}
+
+.fade-out {
+    opacity: 0;
+    transition: opacity var(--transition-medium);
+}
+
+.no-scroll {
+    overflow: hidden;
+}
+
 /* ===== RESPONSIVIDADE ===== */
 @media (max-width: 768px) {
     .main-title {
@@ -1283,9 +1392,34 @@ body {
         padding: 1rem;
     }
     
-    .options-container {
+    /* Cards da tela inicial responsivos */
+    .start-options-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .btn-start-option {
+        min-height: 160px;
+        padding: 1.5rem;
+    }
+    
+    .btn-start-option .option-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .btn-start-option .option-icon i {
+        font-size: 1.5rem;
+    }
+    
+    /* Cards de resposta responsivos */
+    .options-container-improved {
         grid-template-columns: 1fr;
         gap: 1rem;
+    }
+    
+    .option-card-compact {
+        min-height: auto;
     }
     
     .powers-grid {
@@ -1300,9 +1434,15 @@ body {
         grid-template-columns: 1fr;
     }
     
-    .header-content {
+    .question-info-with-button {
         flex-direction: column;
-        text-align: center;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .btn-back {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
     }
     
     .progress-bar {
@@ -1338,10 +1478,6 @@ body {
         flex-direction: column;
     }
     
-    .action-buttons-start {
-        gap: 1rem;
-    }
-    
     .intro-actions {
         flex-direction: column;
     }
@@ -1357,10 +1493,6 @@ body {
 }
 
 @media (max-width: 480px) {
-    .game-header h1 {
-        font-size: 1.4rem;
-    }
-    
     .main-title {
         font-size: 1.8rem;
     }
@@ -1424,21 +1556,91 @@ body {
         max-width: 200px;
         max-height: 200px;
     }
+        .character-guide {
+        bottom: 4px;
+        right: 4px;
+    }
+
+    .character-img {
+        width: 80px !important;
+        height: 80px !important;
+    }
+
+    .character-speech {
+        max-width: 90vw;
+        bottom: 80px !important; 
+        right: 0 !important;
+        left: auto !important;
+        padding: 0.7rem;
+        margin-bottom: 0;
+        font-size: 1.05rem;
+        z-index: 99999;
+    }
+    .character-speech .character-text {
+        font-size: 1rem;
+    }
+    .question-header {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
+    .question-info-with-button {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        gap: 0.5rem;
+    }
+    .question-number {
+        font-size: 1rem;
+        padding: 0.4rem 0.7rem;
+        flex: 1 1 auto;
+        text-align: left;
+    }
+    .btn-back {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.5rem;
+        flex-shrink: 0;
+    }
+    .progress-container-inline {
+        width: 100%;
+        margin-bottom: 0.8rem;
+        padding: 0.5rem 0;
+    }
+    .situation-badge {
+        width: 100%;
+        justify-content: flex-start;
+        font-size: 0.95rem;
+        margin-top: 0.2rem;
+    }
+}
+/* Ajustes específicos para tablet */
+@media (min-width: 481px) and (max-width: 1116px) {
+
+
+    .character-guide {
+        right: 7px; 
+    }
+    
+    .intro-actions {
+        justify-content: flex-start; 
+        gap: 0.8rem;
+    }
+
+    #startGameFromIntroBtn {
+        font-size: 1.2rem;
+        padding: 1.0rem 2rem;
+    }
+
+    /* Botão "Voltar" */
+    #backToStartFromIntroBtn {
+        font-size: 1.2rem;
+        padding: 0.8rem 1.2rem;
+    }
 }
 
-/* ===== UTILITÁRIOS ===== */
-.hidden {
-    display: none !important;
-}
-
-.fade-out {
-    opacity: 0;
-    transition: opacity var(--transition-medium);
-}
-
-.no-scroll {
-    overflow: hidden;
-}
 
 /* ===== ACESSIBILIDADE ===== */
 @media (prefers-reduced-motion: reduce) {
@@ -1453,7 +1655,6 @@ body {
 @media print {
     .loading-screen,
     .character-guide,
-    .game-header,
     .game-footer,
     .fullscreen-gif {
         display: none !important;

@@ -25,19 +25,6 @@
     <!-- Main Container -->
     <div id="mainContainer" class="main-container">
         
-        <!-- Header -->
-        <header class="game-header">
-            <div class="header-content">
-                <h1><i class="fas fa-balance-scale"></i> Desafio dos Três Poderes</h1>
-                <div class="progress-container">
-                    <div class="progress-bar">
-                        <div id="progressFill" class="progress-fill"></div>
-                    </div>
-                    <span id="progressText">0/12</span>
-                </div>
-            </div>
-        </header>
-
         <!-- Character Guide -->
         <div id="characterGuide" class="character-guide">
             <div class="character-container">
@@ -86,12 +73,22 @@
                     </div>
                     
                     <div class="action-buttons-start">
-                        <button id="learnFirstBtn" class="btn btn-secondary btn-large">
-                            <i class="fas fa-book"></i> Primeiro, vamos aprender sobre os Três Poderes
-                        </button>
-                        <button id="startGameBtn" class="btn btn-primary btn-large pulse">
-                            <i class="fas fa-play"></i> Ir direto para o Desafio
-                        </button>
+                        <div class="start-options-grid">
+                            <button id="learnFirstBtn" class="btn-start-option learn-option">
+                                <div class="option-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <h3>Aprender</h3>
+                                <p>Primeiro, vamos conhecer os Três Poderes</p>
+                            </button>
+                            <button id="startGameBtn" class="btn-start-option challenge-option pulse">
+                                <div class="option-icon">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                                <h3>Desafio</h3>
+                                <p>Ir direto para o desafio</p>
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="info-section">
@@ -211,7 +208,7 @@
                         <button id="startGameFromIntroBtn" class="btn btn-primary btn-large pulse">
                             <i class="fas fa-rocket"></i> Agora vamos praticar com situações reais!
                         </button>
-                        <button id="backToStartBtn" class="btn btn-secondary">
+                        <button id="backToStartFromIntroBtn" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Voltar
                         </button>
                     </div>
@@ -222,13 +219,26 @@
             <div id="questionScreen" class="screen">
                 <div class="question-content">
                     <div class="question-header">
-                        <div class="question-number">
-                            <span id="currentQuestion">Situação 1</span>
+                        <div class="question-info-with-button">
+                            <button id="backToStartBtn" class="btn btn-back">
+                                <i class="fas fa-home"></i> Voltar ao Início
+                            </button>
+                            <div class="question-number">
+                                <span id="currentQuestion">Situação 1</span>
+                            </div>
                         </div>
                         <div class="situation-badge">
                             <i class="fas fa-exclamation-circle"></i>
                             <span>Situação Problema</span>
                         </div>
+                    </div>
+                    
+                    <!-- Barra de progresso -->
+                    <div class="progress-container-inline">
+                        <div class="progress-bar">
+                            <div id="progressFill" class="progress-fill"></div>
+                        </div>
+                        <span id="progressText">0/12</span>
                     </div>
                     
                     <div class="situation-card">
@@ -239,58 +249,40 @@
                         </div>
                     </div>
                     
-                    <div class="options-container">
-                        <div id="option1" class="option-card executive enhanced" data-power="executivo">
-                            <div class="option-header">
-                                <div class="option-icon">
+                    <div class="options-container-improved">
+                        <div id="option1" class="option-card-compact executive" data-power="executivo">
+                            <div class="option-header-compact">
+                                <div class="option-icon-compact">
                                     <i class="fas fa-user-tie"></i>
                                 </div>
-                                <div class="option-badge">
-                                    <span>Executa</span>
-                                </div>
-                            </div>
-                            <div class="option-content">
                                 <h4>Poder Executivo</h4>
+                            </div>
+                            <div class="option-content-compact">
                                 <p id="optionText1"></p>
                             </div>
-                            <div class="option-footer">
-                                <small>Administra e governa</small>
-                            </div>
                         </div>
                         
-                        <div id="option2" class="option-card legislative enhanced" data-power="legislativo">
-                            <div class="option-header">
-                                <div class="option-icon">
+                        <div id="option2" class="option-card-compact legislative" data-power="legislativo">
+                            <div class="option-header-compact">
+                                <div class="option-icon-compact">
                                     <i class="fas fa-university"></i>
                                 </div>
-                                <div class="option-badge">
-                                    <span>Cria Leis</span>
-                                </div>
-                            </div>
-                            <div class="option-content">
                                 <h4>Poder Legislativo</h4>
-                                <p id="optionText2"></p>
                             </div>
-                            <div class="option-footer">
-                                <small>Elabora e aprova leis</small>
+                            <div class="option-content-compact">
+                                <p id="optionText2"></p>
                             </div>
                         </div>
                         
-                        <div id="option3" class="option-card judiciary enhanced" data-power="judiciario">
-                            <div class="option-header">
-                                <div class="option-icon">
+                        <div id="option3" class="option-card-compact judiciary" data-power="judiciario">
+                            <div class="option-header-compact">
+                                <div class="option-icon-compact">
                                     <i class="fas fa-balance-scale"></i>
                                 </div>
-                                <div class="option-badge">
-                                    <span>Julga</span>
-                                </div>
-                            </div>
-                            <div class="option-content">
                                 <h4>Poder Judiciário</h4>
-                                <p id="optionText3"></p>
                             </div>
-                            <div class="option-footer">
-                                <small>Interpreta e aplica leis</small>
+                            <div class="option-content-compact">
+                                <p id="optionText3"></p>
                             </div>
                         </div>
                     </div>
@@ -306,6 +298,15 @@
             <!-- Feedback Screen -->
             <div id="feedbackScreen" class="screen">
                 <div class="feedback-content">
+                    <!-- Card da situação na tela de feedback -->
+                    <div class="situation-card-feedback">
+                        <h3 id="situationTitleFeedback" class="situation-title">Título da Situação</h3>
+                        <div id="situationTextFeedback" class="situation-description"></div>
+                        <div class="question-prompt">
+                            <strong id="questionPromptFeedback"></strong>
+                        </div>
+                    </div>
+                    
                     <div class="result-header">
                         <div id="resultIcon" class="result-icon">
                             <i class="fas fa-check-circle"></i>
@@ -329,10 +330,11 @@
                         <button id="nextQuestionBtn" class="btn btn-primary">
                             <i class="fas fa-arrow-right"></i> Próxima Situação
                         </button>
-                        <button id="discussBtn" class="btn btn-secondary">
-                            <i class="fas fa-comments"></i> Momento de Discussão
+                        <button id="tryAgainBtn" class="btn btn-secondary">
+                            <i class="fas fa-redo"></i> Tentar Novamente
                         </button>
                     </div>
+
                 </div>
             </div>
 

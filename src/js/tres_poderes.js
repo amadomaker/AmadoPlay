@@ -281,15 +281,21 @@ class TresPoderesGame {
     showCharacterSpeech() {
         const speech = document.querySelector('.character-speech');
         speech.classList.add('active');
-        
-        // Esconder após 5 segundos
-        setTimeout(() => {
+
+        // 🔹 Cancela temporizadores antigos
+        if (this.speechTimeout) {
+            clearTimeout(this.speechTimeout);
+        }
+
+        // 🔹 Esconder após 10 segundos
+        this.speechTimeout = setTimeout(() => {
             speech.classList.remove('active');
-        }, 5000);
+        }, 8000);
     }
 
+
     // ===== GIF EM TELA CHEIA ===== //
-    showFullScreenGif(state, duration = 2500) {
+    showFullScreenGif(state, duration = 2000) {
         const fullScreenGif = document.getElementById('fullScreenGif');
         const gifImage = document.getElementById('fullScreenGifImage');
         
@@ -320,13 +326,18 @@ class TresPoderesGame {
             this.startGame();
         });
 
-        document.getElementById('backToStartBtn').addEventListener('click', () => {
+        document.getElementById('backToStartFromIntroBtn').addEventListener('click', () => {
             this.showScreen('startScreen');
             this.updateCharacter('idle', 'Vamos decidir como começar nossa aventura de aprendizado!');
         });
 
-        // Botões de opção
-        document.querySelectorAll('.option-card').forEach(card => {
+        // Botão voltar ao início
+        document.getElementById('backToStartBtn').addEventListener('click', () => {
+            this.returnToStart();
+        });
+
+        // Botões de opção (nova classe)
+        document.querySelectorAll('.option-card-compact').forEach(card => {
             card.addEventListener('click', (e) => {
                 this.selectOption(e.currentTarget);
             });
@@ -342,9 +353,8 @@ class TresPoderesGame {
             this.nextSituation();
         });
 
-        // Botão discussão
-        document.getElementById('discussBtn').addEventListener('click', () => {
-            this.pauseForDiscussion();
+        document.getElementById('tryAgainBtn').addEventListener('click', () => {
+            this.tryAgain();
         });
 
         // Botão recomeçar
@@ -383,6 +393,52 @@ class TresPoderesGame {
         // Teclas de atalho
         document.addEventListener('keydown', (e) => {
             this.handleKeyboardShortcuts(e);
+        });
+    }
+        // ===== FUNÇÃO TENTAR NOVAMENTE ===== //
+        tryAgain() {
+            // Reset das opções selecionadas
+            document.querySelectorAll('.option-card-compact').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Reset do estado
+            this.selectedAnswer = null;
+            this.isAnswered = false;
+            
+            // Voltar para tela de questão
+            this.showScreen('questionScreen');
+            this.updateCharacter('idle', 'Vamos tentar novamente! Discutam e analisem as opções com mais atenção.');
+            
+            // Scroll para o topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Log da ação
+            this.logGameEvent('Try Again', {
+                situation: this.currentSituation + 1
+            });
+        }
+
+    // ===== FUNÇÃO VOLTAR AO INÍCIO ===== //
+    returnToStart() {
+        // Resetar estado do jogo
+        this.currentSituation = 0;
+        this.selectedAnswer = null;
+        this.isAnswered = false;
+        
+        // Resetar progresso
+        this.updateProgress();
+        
+        // Voltar para tela inicial
+        this.showScreen('startScreen');
+        this.updateCharacter('idle', 'Voltamos ao início! Escolham como querem continuar a aventura de aprendizado.');
+        
+        // Scroll para o topo
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // Log da ação
+        this.logGameEvent('Returned to Start', {
+            fromSituation: this.currentSituation
         });
     }
 
@@ -430,19 +486,28 @@ class TresPoderesGame {
     loadSituation() {
         const situation = gameData.situations[this.currentSituation];
         
-        // Atualizar conteúdo da situação
-        document.getElementById('currentQuestion').textContent = `Situação ${situation.id}`;
-        document.getElementById('situationTitle').textContent = situation.title;
-        document.getElementById('situationText').textContent = situation.description;
-        document.getElementById('questionPrompt').textContent = situation.question;
+        // Verificar se os elementos existem antes de tentar acessá-los
+        const currentQuestionElement = document.getElementById('currentQuestion');
+        const situationTitleElement = document.getElementById('situationTitle');
+        const situationTextElement = document.getElementById('situationText');
+        const questionPromptElement = document.getElementById('questionPrompt');
+        const optionText1Element = document.getElementById('optionText1');
+        const optionText2Element = document.getElementById('optionText2');
+        const optionText3Element = document.getElementById('optionText3');
         
-        // Atualizar opções
-        document.getElementById('optionText1').textContent = situation.options.executivo;
-        document.getElementById('optionText2').textContent = situation.options.legislativo;
-        document.getElementById('optionText3').textContent = situation.options.judiciario;
+        // Atualizar conteúdo da situação (com verificação)
+        if (currentQuestionElement) currentQuestionElement.textContent = `Situação ${situation.id}`;
+        if (situationTitleElement) situationTitleElement.textContent = situation.title;
+        if (situationTextElement) situationTextElement.textContent = situation.description;
+        if (questionPromptElement) questionPromptElement.textContent = situation.question;
+        
+        // Atualizar opções (com verificação)
+        if (optionText1Element) optionText1Element.textContent = situation.options.executivo;
+        if (optionText2Element) optionText2Element.textContent = situation.options.legislativo;
+        if (optionText3Element) optionText3Element.textContent = situation.options.judiciario;
         
         // Reset das opções
-        document.querySelectorAll('.option-card').forEach(card => {
+        document.querySelectorAll('.option-card-compact').forEach(card => {
             card.classList.remove('selected');
         });
         
@@ -457,7 +522,7 @@ class TresPoderesGame {
         if (this.isAnswered) return;
         
         // Remove seleção anterior
-        document.querySelectorAll('.option-card').forEach(card => {
+        document.querySelectorAll('.option-card-compact').forEach(card => {
             card.classList.remove('selected');
         });
         
@@ -512,6 +577,15 @@ class TresPoderesGame {
     }
 
     showFeedback(isCorrect, situation) {
+        // Preencher informações da situação na tela de feedback
+        const situationTitleFeedbackElement = document.getElementById('situationTitleFeedback');
+        const situationTextFeedbackElement = document.getElementById('situationTextFeedback');
+        const questionPromptFeedbackElement = document.getElementById('questionPromptFeedback');
+        
+        if (situationTitleFeedbackElement) situationTitleFeedbackElement.textContent = situation.title;
+        if (situationTextFeedbackElement) situationTextFeedbackElement.textContent = situation.description;
+        if (questionPromptFeedbackElement) questionPromptFeedbackElement.textContent = situation.question;
+        
         // Atualizar ícone e título do resultado
         const resultIcon = document.getElementById('resultIcon');
         const resultTitle = document.getElementById('resultTitle');
@@ -531,24 +605,29 @@ class TresPoderesGame {
         }
         
         // Atualizar explicação
-        document.getElementById('feedbackExplanation').textContent = situation.explanation;
+        const feedbackExplanationElement = document.getElementById('feedbackExplanation');
+        if (feedbackExplanationElement) feedbackExplanationElement.textContent = situation.explanation;
         
         // Atualizar consequência
         const consequenceText = document.getElementById('consequenceText');
-        if (isCorrect) {
-            consequenceText.textContent = situation.consequence.correct;
-            consequenceText.className = 'consequence-text correct';
-        } else {
-            consequenceText.textContent = situation.consequence.incorrect;
-            consequenceText.className = 'consequence-text incorrect';
+        if (consequenceText) {
+            if (isCorrect) {
+                consequenceText.textContent = situation.consequence.correct;
+                consequenceText.className = 'consequence-text correct';
+            } else {
+                consequenceText.textContent = situation.consequence.incorrect;
+                consequenceText.className = 'consequence-text incorrect';
+            }
         }
         
         // Atualizar botão próxima questão
         const nextBtn = document.getElementById('nextQuestionBtn');
-        if (this.currentSituation < gameData.situations.length - 1) {
-            nextBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Próxima Situação';
-        } else {
-            nextBtn.innerHTML = '<i class="fas fa-flag-checkered"></i> Ver Resultado Final';
+        if (nextBtn) {
+            if (this.currentSituation < gameData.situations.length - 1) {
+                nextBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Próxima Situação';
+            } else {
+                nextBtn.innerHTML = '<i class="fas fa-flag-checkered"></i> Ver Resultado Final';
+            }
         }
         
         this.showScreen('feedbackScreen');
@@ -580,28 +659,16 @@ class TresPoderesGame {
         }
     }
 
-    pauseForDiscussion() {
-        this.updateCharacter('idle', 'Aproveitem este momento para discutir sobre a situação. O que vocês aprenderam? Como isso se relaciona com a vida real?');
-        
-        // Adicionar um pequeno delay antes de permitir continuar
-        const nextBtn = document.getElementById('nextQuestionBtn');
-        nextBtn.disabled = true;
-        nextBtn.textContent = '⏱️ Momento de discussão...';
-        
-        setTimeout(() => {
-            nextBtn.disabled = false;
-            if (this.currentSituation < gameData.situations.length - 1) {
-                nextBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Próxima Situação';
-            } else {
-                nextBtn.innerHTML = '<i class="fas fa-flag-checkered"></i> Ver Resultado Final';
-            }
-        }, 3000);
-    }
 
     updateProgress() {
-        const progress = ((this.currentSituation + 1) / gameData.situations.length) * 100;
-        document.getElementById('progressFill').style.width = `${progress}%`;
-        document.getElementById('progressText').textContent = `${this.currentSituation + 1}/${gameData.situations.length}`;
+        const progressFillElement = document.getElementById('progressFill');
+        const progressTextElement = document.getElementById('progressText');
+        
+        if (progressFillElement && progressTextElement) {
+            const progress = ((this.currentSituation + 1) / gameData.situations.length) * 100;
+            progressFillElement.style.width = `${progress}%`;
+            progressTextElement.textContent = `${this.currentSituation + 1}/${gameData.situations.length}`;
+        }
     }
 
     // ===== TELA FINAL ===== //
@@ -692,7 +759,7 @@ function animateElement(element, animationClass, duration = 1000) {
 
 // Detectar se o usuário está usando teclado para navegação
 function setupAccessibility() {
-    document.querySelectorAll('.btn, .option-card').forEach(element => {
+    document.querySelectorAll('.btn, .option-card-compact, .btn-start-option').forEach(element => {
         element.setAttribute('tabindex', '0');
         
         // Adicionar indicadores visuais para navegação por teclado
