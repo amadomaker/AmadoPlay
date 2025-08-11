@@ -1,0 +1,1200 @@
+/* Importação da fonte */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+/* Reset e configurações globais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #6c63ff 0%, #7c4dff 35%, #9c27b0 70%, #673ab7 100%);
+    min-height: 100vh;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+/* ===== SISTEMA DE TELAS ===== */
+.screen {
+    display: none;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.screen.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== MENU PRINCIPAL ===== */
+.menu-header {
+    text-align: center;
+    margin-bottom: 50px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 40px;
+    border-radius: 25px;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.menu-header h1 {
+    color: #fff;
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    text-shadow: 2px 2px 6px rgba(44, 31, 109, 0.22);
+    background: none;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: unset;
+    background-clip: unset;
+}
+
+
+.menu-header p {
+    font-size: 1.3rem;
+    opacity: 0.9;
+}
+
+.menu-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.menu-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 40px 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    color: white;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.menu-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.menu-btn .btn-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.menu-btn h3 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.menu-btn p {
+    font-size: 1rem;
+    opacity: 0.8;
+    line-height: 1.4;
+}
+
+.learn-btn:hover {
+    background: linear-gradient(135deg, #4ECDC4, #44A08D);
+}
+
+.play-btn:hover {
+    background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+}
+
+
+
+/* ===== NAVEGAÇÃO GERAL ===== */
+/* Esconde qualquer .back-btn genérico no #game-screen */
+#game-screen .back-btn:not(.back-btn-main) {
+  display: none !important;
+}
+
+.back-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateX(-3px);
+}
+.back-btn-learn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.back-btn-learn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateX(-3px);
+}
+/* ===== SISTEMA DE LIÇÕES ===== */
+.lesson-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 0 20px;
+    min-width: 200px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4ECDC4, #44A08D);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    width: 16.67%; /* 1/6 inicialmente */
+}
+
+.lesson-counter {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.lesson-content {
+    background: #f9f9fc;    /* fundo branco suave */
+    padding: 40px;
+    border-radius: 18px;
+    border: 1px solid #e0e0ea;
+    box-shadow: 0 12px 40px rgba(100, 100, 130, 0.12);
+    margin-bottom: 30px;
+    min-height: 500px;
+    color: #2c1f6d;          /* texto escuro para contraste */
+    font-family: 'Poppins', sans-serif;
+}
+
+
+.lesson-header h2 {
+    font-size: 2.6rem;
+    margin-bottom: 15px;
+    color: #443fa7; /* roxo vivo, destaque sem amarelo */
+    text-shadow: none;
+    text-align: center;
+}
+
+.lesson-header p {
+    color: #6b62c4; /* roxo médio para conforto visual */
+    font-size: 1.2rem;
+    line-height: 1.7;
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 400;
+}
+
+.food-group-display {
+    background: #fff; /* branco sólido para máximo contraste */
+    padding: 30px 35px;
+    border-radius: 20px;
+    margin: 25px 0;
+    border: 1px solid #d9d9e6; /* borda cinza-clara */
+    box-shadow: 0 7px 35px rgba(100, 100, 140, 0.15);
+    color: #382b9f; /* texto roxo mais escuro */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.food-group-display:hover {
+    background: #f0f0f8;
+    box-shadow: 0 9px 48px rgba(100, 100, 140, 0.25);
+}
+
+.food-examples {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    margin: 25px 0;
+}
+
+.food-example {
+    background: #f6f8fc;
+    color: #514fa0;
+    padding: 14px;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 2px 16px rgba(44,31,109,0.12);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.food-example:hover {
+    background: #e2e2ee;
+    box-shadow: 0 5px 26px rgba(44,31,109,0.18);
+}
+
+.food-example .emoji {
+    font-size: 2.7rem;
+    margin-bottom: 12px;
+}
+
+.food-example .name {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+
+.group-tips {
+    background: #f5f5ff; 
+    border-radius: 20px;
+    border-left: 6px solid #6559ff;
+    padding: 28px 32px;
+    margin-top: 34px;
+    color: #4646aa;   /* texto roxo médio */
+    font-weight: 600;
+    box-shadow: 0 5px 28px rgba(44, 31, 109, 0.2);
+}
+.group-tips h4 {
+    color: #554ea3;
+    margin-bottom: 18px;
+    font-size: 1.4rem;
+}
+.group-tips ul {
+    list-style: none;
+    padding: 0;
+}
+.group-tips li {
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 28px;
+}
+.group-tips li::before {
+    content: "💡";
+    position: absolute;
+    left: 0;
+    font-size: 1.1rem;
+}
+
+
+
+.lesson-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.control-btn {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    min-width: 140px;
+}
+
+.control-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.control-btn:not(:disabled):hover {
+    transform: translateY(-2px);
+}
+
+.control-btn.primary {
+    background: linear-gradient(45deg, #4ECDC4, #44A08D);
+    color: white;
+    box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+}
+
+.control-btn.primary:hover:not(:disabled) {
+    box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
+}
+
+.control-btn:not(.primary) {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ===== QUIZ INTERATIVO ===== */
+.quiz-content {
+    max-width: 600px;
+}
+
+#quiz-question {
+    font-size: 1.3rem;
+    margin: 20px 0;
+    text-align: center;
+    line-height: 1.5;
+}
+
+#quiz-options {
+    display: grid;
+    gap: 15px;
+    margin: 25px 0;
+}
+
+.quiz-option {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    font-size: 1rem;
+}
+
+.quiz-option:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(5px);
+}
+
+.quiz-option.correct {
+    background: linear-gradient(135deg, #4ECDC4, #44A08D);
+    border-color: #4ECDC4;
+}
+
+.quiz-option.incorrect {
+    background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+    border-color: #FF6B6B;
+}
+
+#quiz-feedback {
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+    display: none;
+}
+
+#quiz-feedback.correct {
+    background: rgba(78, 205, 196, 0.2);
+    border: 1px solid #4ECDC4;
+    color: #4ECDC4;
+}
+
+#quiz-feedback.incorrect {
+    background: rgba(255, 107, 107, 0.2);
+    border: 1px solid #FF6B6B;
+    color: #FF6B6B;
+}
+
+
+
+/* ===== Desafio PRINCIPAL ===== */
+.game-header {
+    text-align: center;
+    margin-bottom: 20px;
+    background: #fff;                 /* Fundo branco sólido */
+    padding: 25px;
+    border-radius: 20px;
+    border: 1.5px solid #eceafd;
+    box-shadow: 0 8px 32px rgba(120,110,180,0.1);
+    position: relative;               /* Para posicionamento filho absoluto */
+}
+
+.game-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #443fa7;                  
+
+    background: none;                
+
+}
+
+.game-header p {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    color: #463d6b;                  /* Roxo escuro */
+    opacity: 1;
+}
+
+/* Botão Menu Principal */
+.game-header .back-btn {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    background: linear-gradient(95deg, #7b6ffa 35%, #a084f6 100%);
+    border: none;
+    color: #fff;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(120,110,180,0.15);
+    z-index: 3;
+}
+.game-header .back-btn:hover {
+    background: linear-gradient(95deg, #6659ff, #d673ff 70%);
+}
+
+
+
+/* Container dos botões na pirâmide */
+#container-botoes {
+  position: absolute;
+  top: 20px;
+  right: 35px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+  z-index: 5;
+}
+
+/* Botões estilizados iguais, degradê roxo */
+#container-botoes button {
+  width: 170px;
+  padding: 13px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 22px;
+  cursor: pointer;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: none;
+  color: #fff;
+  background: linear-gradient(95deg, #7b62ff 20%, #a082ff 100%);
+  box-shadow: 0 3px 13px rgba(110, 92, 255, 0.4);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+#container-botoes button:hover {
+  background: linear-gradient(95deg, #6357ff 15%, #ca7dff 100%);
+  box-shadow: 0 5px 15px rgba(110, 92, 255, 0.7);
+}
+
+#container-botoes button span {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+/* Layout principal do jogo */
+.game-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+    align-items: start;
+}
+
+/* Área dos alimentos */
+.food-bank {
+    background: #fff;
+    padding: 25px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 20px;
+}
+
+.food-bank h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    color: #443fa7;
+    
+}
+
+.food-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+.food-item {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    color: #333;
+    padding: 15px;
+    border-radius: 15px;
+    cursor: grab;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.food-item:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    border-color: #667eea;
+}
+
+.food-item:active {
+    cursor: grabbing;
+    transform: scale(0.95);
+}
+
+.food-icon {
+    font-size: 2.5rem;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.food-item span {
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: block;
+}
+
+/* Pirâmide */
+.pyramid-section {
+    background: #fff;
+    padding: 25px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.pyramid-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.pyramid-level {
+    position: relative;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.pyramid-level:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.level-4 { /* Energéticos - base azul */
+    background: linear-gradient(135deg, #659fed, #3364c5); /* Azul vibrante */
+    width: 100%;
+    margin: 0 auto 10px auto;
+    color: #fff;
+}
+
+.level-3 { /* Reguladores - verde vivo */
+    background: linear-gradient(135deg, #5bd18d, #2f8b57); /* Verde vibrante */
+    width: 75%;
+    margin: 0 auto 10px auto;
+    color: #fff;
+}
+
+.level-2 { /* Construtores - vermelho/rosa */
+    background: linear-gradient(135deg, #f07167, #ad322f); /* Vermelho/rosa */
+    width: 50%;
+    margin: 0 auto 10px auto;
+    color: #fff;
+}
+
+.level-1 { /* Extras - laranja */
+    background: linear-gradient(135deg, #f1a54c, #c96e1e); /* Laranja/mel */
+    width: 25%;
+    margin: 0 auto 10px auto;
+    color: #fff;
+}
+
+
+
+.level-header {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.level-header h4 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.subtitle {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    font-weight: 400;
+}
+
+.level-content {
+    padding: 20px;
+    min-height: 80px;
+}
+
+.drop-zone {
+    min-height: 60px;
+    border: 2px dashed rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.drop-zone.drag-over {
+    border-color: #FFD700;
+    background: rgba(255, 215, 0, 0.2);
+    transform: scale(1.05);
+}
+
+.drop-hint {
+    color: rgba(255, 255, 255, 0.7);
+    font-style: italic;
+    pointer-events: none;
+}
+
+.drop-zone:not(:empty) .drop-hint {
+    display: none;
+}
+
+/* Alimentos colocados na pirâmide */
+.food-item.placed {
+    background: rgba(255, 255, 255, 0.9);
+    cursor: default;
+    transform: scale(0.8);
+    margin: 2px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.food-item.placed .food-icon {
+    font-size: 1.8rem;
+}
+
+/* ===== MODAL ===== */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #fff;
+    transition: color 0.3s;
+}
+
+.close:hover {
+    color: #FFD700;
+}
+
+/*Botão visualizar piramide   /*
+
+/* ===== FEEDBACK VISUAL ===== */
+.feedback {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    font-weight: 700;
+    z-index: 1000;
+    animation: feedbackPulse 1.5s ease-out forwards;
+    pointer-events: none;
+}
+
+.feedback.correct {
+    color: #00FF7F;
+    text-shadow: 0 0 10px #00FF7F;
+}
+
+.feedback.incorrect {
+    color: #FF4444;
+    text-shadow: 0 0 10px #FF4444;
+}
+
+@keyframes feedbackPulse {
+    0% { 
+        opacity: 0; 
+        transform: translate(-50%, -50%) scale(0.5); 
+    }
+    20% { 
+        opacity: 1; 
+        transform: translate(-50%, -50%) scale(1.2); 
+    }
+    80% { 
+        opacity: 1; 
+        transform: translate(-50%, -50%) scale(1); 
+    }
+    100% { 
+        opacity: 0; 
+        transform: translate(-50%, -50%) scale(0.8); 
+    }
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 1200px) {
+    .menu-options {
+        grid-template-columns: 1fr;
+        max-width: 600px;
+    }
+    
+    .progress-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 968px) {
+    .game-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .food-bank {
+        position: static;
+        order: 2;
+    }
+    
+    .pyramid-section {
+        order: 1;
+    }
+    
+    .menu-header h1, .game-header h1 {
+        font-size: 2.2rem;
+    }
+    
+    .food-items {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 10px;
+    }
+    
+    .lesson-nav {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0px;
+    }
+    
+    .progress-bar {
+        margin: 10px 0;
+        order: 2;
+    }
+    
+    .lesson-counter {
+        text-align: center;
+        order: 3;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .menu-header, .game-header {
+        padding: 20px;
+    }
+    
+    .menu-header h1, .game-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .score-board {
+        gap: 15px;
+    }
+    
+    .score-board span {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .food-bank, .pyramid-section, .lesson-content {
+        padding: 20px;
+    }
+    
+    .level-header h4 {
+        font-size: 1.1rem;
+    }
+    
+    .food-items {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 8px;
+    }
+    
+    .food-item {
+        padding: 10px;
+    }
+    
+    .food-icon {
+        font-size: 2rem;
+    }
+    
+    .food-examples {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 10px;
+    }
+    
+    .lesson-controls {
+        flex-direction: column;
+    }
+    
+    .control-btn {
+        width: 100%;
+    }
+    
+    .modal-content {
+        margin: 10% auto;
+        padding: 20px;
+        width: 95%;
+    }
+}
+.pyramid-section {
+    position: relative;
+}
+
+.back-btn-left {
+    position: absolute !important;
+    left: 15px;
+    top: 20px;
+    z-index: 10;
+    max-width: 140px;
+    font-size: 0.9rem;
+
+    /* Garantir visibilidade */
+    background: linear-gradient(95deg, #7b62ff 20%, #a082ff 100%);
+    box-shadow: 0 3px 13px rgba(110, 92, 255, 0.4);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    color: white !important;             
+    border: none !important;              
+    opacity: 1 !important;                
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2) !important; 
+}
+
+
+@media (max-width: 801px) {
+    .back-btn-left {
+        left: 10px;
+        top: 10px;
+        max-width: 120px;
+        font-size: 0.85rem;
+    }
+        .lesson-nav {
+        padding-bottom: 0 !important;
+        margin-bottom: 16px !important;
+        gap: 0 !important;
+    }
+    .lesson-nav .back-btn {
+        margin-bottom: 0; 
+    }
+    .progress-bar,
+    .lesson-counter {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        
+    }
+
+    .lesson-content, #lesson-content {
+    padding-top: 16px; 
+    padding-bottom: 16px;
+    margin-top: 0px;   
+
+  }
+}
+
+@media (max-width: 430px) {
+  /* Container pirâmide como referência */
+  .pyramid-section {
+    position: relative;
+  }
+  .level-header {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+  
+      /* Ajustar título do card laranja */
+    .level-1 .level-header h4 {
+        font-size: 0.83rem;          /* fonte menor */
+        line-height: 1.1;            /* linha mais compacta */
+        white-space: normal;         /* permitir quebra de linha */
+        word-break: break-word;
+        margin: 0;                   /* remover margens */
+        padding: 0 1px;              /* menos espaço nas laterais */
+        text-align: center;          /* centralizado para boa leitura */
+    }
+
+    /* Ajustar subtítulo para melhor leitura */
+    .level-1 .subtitle {
+        font-size: 0.65rem;         /* fonte menor */
+        padding: 0 2px;
+        opacity: 1;                 /* mais visível */
+        line-height: 1.2;
+        word-break: break-word;
+    }
+
+    /* Reduzir padding de conteúdo para ocupar menos espaço */
+    .level-1 .level-content {
+        padding: 10px 10px;
+        min-height: auto;           /* deixar o tamanho mínimo flexível */
+    }
+
+  /* Botão Menu Principal */
+  .back-btn-left {
+    position: absolute !important;
+    top: 10px;
+    left: 10px;
+    width: 100px;
+    font-size: 0.8rem;
+    padding: 8px 10px;
+    border-radius: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    background: linear-gradient(95deg, #7b62ff 20%, #a082ff 100%);
+    box-shadow: 0 3px 13px rgba(110, 92, 255, 0.4);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    color: white;
+    border: none;
+    opacity: 1;
+    z-index: 10;
+  }
+
+  /* Botões direitos empilhados */
+  #container-botoes {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 10;
+  }
+
+  #container-botoes button {
+    width: 110px;
+    padding: 8px 0;
+    font-size: 0.75rem;
+    border-radius: 18px;
+  }
+
+  /* Espaço extra para a pirâmide ficar limpa */
+  .pyramid-content, .pyramid-body, .pyramid-level:first-child {
+    margin-top: 60px !important; /* dá espaço para os botões em cima */
+  }
+    .lesson-nav {
+        padding-bottom: 0 !important;
+        margin-bottom: 15px !important;
+        gap: 0 !important;
+    }
+    .lesson-nav .back-btn {
+        margin-bottom: 0; 
+    }
+    .progress-bar,
+    .lesson-counter {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        
+    }
+
+    .lesson-content, #lesson-content {
+    padding-top: 16px; 
+    padding-bottom: 16px;
+    margin-top: 0px;   
+
+  }
+}
+
+
+/* ===== ANIMAÇÕES ESPECIAIS ===== */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounce {
+    0%, 20%, 53%, 80%, 100% { transform: scale(1); }
+    40%, 43% { transform: scale(1.1); }
+    70% { transform: scale(1.05); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(78, 205, 196, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(78, 205, 196, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(78, 205, 196, 0); }
+}
+
+.pyramid-level {
+    animation: slideInUp 0.6s ease-out;
+}
+
+.pyramid-level:nth-child(1) { animation-delay: 0.1s; }
+.pyramid-level:nth-child(2) { animation-delay: 0.2s; }
+.pyramid-level:nth-child(3) { animation-delay: 0.3s; }
+.pyramid-level:nth-child(4) { animation-delay: 0.4s; }
+
+.food-item {
+    animation: slideInUp 0.4s ease-out;
+}
+
+/* Estados especiais */
+.food-item.dragging {
+    opacity: 0.7;
+    transform: rotate(5deg) scale(1.1);
+    z-index: 1000;
+}
+
+.pyramid-level.highlight {
+    animation: pulse 1s infinite;
+}
+
+/* Efeitos de notificação */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 2001;
+    max-width: 300px;
+    animation: slideInRight 0.5s ease-out;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+/* Efeito de confetti */
+@keyframes confettiFall {
+    to {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* Estilos para elementos desbloqueados */
+.unlocked {
+    animation: achievementUnlock 0.6s ease-out;
+}
+
+@keyframes achievementUnlock {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Efeito de tipografia gradiente */
+.gradient-text {
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Customização da barra de rolagem */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #4ECDC4, #44A08D);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #44A08D, #4ECDC4);
+}
+
