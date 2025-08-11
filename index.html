@@ -1,128 +1,228 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#8a078b">
-    <link rel="stylesheet" href="../src/css/main.css">
-    <title>AmadoPlay - Plataforma Educacional</title>
-    
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>AmadoPlay - Plataforma Educacional</title>
+  <link rel="stylesheet" href="src/css/main.css" />
 </head>
 <body>
-    <div class="animated-bg"></div>
+  <div class="floating-shapes">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+  </div>
+  
+  <!-- HEADER -->
+  <header class="main-header">
+    <div class="header-top">
+      <div class="header-container">
+        <!-- Logo -->
+        <div class="logo-section">
+          <img src="src/assets/images/Diyogo-02.png" alt="Logo AmadoPlay" />
+          <div class="logo-text">
+            <h1>AmadoPlay</h1>
+            <p>Plataforma Educacional Interativa</p>
+          </div>
+        </div>
+
+        <!-- Ações topo -->
+        <div class="nav-actions">
+          <div class="search-bar">
+            <input type="text" placeholder="Buscar ferramentas, atividades…" />
+            <button>🔍</button>
+          </div>
+          <div class="user-menu">
+            <button class="btn-login">Entrar</button>
+          </div>
+        </div>
+
+        <!-- Botão mobile -->
+        <button class="mobile-menu-toggle">☰</button>
+      </div>
+    </div>
+
+    <!-- MENU PRINCIPAL -->
+    <nav class="main-nav">
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="#" class="nav-link"><span class="nav-icon">🏠</span><span>Início</span></a>
+        </li>
+
+        <!-- Ferramentas -->
+        <li class="nav-item">
+          <a class="nav-link">
+            <span class="nav-icon">🧩</span><span>Ferramentas</span><span class="arrow">▼</span>
+          </a>
+          <div class="dropdown">
+            <a href="pages/Abaco_digital.html" class="dropdown-item"><span class="dropdown-icon">🧮</span><span>Ábaco Digital</span></a>
+            <a href="pages/Material_dourado.html" class="dropdown-item"><span class="dropdown-icon">🟨</span><span>Material Dourado</span></a>
+            <a href="pages/Alfabeto_movel.html" class="dropdown-item"><span class="dropdown-icon">🔤</span><span>Alfabeto Móvel</span></a>
+            <a href="pages/Piramide_alimentar.html" class="dropdown-item"><span class="dropdown-icon">🥗</span><span>Pirâmide Alimentar</span></a>
+            <a href="pages/mapa_brasil.html" class="dropdown-item"><span class="dropdown-icon">🗺️</span><span>Mapa do Brasil</span></a>
+            <a href="#" class="dropdown-item"><span class="dropdown-icon">⚖️</span><span>Três Poderes</span></a>
+          </div>
+        </li>
+
+        <!-- Atividades -->
+        <li class="nav-item">
+          <a class="nav-link"><span class="nav-icon">📚</span><span>Atividades</span><span class="arrow">▼</span></a>
+          <div class="dropdown">
+            <a href="#" class="dropdown-item"><span class="dropdown-icon">👶</span><span>Educação Infantil</span></a>
+            <a href="#" class="dropdown-item"><span class="dropdown-icon">🎒</span><span>Fundamental I</span></a>
+            <a href="#" class="dropdown-item"><span class="dropdown-icon">📖</span><span>Fundamental II</span></a>
+            <a href="#" class="dropdown-item"><span class="dropdown-icon">🎓</span><span>EJA</span></a>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a href="#" class="nav-link"><span class="nav-icon">👨‍🏫</span><span>Para Professores</span></a>
+        </li>
+        <li class="nav-item">
+          <a href="../pages/quem_somos.html" class="nav-link"><span class="nav-icon">ℹ️</span><span>Quem Somos</span></a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Transforme o Aprendizado em uma Aventura</h1>
+      <p class="hero-subtitle">Ferramentas interativas e atividades educacionais para engajar alunos de todas as idades</p>
+
+      <div class="hero-stats">
+        <div class="stat-item"><span class="stat-number">6</span><span class="stat-label">Ferramentas</span></div>
+        <div class="stat-item"><span class="stat-number">Em breve</span><span class="stat-label">Atividades</span></div>
+        <div class="stat-item"><span class="stat-number">Crescendo</span><span class="stat-label">Usuários</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <div class="main-container">
+
+        <!-- ACESSO RÁPIDO -->
+    <section class="quick-access">
+      <h2 class="section-heading">Acesso Rápido</h2>
+      <div class="quick-grid">
+        <div class="quick-item"><div class="quick-icon">🧮</div><span class="quick-label">Matemática</span></div>
+        <div class="quick-item"><div class="quick-icon">📖</div><span class="quick-label">Português</span></div>
+        <div class="quick-item"><div class="quick-icon">🧪</div><span class="quick-label">Ciências</span></div>
+        <div class="quick-item"><div class="quick-icon">🌍</div><span class="quick-label">Geografia</span></div>
+        <div class="quick-item"><div class="quick-icon">📜</div><span class="quick-label">História</span></div>
+        <div class="quick-item"><div class="quick-icon">🎨</div><span class="quick-label">Artes</span></div>
+      </div>
+    </section>
+    <!-- TODAS AS FERRAMENTAS EM DESTAQUE -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title"><div class="section-icon">🧩</div> Nossas Ferramentas Interativas</h2>
+        <span class="feature-badge">Foco Principal</span>
+      </div>
+
+      <div class="cards-grid">
+        <!-- Ferramenta 1 -->
+        <div class="tool-card" onclick="acessarFerramenta('abaco')">
+          <div class="card-image">
+            <img src="src/assets/images/abaco_digital1.png" alt="Ábaco Digital" />
+            <span class="card-badge">Popular</span>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Ábaco Digital</h3>
+            <p class="card-description">Aprenda matemática de forma visual com nosso ábaco interativo e desenvolva habilidades numéricas.</p>
+            <div class="card-footer">
+            </div>
+          </div>
+        </div>
+   
+
+        <!-- Ferramenta 2 -->
+        <div class="tool-card" onclick="acessarFerramenta('material-dourado')">
+          <div class="card-image">
+            <img src="src/assets/images/material_dourado4.png" alt="Material Dourado" />
+            <span class="card-badge">Popular</span>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Material Dourado</h3>
+            <p class="card-description">Explore o sistema decimal com blocos virtuais interativos e compreenda melhor os números.</p>
+            <div class="card-footer">
+            </div>
+          </div>
+        </div>
+
+        <!-- Ferramenta 3 -->
+        <div class="tool-card" onclick="acessarFerramenta('alfabeto-movel')">
+          <div class="card-image">
+            <img src="src/assets/images/Alfabeto_movel1.png" alt="Alfabeto Móvel" />
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Alfabeto Móvel</h3>
+            <p class="card-description">Forme palavras e desenvolva habilidades de leitura de forma lúdica e interativa.</p>
+            <div class="card-footer">
+            </div>
+          </div>
+        </div>
+
+        <!-- Ferramenta 4 -->
+        <div class="tool-card" onclick="acessarFerramenta('piramide-alimentar')">
+          <div class="card-image">
+            <img src="src/assets/images/piramide_alimentar1.png" alt="Pirâmide Alimentar" />
+            <span class="card-badge">Novo</span>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Pirâmide Alimentar</h3>
+            <p class="card-description">Organize os alimentos nos níveis corretos da pirâmide e aprenda sobre alimentação saudável.</p>
+            <div class="card-footer">
+            </div>
+          </div>
+        </div>
+
+        <!-- Ferramenta 5 -->
+        <div class="tool-card" onclick="acessarFerramenta('mapa-brasil')">
+          <div class="card-image">
+            <img src="src/assets/images/mapa_brasil1.png" alt="Mapa do Brasil" />
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Mapa do Brasil</h3>
+            <p class="card-description">Identifique estados e regiões do Brasil de forma interativa e educativa.</p>
+            <div class="card-footer">
+            </div>
+          </div>
+        </div>
+
+        <!-- Ferramenta 6 -->
+        <div class="tool-card">
+          <div class="card-image">
+            <img src="src/assets/images/tres_poderes1.png" alt="Três Poderes" />
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Três Poderes do Brasil</h3>
+            <p class="card-description">Aprenda sobre Executivo, Legislativo e Judiciário de forma didática e interativa.</p>
+            <div class="card-footer">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CANAL DE KARAOKÊ COMO CARD ESPECIAL -->
+    <section class="special-section">
+      <div class="karaoke-card">
+        <div class="karaoke-content">
+          <div class="karaoke-icon">🎵</div>
+          <div class="karaoke-text">
+            <h3>Canal de Karaokê Educativo</h3>
+            <p>Cante e aprenda com músicas educativas! Conteúdo externo parceiro para complementar o aprendizado.</p>
+          </div>
+          <button class="btn-karaoke">Acessar Canal</button>
+        </div>
+      </div>
+    </section>
     
-    <div class="floating-shapes">
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-    </div>
-
-    <div class="container">
-      <header>
-        <img src="src/assets/images/Diyogo-02.png" alt="Logo principal diyogo"
-            style="width: 120px; height: auto;">
-        <h1>AmadoPlay</h1>
-        <p class="subtitle">Ferramentas Educacionais Interativas</p>
-      </header>
-
-
-        <div class="tools-grid">
-            <div class="tool-card card-abaco" onclick="acessarFerramenta('abaco')">
-                <div class="card-image">
-                    <img src="src/assets/images/abaco_digital1.png" alt="Ábaco Digital">
-                    <div class="card-overlay">
-                        <div class="play-icon">🧮</div>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <h3 class="tool-title">Ábaco Digital</h3>
-                    <p class="tool-description">Aprenda matemática de forma visual com nosso ábaco interativo e desenvolva habilidades numéricas.</p>
-                </div>
-            </div>
-
-            <div class="tool-card card-material" onclick="acessarFerramenta('material-dourado')">
-                <div class="card-image">
-                    <img src="src/assets/images/material_dourado4.png" alt="Material Dourado">
-                    <div class="card-overlay">
-                        <div class="play-icon">🟨</div>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <h3 class="tool-title">Material Dourado</h3>
-                    <p class="tool-description">Explore o sistema decimal com blocos virtuais interativos e compreenda melhor os números.</p>
-                </div>
-            </div>
-
-            <div class="tool-card card-alfabeto" onclick="acessarFerramenta('alfabeto-movel')">
-                <div class="card-image">
-                    <img src="src/assets/images/Alfabeto_movel1.png" alt="Alfabeto Móvel">
-                    <div class="card-overlay">
-                        <div class="play-icon">🔤</div>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <h3 class="tool-title">Alfabeto Móvel</h3>
-                    <p class="tool-description">Forme palavras e desenvolva habilidades de leitura de forma lúdica e interativa.</p>
-                </div>
-            </div>
-
-            <div class="tool-card card-piramide-alimentar" onclick="acessarFerramenta('piramide-alimentar')">
-                <div class="card-image1">
-                    <img src="src/assets/images/piramide_alimentar1.png" alt="Jogos Interativos">
-                    <div class="card-overlay">
-                        <div class="play-icon">🥗</div>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <h3 class="tool-title">Pirâmide alimentar</h3>
-                    <p class="tool-description">Pirâmide alimentar: Organize os alimentos nos níveis corretos da pirâmide.</p>
-                </div>
-            </div>
-
-            <div class="tool-card card-mapa-brasil" onclick="acessarFerramenta('mapa-brasil')">
-                <div class="card-image1">
-                    <img src="src/assets/images/mapa_brasil1.png" alt="Quebra-cabeças">
-                    <div class="card-overlay">
-                        <div class="play-icon">🗺️</div>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <h3 class="tool-title">Mapa do Brasil</h3>
-                    <p class="tool-description">Mapa do Brasil: Identifique estados e regiões interativamente.</p>
-                </div>
-            </div>
-
-            <div class="tool-card card-tres-poderes" onclick="acessarFerramenta('tres-poderes')">
-                <div class="card-image1">
-                    <img src="src/assets/images/tres_poderes1.png" alt="Palavras Cruzadas">
-                    <div class="card-overlay">
-                        <div class="play-icon">⚖️</div>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <h3 class="tool-title">Três poderes do Brasil</h3>
-                    <p class="tool-description">Três poderes do Brasil: Aprenda sobre Executivo, Legislativo e Judiciário.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="youtube-section">
-            <div class="youtube-icon">▶️</div>
-            <h2 class="youtube-title">Canal de Karaokê Educativo</h2>
-            <p class="youtube-description">
-                Cante e aprenda com nosso canal especial! Músicas educativas e karaokê infantil para tornar o aprendizado ainda mais divertido e memorável.
-            </p>
-        <a href="#"
-        class="btn"
-        onclick="acessarYoutube(); return false;">
-        🎵 Acessar Canal
-        </a>
-        </div>
-    </div>
-
     <script>
         function acessarFerramenta(ferramenta) {
             switch(ferramenta) {
@@ -136,7 +236,7 @@
                     window.open('pages/Alfabeto_movel.html', '_blank');
                     break;
                 case 'piramide-alimentar':
-                    window.open('https://wordwall.net/pt/resource/10629829/jogo-da-pir%C3%A2mide-alimentar', '_blank');
+                    window.open('pages/piramide_alimentar.html', '_blank');
                     break;
                 case 'mapa-brasil':
                     window.open('pages/mapa_brasil.html', '_blank');
@@ -147,148 +247,8 @@
                     
             }
         }
+    </script>  
 
-        function acessarYoutube() {
-        window.open(
-            'https://www.youtube.com/channel/UCfwZCL3gq8PaIg_i1VcnocQ',
-            '_blank'
-        );
-        }
-        
-
-
-        // Efeitos interativos aprimorados
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.tool-card');
-            
-            // Adiciona efeito de hover mais suave
-            cards.forEach((card, index) => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.zIndex = '10';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.zIndex = '1';
-                });
-
-                // Animação de entrada escalonada
-                setTimeout(() => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, index * 100);
-            });
-
-            // Cria efeito de partículas flutuantes
-            const shapesContainer = document.querySelector('.floating-shapes');
-            setInterval(() => {
-                const shape = document.createElement('div');
-                shape.className = 'shape';
-                shape.style.width = Math.random() * 80 + 30 + 'px';
-                shape.style.height = shape.style.width;
-                shape.style.left = Math.random() * 100 + '%';
-                shape.style.animationDuration = Math.random() * 10 + 15 + 's';
-                shapesContainer.appendChild(shape);
-
-                // Remove a forma após a animação
-                setTimeout(() => {
-                    if (shapesContainer.contains(shape)) {
-                        shapesContainer.removeChild(shape);
-                    }
-                }, 25000);
-            }, 3000);
-        });
-    </script>
-
-    <!-- Botão Flutuante Quem Somos -->
-    <button class="floating-about-btn" onclick="openAboutModal()" title="Quem Somos">
-        ℹ️
-    </button>
-
-    <!-- Modal Quem Somos -->
-    <div class="modal-overlay" id="aboutModal" onclick="closeAboutModal(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <button class="modal-close" onclick="closeAboutModal()">&times;</button>
-                <img src="src/assets/images/logo-amado.png" alt="Logo Amado Maker" class="about-logo__img" />
-                <h2 class="about-title">Amado Maker</h2>
-                <p class="about-subtitle">Cultura Maker na Educação Pública</p>
-            </div>
-            
-
-            <div class="modal-body">
-                <div class="about-section">
-                    <p class="about-text">
-                        A <strong>Amado Maker</strong> é uma empresa que facilita a implementação do ecossistema da cultura maker aplicada à educação pública. É especializada na elaboração de material didático direcionado para a Cultura Maker, implementação de tecnologia educacional e instalação de Laboratórios Makers.
-                    </p>
-                    
-                    <p class="about-text">
-                        Atende alunos e professores desde a <strong>Educação Infantil até a EJA</strong>, proporcionando uma experiência completa de aprendizado através da metodologia maker.
-                    </p>
-                </div>
-
-                <div class="highlight-box">
-                    <div class="highlight-title">
-                        <span>👨‍🏫</span>
-                        Capacitação Profissional
-                    </div>
-                    <p class="about-text" style="margin-bottom: 0;">
-                        Para o corpo docente, a Amado Maker disponibiliza um <strong>treinamento técnico e pedagógico robusto</strong>, com mestres e doutores na área da Educação Maker, visando capacitar o educador para a apropriação das metodologias ativas de ensino e mantém a assessoria durante todo processo de aplicação e execução do projeto.
-                    </p>
-                </div>
-
-                <div class="services-grid">
-                    <div class="service-item">
-                        <span class="service-icon">📚</span>
-                        <div class="service-title">Material Didático</div>
-                        <p class="service-desc">Elaboração de conteúdo especializado para Cultura Maker</p>
-                    </div>
-                    
-                    <div class="service-item">
-                        <span class="service-icon">💻</span>
-                        <div class="service-title">Tecnologia Educacional</div>
-                        <p class="service-desc">Implementação de soluções tecnológicas inovadoras</p>
-                    </div>
-                    
-                    <div class="service-item">
-                        <span class="service-icon">🔬</span>
-                        <div class="service-title">Laboratórios Makers</div>
-                        <p class="service-desc">Instalação completa de espaços maker educacionais</p>
-                    </div>
-                    
-                    <div class="service-item">
-                        <span class="service-icon">🎓</span>
-                        <div class="service-title">Treinamento</div>
-                        <p class="service-desc">Capacitação técnica e pedagógica para educadores</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    
-    <script>
-    // Funções do Modal Quem Somos
-    function openAboutModal() {
-        const modal = document.getElementById('aboutModal');
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeAboutModal(event) {
-        if (!event || event.target === event.currentTarget) {
-            const modal = document.getElementById('aboutModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-    }
-
-    // Fechar modal com ESC
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeAboutModal();
-        }
-    });
-    </script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -299,92 +259,102 @@
         }
     </script>
 
-        <!-- Rodapé -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-links">
-                <a href="pages/privacidade.html">Política de Privacidade</a>
-                <span class="separator">•</span>
-                <a href="pages/termos_de_uso.html">Termos de Uso</a>
-                <span class="separator">•</span>
-                <a href="pages/contato.html">Contato</a>
-            </div>
-            <div class="footer-copyright">
-                <p>&copy; 2025 AMADO TECNOLOGIA LTDA (AMADOTEC). Todos os direitos reservados.</p>
-            </div>
-        </div>
-    </footer>
+    <!-- Rodapé -->
+  <footer class="footer">
+      <div class="footer-content">
+          <div class="footer-links">
+              <a href="pages/privacidade.html">Política de Privacidade</a>
+              <span class="separator">•</span>
+              <a href="pages/termos_de_uso.html">Termos de Uso</a>
+              <span class="separator">•</span>
+              <a href="pages/contato.html">Contato</a>
+          </div>
+          <div class="footer-copyright">
+              <p>&copy; 2025 AMADO TECNOLOGIA LTDA (AMADOTEC). Todos os direitos reservados.</p>
+          </div>
+      </div>
+  </footer>
 
-    <style>
+  <style>
     .footer {
-        background: linear-gradient(135deg, #1e293b, #334155);
-        color: white;
-        padding: 30px 20px;
-        margin-top: 50px;
-        text-align: center;
-    }
+    width: 100%;
+    background: linear-gradient(135deg, #1e293b, #334155);
+    color: white;
+    padding: 30px 20px;
+    margin-top: 50px;
+    text-align: center;
+    position: relative; /* para evitar sobreposição */
+    box-sizing: border-box; /* garantir padding dentro da largura */
+}
 
-    .footer-content {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
+/* Container do conteúdo centralizado */
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px; /* para evitar conteúdo colado nas bordas */
+    box-sizing: border-box;
+}
 
+/* restante dos estilos permanece igual */
+.footer-links {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.footer-links a {
+    color: #e2e8f0;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.separator {
+    color: #64748b;
+    font-weight: bold;
+    margin: 0 5px;
+}
+
+.footer-copyright {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    padding-top: 15px;
+    border-top: 1px solid #475569;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
     .footer-links {
-        margin-bottom: 15px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 10px;
+        flex-direction: column;
+        gap: 5px;
     }
-
-    .footer-links a {
-        color: #e2e8f0;
-        text-decoration: none;
-        font-weight: 500;
-        padding: 5px 10px;
-        border-radius: 4px;
-        transition: all 0.3s ease;
-    }
-
-    .footer-links a:hover {
-        color: white;
-        background: rgba(255, 255, 255, 0.1);
-    }
-
+    
     .separator {
-        color: #64748b;
-        font-weight: bold;
-        margin: 0 5px;
+        display: none;
     }
-
+    
+    .footer-links a {
+        display: block;
+        width: auto;
+    }
+    
     .footer-copyright {
-        font-size: 0.9rem;
-        color: #94a3b8;
-        padding-top: 15px;
-        border-top: 1px solid #475569;
+        font-size: 0.8rem;
     }
+}
 
-    /* Responsividade */
-    @media (max-width: 768px) {
-        .footer-links {
-            flex-direction: column;
-            gap: 5px;
-        }
-        
-        .separator {
-            display: none;
-        }
-        
-        .footer-links a {
-            display: block;
-            width: auto;
-        }
-        
-        .footer-copyright {
-            font-size: 0.8rem;
-        }
-    }
-    </style>
+  </style>
+
+  <script src="../src/js/index.js"></script>
 </body>
 </html>
