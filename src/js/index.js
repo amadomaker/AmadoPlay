@@ -82,6 +82,19 @@ const Utils = {
   }
 };
 
+// Previne o "piscar" do menu
+document.addEventListener('DOMContentLoaded', function() {
+  // Remove qualquer classe menu-open que possa estar sendo aplicada incorretamente
+  document.body.classList.remove('menu-open');
+  
+  // Força o estado inicial correto
+  const nav = document.querySelector('.main-nav');
+  if (nav && window.innerWidth <= 768) {
+    nav.style.display = 'none';
+  }
+});
+
+
 // ===============================
 // GERENCIADOR DE ESTADO
 // ===============================

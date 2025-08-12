@@ -188,6 +188,7 @@ body::before {
   transition: var(--transition);
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
+  color: rgb(0, 0, 0);
 }
 
 .search-bar input:focus {
@@ -239,46 +240,70 @@ body::before {
 }
 
 /*=== MENU MOBILE ===*/
+/*=== BOTÃO HAMBÚRGUER ===*/
 .mobile-menu-toggle {
   display: none;
-  background: none;
-  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(102, 126, 234, 0.3);
   cursor: pointer;
-  padding: 8px;
+  padding: 10px;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   width: 44px;
   height: 44px;
   border-radius: 8px;
-  transition: var(--transition);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 10001;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .mobile-menu-toggle:hover {
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(255, 255, 255, 1);
+  border-color: var(--primary-color);
 }
 
+/* LINHAS DO HAMBÚRGUER */
 .hamburger-line {
-  display: block;
-  width: 25px;
-  height: 3px;
-  background: var(--primary-color);
-  margin: 3px 0;
-  transition: var(--transition);
-  border-radius: 2px;
+  display: block !important;
+  width: 22px !important;
+  height: 3px !important;
+  background-color: #2d3436 !important;
+  border-radius: 2px !important;
+  transition: all 0.3s ease !important;
+  transform-origin: center !important;
+  position: relative !important;
+
 }
 
+/* Garante espaçamento entre as linhas */
+.hamburger-line:nth-child(1) {
+  margin-bottom: 4px !important;
+}
+
+.hamburger-line:nth-child(2) {
+  margin-bottom: 4px !important;
+}
+
+.hamburger-line:nth-child(3) {
+  margin-bottom: 0 !important;
+}
+
+/* ANIMAÇÃO QUANDO MENU ABERTO */
 .menu-open .hamburger-line:nth-child(1) {
-  transform: rotate(-45deg) translate(-6px, 6px);
+  transform: rotate(45deg) translate(6px, 6px) !important;
 }
 
 .menu-open .hamburger-line:nth-child(2) {
-  opacity: 0;
+  opacity: 0 !important;
+  transform: scale(0) !important;
 }
 
 .menu-open .hamburger-line:nth-child(3) {
-  transform: rotate(45deg) translate(-6px, -6px);
+  transform: rotate(-45deg) translate(6px, -6px) !important;
 }
+
 
 /*=== MENU PRINCIPAL ===*/
 .main-nav {
@@ -857,11 +882,16 @@ body::before {
 }
 
 /* Mobile */
-@media (max-width: 768px) {
+@media (max-width: 801px) {
   .mobile-menu-toggle {
-    display: flex;
+    display: flex !important;
+    z-index: 1000 !important;
   
   }
+  .mobile-menu-toggle .hamburger-line {
+  background: #2d3436 !important; /* Cor bem visível */
+  }
+
   
   .nav-actions {
     display: none;
@@ -943,14 +973,11 @@ body::before {
   .nav-item:focus-within {
     z-index: auto !important;
   }
-  
   .dropdown-parent:hover .dropdown,
-
-  
   .dropdown-parent.mobile-open .dropdown {
-    display: block;
+    display: block !important;
   }
-  
+
   .logo-section img {
     height: 70px;
   }
@@ -1030,17 +1057,7 @@ body::before {
   }
 }
 
-/* Modo escuro (se preferir implementar) */
-@media (prefers-color-scheme: dark) {
-  .search-bar input {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-  }
-  
-  .search-bar input::placeholder {
-    color: rgba(255, 255, 255, 0.7);
-  }
-}
+
 
 /* Alto contraste */
 @media (prefers-contrast: high) {
@@ -1077,3 +1094,51 @@ body::before {
     color: black;
   }
 }
+
+/* Isola o header e evita que efeitos por trás interfiram */
+.main-header { isolation: isolate; }
+
+/* Botão sempre no topo e com fundo sólido p/ contraste */
+.mobile-menu-toggle {
+  position: relative;
+  z-index: 10010;            /* acima de nav/shimmer */
+  background: #fff;          /* sólido no mobile */
+  overflow: visible;         /* garante que nada seja cortado */
+}
+
+/* Desenha as 3 linhas como background do próprio botão (fallback robusto) */
+.mobile-menu-toggle::before {
+  content: "";
+  display: block;
+  width: 22px;
+  height: 18px;              /* espaço para 3 linhas */
+  /* 3 faixas (topo, meio, baixo) */
+  background:
+    linear-gradient(#2d3436 0 0) 0 0/22px 3px no-repeat,
+    linear-gradient(#2d3436 0 0) 0 50%/22px 3px no-repeat,
+    linear-gradient(#2d3436 0 0) 0 100%/22px 3px no-repeat;
+  margin: 0 auto;            /* centraliza no botão */
+}
+
+/* Garante que o shimmer da nav não cubra nada nem pegue clique */
+.main-nav::before { pointer-events: none; }
+
+/* Modo aberto: anima o "X" usando transform só no pseudo (sem spans) */
+.menu-open .mobile-menu-toggle::before {
+  background:
+    linear-gradient(#2d3436 0 0) 0 50%/22px 3px no-repeat;
+  transform: rotate(45deg);
+}
+.menu-open .mobile-menu-toggle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 3px;
+  background: #2d3436;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* (Opcional) esconde os spans antigos para não interferirem */
+.mobile-menu-toggle .hamburger-line { display: none !important; }

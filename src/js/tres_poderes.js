@@ -12,7 +12,7 @@ const gameData = {
                 judiciario: "O juiz decide que celulares não são permitidos nas escolas."
             },
             correct: "legislativo",
-            explanation: "O Legislativo é o poder responsável por elaborar, discutir e aprovar leis. O Executivo só pode sancionar ou vetar a lei após a aprovação. O Judiciário só atua se houver conflitos ou necessidade de interpretar a lei.",
+            explanation: "O Legislativo é o poder responsável por elaboraprovar leis.",
             consequence: {
                 correct: "✅ O Conselho indicou o Legislativo. A proposta foi levada para a câmara de vereadores, que discutiu o tema com a população e aprovou a nova lei sobre uso de celulares. A escola agora tem regras claras, construídas com participação da comunidade.",
                 incorrect: "❌ O Conselho indicou o poder errado. No entanto, sem a aprovação da câmara, a proposta não pode se tornar lei. O problema continua sem solução clara."
