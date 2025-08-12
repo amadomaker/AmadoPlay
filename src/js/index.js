@@ -171,20 +171,37 @@ class MobileMenu {
     this.closeAllDropdowns();
   }
   
-  setupMobileDropdowns() {
-    this.dropdowns.forEach(dropdown => {
-      const trigger = dropdown.querySelector('.dropdown-trigger');
-      if (!trigger) return;
-      
-      trigger.addEventListener('click', (e) => {
-        if (Utils.isMobile()) {
-          e.preventDefault();
-          this.toggleDropdown(dropdown);
-        }
-      });
+setupMobileDropdowns() {
+  this.dropdowns.forEach(dropdown => {
+    const trigger = dropdown.querySelector('.nav-link');
+    if (!trigger) return;
+
+    // Acessibilidade
+    trigger.setAttribute('aria-haspopup', 'true');
+    trigger.setAttribute('role', 'button');
+    trigger.setAttribute('aria-expanded', 'false');
+
+    trigger.addEventListener('click', (e) => {
+      if (!Utils.isMobile()) return;    // no desktop, deixa o hover agir
+      e.preventDefault();
+      e.stopPropagation();              // evita interferência de outros listeners
+
+      const wasOpen = dropdown.classList.contains('mobile-open');
+
+      // fecha todos
+      this.closeAllDropdowns();
+
+      if (!wasOpen) {
+        dropdown.classList.add('mobile-open');
+        trigger.setAttribute('aria-expanded', 'true');
+      } else {
+        trigger.setAttribute('aria-expanded', 'false');
+      }
     });
-  }
-  
+  });
+}
+
+
   toggleDropdown(dropdown) {
     const isOpen = dropdown.classList.contains('mobile-open');
     
@@ -856,3 +873,4 @@ window.acessarFerramenta = function(toolName) {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { AmadoPlayApp, CONFIG, Utils };
 }
+

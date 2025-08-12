@@ -12,7 +12,11 @@ const gameData = {
                 judiciario: "O juiz decide que celulares não são permitidos nas escolas."
             },
             correct: "legislativo",
-            explanation: "O Legislativo é o poder responsável por elaboraprovar leis.",
+            explanation: "O Legislativo é o poder responsável por elaborar e aprovar leis.",
+            wrongExplanations: {
+                executivo: "O prefeito não pode criar leis sozinho. Ele pode propor, mas quem aprova é o Legislativo.",
+                judiciario: "O Judiciário não cria leis, ele interpreta e aplica as leis existentes quando há conflitos."
+            },
             consequence: {
                 correct: "✅ O Conselho indicou o Legislativo. A proposta foi levada para a câmara de vereadores, que discutiu o tema com a população e aprovou a nova lei sobre uso de celulares. A escola agora tem regras claras, construídas com participação da comunidade.",
                 incorrect: "❌ O Conselho indicou o poder errado. No entanto, sem a aprovação da câmara, a proposta não pode se tornar lei. O problema continua sem solução clara."
@@ -29,7 +33,11 @@ const gameData = {
                 judiciario: "O juiz determina que o hospital seja reformado."
             },
             correct: "executivo",
-            explanation: "O Executivo executa ações e políticas públicas, como obras e serviços. O Legislativo aprova o orçamento, mas não realiza obras. O Judiciário só age se houver problemas legais no processo.",
+            explanation: "O Executivo executa ações e políticas públicas, como obras e serviços.",
+            wrongExplanations: {
+                legislativo: "O Legislativo aprova o orçamento, mas não realiza obras.",
+                judiciario: "O Judiciário só age se houver problemas legais no processo."
+            },
             consequence: {
                 correct: "✅ O Conselho indicou o Executivo. A prefeitura contratou uma empresa e iniciou a reforma. A população está sendo atendida com mais segurança e conforto.",
                 incorrect: "❌ O Conselho escolheu o poder errado. Sem a ação do Executivo, a reforma não pode ser feita. O hospital continua com problemas."
@@ -47,6 +55,10 @@ const gameData = {
             },
             correct: "legislativo",
             explanation: "O Legislativo é o responsável por aprovar leis como essa. O Executivo só aplica a lei aprovada. O Judiciário não cria ou aprova leis.",
+            wrongExplanations: {
+                executivo: "O prefeito pode executar mudanças, mas para criar uma lei é necessária a aprovação do Legislativo.",
+                judiciario: "O Judiciário não cria leis sobre políticas públicas, ele apenas interpreta leis quando há conflitos."
+            },
             consequence: {
                 correct: "✅ O Conselho indicou o Legislativo. A proposta foi discutida na câmara e virou lei. Agora as escolas têm uma merenda mais saudável e variada.",
                 incorrect: "❌ A proposta foi encaminhada ao poder errado e não pôde ser votada como lei. A mudança não aconteceu."
@@ -64,6 +76,10 @@ const gameData = {
             },
             correct: "judiciario",
             explanation: "O Judiciário é o poder que julga se houve crime e aplica as penas previstas. O Executivo pode investigar internamente, mas não julga. O Legislativo pode fiscalizar, mas também não julga.",
+            wrongExplanations: {
+                executivo: "A prefeitura pode fazer investigação interna, mas não tem poder para julgar crimes e aplicar penas.",
+                legislativo: "Os vereadores podem fiscalizar e investigar, mas não têm poder para julgar e condenar criminalmente."
+            },
             consequence: {
                 correct: "✅ O Conselho indicou o Judiciário. O caso foi julgado por um tribunal e os responsáveis foram punidos conforme a lei.",
                 incorrect: "❌ O poder escolhido não tem autoridade para julgar crimes. O caso precisa ser levado ao Judiciário para ser resolvido legalmente."
@@ -81,6 +97,10 @@ const gameData = {
             },
             correct: "executivo",
             explanation: "O Executivo realiza ações como essa, cuidando da manutenção dos espaços públicos. O Legislativo aprova recursos, mas não executa obras. O Judiciário só atua se a prefeitura descumprir suas responsabilidades legais.",
+            wrongExplanations: {
+                legislativo: "Os vereadores aprovam recursos e fiscalizam, mas não executam obras de manutenção dos espaços públicos.",
+                judiciario: "O Judiciário só atua quando há descumprimento de obrigações legais, não para resolver problemas de manutenção rotineira."
+            },
             consequence: {
                 correct: "✅ O Conselho indicou o Executivo. A prefeitura agiu e a praça foi iluminada novamente. As famílias voltaram a frequentar o espaço com segurança.",
                 incorrect: "❌ O poder escolhido não tem essa função. Sem a ação do Executivo, o problema continua."
@@ -98,6 +118,10 @@ const gameData = {
             },
             correct: "judiciario",
             explanation: "O Judiciário pode considerar uma lei inválida se ela for contrária à Constituição. O Executivo e o Legislativo não podem, sozinhos, anular uma lei já aprovada.",
+            wrongExplanations: {
+                executivo: "O prefeito não pode anular uma lei sozinho. Ele executa as leis aprovadas, mas não pode invalidá-las.",
+                legislativo: "Os vereadores não podem simplesmente cancelar uma lei já aprovada. O processo é mais complexo e demora mais tempo."
+            },
             consequence: {
                 correct: "✅ O Conselho indicou o Judiciário. O tribunal analisou o caso e decidiu que a lei era inconstitucional. As pessoas com deficiência voltaram a ter seus direitos garantidos.",
                 incorrect: "❌ A lei continua em vigor porque não foi questionada no Judiciário, que é o único com poder para anulá-la nesse caso."
@@ -115,6 +139,10 @@ const gameData = {
             },
             correct: "executivo",
             explanation: "O Executivo é responsável por executar obras públicas e garantir a infraestrutura necessária. O Legislativo aprova os recursos, mas não executa as obras. O Judiciário só intervém se houver disputas legais.",
+            wrongExplanations: {
+                legislativo: "A câmara aprova o orçamento e fiscaliza, mas não planeja nem executa obras públicas.",
+                judiciario: "O Judiciário não determina a construção de obras públicas, ele só intervém quando há conflitos legais."
+            },
             consequence: {
                 correct: "✅ O Conselho indicou o Executivo. A prefeitura iniciou a construção da nova escola, atendendo a demanda da população.",
                 incorrect: "❌ O poder indicado não tem responsabilidade direta pela execução da obra. A construção não avançou e as escolas permanecem lotadas."
@@ -132,6 +160,10 @@ const gameData = {
             },
             correct: "legislativo",
             explanation: "O Legislativo é responsável por elaborar e aprovar leis. O Executivo executa as leis. O Judiciário interpreta as leis se houver conflitos.",
+            wrongExplanations: {
+                executivo: "O prefeito executa as leis aprovadas, mas não pode criar leis sozinho através de decretos neste caso.",
+                judiciario: "O Judiciário interpreta leis quando há conflitos, mas não cria leis sobre políticas educacionais."
+            },
             consequence: {
                 correct: "✅ O Conselho indicou o Legislativo. A proposta foi discutida e aprovada pela câmara, permitindo a mudança no horário escolar.",
                 incorrect: "❌ Sem a aprovação do Legislativo, a mudança não foi possível. O horário escolar continuou o mesmo."
@@ -149,6 +181,10 @@ const gameData = {
             },
             correct: "judiciario",
             explanation: "O Judiciário é o poder que julga crimes e irregularidades. O Legislativo fiscaliza, mas não julga. O Executivo pode investigar, mas não condena.",
+            wrongExplanations: {
+                executivo: "A prefeitura pode fazer investigação interna, mas não tem poder para julgar e condenar crimes.",
+                legislativo: "A câmara pode fiscalizar e abrir processo, mas não tem poder para julgar e aplicar penas criminais."
+            },
             consequence: {
                 correct: "✅ O Conselho indicou o Judiciário. O tribunal analisou as provas e decidiu sobre o caso, garantindo justiça.",
                 incorrect: "❌ Sem a atuação do Judiciário, o caso não foi julgado e a denúncia não avançou."
@@ -166,6 +202,10 @@ const gameData = {
             },
             correct: "legislativo",
             explanation: "O Legislativo cria leis e aprova os recursos necessários para obras públicas. O Executivo executa os projetos aprovados. O Judiciário só atua se houver disputas legais.",
+            wrongExplanations: {
+                executivo: "A prefeitura executa e mantém o parque, mas não pode aprovar leis e orçamento para sua criação oficial.",
+                judiciario: "O tribunal não decide sobre criação de políticas públicas, ele só atua quando há conflitos legais."
+            },
             consequence: {
                 correct: "✅ O Conselho indicou o Legislativo. A proposta foi aprovada, e o Executivo iniciou a criação do parque.",
                 incorrect: "❌ Sem a aprovação do Legislativo, o parque não pode ser criado oficialmente."
@@ -183,6 +223,10 @@ const gameData = {
             },
             correct: "legislativo",
             explanation: "O Legislativo tem o papel de criar leis para regulamentar situações como essa. O Executivo aplica a lei, mas não a cria sozinho. O Judiciário só age se houver conflito legal.",
+            wrongExplanations: {
+                executivo: "O prefeito pode regulamentar e fiscalizar, mas não pode criar leis sozinho sem aprovação do Legislativo.",
+                judiciario: "O Judiciário não cria leis sobre regulamentação urbana, ele só age quando há conflitos legais específicos."
+            },
             consequence: {
                 correct: "✅ O Conselho indicou o Legislativo. A lei foi aprovada, e o Executivo fiscaliza o cumprimento.",
                 incorrect: "❌ Sem a lei aprovada, o problema do barulho não foi resolvido."
@@ -200,6 +244,10 @@ const gameData = {
             },
             correct: "judiciario",
             explanation: "O Judiciário é responsável por garantir que leis e ações estejam de acordo com a Constituição e os direitos fundamentais. O Executivo aplica as leis, mas não pode invalidar sozinho uma lei aprovada. O Legislativo pode propor mudanças ou revogar leis, mas o efeito não é imediato como uma decisão judicial.",
+            wrongExplanations: {
+                executivo: "O prefeito não pode suspender uma lei aprovada pelo Legislativo sozinho, ele deve executar as leis vigentes.",
+                legislativo: "Os vereadores podem revogar a lei, mas esse processo demora e não tem efeito imediato como uma decisão judicial."
+            },
             consequence: {
                 correct: "✅ O Conselho indicou o Judiciário. O tribunal suspendeu a aplicação da lei até que sua legalidade seja analisada. As famílias seguem com acesso à moradia durante o processo.",
                 incorrect: "❌ O poder escolhido não tem autoridade para suspender o projeto de forma imediata. A medida continua valendo."
@@ -207,6 +255,7 @@ const gameData = {
         }
     ]
 };
+
 
 // ===== CONTROLE DO JOGO ===== //
 class TresPoderesGame {
@@ -311,90 +360,96 @@ class TresPoderesGame {
     }
 
     // ===== EVENT LISTENERS ===== //
-    setupEventListeners() {
-        // Botões da tela inicial
-        document.getElementById('learnFirstBtn').addEventListener('click', () => {
-            this.showIntroduction();
-        });
+setupEventListeners() {
+    // Salva referência da instância
+    const game = this;
+    
+    // Botões da tela inicial
+    document.getElementById('learnFirstBtn').addEventListener('click', () => {
+        game.showIntroduction();
+    });
 
-        document.getElementById('startGameBtn').addEventListener('click', () => {
-            this.startGame();
-        });
+    document.getElementById('startGameBtn').addEventListener('click', () => {
+        game.startGame();
+    });
 
-        // Botões da tela de introdução
-        document.getElementById('startGameFromIntroBtn').addEventListener('click', () => {
-            this.startGame();
-        });
+    // Botões da tela de introdução
+    document.getElementById('startGameFromIntroBtn').addEventListener('click', () => {
+        game.startGame();
+    });
 
-        document.getElementById('backToStartFromIntroBtn').addEventListener('click', () => {
-            this.showScreen('startScreen');
-            this.updateCharacter('idle', 'Vamos decidir como começar nossa aventura de aprendizado!');
-        });
+    document.getElementById('backToStartFromIntroBtn').addEventListener('click', () => {
+        game.showScreen('startScreen');
+        game.updateCharacter('idle', 'Vamos decidir como começar nossa aventura de aprendizado!');
+    });
 
-        // Botão voltar ao início
-        document.getElementById('backToStartBtn').addEventListener('click', () => {
-            this.returnToStart();
-        });
+    // Botão voltar ao início
+    document.getElementById('backToStartBtn').addEventListener('click', () => {
+        game.returnToStart();
+    });
 
-        // Botões de opção (nova classe)
-        document.querySelectorAll('.option-card-compact').forEach(card => {
-            card.addEventListener('click', (e) => {
-                this.selectOption(e.currentTarget);
-            });
+    // Botões de opção (nova classe)
+    document.querySelectorAll('.option-card-compact').forEach(card => {
+        card.addEventListener('click', (e) => {
+            game.selectOption(e.currentTarget);
         });
+    });
 
-        // Botão de ajuda
-        document.getElementById('helpBtn').addEventListener('click', () => {
-            this.showHelpModal();
-        });
+    // Botão de ajuda
+    document.getElementById('helpBtn').addEventListener('click', () => {
+        game.showHelpModal();
+    });
 
-        // Botão próxima questão
-        document.getElementById('nextQuestionBtn').addEventListener('click', () => {
-            this.nextSituation();
-        });
+    // ✅ SOLUÇÃO DEFINITIVA - BOTÃO PRÓXIMA QUESTÃO
+    document.getElementById('nextQuestionBtn').addEventListener('click', () => {
+        // Chama função global ao invés do método da classe
+        handleNextSituation();
+    });
 
-        document.getElementById('tryAgainBtn').addEventListener('click', () => {
-            this.tryAgain();
-        });
 
-        // Botão recomeçar
-        document.getElementById('restartGameBtn').addEventListener('click', () => {
-            this.restartGame();
-        });
+    document.getElementById('tryAgainBtn').addEventListener('click', () => {
+        game.tryAgain();
+    });
 
-        // Botão resumo
-        document.getElementById('summaryBtn').addEventListener('click', () => {
-            this.showSummaryModal();
-        });
+    // Botão recomeçar
+    document.getElementById('restartGameBtn').addEventListener('click', () => {
+        game.restartGame();
+    });
 
-        // Fechar modais
-        document.getElementById('closeHelpBtn').addEventListener('click', () => {
-            this.closeModal('helpModal');
-        });
+    // Botão resumo
+    document.getElementById('summaryBtn').addEventListener('click', () => {
+        game.showSummaryModal();
+    });
 
-        document.getElementById('closeSummaryBtn').addEventListener('click', () => {
-            this.closeModal('summaryModal');
-        });
+    // Fechar modais
+    document.getElementById('closeHelpBtn').addEventListener('click', () => {
+        game.closeModal('helpModal');
+    });
 
-        // Fechar modal clicando fora
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    this.closeModal(modal.id);
-                }
-            });
-        });
+    document.getElementById('closeSummaryBtn').addEventListener('click', () => {
+        game.closeModal('summaryModal');
+    });
 
-        // Personagem clicável
-        document.getElementById('characterImage').addEventListener('click', () => {
-            this.showCharacterSpeech();
+    // Fechar modal clicando fora
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                game.closeModal(modal.id);
+            }
         });
+    });
 
-        // Teclas de atalho
-        document.addEventListener('keydown', (e) => {
-            this.handleKeyboardShortcuts(e);
-        });
-    }
+    // Personagem clicável
+    document.getElementById('characterImage').addEventListener('click', () => {
+        game.showCharacterSpeech();
+    });
+
+    // Teclas de atalho
+    document.addEventListener('keydown', (e) => {
+        game.handleKeyboardShortcuts(e);
+    });
+}
+
         // ===== FUNÇÃO TENTAR NOVAMENTE ===== //
         tryAgain() {
             // Reset das opções selecionadas
@@ -577,87 +632,106 @@ class TresPoderesGame {
     }
 
     showFeedback(isCorrect, situation) {
-        // Preencher informações da situação na tela de feedback
-        const situationTitleFeedbackElement = document.getElementById('situationTitleFeedback');
-        const situationTextFeedbackElement = document.getElementById('situationTextFeedback');
-        const questionPromptFeedbackElement = document.getElementById('questionPromptFeedback');
+    // Preencher informações da situação na tela de feedback
+    const situationTitleFeedbackElement = document.getElementById('situationTitleFeedback');
+    const situationTextFeedbackElement = document.getElementById('situationTextFeedback');
+    const questionPromptFeedbackElement = document.getElementById('questionPromptFeedback');
+    
+    if (situationTitleFeedbackElement) situationTitleFeedbackElement.textContent = situation.title;
+    if (situationTextFeedbackElement) situationTextFeedbackElement.textContent = situation.description;
+    if (questionPromptFeedbackElement) questionPromptFeedbackElement.textContent = situation.question;
+    
+    // Atualizar ícone e título do resultado
+    const resultIcon = document.getElementById('resultIcon');
+    const resultTitle = document.getElementById('resultTitle');
+    
+    // 🔹 NOVA LÓGICA PARA MOSTRAR APENAS A RESPOSTA RELEVANTE
+    const feedbackExplanationElement = document.getElementById('feedbackExplanation');
+    let explanationText = '';
+    
+    if (isCorrect) {
+        // USUÁRIO ACERTOU - Mostra apenas a resposta correta
+        const correctOptionText = situation.options[situation.correct];
         
-        if (situationTitleFeedbackElement) situationTitleFeedbackElement.textContent = situation.title;
-        if (situationTextFeedbackElement) situationTextFeedbackElement.textContent = situation.description;
-        if (questionPromptFeedbackElement) questionPromptFeedbackElement.textContent = situation.question;
+        resultIcon.className = 'result-icon correct';
+        resultIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+        resultTitle.textContent = 'Muito Bem!';
+        resultTitle.className = 'result-title correct';
         
-        // Atualizar ícone e título do resultado
-        const resultIcon = document.getElementById('resultIcon');
-        const resultTitle = document.getElementById('resultTitle');
+        explanationText = `
+            <div class="feedback-answer-section">
+                <h4>✅ Sua resposta (CORRETA):</h4>
+                <p class="selected-answer correct">"${correctOptionText}"</p>
+                <h4>Por que essa é a resposta:</h4>
+                <p class="explanation-text">${situation.explanation}</p>
+            </div>
+        `;
         
+        this.updateCharacter('correct', 'Parabéns! Vocês escolheram o poder correto. Que tal discutir por que essa foi a melhor escolha?');
+    } else {
+        // USUÁRIO ERROU - Mostra APENAS a resposta escolhida (SEM mostrar a correta)
+        const selectedOptionText = situation.options[this.selectedAnswer];
+        
+        // Busca explicação específica para a resposta errada
+        const wrongExplanation = situation.wrongExplanations && situation.wrongExplanations[this.selectedAnswer] 
+            ? situation.wrongExplanations[this.selectedAnswer]
+            : `Esta opção não está correta. Discutam novamente e tentem identificar qual poder é o mais adequado para esta situação.`;
+        
+        resultIcon.className = 'result-icon incorrect';
+        resultIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
+        resultTitle.textContent = 'Vamos Tentar Novamente!';
+        resultTitle.className = 'result-title incorrect';
+        
+        explanationText = `
+            <div class="feedback-answer-section">
+                <h4>❌ Sua resposta:</h4>
+                <p class="selected-answer incorrect">"${selectedOptionText}"</p>
+                <h4>Por que essa não é a resposta:</h4>
+                <p class="explanation-text">${wrongExplanation}</p>
+                
+                <div class="try-again-hint">
+                    <h4>💭 Dica para próxima tentativa:</h4>
+                    <p class="hint-text">Pensem em qual dos três poderes tem a função específica necessária para resolver esta situação. Discutam as responsabilidades de cada poder antes de escolher!</p>
+                </div>
+            </div>
+        `;
+        
+        this.updateCharacter('incorrect', 'Não desistam! Vocês podem tentar novamente. Discutam qual poder seria mais adequado para esta situação.');
+    }
+    
+    // Atualizar explicação com HTML
+    if (feedbackExplanationElement) {
+        feedbackExplanationElement.innerHTML = explanationText;
+    }
+    
+    // Atualizar consequência (mantém como estava)
+    const consequenceText = document.getElementById('consequenceText');
+    if (consequenceText) {
         if (isCorrect) {
-            resultIcon.className = 'result-icon correct';
-            resultIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
-            resultTitle.textContent = 'Muito Bem!';
-            resultTitle.className = 'result-title correct';
-            this.updateCharacter('correct', 'Parabéns! Vocês escolheram o poder correto. Que tal discutir por que essa foi a melhor escolha?');
+            consequenceText.textContent = situation.consequence.correct;
+            consequenceText.className = 'consequence-text correct';
         } else {
-            resultIcon.className = 'result-icon incorrect';
-            resultIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
-            resultTitle.textContent = 'Vamos Aprender!';
-            resultTitle.className = 'result-title incorrect';
-            this.updateCharacter('incorrect', 'Não se preocupem! Errar faz parte do aprendizado. Vamos ver por que a outra opção era melhor.');
+            consequenceText.textContent = situation.consequence.incorrect;
+            consequenceText.className = 'consequence-text incorrect';
         }
-        
-        // Atualizar explicação
-        const feedbackExplanationElement = document.getElementById('feedbackExplanation');
-        if (feedbackExplanationElement) feedbackExplanationElement.textContent = situation.explanation;
-        
-        // Atualizar consequência
-        const consequenceText = document.getElementById('consequenceText');
-        if (consequenceText) {
-            if (isCorrect) {
-                consequenceText.textContent = situation.consequence.correct;
-                consequenceText.className = 'consequence-text correct';
-            } else {
-                consequenceText.textContent = situation.consequence.incorrect;
-                consequenceText.className = 'consequence-text incorrect';
-            }
-        }
-        
-        // Atualizar botão próxima questão
-        const nextBtn = document.getElementById('nextQuestionBtn');
-        if (nextBtn) {
-            if (this.currentSituation < gameData.situations.length - 1) {
-                nextBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Próxima Situação';
-            } else {
-                nextBtn.innerHTML = '<i class="fas fa-flag-checkered"></i> Ver Resultado Final';
-            }
-        }
-        
-        this.showScreen('feedbackScreen');
-        
-        // Scroll para o topo
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
-    nextSituation() {
+    
+    // Atualizar botão próxima questão (mantém como estava)
+    const nextBtn = document.getElementById('nextQuestionBtn');
+    if (nextBtn) {
         if (this.currentSituation < gameData.situations.length - 1) {
-            this.currentSituation++;
-            this.loadSituation();
-            this.updateProgress();
-            this.showScreen('questionScreen');
-            
-            // Mensagem do personagem baseada no progresso
-            const progress = this.currentSituation + 1;
-            if (progress === 5) {
-                this.updateCharacter('marcelo', `Olá! Sou o Marcelo. Vocês estão indo muito bem! Já passaram de ${progress} situações.`);
-            } else if (progress === 9) {
-                this.updateCharacter('idle', `Uau! Vocês estão quase terminando. Faltam apenas ${gameData.situations.length - progress} situações!`);
-            } else if (progress === gameData.situations.length) {
-                this.updateCharacter('correct', 'Esta é a última situação! Vocês chegaram longe, parabéns!');
-            } else {
-                this.updateCharacter('idle', `Ótimo! Vamos para a situação ${progress}. Continuem discutindo antes de escolher!`);
-            }
+            nextBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Próxima Situação';
         } else {
-            this.showFinalScreen();
+            nextBtn.innerHTML = '<i class="fas fa-flag-checkered"></i> Ver Resultado Final';
         }
     }
+    
+    this.showScreen('feedbackScreen');
+    
+    // Scroll para o topo
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 
 
     updateProgress() {
@@ -803,6 +877,61 @@ if ('serviceWorker' in navigator) {
             });
     });
 }
+// ===== FUNÇÃO GLOBAL PARA PRÓXIMA SITUAÇÃO ===== //
+function handleNextSituation() {
+    // Acessa a instância global do jogo
+    if (window.game && typeof window.game.currentSituation !== 'undefined') {
+        const game = window.game;
+        
+        if (game.currentSituation < gameData.situations.length - 1) {
+            // Próxima situação
+            game.currentSituation++;
+            game.loadSituation();
+            game.updateProgress();
+            game.showScreen('questionScreen');
+            
+            // Mensagem do personagem baseada no progresso
+            const progress = game.currentSituation + 1;
+            if (progress === 5) {
+                game.updateCharacter('marcelo', `Olá! Sou o Marcelo. Vocês estão indo muito bem! Já passaram de ${progress} situações.`);
+            } else if (progress === 9) {
+                game.updateCharacter('idle', `Uau! Vocês estão quase terminando. Faltam apenas ${gameData.situations.length - progress} situações!`);
+            } else if (progress === gameData.situations.length) {
+                game.updateCharacter('correct', 'Esta é a última situação! Vocês chegaram longe, parabéns!');
+            } else {
+                game.updateCharacter('idle', `Ótimo! Vamos para a situação ${progress}. Continuem discutindo antes de escolher!`);
+            }
+        } else {
+            // Tela final
+            handleFinalScreen();
+        }
+    } else {
+        console.error('Game instance not found');
+    }
+}
+
+// ===== FUNÇÃO GLOBAL PARA TELA FINAL ===== //
+function handleFinalScreen() {
+    const game = window.game;
+    if (game) {
+        game.showFullScreenGif('correct', 3000);
+        
+        setTimeout(() => {
+            game.updateCharacter('correct', 'Parabéns! Vocês completaram todas as situações e aprenderam muito sobre os Três Poderes!');
+            game.showScreen('finalScreen');
+            
+            // Scroll para o topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Log de conclusão
+            game.logGameEvent('Game Completed', {
+                totalSituations: gameData.situations.length,
+                completed: true
+            });
+        }, 3000);
+    }
+}
+
 
 // ===== INICIALIZAÇÃO ===== //
 

@@ -963,10 +963,13 @@ body::before {
     z-index: auto !important;
   }
   
-  /* Mostra dropdown quando aberto no mobile */
-  .dropdown-parent.mobile-open .dropdown {
-    display: block !important;
-  }
+
+   /* No mobile, dropdown só abre com .mobile-open (JS) */
+  .dropdown { display: none !important; }
+  .dropdown-parent.mobile-open .dropdown { display: block !important; }
+
+  /* Neutraliza qualquer regra de hover herdada */
+  .dropdown-parent:hover .dropdown { display: none !important; }
   
   /* Remove hover effects no mobile */
   .nav-item:hover,
@@ -1142,3 +1145,4 @@ body::before {
 
 /* (Opcional) esconde os spans antigos para não interferirem */
 .mobile-menu-toggle .hamburger-line { display: none !important; }
+
