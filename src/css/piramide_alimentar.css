@@ -19,7 +19,7 @@ body {
 .container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 15px;
     min-height: 100vh;
 }
 
@@ -522,15 +522,15 @@ body {
 /* Layout principal do jogo */
 .game-container {
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 30px;
+    grid-template-columns: 1fr 1.8fr;
+    gap: 20px;
     align-items: start;
 }
 
 /* Área dos alimentos */
 .food-bank {
     background: #fff;
-    padding: 25px;
+    padding: 20px;
     border-radius: 20px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -549,24 +549,30 @@ body {
 
 .food-items {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 12px;
 }
 
 .food-item {
     background: linear-gradient(145deg, #ffffff, #f0f0f0);
     color: #333;
-    padding: 15px;
-    border-radius: 15px;
+    padding: 8px; /* ← Padding bem menor */
+    border-radius: 10px; /* ← Menor border-radius */
     cursor: grab;
     text-align: center;
     transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     border: 2px solid transparent;
     position: relative;
     overflow: hidden;
+    
+    /* ← CHAVE: CONTROLE TOTAL DE FLEXBOX */
+    flex: 0 0 auto; /* NÃO cresce, NÃO encolhe */
+    width: 70px; /* ← LARGURA FIXA MENOR */
+    max-width: 70px; /* ← Garante que não passe */
+    min-width: 60px; /* ← Mínimo para leitura */
+    height: auto; /* ← Altura automática */
 }
-
 .food-item:hover {
     transform: translateY(-5px) scale(1.05);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
@@ -579,21 +585,22 @@ body {
 }
 
 .food-icon {
-    font-size: 2.5rem;
-    margin-bottom: 8px;
+    font-size: 2rem;
+    margin-bottom: 6px;
     display: block;
 }
 
 .food-item span {
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     display: block;
+    line-height: 1.2;
 }
 
 /* Pirâmide */
 .pyramid-section {
     background: #fff;
-    padding: 25px;
+    padding: 20px;
     border-radius: 20px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -604,15 +611,15 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0;
-    max-width: 800px;
+    max-width: 650px;
     margin: 0 auto;
 }
 
 .pyramid-level {
     position: relative;
     border: 3px solid rgba(255, 255, 255, 0.3);
-    border-radius: 15px;
-    margin-bottom: 10px;
+    border-radius: 12px;
+    margin-bottom: 8px;
     overflow: hidden;
     transition: all 0.3s ease;
 }
@@ -653,39 +660,40 @@ body {
 
 
 .level-header {
-    padding: 15px;
+    padding: 12px;
     text-align: center;
     border-bottom: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .level-header h4 {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: 700;
     margin-bottom: 5px;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .subtitle {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     opacity: 0.9;
     font-weight: 400;
 }
 
 .level-content {
-    padding: 20px;
-    min-height: 80px;
+    padding: 15px;
+    min-height: 60px;
 }
 
 .drop-zone {
-    min-height: 60px;
+    min-height: 45px; /* ← Ainda menor */
     border: 2px dashed rgba(255, 255, 255, 0.5);
-    border-radius: 10px;
+    border-radius: 8px;
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 10px;
+    flex-direction: row; /* ← FORÇA HORIZONTAL */
+    flex-wrap: wrap; /* ← Permite quebra quando necessário */
+    gap: 4px; /* ← Gap menor para mais cards lado a lado */
+    padding: 6px; /* ← Padding menor */
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start; /* ← ALINHA À ESQUERDA, NÃO CENTRALIZA */
     transition: all 0.3s ease;
     position: relative;
 }
@@ -710,13 +718,17 @@ body {
 .food-item.placed {
     background: rgba(255, 255, 255, 0.9);
     cursor: default;
-    transform: scale(0.8);
-    margin: 2px;
+    transform: scale(0.80) !important;
+    margin: 1px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    /* ← AINDA MAIS COMPACTO QUANDO COLOCADO */
+    max-width: 80px;
+    width: 75px;
+    padding: 8px;
 }
 
 .food-item.placed .food-icon {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
 }
 
 /* ===== MODAL ===== */
@@ -800,6 +812,67 @@ body {
     100% { 
         opacity: 0; 
         transform: translate(-50%, -50%) scale(0.8); 
+    }
+}
+/* ===== RESPONSIVIDADE PARA LAYOUT HORIZONTAL ===== */
+
+@media (max-width: 968px) {
+    .drop-zone {
+        gap: 3px;
+        padding: 5px;
+        min-height: 40px;
+    }
+    
+    .food-item {
+        width: 65px;
+        max-width: 65px;
+        padding: 6px;
+    }
+    
+    .food-item.placed {
+        width: 58px;
+        max-width: 58px;
+        transform: scale(0.75) !important;
+    }
+    
+    .food-icon {
+        font-size: 1.4rem;
+    }
+    
+    .food-item.placed .food-icon {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .drop-zone {
+        gap: 2px;
+        padding: 4px;
+        min-height: 38px;
+    }
+    
+    .food-item {
+        width: 58px;
+        max-width: 58px;
+        padding: 5px;
+    }
+    
+    .food-item.placed {
+        width: 52px;
+        max-width: 52px;
+        transform: scale(0.7) !important;
+    }
+    
+    .food-icon {
+        font-size: 1.3rem;
+    }
+    
+    .food-item.placed .food-icon {
+        font-size: 1rem;
+    }
+    
+    .food-item span {
+        font-size: 0.7rem;
     }
 }
 
