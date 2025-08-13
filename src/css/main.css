@@ -853,36 +853,8 @@ body::before {
 }
 
 /*=== RESPONSIVIDADE ===*/
-
-/* Tablets */
+/* ===== MOBILE E TABLET UNIFICADOS (até 1024px) ===== */
 @media (max-width: 1024px) {
-  .header-container {
-    padding: 0 15px;
-  }
-  
-  .search-bar input {
-    width: 200px;
-  }
-  
-  .search-bar input:focus {
-    width: 250px;
-  }
-  
-  .cards-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  }
-  
-  .nav-menu {
-    padding: 0 15px;
-  }
-  
-  .main-container {
-    padding: 0 15px;
-  }
-}
-
-/* Mobile */
-@media (max-width: 801px) {
   .mobile-menu-toggle {
     display: flex !important;
     z-index: 1000 !important;
@@ -893,7 +865,7 @@ body::before {
   }
 
   .nav-actions {
-    display: none;
+    display: none !important;
   }
   
   .main-nav {
@@ -942,7 +914,7 @@ body::before {
     color: var(--text-dark) !important;
   }
   
-  /* DROPDOWNS - SEÇÃO LIMPA SEM CONFLITOS */
+  /* DROPDOWNS - FORÇA COMPORTAMENTO MOBILE */
   .dropdown {
     position: static !important;
     opacity: 1 !important;
@@ -952,38 +924,26 @@ body::before {
     background: rgba(102, 126, 234, 0.05) !important;
     margin: 10px 0 !important;
     border-radius: 10px !important;
-    display: none !important; /* SEMPRE ESCONDIDO POR PADRÃO */
+    display: none !important;
     z-index: auto !important;
   }
   
-  /* BLOQUEIA HOVER COMPLETAMENTE */
-  .dropdown-parent:hover .dropdown {
-    display: none !important;
-  }
-  
+  /* BLOQUEIA QUALQUER HOVER/FOCUS */
+  .dropdown-parent:hover .dropdown,
   .dropdown-parent:focus-within .dropdown {
     display: none !important;
   }
   
-  /* SÓ ESTA REGRA CONTROLA A ABERTURA */
+  /* SÓ JAVASCRIPT CONTROLA */
   .dropdown-parent.mobile-open .dropdown {
     display: block !important;
   }
   
-  /* Remove hover effects nos nav-items */
   .nav-item:hover,
   .nav-item:focus-within {
     z-index: auto !important;
   }
 
-  /* ❌ REMOVA COMPLETAMENTE ESTAS LINHAS CONFLITANTES:
-  .dropdown-parent:hover .dropdown,
-  .dropdown-parent.mobile-open .dropdown {
-    display: block !important;
-  }
-  */
-
-  /* RESTO DO CSS MOBILE... */
   .logo-section img {
     height: 70px;
   }
@@ -1062,7 +1022,6 @@ body::before {
     height: 60px;
   }
 }
-
 
 
 
