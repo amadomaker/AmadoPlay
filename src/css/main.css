@@ -886,13 +886,12 @@ body::before {
   .mobile-menu-toggle {
     display: flex !important;
     z-index: 1000 !important;
-  
   }
+  
   .mobile-menu-toggle .hamburger-line {
-  background: #2d3436 !important; /* Cor bem visível */
+    background: #2d3436 !important;
   }
 
-  
   .nav-actions {
     display: none;
   }
@@ -909,12 +908,10 @@ body::before {
     z-index: 1000 !important;
   }
   
-  /* Quando menu está aberto */
   .menu-open .main-nav {
     display: block !important;
   }
   
-  /* Menu volta a ser vertical no mobile */
   .nav-menu {
     flex-direction: column !important;
     padding: 20px !important;
@@ -922,7 +919,6 @@ body::before {
     align-items: stretch !important;
   }
   
-  /* Links voltam a ter cor escura no mobile */
   .nav-link {
     color: var(--text-dark) !important;
     padding: 15px 0 !important;
@@ -932,24 +928,21 @@ body::before {
     background: transparent !important;
   }
   
-  /* Hover no mobile */
   .nav-link:hover {
     background: rgba(102, 126, 234, 0.1) !important;
     transform: none !important;
     color: var(--primary-color) !important;
   }
   
-  /* Ícones escuros no mobile */
   .nav-icon {
     color: var(--text-dark) !important;
   }
   
-  /* Seta escura no mobile */
   .arrow {
     color: var(--text-dark) !important;
   }
   
-  /* Dropdowns no mobile */
+  /* DROPDOWNS - SEÇÃO LIMPA SEM CONFLITOS */
   .dropdown {
     position: static !important;
     opacity: 1 !important;
@@ -959,28 +952,38 @@ body::before {
     background: rgba(102, 126, 234, 0.05) !important;
     margin: 10px 0 !important;
     border-radius: 10px !important;
-    display: none !important;
+    display: none !important; /* SEMPRE ESCONDIDO POR PADRÃO */
     z-index: auto !important;
   }
   
-
-   /* No mobile, dropdown só abre com .mobile-open (JS) */
-  .dropdown { display: none !important; }
-  .dropdown-parent.mobile-open .dropdown { display: block !important; }
-
-  /* Neutraliza qualquer regra de hover herdada */
-  .dropdown-parent:hover .dropdown { display: none !important; }
+  /* BLOQUEIA HOVER COMPLETAMENTE */
+  .dropdown-parent:hover .dropdown {
+    display: none !important;
+  }
   
-  /* Remove hover effects no mobile */
+  .dropdown-parent:focus-within .dropdown {
+    display: none !important;
+  }
+  
+  /* SÓ ESTA REGRA CONTROLA A ABERTURA */
+  .dropdown-parent.mobile-open .dropdown {
+    display: block !important;
+  }
+  
+  /* Remove hover effects nos nav-items */
   .nav-item:hover,
   .nav-item:focus-within {
     z-index: auto !important;
   }
+
+  /* ❌ REMOVA COMPLETAMENTE ESTAS LINHAS CONFLITANTES:
   .dropdown-parent:hover .dropdown,
   .dropdown-parent.mobile-open .dropdown {
     display: block !important;
   }
+  */
 
+  /* RESTO DO CSS MOBILE... */
   .logo-section img {
     height: 70px;
   }
@@ -1059,6 +1062,7 @@ body::before {
     height: 60px;
   }
 }
+
 
 
 

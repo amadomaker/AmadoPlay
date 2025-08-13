@@ -32,7 +32,7 @@ const CONFIG = {
   
   // Breakpoints responsivos
   BREAKPOINTS: {
-    MOBILE: 768,
+    MOBILE: 801,
     TABLET: 1024
   }
 };
@@ -68,12 +68,22 @@ const Utils = {
   
   // Detecta se é dispositivo mobile
   isMobile() {
-    return window.innerWidth <= CONFIG.BREAKPOINTS.MOBILE;
+    const width = window.innerWidth;
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
+    // Força mobile para larguras <= 801px (igual ao CSS)
+    if (width <= 801) {
+      return true;
+    }
+    
+    // Para telas maiores, verifica se tem touch
+    return hasTouch && width <= 1024;
   },
   
-  // Detecta se é tablet
+  // Nova função específica para tablets
   isTablet() {
-    return window.innerWidth <= CONFIG.BREAKPOINTS.TABLET && window.innerWidth > CONFIG.BREAKPOINTS.MOBILE;
+    const width = window.innerWidth;
+    return width > 480 && width <= 801;
   },
   
   // Detecta se usuário prefere movimento reduzido
@@ -146,8 +156,13 @@ class MobileMenu {
     
     // Fecha menu ao clicar fora
     document.addEventListener('click', (e) => {
+      // Se clicou fora do nav e do toggle
       if (!this.nav.contains(e.target) && !this.toggle.contains(e.target)) {
         this.closeMenu();
+      }
+      // Se clicou fora de um dropdown aberto (mas dentro do nav)
+      else if (this.nav.contains(e.target)) {
+        this.handleDropdownOutsideClick(e);
       }
     });
     
@@ -160,6 +175,8 @@ class MobileMenu {
         this.closeMenu();
       }
     }, 250));
+    
+    
   }
   
   toggleMenu() {
@@ -171,51 +188,84 @@ class MobileMenu {
     this.closeAllDropdowns();
   }
   
-setupMobileDropdowns() {
-  this.dropdowns.forEach(dropdown => {
-    const trigger = dropdown.querySelector('.nav-link');
-    if (!trigger) return;
+  setupMobileDropdowns() {
+    this.dropdowns.forEach(dropdown => {
+      const trigger = dropdown.querySelector('.nav-link');
+      if (!trigger) return;
 
-    // Acessibilidade
-    trigger.setAttribute('aria-haspopup', 'true');
-    trigger.setAttribute('role', 'button');
-    trigger.setAttribute('aria-expanded', 'false');
+      // Acessibilidade
+      trigger.setAttribute('aria-haspopup', 'true');
+      trigger.setAttribute('role', 'button');
+      trigger.setAttribute('aria-expanded', 'false');
 
-    trigger.addEventListener('click', (e) => {
-      if (!Utils.isMobile()) return;    // no desktop, deixa o hover agir
-      e.preventDefault();
-      e.stopPropagation();              // evita interferência de outros listeners
+      trigger.addEventListener('click', (e) => {
+        // Só funciona no mobile E quando o menu principal está aberto
+        if (!Utils.isMobile() || !AppState.isMenuOpen) return;
+        
+        e.preventDefault();
+        e.stopPropagation();
 
-      const wasOpen = dropdown.classList.contains('mobile-open');
+        const wasOpen = dropdown.classList.contains('mobile-open');
 
-      // fecha todos
-      this.closeAllDropdowns();
+        // Fecha todos os outros dropdowns
+        this.closeAllDropdowns();
 
-      if (!wasOpen) {
-        dropdown.classList.add('mobile-open');
-        trigger.setAttribute('aria-expanded', 'true');
-      } else {
-        trigger.setAttribute('aria-expanded', 'false');
+        // Toggle do dropdown atual
+        if (!wasOpen) {
+          dropdown.classList.add('mobile-open');
+          trigger.setAttribute('aria-expanded', 'true');
+          
+          // Log para debug
+          console.log('Dropdown aberto:', dropdown);
+        } else {
+          // Se estava aberto, mantém fechado
+          trigger.setAttribute('aria-expanded', 'false');
+          
+          // Log para debug
+          console.log('Dropdown fechado:', dropdown);
+        }
+      });
+    });
+  }
+  
+  // Nova função para lidar com cliques fora dos dropdowns
+  handleDropdownOutsideClick(e) {
+    if (!Utils.isMobile()) return;
+    
+    // Verifica se clicou dentro de algum dropdown
+    let clickedInsideDropdown = false;
+    
+    this.dropdowns.forEach(dropdown => {
+      if (dropdown.contains(e.target)) {
+        // Se clicou no link principal, não fazer nada (já é tratado acima)
+        const trigger = dropdown.querySelector('.nav-link');
+        if (trigger && trigger.contains(e.target)) {
+          return;
+        }
+        clickedInsideDropdown = true;
       }
     });
-  });
-}
-
-
-  toggleDropdown(dropdown) {
-    const isOpen = dropdown.classList.contains('mobile-open');
     
-    // Fecha todos os outros dropdowns
-    this.dropdowns.forEach(d => d.classList.remove('mobile-open'));
-    
-    // Toggle do dropdown atual
-    dropdown.classList.toggle('mobile-open', !isOpen);
+    // Se não clicou dentro de nenhum dropdown, fecha todos
+    if (!clickedInsideDropdown) {
+      this.closeAllDropdowns();
+    }
   }
   
   closeAllDropdowns() {
-    this.dropdowns.forEach(d => d.classList.remove('mobile-open'));
+    this.dropdowns.forEach(dropdown => {
+      dropdown.classList.remove('mobile-open');
+      const trigger = dropdown.querySelector('.nav-link');
+      if (trigger) {
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+    
+    // Log para debug
+    console.log('Todos os dropdowns fechados');
   }
 }
+
 
 // ===============================
 // GERENCIADOR DE BUSCA
