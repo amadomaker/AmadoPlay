@@ -19,7 +19,7 @@ const gameData = {
             },
             consequence: {
                 correct: "✅ O Conselho indicou o Legislativo. A proposta foi levada para a câmara de vereadores, que discutiu o tema com a população e aprovou a nova lei sobre uso de celulares. A escola agora tem regras claras, construídas com participação da comunidade.",
-                incorrect: "❌ O Conselho indicou o poder errado. No entanto, sem a aprovação da câmara, a proposta não pode se tornar lei. O problema continua sem solução clara."
+                incorrect: "❌ O Conselho indicou o poder incorreto. A proposta não avançou, e o problema continua sem solução clara."
             }
         },
         {
@@ -40,7 +40,7 @@ const gameData = {
             },
             consequence: {
                 correct: "✅ O Conselho indicou o Executivo. A prefeitura contratou uma empresa e iniciou a reforma. A população está sendo atendida com mais segurança e conforto.",
-                incorrect: "❌ O Conselho escolheu o poder errado. Sem a ação do Executivo, a reforma não pode ser feita. O hospital continua com problemas."
+                incorrect: "❌ O Conselho escolheu o poder errado. Sem a ação certa, a reforma não pode ser feita. O hospital continua com problemas."
             }
         },
         {
@@ -82,7 +82,7 @@ const gameData = {
             },
             consequence: {
                 correct: "✅ O Conselho indicou o Judiciário. O caso foi julgado por um tribunal e os responsáveis foram punidos conforme a lei.",
-                incorrect: "❌ O poder escolhido não tem autoridade para julgar crimes. O caso precisa ser levado ao Judiciário para ser resolvido legalmente."
+                incorrect: "❌ O poder escolhido não tem autoridade para julgar crimes. O caso precisa ser levado ao poder correto para ser resolvido legalmente."
             }
         },
         {
@@ -103,7 +103,7 @@ const gameData = {
             },
             consequence: {
                 correct: "✅ O Conselho indicou o Executivo. A prefeitura agiu e a praça foi iluminada novamente. As famílias voltaram a frequentar o espaço com segurança.",
-                incorrect: "❌ O poder escolhido não tem essa função. Sem a ação do Executivo, o problema continua."
+                incorrect: "❌ O poder escolhido não tem essa função. Sem a ação correta, o problema continua."
             }
         },
         {
@@ -124,7 +124,7 @@ const gameData = {
             },
             consequence: {
                 correct: "✅ O Conselho indicou o Judiciário. O tribunal analisou o caso e decidiu que a lei era inconstitucional. As pessoas com deficiência voltaram a ter seus direitos garantidos.",
-                incorrect: "❌ A lei continua em vigor porque não foi questionada no Judiciário, que é o único com poder para anulá-la nesse caso."
+                incorrect: "❌ A lei continua em vigor porque não foi questionada pelo poder responsável por anulá-la."
             }
         },
         {
@@ -166,7 +166,7 @@ const gameData = {
             },
             consequence: {
                 correct: "✅ O Conselho indicou o Legislativo. A proposta foi discutida e aprovada pela câmara, permitindo a mudança no horário escolar.",
-                incorrect: "❌ Sem a aprovação do Legislativo, a mudança não foi possível. O horário escolar continuou o mesmo."
+                incorrect: "❌ Sem a aprovação correta, a mudança não foi possível. O horário escolar continuou o mesmo."
             }
         },
         {
@@ -187,7 +187,7 @@ const gameData = {
             },
             consequence: {
                 correct: "✅ O Conselho indicou o Judiciário. O tribunal analisou as provas e decidiu sobre o caso, garantindo justiça.",
-                incorrect: "❌ Sem a atuação do Judiciário, o caso não foi julgado e a denúncia não avançou."
+                incorrect: "❌ Sem a atuação correta, o caso não foi julgado e a denúncia não avançou."
             }
         },
         {
@@ -208,7 +208,7 @@ const gameData = {
             },
             consequence: {
                 correct: "✅ O Conselho indicou o Legislativo. A proposta foi aprovada, e o Executivo iniciou a criação do parque.",
-                incorrect: "❌ Sem a aprovação do Legislativo, o parque não pode ser criado oficialmente."
+                incorrect: "❌ Sem a aprovação correta, o parque não pode ser criado oficialmente."
             }
         },
         {
@@ -229,7 +229,7 @@ const gameData = {
             },
             consequence: {
                 correct: "✅ O Conselho indicou o Legislativo. A lei foi aprovada, e o Executivo fiscaliza o cumprimento.",
-                incorrect: "❌ Sem a lei aprovada, o problema do barulho não foi resolvido."
+                incorrect: "❌ Sem a lei aprovada, o problema não foi resolvido."
             }
         },
         {

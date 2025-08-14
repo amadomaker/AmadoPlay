@@ -4,12 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Quem Somos | AmadoPlay</title>
-  <link rel="stylesheet" href="../src/css/main1.css" />
+  <link rel="stylesheet" href="../src/css/main.css" />
   <style>
     body {
       background: linear-gradient(135deg, #6c63ff 0%, #7c4dff 35%, #9c27b0 70%, #673ab7 100%);
       min-height: 100vh;
     }
+    
     .about-container {
       max-width: 900px;
       margin: 40px auto;
@@ -19,14 +20,17 @@
       padding: 40px 30px;
       backdrop-filter: blur(8px);
     }
+    
     .about-header {
       text-align: center;
       margin-bottom: 32px;
     }
+    
     .about-logo__img {
       width: 90px;
       margin-bottom: 15px;
     }
+    
     .about-title {
       font-size: 2.4rem;
       background: linear-gradient(135deg,#6c63ff,#9c27b0);
@@ -36,14 +40,17 @@
       font-weight: 800;
       letter-spacing: 1px;
     }
+    
     .about-subtitle {
       color: #764ba2;
       font-size: 1.2rem;
       margin-bottom: 18px;
     }
+    
     .about-section {
       margin-bottom: 26px;
     }
+    
     .about-text {
       color: #2d3436;
       font-size: 1.14rem;
@@ -51,6 +58,7 @@
       margin-bottom: 16px;
       text-align: justify;
     }
+    
     .highlight-box {
       background: linear-gradient(135deg,rgba(108,99,255,0.09),rgba(200,140,250,0.12));
       border-left: 4px solid #6c63ff;
@@ -58,6 +66,7 @@
       border-radius: 12px;
       margin: 28px 0 34px 0;
     }
+    
     .highlight-title {
       font-size: 1.18rem;
       color: #6c63ff;
@@ -74,6 +83,7 @@
       gap: 22px;
       margin-top: 18px;
     }
+    
     .service-item {
       background: #f7f2fa;
       padding: 19px 12px;
@@ -83,37 +93,322 @@
       border: 1px solid #e6e6fa;
       transition: box-shadow 0.3s;
     }
+    
     .service-item:hover {
       box-shadow: 0 10px 32px rgba(108,99,255,0.08);
     }
+    
     .service-icon {
       font-size: 2rem;
       margin-bottom: 10px;
       display: block;
     }
+    
     .service-title {
       font-size: 1.15rem;
       color: #673ab7;
       font-weight: 700;
       margin-bottom: 8px;
     }
+    
     .service-desc {
       font-size: 1rem;
       color: #764ba2;
     }
-    @media (max-width: 600px) {
-      .about-container {padding: 20px 8px;}
+
+    /* ===== MELHORIAS DE RESPONSIVIDADE ===== */
+
+    /* Tablets - iPad e similares (768px - 1024px) */
+    @media (min-width: 768px) and (max-width: 1024px) {
+      .about-container {
+        margin: 30px 20px;
+        padding: 35px 25px;
+        border-radius: 20px;
+      }
+      
+      .about-title {
+        font-size: 2.2rem;
+      }
+      
+      .about-subtitle {
+        font-size: 1.1rem;
+      }
+      
+      .about-text {
+        font-size: 1.1rem;
+        text-align: left;
+      }
+      
+      .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+      
+      .highlight-box {
+        padding: 16px 20px;
+        margin: 24px 0 30px 0;
+      }
+      
+      .highlight-title {
+        font-size: 1.1rem;
+      }
+    }
+
+    /* Tablets em modo retrato e celulares grandes (481px - 767px) */
+    @media (min-width: 481px) and (max-width: 767px) {
+      .about-container {
+        margin: 20px 15px;
+        padding: 25px 20px;
+        border-radius: 16px;
+      }
+      
+      .about-logo__img {
+        width: 75px;
+      }
+      
+      .about-title {
+        font-size: 2rem;
+        letter-spacing: 0.5px;
+      }
+      
+      .about-subtitle {
+        font-size: 1.05rem;
+        margin-bottom: 16px;
+      }
+      
+      .about-section {
+        margin-bottom: 20px;
+      }
+      
+      .about-text {
+        font-size: 1.05rem;
+        line-height: 1.6;
+        text-align: left;
+        margin-bottom: 14px;
+      }
+      
+      .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-top: 16px;
+      }
+      
+      .service-item {
+        padding: 16px 10px;
+      }
+      
+      .service-icon {
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+      }
+      
+      .service-title {
+        font-size: 1.05rem;
+        margin-bottom: 6px;
+      }
+      
+      .service-desc {
+        font-size: 0.95rem;
+      }
+      
+      .highlight-box {
+        padding: 15px 18px;
+        margin: 20px 0 25px 0;
+      }
+      
+      .highlight-title {
+        font-size: 1.05rem;
+        margin-bottom: 10px;
+      }
+    }
+
+    /* Celulares - até 480px */
+    @media (max-width: 480px) {
+      .about-container {
+        margin: 15px 10px;
+        padding: 20px 15px;
+        border-radius: 12px;
+      }
+      
+      .about-header {
+        margin-bottom: 24px;
+      }
+      
+      .about-logo__img {
+        width: 65px;
+        margin-bottom: 12px;
+      }
+      
+      .about-title {
+        font-size: 1.75rem;
+        letter-spacing: 0.5px;
+        line-height: 1.2;
+      }
+      
+      .about-subtitle {
+        font-size: 1rem;
+        margin-bottom: 14px;
+      }
+      
+      .about-section {
+        margin-bottom: 18px;
+      }
+      
+      .about-text {
+        font-size: 1rem;
+        line-height: 1.6;
+        text-align: left;
+        margin-bottom: 12px;
+      }
+      
+      .services-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        margin-top: 14px;
+      }
+      
+      .service-item {
+        padding: 14px 12px;
+        border-radius: 12px;
+      }
+      
+      .service-icon {
+        font-size: 1.6rem;
+        margin-bottom: 6px;
+      }
+      
+      .service-title {
+        font-size: 1rem;
+        margin-bottom: 5px;
+      }
+      
+      .service-desc {
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+      
+      .highlight-box {
+        padding: 12px 15px;
+        margin: 16px 0 20px 0;
+        border-radius: 10px;
+      }
+      
+      .highlight-title {
+        font-size: 1rem;
+        margin-bottom: 8px;
+        flex-direction: column;
+        gap: 4px;
+        text-align: center;
+      }
+      
+      .highlight-title span {
+        font-size: 1.2rem;
+      }
+    }
+
+    /* Celulares muito pequenos - até 360px */
+    @media (max-width: 360px) {
+      .about-container {
+        margin: 10px 8px;
+        padding: 16px 12px;
+      }
+      
+      .about-title {
+        font-size: 1.6rem;
+      }
+      
+      .about-subtitle {
+        font-size: 0.95rem;
+      }
+      
+      .about-text {
+        font-size: 0.95rem;
+      }
+      
+      .service-item {
+        padding: 12px 10px;
+      }
+      
+      .service-title {
+        font-size: 0.95rem;
+      }
+      
+      .service-desc {
+        font-size: 0.85rem;
+      }
+      
+      .highlight-box {
+        padding: 10px 12px;
+      }
+      
+      .highlight-title {
+        font-size: 0.95rem;
+      }
+    }
+
+    /* Melhorias para landscape em celulares */
+    @media (max-width: 768px) and (orientation: landscape) {
+      .about-container {
+        margin: 10px 15px;
+      }
+      
+      .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .about-header {
+        margin-bottom: 20px;
+      }
+      
+      .about-logo__img {
+        width: 55px;
+      }
+      
+      .about-title {
+        font-size: 1.8rem;
+      }
+    }
+
+    /* Ajustes para telas muito grandes */
+    @media (min-width: 1200px) {
+      .about-container {
+        margin: 50px auto;
+        padding: 45px 35px;
+      }
+      
+      .services-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+      }
+    }
+
+    /* Melhorias de acessibilidade para toque */
+    @media (hover: none) and (pointer: coarse) {
+      .service-item {
+        padding: 18px 15px;
+      }
+      
+      .service-item:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+      }
     }
   </style>
 </head>
 <body>
-<!-- HEADER -->
-  <header class="main-header">
+  <!-- HEADER -->
+  <header class="main-header" role="banner">
     <div class="header-top">
       <div class="header-container">
         <!-- Logo -->
         <div class="logo-section">
-          <img src="../src/assets/images/Diyogo-02.png" alt="Logo AmadoPlay" />
+          <img 
+            src="../src/assets/images/Diyogo-02.png" 
+            alt="Logo AmadoPlay - Plataforma Educacional Interativa" 
+            width="90" 
+            height="90"
+            loading="eager"
+          />
           <div class="logo-text">
             <h1>AmadoPlay</h1>
             <p>Plataforma Educacional Interativa</p>
@@ -122,63 +417,173 @@
 
         <!-- Ações topo -->
         <div class="nav-actions">
-          <div class="search-bar">
-            <input type="text" placeholder="Buscar ferramentas, atividades…" />
-            <button>🔍</button>
+          <div class="search-bar" role="search">
+            <label for="search-input" class="sr-only">Buscar ferramentas e atividades</label>
+            <input 
+              type="text" 
+              id="search-input"
+              placeholder="Buscar ferramentas, atividades…" 
+              aria-label="Campo de busca"
+              autocomplete="off"
+            />
+            <button type="submit" aria-label="Buscar">🔍</button>
           </div>
           <div class="user-menu">
-            <button class="btn-login">Entrar</button>
+            <button class="btn-login" aria-label="Fazer login na plataforma">Entrar</button>
           </div>
         </div>
 
         <!-- Botão mobile -->
-        <button class="mobile-menu-toggle">☰</button>
+        <button 
+          class="mobile-menu-toggle" 
+          aria-label="Abrir menu de navegação"
+          aria-expanded="false"
+          aria-controls="main-navigation"
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
       </div>
     </div>
 
     <!-- MENU PRINCIPAL -->
-    <nav class="main-nav">
+    <nav class="main-nav" role="navigation" id="main-navigation" aria-label="Menu principal">
       <ul class="nav-menu">
         <li class="nav-item">
-          <a href="../index1.html" class="nav-link"><span class="nav-icon">🏠</span><span>Início</span></a>
-        </li>
-
-        <!-- Ferramentas -->
-        <li class="nav-item">
-          <a class="nav-link">
-            <span class="nav-icon">🧩</span><span>Ferramentas</span><span class="arrow">▼</span>
+          <a href="../index.html" class="nav-link" aria-current="page">
+            <span class="nav-icon" aria-hidden="true">🏠</span>
+            <span>Início</span>
           </a>
-          <div class="dropdown">
-            <a href="#" class="dropdown-item"><span class="dropdown-icon">🧮</span><span>Ábaco Digital</span></a>
-            <a href="#" class="dropdown-item"><span class="dropdown-icon">🟨</span><span>Material Dourado</span></a>
-            <a href="#" class="dropdown-item"><span class="dropdown-icon">🔤</span><span>Alfabeto Móvel</span></a>
-            <a href="#" class="dropdown-item"><span class="dropdown-icon">🥗</span><span>Pirâmide Alimentar</span></a>
-            <a href="#" class="dropdown-item"><span class="dropdown-icon">🗺️</span><span>Mapa do Brasil</span></a>
-            <a href="#" class="dropdown-item"><span class="dropdown-icon">⚖️</span><span>Três Poderes</span></a>
+        </li>
+        
+        <!-- Área do Conhecimento -->
+        <li class="nav-item dropdown-parent">
+          <a 
+            class="nav-link dropdown-trigger" 
+            href="#"
+            aria-expanded="false"
+            aria-haspopup="true"
+          >
+            <span class="nav-icon" aria-hidden="true">📚</span>
+            <span>Área do Conhecimento</span>
+            <span class="arrow" aria-hidden="true">▼</span>
+          </a>
+          <div class="dropdown" aria-label="Submenu Área do Conhecimento">
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🧮</span>
+              <span>Matemática</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">📖</span>
+              <span>Língua Portuguesa</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🔬</span>
+              <span>Ciências</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🏛️</span>
+              <span>História</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🌎</span>
+              <span>Geografia</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🎨</span>
+              <span>Artes</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🤸</span>
+              <span>Educação Física</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🗣️</span>
+              <span>Língua Estrangeira</span>
+            </a>
           </div>
         </li>
 
-        <!-- Atividades -->
-        <li class="nav-item">
-          <a class="nav-link"><span class="nav-icon">📚</span><span>Atividades</span><span class="arrow">▼</span></a>
-          <div class="dropdown">
-            <a href="#" class="dropdown-item"><span class="dropdown-icon">👶</span><span>Educação Infantil</span></a>
-            <a href="#" class="dropdown-item"><span class="dropdown-icon">🎒</span><span>Fundamental I</span></a>
-            <a href="#" class="dropdown-item"><span class="dropdown-icon">📖</span><span>Fundamental II</span></a>
-            <a href="#" class="dropdown-item"><span class="dropdown-icon">🎓</span><span>EJA</span></a>
+        <!-- Ano de Ensino -->
+        <li class="nav-item dropdown-parent">
+          <a 
+            class="nav-link dropdown-trigger"
+            href="#"
+            aria-expanded="false"
+            aria-haspopup="true"
+          >
+            <span class="nav-icon" aria-hidden="true">🎒</span>
+            <span>Ano de Escolaridade</span>
+            <span class="arrow" aria-hidden="true">▼</span>
+          </a>
+          <div class="dropdown" aria-label="Submenu Ano de Escolaridade">
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">👶</span>
+              <span>Educação Infantil</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">1️⃣</span>
+              <span>1º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">2️⃣</span>
+              <span>2º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">3️⃣</span>
+              <span>3º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">4️⃣</span>
+              <span>4º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">5️⃣</span>
+              <span>5º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">6️⃣</span>
+              <span>6º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">7️⃣</span>
+              <span>7º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">8️⃣</span>
+              <span>8º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">9️⃣</span>
+              <span>9º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">📘</span>
+              <span>EJA</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🎓</span>
+              <span>Ensino Médio</span>
+            </a>
           </div>
         </li>
 
         <li class="nav-item">
-          <a href="#" class="nav-link"><span class="nav-icon">👨‍🏫</span><span>Para Professores</span></a>
+          <a href="#" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">👨‍🏫</span>
+            <span>Para Professores</span>
+          </a>
         </li>
         <li class="nav-item">
-          <a href="../pages/quem_somos.html" class="nav-link"><span class="nav-icon">ℹ️</span><span>Quem Somos</span></a>
+          <a href="../pages/quem_somos.html" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">ℹ️</span>
+            <span>Quem Somos</span>
+          </a>
         </li>
       </ul>
     </nav>
   </header>
-
 
   <main>
     <div class="about-container">
@@ -229,5 +634,8 @@
       </div>
     </div>
   </main>
+  
+  <!-- JavaScript -->
+  <script src="../src/js/index.js"></script>
 </body>
 </html>
