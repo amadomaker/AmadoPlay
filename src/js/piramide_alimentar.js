@@ -510,8 +510,10 @@ class NutritionEducationSystem {
     initializeGame() {
         this.setupGameEventListeners();
         this.updateGameUI();
+        restoreHeaderState();
         
     }
+    
 
     setupGameEventListeners() {
     const foodItems = document.querySelectorAll('.food-item');
@@ -606,6 +608,9 @@ class NutritionEducationSystem {
     handleDragEnd(e) {
         e.target.classList.remove('dragging');
         this.removeAllHighlights();
+
+        autoScrollManager.onDragEnd();
+        this.isDragging = false;
     }
 
     handleDragOver(e) {
@@ -667,6 +672,8 @@ class NutritionEducationSystem {
         item.classList.add('dragging');
         this.highlightCompatibleZones(item.dataset.group);
         this.createTouchClone(item, e.touches[0]);
+        this.isDragging = true; // Flag para saber que está arrastando
+
     }
 
     handleTouchMove(e) {
@@ -680,6 +687,7 @@ class NutritionEducationSystem {
             clone.style.left = (touch.clientX - this.touchData.offsetX) + 'px';
             clone.style.top = (touch.clientY - this.touchData.offsetY) + 'px';
         }
+        autoScrollManager.onDragMove(touch.clientY);
         
         const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
         const dropZone = elementBelow?.closest('.drop-zone');
@@ -718,6 +726,8 @@ class NutritionEducationSystem {
             this.handleIncorrectDrop(dropZone, itemName);
         }
     }
+    autoScrollManager.onDragEnd();
+
 
     this.touchData.item.classList.remove('dragging');
     if (this.touchClone) {
@@ -1142,8 +1152,126 @@ restoreFoodItems() {
                 });
             }
         });
+            document.addEventListener('mousemove', (e) => {
+        if (this.isDragging) {
+            autoScrollManager.onDragMove(e.clientY);
+        }
+        });
     }
 }
+// ===== AUTO-SCROLL DURANTE DRAG & DROP =====
+class AutoScrollManager {
+    constructor() {
+        this.isAutoScrolling = false;
+        this.scrollSpeed = 0;
+        this.scrollDirection = null;
+        this.scrollContainer = document.querySelector('.container'); // Container principal
+        this.scrollZoneSize = 80; // Tamanho da zona de scroll (pixels)
+        this.maxScrollSpeed = 8; // Velocidade máxima de scroll
+        this.scrollAnimation = null;
+        
+        this.init();
+    }
+    
+    init() {
+        // Bind dos métodos para manter contexto
+        this.handleAutoScroll = this.handleAutoScroll.bind(this);
+        this.checkScrollZones = this.checkScrollZones.bind(this);
+        this.startAutoScroll = this.startAutoScroll.bind(this);
+        this.stopAutoScroll = this.stopAutoScroll.bind(this);
+    }
+    
+    // Verifica se o cursor/touch está nas zonas de scroll
+    checkScrollZones(clientY) {
+        const viewportHeight = window.innerHeight;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        
+        // Zona superior (scroll para cima)
+        if (clientY < this.scrollZoneSize) {
+            const intensity = (this.scrollZoneSize - clientY) / this.scrollZoneSize;
+            this.startAutoScroll('up', intensity);
+            return true;
+        }
+        
+        // Zona inferior (scroll para baixo)
+        if (clientY > viewportHeight - this.scrollZoneSize) {
+            const intensity = (clientY - (viewportHeight - this.scrollZoneSize)) / this.scrollZoneSize;
+            this.startAutoScroll('down', intensity);
+            return true;
+        }
+        
+        // Fora das zonas de scroll
+        this.stopAutoScroll();
+        return false;
+    }
+    
+    // Inicia o auto-scroll
+    startAutoScroll(direction, intensity) {
+        if (this.scrollDirection !== direction || this.scrollSpeed !== intensity * this.maxScrollSpeed) {
+            this.scrollDirection = direction;
+            this.scrollSpeed = Math.min(intensity * this.maxScrollSpeed, this.maxScrollSpeed);
+            
+            if (!this.isAutoScrolling) {
+                this.isAutoScrolling = true;
+                this.handleAutoScroll();
+            }
+        }
+    }
+    
+    // Para o auto-scroll
+    stopAutoScroll() {
+        this.isAutoScrolling = false;
+        this.scrollDirection = null;
+        this.scrollSpeed = 0;
+        
+        if (this.scrollAnimation) {
+            cancelAnimationFrame(this.scrollAnimation);
+            this.scrollAnimation = null;
+        }
+    }
+    
+    // Executa o scroll suave
+    handleAutoScroll() {
+        if (!this.isAutoScrolling) return;
+        
+        const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
+        const viewportHeight = window.innerHeight;
+        
+        let newScroll = currentScroll;
+        
+        if (this.scrollDirection === 'up' && currentScroll > 0) {
+            newScroll = Math.max(0, currentScroll - this.scrollSpeed);
+        } else if (this.scrollDirection === 'down' && currentScroll < documentHeight - viewportHeight) {
+            newScroll = Math.min(documentHeight - viewportHeight, currentScroll + this.scrollSpeed);
+        }
+        
+        if (newScroll !== currentScroll) {
+            window.scrollTo({
+                top: newScroll,
+                behavior: 'auto' // Scroll suave mas não animate (para performance)
+            });
+        }
+        
+        // Continua o auto-scroll
+        this.scrollAnimation = requestAnimationFrame(this.handleAutoScroll);
+    }
+    
+    // Método público para ser chamado durante drag
+    onDragMove(clientY) {
+        this.checkScrollZones(clientY);
+    }
+    
+    // Método público para parar quando drag termina
+    onDragEnd() {
+        this.stopAutoScroll();
+    }
+}
+
+// Instancia o gerenciador de auto-scroll
+const autoScrollManager = new AutoScrollManager();
+
 
 // ===== FUNÇÕES GLOBAIS PARA NAVEGAÇÃO =====
 function startLearning() {
@@ -1244,10 +1372,91 @@ const additionalStyles = `
     }
 `;
 
+
 // Injetar estilos adicionais
 const styleSheet = document.createElement('style');
 styleSheet.textContent = additionalStyles;
 document.head.appendChild(styleSheet);
+// ===== FUNCIONALIDADE DE TOGGLE DO HEADER =====
+
+// Estado do header (true = expandido, false = colapsado)
+let headerExpanded = true;
+
+// Função para toggle do header
+function toggleGameHeader() {
+    const header = document.querySelector('.game-header');
+    const arrow = document.querySelector('.header-toggle-arrow');
+    
+    if (!header || !arrow) {
+        console.warn('Header ou seta não encontrados');
+        return;
+    }
+    
+    // Toggle do estado
+    headerExpanded = !headerExpanded;
+    
+    if (headerExpanded) {
+        // EXPANDIR HEADER
+        header.classList.remove('collapsed');
+        arrow.innerHTML = '▲'; // Seta para cima
+        arrow.setAttribute('title', 'Esconder Header');
+        
+        // Salva estado no localStorage
+        localStorage.setItem('pyramid-header-expanded', 'true');
+        
+        // Log para debug
+        console.log('Header expandido');
+        
+    } else {
+        // COLAPSAR HEADER  
+        header.classList.add('collapsed');
+        arrow.innerHTML = '▼'; // Seta para baixo
+        arrow.setAttribute('title', 'Mostrar Header');
+        
+        // Salva estado no localStorage
+        localStorage.setItem('pyramid-header-expanded', 'false');
+        
+        // Log para debug
+        console.log('Header colapsado');
+    }
+    
+    // Feedback visual suave
+    header.style.transform = 'scale(0.98)';
+    setTimeout(() => {
+        header.style.transform = 'scale(1)';
+    }, 150);
+}
+
+// Função para restaurar estado salvo do header
+function restoreHeaderState() {
+    const savedState = localStorage.getItem('pyramid-header-expanded');
+    const header = document.querySelector('.game-header');
+    const arrow = document.querySelector('.header-toggle-arrow');
+    
+    if (!header || !arrow) return;
+    
+    // Se não há estado salvo, mantém expandido por padrão
+    if (savedState === null) {
+        headerExpanded = true;
+        return;
+    }
+    
+    // Aplica estado salvo
+    headerExpanded = savedState === 'true';
+    
+    if (headerExpanded) {
+        header.classList.remove('collapsed');
+        arrow.innerHTML = '▲';
+        arrow.setAttribute('title', 'Esconder Header');
+    } else {
+        header.classList.add('collapsed');
+        arrow.innerHTML = '▼';
+        arrow.setAttribute('title', 'Mostrar Header');
+    }
+    
+    console.log(`Estado do header restaurado: ${headerExpanded ? 'expandido' : 'colapsado'}`);
+}
+
 
 // ===== INICIALIZAÇÃO =====
 let nutrition;
@@ -1299,3 +1508,5 @@ function updateBackButtons(screenName) {
 // Responsividade do Menu Principal
 window.addEventListener('load', relocateBackBtnMain);
 window.addEventListener('resize', relocateBackBtnMain);
+
+

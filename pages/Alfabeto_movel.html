@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <title>Alfabeto Móvel - Educacional</title>
     <style>
         * {
@@ -11,13 +14,18 @@
             box-sizing: border-box;
         }
 
+        html {
+            height: 100%;
+        }
+
         body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            background: linear-gradient(135deg, #6c63ff 0%, #7c4dff 35%, #9c27b0 70%, #673ab7 100%);
+            font-family: 'Montserrat', Arial, sans-serif;
+            background: linear-gradient(135deg, #7c4dff 0%, #8e24aa 35%, #ab47bc 70%, #7b1fa2 100%);
             min-height: 100vh;
             padding: 20px;
             position: relative;
             overflow-x: hidden;
+ 
         }
 
         .container {
@@ -25,6 +33,7 @@
             margin: 0 auto;
             position: relative;
             z-index: 2;
+            flex: 1;
         }
 
         .header {
@@ -35,15 +44,19 @@
         .title {
             color: white;
             font-size: 3em;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.7);
             margin-bottom: 10px;
             animation: bounce 2s infinite;
+            font-weight: 800;
+            font-family: 'Montserrat', Arial, sans-serif;
         }
 
         .subtitle {
-            color: #f0f0f0;
+            color: white;
             font-size: 1.2em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            font-weight: 600;
+            font-family: 'Montserrat', Arial, sans-serif;
         }
 
         .workspace {
@@ -58,11 +71,12 @@
         }
 
         .workspace-title {
-            color: #333;
+            color: #2d3436;
             font-size: 1.5em;
             margin-bottom: 20px;
             text-align: center;
-            font-weight: bold;
+            font-weight: 700;
+            font-family: 'Montserrat', Arial, sans-serif;
         }
 
         .workspace-area {
@@ -92,11 +106,12 @@
         }
 
         .alphabet-title {
-            color: #333;
+            color: #2d3436;
             font-size: 1.5em;
             margin-bottom: 25px;
             text-align: center;
-            font-weight: bold;
+            font-weight: 700;
+            font-family: 'Montserrat', Arial, sans-serif;
         }
 
         .alphabet-grid {
@@ -114,14 +129,15 @@
             align-items: center;
             justify-content: center;
             font-size: 2.5em;
-            font-weight: bold;
+            font-weight: 800;
             color: white;
             cursor: grab;
             transition: all 0.3s ease;
             box-shadow: 0 8px 15px rgba(0,0,0,0.2);
             position: relative;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
             border: 3px solid rgba(255,255,255,0.3);
+            font-family: 'Montserrat', Arial, sans-serif;
         }
 
         .letter:hover {
@@ -140,33 +156,33 @@
             z-index: 1000;
         }
 
-        /* Cores vibrantes para cada letra */
-        .letter:nth-child(1) { background: linear-gradient(135deg, #ff6b9d, #ff8a9b); }
-        .letter:nth-child(2) { background: linear-gradient(135deg, #4ecdc4, #45b7aa); }
-        .letter:nth-child(3) { background: linear-gradient(135deg, #ffe66d, #ffdd44); }
-        .letter:nth-child(4) { background: linear-gradient(135deg, #95e1d3, #7dd3c0); }
-        .letter:nth-child(5) { background: linear-gradient(135deg, #ff9a9e, #fecfef); }
-        .letter:nth-child(6) { background: linear-gradient(135deg, #a8edea, #fed6e3); }
-        .letter:nth-child(7) { background: linear-gradient(135deg, #ffeaa7, #fab1a0); }
-        .letter:nth-child(8) { background: linear-gradient(135deg, #81ecec, #74b9ff); }
-        .letter:nth-child(9) { background: linear-gradient(135deg, #fd79a8, #fdcb6e); }
-        .letter:nth-child(10) { background: linear-gradient(135deg, #00cec9, #55efc4); }
-        .letter:nth-child(11) { background: linear-gradient(135deg, #ff7675, #fd79a8); }
-        .letter:nth-child(12) { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
-        .letter:nth-child(13) { background: linear-gradient(135deg, #fdcb6e, #e17055); }
-        .letter:nth-child(14) { background: linear-gradient(135deg, #00b894, #00cec9); }
-        .letter:nth-child(15) { background: linear-gradient(135deg, #e84393, #fd79a8); }
-        .letter:nth-child(16) { background: linear-gradient(135deg, #0984e3, #74b9ff); }
-        .letter:nth-child(17) { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
-        .letter:nth-child(18) { background: linear-gradient(135deg, #fd79a8, #fdcb6e); }
-        .letter:nth-child(19) { background: linear-gradient(135deg, #55efc4, #81ecec); }
-        .letter:nth-child(20) { background: linear-gradient(135deg, #ff9ff3, #f368e0); }
-        .letter:nth-child(21) { background: linear-gradient(135deg, #54a0ff, #5f27cd); }
-        .letter:nth-child(22) { background: linear-gradient(135deg, #48dbfb, #0abde3); }
-        .letter:nth-child(23) { background: linear-gradient(135deg, #ff9ff3, #f368e0); }
-        .letter:nth-child(24) { background: linear-gradient(135deg, #ff6348, #ff4757); }
-        .letter:nth-child(25) { background: linear-gradient(135deg, #feca57, #ff9ff3); }
-        .letter:nth-child(26) { background: linear-gradient(135deg, #48dbfb, #ff6348); }
+        /* Cores mais contrastantes para acessibilidade */
+        .letter:nth-child(1) { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .letter:nth-child(2) { background: linear-gradient(135deg, #27ae60, #229954); }
+        .letter:nth-child(3) { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .letter:nth-child(4) { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .letter:nth-child(5) { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .letter:nth-child(6) { background: linear-gradient(135deg, #1abc9c, #16a085); }
+        .letter:nth-child(7) { background: linear-gradient(135deg, #e67e22, #d35400); }
+        .letter:nth-child(8) { background: linear-gradient(135deg, #34495e, #2c3e50); }
+        .letter:nth-child(9) { background: linear-gradient(135deg, #e91e63, #ad1457); }
+        .letter:nth-child(10) { background: linear-gradient(135deg, #00bcd4, #0097a7); }
+        .letter:nth-child(11) { background: linear-gradient(135deg, #ff5722, #d84315); }
+        .letter:nth-child(12) { background: linear-gradient(135deg, #673ab7, #512da8); }
+        .letter:nth-child(13) { background: linear-gradient(135deg, #795548, #5d4037); }
+        .letter:nth-child(14) { background: linear-gradient(135deg, #607d8b, #455a64); }
+        .letter:nth-child(15) { background: linear-gradient(135deg, #ff9800, #f57c00); }
+        .letter:nth-child(16) { background: linear-gradient(135deg, #2196f3, #1976d2); }
+        .letter:nth-child(17) { background: linear-gradient(135deg, #4caf50, #388e3c); }
+        .letter:nth-child(18) { background: linear-gradient(135deg, #f44336, #d32f2f); }
+        .letter:nth-child(19) { background: linear-gradient(135deg, #009688, #00695c); }
+        .letter:nth-child(20) { background: linear-gradient(135deg, #ff6b9d, #e91e63); }
+        .letter:nth-child(21) { background: linear-gradient(135deg, #5c6bc0, #3949ab); }
+        .letter:nth-child(22) { background: linear-gradient(135deg, #26a69a, #00695c); }
+        .letter:nth-child(23) { background: linear-gradient(135deg, #ef5350, #d32f2f); }
+        .letter:nth-child(24) { background: linear-gradient(135deg, #ab47bc, #7b1fa2); }
+        .letter:nth-child(25) { background: linear-gradient(135deg, #42a5f5, #1976d2); }
+        .letter:nth-child(26) { background: linear-gradient(135deg, #66bb6a, #388e3c); }
 
         .controls {
             display: flex;
@@ -180,20 +196,21 @@
             border: none;
             border-radius: 25px;
             font-size: 1.1em;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            font-family: inherit;
+            font-family: 'Montserrat', Arial, sans-serif;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
 
         .btn-clear {
-            background: linear-gradient(135deg, #ff6b9d, #ff4757);
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
             color: white;
         }
 
         .btn-reset {
-            background: linear-gradient(135deg, #4ecdc4, #45b7aa);
+            background: linear-gradient(135deg, #27ae60, #229954);
             color: white;
         }
 
@@ -219,70 +236,35 @@
             }
         }
 
-        /* Efeitos de fundo */
-        .bg-shapes {
-            position: absolute;
-            top: 0;
+ 
+
+        /* Footer sempre no final da página */
+        .game-footer {
+            position: fixed;
+            bottom: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 1;
+            width: 100vw;
+            text-align: center;
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-weight: 400;
+            font-size: 0.75em;
+            line-height: 1.2;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            z-index: 100;
         }
 
-        .shape {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.1;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .shape:nth-child(1) {
-            width: 80px;
-            height: 80px;
-            background: #ff6b9d;
-            top: 10%;
-            left: 10%;
-            animation-delay: 0s;
-        }
-
-        .shape:nth-child(2) {
-            width: 60px;
-            height: 60px;
-            background: #4ecdc4;
-            top: 20%;
-            right: 10%;
-            animation-delay: 2s;
-        }
-
-        .shape:nth-child(3) {
-            width: 100px;
-            height: 100px;
-            background: #ffe66d;
-            bottom: 10%;
-            left: 15%;
-            animation-delay: 4s;
-        }
-
-        .shape:nth-child(4) {
-            width: 70px;
-            height: 70px;
-            background: #95e1d3;
-            bottom: 20%;
-            right: 20%;
-            animation-delay: 1s;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px) rotate(0deg);
-            }
-            50% {
-                transform: translateY(-20px) rotate(180deg);
-            }
-        }
 
         @media (max-width: 768px) {
+            /* Habilitar scroll no mobile */
+            body {
+                overflow-y: auto;
+                padding-bottom: 0;
+            }
+            
             .title {
                 font-size: 2em;
             }
@@ -297,6 +279,25 @@
                 grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
                 gap: 10px;
             }
+            
+            .game-footer { 
+                font-size: 0.7em; 
+                padding: 6px 15px;
+                margin-left: -20px;
+                width: calc(100vw);
+            }
+            
+            /* Melhorar área de toque no mobile */
+            .letter {
+                touch-action: none;
+                user-select: none;
+            }
+            
+            /* Garantir que o container tenha altura suficiente para scroll */
+            .container {
+                min-height: calc(100vh - 40px);
+                padding-bottom: 20px;
+            }
         }
     </style>
 </head>
@@ -310,24 +311,29 @@
 
     <div class="container">
         <div class="header">
-            <h1 class="title">🌈 Alfabeto Móvel 🌈</h1>
+            <h1 class="title">Alfabeto Móvel</h1>
             <p class="subtitle">Arraste as letras e forme palavras!</p>
         </div>
 
         <div class="workspace">
-            <h2 class="workspace-title">✨ Área de Trabalho - Monte suas palavras aqui! ✨</h2>
+            <h2 class="workspace-title">Área de Trabalho - Monte suas palavras aqui!</h2>
             <div class="workspace-area" id="workspace"></div>
         </div>
 
         <div class="alphabet-container">
-            <h2 class="alphabet-title">🔤 Escolha as Letras 🔤</h2>
+            <h2 class="alphabet-title">Escolha as Letras</h2>
             <div class="alphabet-grid" id="alphabet"></div>
             <div class="controls">
-                <button class="btn btn-clear" onclick="clearWorkspace()">🗑️ Limpar Área</button>
-                <button class="btn btn-reset" onclick="resetAlphabet()">🔄 Voltar Letras</button>
+                <button class="btn btn-clear" onclick="clearWorkspace()">Limpar Área</button>
+                <button class="btn btn-reset" onclick="resetAlphabet()">Voltar Letras</button>
             </div>
         </div>
     </div>
+
+    <!-- Footer sempre no final da página -->
+    <footer class="game-footer">
+        <p>Ferramenta Educacional - Alfabeto Móvel | Criado e desenvolvido por João Jr</p>
+    </footer>
 
     <script>
         // Alfabeto português
@@ -336,6 +342,7 @@
 
         let draggedElement = null;
         let dragOffset = { x: 0, y: 0 };
+        let isMobile = window.innerWidth <= 768;
 
         // Criar alfabeto
         function createAlphabet() {
@@ -374,7 +381,7 @@
             e.target.classList.remove('dragging');
         }
 
-        // Touch events para mobile
+        // Touch events para mobile com scroll melhorado
         function handleTouchStart(e) {
             e.preventDefault();
             const touch = e.touches[0];
@@ -394,6 +401,11 @@
             
             document.body.appendChild(draggedElement);
             updateTouchPosition(touch);
+            
+            // Permitir scroll durante o arraste no mobile
+            if (isMobile) {
+                document.body.style.overflow = 'auto';
+            }
         }
 
         function handleTouchMove(e) {
@@ -401,6 +413,18 @@
             if (draggedElement) {
                 const touch = e.touches[0];
                 updateTouchPosition(touch);
+                
+                // Auto-scroll no mobile quando próximo das bordas
+                if (isMobile) {
+                    const threshold = 100;
+                    const scrollSpeed = 5;
+                    
+                    if (touch.clientY < threshold) {
+                        window.scrollBy(0, -scrollSpeed);
+                    } else if (touch.clientY > window.innerHeight - threshold) {
+                        window.scrollBy(0, scrollSpeed);
+                    }
+                }
             }
         }
 
@@ -416,6 +440,11 @@
                 
                 document.body.removeChild(draggedElement);
                 draggedElement = null;
+                
+                // Restaurar comportamento de scroll no mobile
+                if (isMobile) {
+                    document.body.style.overflow = 'auto';
+                }
             }
         }
 
@@ -459,12 +488,12 @@
             
             // Escolher cor aleatória
             const colors = [
-                'linear-gradient(135deg, #ff6b9d, #ff8a9b)',
-                'linear-gradient(135deg, #4ecdc4, #45b7aa)',
-                'linear-gradient(135deg, #ffe66d, #ffdd44)',
-                'linear-gradient(135deg, #95e1d3, #7dd3c0)',
-                'linear-gradient(135deg, #ff9a9e, #fecfef)',
-                'linear-gradient(135deg, #a8edea, #fed6e3)'
+                'linear-gradient(135deg, #e74c3c, #c0392b)',
+                'linear-gradient(135deg, #27ae60, #229954)',
+                'linear-gradient(135deg, #f39c12, #e67e22)',
+                'linear-gradient(135deg, #3498db, #2980b9)',
+                'linear-gradient(135deg, #9b59b6, #8e44ad)',
+                'linear-gradient(135deg, #1abc9c, #16a085)'
             ];
             newLetter.style.background = colors[Math.floor(Math.random() * colors.length)];
             
@@ -489,13 +518,18 @@
             }
         }
 
+        // Detectar mudanças de orientação/tamanho
+        window.addEventListener('resize', () => {
+            isMobile = window.innerWidth <= 768;
+        });
+
         // Inicializar
         document.addEventListener('DOMContentLoaded', () => {
             createAlphabet();
             setupDropZone();
         });
 
-        // Prevenir zoom no mobile durante touch
+        // Otimizações para mobile - prevenir zoom e permitir scroll suave
         document.addEventListener('touchstart', (e) => {
             if (e.touches.length > 1) {
                 e.preventDefault();

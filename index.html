@@ -2,27 +2,73 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>AmadoPlay - Plataforma Educacional</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  
+  <!-- Performance e SEO -->
+  <title>AmadoPlay - Plataforma Educacional Interativa</title>
+  <meta name="description" content="Transforme o aprendizado em uma aventura com ferramentas educacionais interativas para todas as idades. Matemática, Português, Ciências e muito mais!" />
+  <meta name="keywords" content="educação, ferramentas educacionais, matemática, português, ciências, ábaco digital, material dourado" />
+  <meta name="author" content="AMADO TECNOLOGIA LTDA" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="AmadoPlay - Plataforma Educacional Interativa" />
+  <meta property="og:description" content="Ferramentas interativas e atividades educacionais para engajar alunos de todas as idades" />
+  <meta property="og:url" content="https://amadoplay.com" />
+  <meta property="og:site_name" content="AmadoPlay" />
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AmadoPlay - Plataforma Educacional" />
+  <meta name="twitter:description" content="Transforme o aprendizado em uma aventura com ferramentas educacionais interativas" />
+  
+  <!-- Performance otimization -->
+  <meta name="theme-color" content="#667eea" />
+  <meta name="robots" content="index, follow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="dns-prefetch" href="//www.youtube.com" />
+  
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="AmadoPlay" />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  
+  <!-- CSS -->
   <link rel="stylesheet" href="src/css/main.css" />
+  
+  <!-- Preload critical resources -->
+  <link rel="preload" href="src/assets/images/Diyogo-02.png" as="image" type="image/png" />
 </head>
 <body>
-  <div class="floating-shapes">
-    <div class="shape"></div>
-    <div class="shape"></div>
-    <div class="shape"></div>
-    <div class="shape"></div>
-    <div class="shape"></div>
-    <div class="shape"></div>
+  <!-- Formas flutuantes otimizadas -->
+  <div class="floating-shapes" aria-hidden="true">
+    <div class="shape" role="presentation"></div>
+    <div class="shape" role="presentation"></div>
+    <div class="shape" role="presentation"></div>
+    <div class="shape" role="presentation"></div>
+    <div class="shape" role="presentation"></div>
+    <div class="shape" role="presentation"></div>
   </div>
   
   <!-- HEADER -->
-  <header class="main-header">
+  <header class="main-header" role="banner">
     <div class="header-top">
       <div class="header-container">
         <!-- Logo -->
         <div class="logo-section">
-          <img src="src/assets/images/Diyogo-02.png" alt="Logo AmadoPlay" />
+          <img 
+            src="src/assets/images/Diyogo-02.png" 
+            alt="Logo AmadoPlay - Plataforma Educacional Interativa" 
+            width="90" 
+            height="90"
+            loading="eager"
+          />
           <div class="logo-text">
             <h1>AmadoPlay</h1>
             <p>Plataforma Educacional Interativa</p>
@@ -31,330 +77,510 @@
 
         <!-- Ações topo -->
         <div class="nav-actions">
-          <div class="search-bar">
-            <input type="text" placeholder="Buscar ferramentas, atividades…" />
-            <button>🔍</button>
+          <div class="search-bar" role="search">
+            <label for="search-input" class="sr-only">Buscar ferramentas e atividades</label>
+            <input 
+              type="text" 
+              id="search-input"
+              placeholder="Buscar ferramentas, atividades…" 
+              aria-label="Campo de busca"
+              autocomplete="off"
+            />
+            <button type="submit" aria-label="Buscar">🔍</button>
           </div>
           <div class="user-menu">
-            <button class="btn-login">Entrar</button>
+            <button class="btn-login" aria-label="Fazer login na plataforma">Entrar</button>
           </div>
         </div>
 
         <!-- Botão mobile -->
-        <button class="mobile-menu-toggle">☰</button>
+        <button 
+          class="mobile-menu-toggle" 
+          aria-label="Abrir menu de navegação"
+          aria-expanded="false"
+          aria-controls="main-navigation"
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
       </div>
     </div>
 
     <!-- MENU PRINCIPAL -->
-    <nav class="main-nav">
+    <nav class="main-nav" role="navigation" id="main-navigation" aria-label="Menu principal">
       <ul class="nav-menu">
         <li class="nav-item">
-          <a href="#" class="nav-link"><span class="nav-icon">🏠</span><span>Início</span></a>
-        </li>
-
-        <!-- Ferramentas -->
-        <li class="nav-item">
-          <a class="nav-link">
-            <span class="nav-icon">🧩</span><span>Ferramentas</span><span class="arrow">▼</span>
+          <a href="#" class="nav-link" aria-current="page">
+            <span class="nav-icon" aria-hidden="true">🏠</span>
+            <span>Início</span>
           </a>
-          <div class="dropdown">
-            <a href="pages/Abaco_digital.html" class="dropdown-item"><span class="dropdown-icon">🧮</span><span>Ábaco Digital</span></a>
-            <a href="pages/Material_dourado.html" class="dropdown-item"><span class="dropdown-icon">🟨</span><span>Material Dourado</span></a>
-            <a href="pages/Alfabeto_movel.html" class="dropdown-item"><span class="dropdown-icon">🔤</span><span>Alfabeto Móvel</span></a>
-            <a href="pages/Piramide_alimentar.html" class="dropdown-item"><span class="dropdown-icon">🥗</span><span>Pirâmide Alimentar</span></a>
-            <a href="pages/mapa_brasil.html" class="dropdown-item"><span class="dropdown-icon">🗺️</span><span>Mapa do Brasil</span></a>
-            <a href="#" class="dropdown-item"><span class="dropdown-icon">⚖️</span><span>Três Poderes</span></a>
+        </li>
+        
+        <!-- Área do Conhecimento -->
+        <li class="nav-item dropdown-parent">
+          <a 
+            class="nav-link dropdown-trigger" 
+            href="#"
+            aria-expanded="false"
+            aria-haspopup="true"
+          >
+            <span class="nav-icon" aria-hidden="true">📚</span>
+            <span>Área do Conhecimento</span>
+            <span class="arrow" aria-hidden="true">▼</span>
+          </a>
+          <div class="dropdown" aria-label="Submenu Área do Conhecimento">
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🧮</span>
+              <span>Matemática</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">📖</span>
+              <span>Língua Portuguesa</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🔬</span>
+              <span>Ciências</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🏛️</span>
+              <span>História</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🌎</span>
+              <span>Geografia</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🎨</span>
+              <span>Artes</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🤸</span>
+              <span>Educação Física</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🗣️</span>
+              <span>Língua Estrangeira</span>
+            </a>
           </div>
         </li>
 
-        <!-- Atividades -->
-        <li class="nav-item">
-          <a class="nav-link"><span class="nav-icon">📚</span><span>Atividades</span><span class="arrow">▼</span></a>
-          <div class="dropdown">
-            <a href="#" class="dropdown-item"><span class="dropdown-icon">👶</span><span>Educação Infantil</span></a>
-            <a href="#" class="dropdown-item"><span class="dropdown-icon">🎒</span><span>Fundamental I</span></a>
-            <a href="#" class="dropdown-item"><span class="dropdown-icon">📖</span><span>Fundamental II</span></a>
-            <a href="#" class="dropdown-item"><span class="dropdown-icon">🎓</span><span>EJA</span></a>
+        <!-- Ano de Ensino -->
+        <li class="nav-item dropdown-parent">
+          <a 
+            class="nav-link dropdown-trigger"
+            href="#"
+            aria-expanded="false"
+            aria-haspopup="true"
+          >
+            <span class="nav-icon" aria-hidden="true">🎒</span>
+            <span>Ano de Escolaridade</span>
+            <span class="arrow" aria-hidden="true">▼</span>
+          </a>
+          <div class="dropdown" aria-label="Submenu Ano de Escolaridade">
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">👶</span>
+              <span>Educação Infantil</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">1️⃣</span>
+              <span>1º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">2️⃣</span>
+              <span>2º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">3️⃣</span>
+              <span>3º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">4️⃣</span>
+              <span>4º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">5️⃣</span>
+              <span>5º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">6️⃣</span>
+              <span>6º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">7️⃣</span>
+              <span>7º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">8️⃣</span>
+              <span>8º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">9️⃣</span>
+              <span>9º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">📘</span>
+              <span>EJA</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🎓</span>
+              <span>Ensino Médio</span>
+            </a>
+
           </div>
         </li>
 
         <li class="nav-item">
-          <a href="#" class="nav-link"><span class="nav-icon">👨‍🏫</span><span>Para Professores</span></a>
+          <a href="#" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">👨‍🏫</span>
+            <span>Para Professores</span>
+          </a>
         </li>
         <li class="nav-item">
-          <a href="../pages/quem_somos.html" class="nav-link"><span class="nav-icon">ℹ️</span><span>Quem Somos</span></a>
+          <a href="../pages/quem_somos.html" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">ℹ️</span>
+            <span>Quem Somos</span>
+          </a>
         </li>
       </ul>
     </nav>
   </header>
 
   <!-- HERO -->
-  <section class="hero-section">
+  <section class="hero-section" role="banner">
     <div class="hero-content">
       <h1 class="hero-title">Transforme o Aprendizado em uma Aventura</h1>
       <p class="hero-subtitle">Ferramentas interativas e atividades educacionais para engajar alunos de todas as idades</p>
 
-      <div class="hero-stats">
-        <div class="stat-item"><span class="stat-number">6</span><span class="stat-label">Ferramentas</span></div>
-        <div class="stat-item"><span class="stat-number">Em breve</span><span class="stat-label">Atividades</span></div>
-        <div class="stat-item"><span class="stat-number">Crescendo</span><span class="stat-label">Usuários</span></div>
+      <div class="hero-stats" role="group" aria-label="Estatísticas da plataforma">
+        <div class="stat-item">
+          <span class="stat-number">6</span>
+          <span class="stat-label">Ferramentas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">Em breve</span>
+          <span class="stat-label">Atividades</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">Crescendo</span>
+          <span class="stat-label">Usuários</span>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- CONTEÚDO PRINCIPAL -->
-  <div class="main-container">
+  <main class="main-container" role="main">
 
-        <!-- ACESSO RÁPIDO -->
-    <section class="quick-access">
-      <h2 class="section-heading">Acesso Rápido</h2>
-      <div class="quick-grid">
-        <div class="quick-item"><div class="quick-icon">🧮</div><span class="quick-label">Matemática</span></div>
-        <div class="quick-item"><div class="quick-icon">📖</div><span class="quick-label">Português</span></div>
-        <div class="quick-item"><div class="quick-icon">🧪</div><span class="quick-label">Ciências</span></div>
-        <div class="quick-item"><div class="quick-icon">🌍</div><span class="quick-label">Geografia</span></div>
-        <div class="quick-item"><div class="quick-icon">📜</div><span class="quick-label">História</span></div>
-        <div class="quick-item"><div class="quick-icon">🎨</div><span class="quick-label">Artes</span></div>
-      </div>
-    </section>
+
     <!-- TODAS AS FERRAMENTAS EM DESTAQUE -->
-    <section class="section">
+    <section class="section" aria-labelledby="tools-title">
       <div class="section-header">
-        <h2 class="section-title"><div class="section-icon">🧩</div> Nossas Ferramentas Interativas</h2>
+        <h2 id="tools-title" class="section-title">
+          <div class="section-icon" aria-hidden="true">🧩</div> 
+          Nossas Ferramentas Interativas
+        </h2>
         <span class="feature-badge">Foco Principal</span>
       </div>
 
-      <div class="cards-grid">
+      <div class="cards-grid" role="group" aria-label="Lista de ferramentas educacionais">
         <!-- Ferramenta 1 -->
-        <div class="tool-card" onclick="acessarFerramenta('abaco')">
+        <article class="tool-card" data-tool="abaco" tabindex="0" role="button" aria-label="Acessar Ábaco Digital">
           <div class="card-image">
-            <img src="src/assets/images/abaco_digital1.png" alt="Ábaco Digital" />
+            <img 
+              src="src/assets/images/abaco_digital1.png" 
+              alt="Interface do Ábaco Digital - ferramenta para aprender matemática visualmente"
+              width="300" 
+              height="200"
+              loading="lazy"
+            />
             <span class="card-badge">Popular</span>
           </div>
           <div class="card-content">
             <h3 class="card-title">Ábaco Digital</h3>
             <p class="card-description">Aprenda matemática de forma visual com nosso ábaco interativo e desenvolva habilidades numéricas.</p>
-            <div class="card-footer">
-            </div>
           </div>
-        </div>
-   
+        </article>
 
         <!-- Ferramenta 2 -->
-        <div class="tool-card" onclick="acessarFerramenta('material-dourado')">
+        <article class="tool-card" data-tool="material-dourado" tabindex="0" role="button" aria-label="Acessar Material Dourado">
           <div class="card-image">
-            <img src="src/assets/images/material_dourado4.png" alt="Material Dourado" />
+            <img 
+              src="src/assets/images/material_dourado4.png" 
+              alt="Interface do Material Dourado - blocos virtuais para aprender sistema decimal"
+              width="300" 
+              height="200"
+              loading="lazy"
+            />
             <span class="card-badge">Popular</span>
           </div>
           <div class="card-content">
             <h3 class="card-title">Material Dourado</h3>
             <p class="card-description">Explore o sistema decimal com blocos virtuais interativos e compreenda melhor os números.</p>
-            <div class="card-footer">
-            </div>
           </div>
-        </div>
+        </article>
 
         <!-- Ferramenta 3 -->
-        <div class="tool-card" onclick="acessarFerramenta('alfabeto-movel')">
+        <article class="tool-card" data-tool="alfabeto-movel" tabindex="0" role="button" aria-label="Acessar Alfabeto Móvel">
           <div class="card-image">
-            <img src="src/assets/images/Alfabeto_movel1.png" alt="Alfabeto Móvel" />
+            <img 
+              src="src/assets/images/Alfabeto_movel1.png" 
+              alt="Interface do Alfabeto Móvel - ferramenta para formar palavras"
+              width="300" 
+              height="200"
+              loading="lazy"
+            />
           </div>
           <div class="card-content">
             <h3 class="card-title">Alfabeto Móvel</h3>
             <p class="card-description">Forme palavras e desenvolva habilidades de leitura de forma lúdica e interativa.</p>
-            <div class="card-footer">
-            </div>
           </div>
-        </div>
+        </article>
 
         <!-- Ferramenta 4 -->
-        <div class="tool-card" onclick="acessarFerramenta('piramide-alimentar')">
+        <article class="tool-card" data-tool="piramide-alimentar" tabindex="0" role="button" aria-label="Acessar Pirâmide Alimentar">
           <div class="card-image">
-            <img src="src/assets/images/piramide_alimentar1.png" alt="Pirâmide Alimentar" />
+            <img 
+              src="src/assets/images/piramide_alimentar1.png" 
+              alt="Interface da Pirâmide Alimentar - ferramenta para aprender sobre alimentação saudável"
+              width="300" 
+              height="200"
+              loading="lazy"
+            />
             <span class="card-badge">Novo</span>
           </div>
           <div class="card-content">
             <h3 class="card-title">Pirâmide Alimentar</h3>
             <p class="card-description">Organize os alimentos nos níveis corretos da pirâmide e aprenda sobre alimentação saudável.</p>
-            <div class="card-footer">
-            </div>
           </div>
-        </div>
+        </article>
 
         <!-- Ferramenta 5 -->
-        <div class="tool-card" onclick="acessarFerramenta('mapa-brasil')">
+        <article class="tool-card" data-tool="mapa-brasil" tabindex="0" role="button" aria-label="Acessar Mapa do Brasil">
           <div class="card-image">
-            <img src="src/assets/images/mapa_brasil1.png" alt="Mapa do Brasil" />
+            <img 
+              src="src/assets/images/mapa_brasil1.png" 
+              alt="Interface do Mapa do Brasil - ferramenta para identificar estados e regiões"
+              width="300" 
+              height="200"
+              loading="lazy"
+            />
           </div>
           <div class="card-content">
             <h3 class="card-title">Mapa do Brasil</h3>
             <p class="card-description">Identifique estados e regiões do Brasil de forma interativa e educativa.</p>
-            <div class="card-footer">
-            </div>
           </div>
-        </div>
+        </article>
 
         <!-- Ferramenta 6 -->
-        <div class="tool-card">
+        <article class="tool-card" data-tool="tres-poderes" tabindex="0" role="button" aria-label="Acessar Três Poderes">
           <div class="card-image">
-            <img src="src/assets/images/tres_poderes1.png" alt="Três Poderes" />
+            <img 
+              src="src/assets/images/tres_poderes1.png" 
+              alt="Interface dos Três Poderes - ferramenta para aprender sobre governo brasileiro"
+              width="300" 
+              height="200"
+              loading="lazy"
+            />
           </div>
           <div class="card-content">
             <h3 class="card-title">Três Poderes do Brasil</h3>
             <p class="card-description">Aprenda sobre Executivo, Legislativo e Judiciário de forma didática e interativa.</p>
-            <div class="card-footer">
-            </div>
           </div>
-        </div>
+        </article>
       </div>
     </section>
 
     <!-- CANAL DE KARAOKÊ COMO CARD ESPECIAL -->
-    <section class="special-section">
-      <div class="karaoke-card">
+    <section class="special-section" aria-labelledby="karaoke-title">
+      <article class="karaoke-card">
         <div class="karaoke-content">
-          <div class="karaoke-icon">🎵</div>
+          <div class="karaoke-icon" aria-hidden="true">🎵</div>
           <div class="karaoke-text">
-            <h3>Canal de Karaokê Educativo</h3>
+            <h3 id="karaoke-title">Canal de Karaokê Educativo</h3>
             <p>Cante e aprenda com músicas educativas! Conteúdo externo parceiro para complementar o aprendizado.</p>
           </div>
-          <button class="btn-karaoke">Acessar Canal</button>
+          <button class="btn-karaoke" aria-label="Acessar canal de karaokê educativo no YouTube">
+            Acessar Canal
+          </button>
         </div>
-      </div>
+      </article>
     </section>
-    
-    <script>
-        function acessarFerramenta(ferramenta) {
-            switch(ferramenta) {
-                case 'abaco':
-                    window.open('pages/Abaco_digital.html', '_blank');
-                    break;
-                case 'material-dourado':
-                    window.open('pages/Material_dourado.html', '_blank');
-                    break;
-                case 'alfabeto-movel':
-                    window.open('pages/Alfabeto_movel.html', '_blank');
-                    break;
-                case 'piramide-alimentar':
-                    window.open('pages/piramide_alimentar.html', '_blank');
-                    break;
-                case 'mapa-brasil':
-                    window.open('pages/mapa_brasil.html', '_blank');
-                    break;
-                case 'tres-poderes':
-                    window.open('https://wordwall.net/pt/resource/3946124/os-tr%C3%AAs-poderes', '_blank');
-                    break;
-                    
-            }
-        }
-    </script>  
+  </main>
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/AmadoPlay/service-worker.js')
-                .then(reg => console.log('Service Worker registrado:', reg))
-                .catch(err => console.error('Erro ao registrar o Service Worker:', err));
-            });
-        }
-    </script>
-
-    <!-- Rodapé -->
-  <footer class="footer">
-      <div class="footer-content">
-          <div class="footer-links">
-              <a href="pages/privacidade.html">Política de Privacidade</a>
-              <span class="separator">•</span>
-              <a href="pages/termos_de_uso.html">Termos de Uso</a>
-              <span class="separator">•</span>
-              <a href="pages/contato.html">Contato</a>
-          </div>
-          <div class="footer-copyright">
-              <p>&copy; 2025 AMADO TECNOLOGIA LTDA (AMADOTEC). Todos os direitos reservados.</p>
-          </div>
+  <!-- Rodapé -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-content">
+      <nav class="footer-links" aria-label="Links do rodapé">
+        <a href="pages/privacidade.html">Política de Privacidade</a>
+        <span class="separator" aria-hidden="true">•</span>
+        <a href="pages/termos_de_uso.html">Termos de Uso</a>
+        <span class="separator" aria-hidden="true">•</span>
+        <a href="pages/contato.html">Contato</a>
+      </nav>
+      <div class="footer-copyright">
+        <p>&copy; 2025 AMADO TECNOLOGIA LTDA (AMADOTEC). Todos os direitos reservados.</p>
       </div>
+    </div>
   </footer>
 
+  <!-- Screen reader utility -->
+  <div class="sr-only">
+    AmadoPlay - Plataforma educacional com ferramentas interativas para aprendizado em matemática, português, ciências e outras disciplinas.
+  </div>
+
+  <!-- CSS inline otimizado para o footer -->
   <style>
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .hamburger-line {
+      display: block;
+      width: 25px;
+      height: 3px;
+      background: var(--primary-color);
+      margin: 5px 0;
+      transition: 0.3s;
+      border-radius: 2px;
+    }
+
     .footer {
-    width: 100%;
-    background: linear-gradient(135deg, #1e293b, #334155);
-    color: white;
-    padding: 30px 20px;
-    margin-top: 50px;
-    text-align: center;
-    position: relative; /* para evitar sobreposição */
-    box-sizing: border-box; /* garantir padding dentro da largura */
-}
+      width: 100%;
+      background: linear-gradient(135deg, #1e293b, #334155);
+      color: white;
+      padding: 30px 20px;
+      margin-top: 50px;
+      text-align: center;
+      position: relative;
+      box-sizing: border-box;
+    }
 
-/* Container do conteúdo centralizado */
-.footer-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px; /* para evitar conteúdo colado nas bordas */
-    box-sizing: border-box;
-}
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+      box-sizing: border-box;
+    }
 
-/* restante dos estilos permanece igual */
-.footer-links {
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.footer-links a {
-    color: #e2e8f0;
-    text-decoration: none;
-    font-weight: 500;
-    padding: 5px 10px;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-}
-
-.footer-links a:hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.separator {
-    color: #64748b;
-    font-weight: bold;
-    margin: 0 5px;
-}
-
-.footer-copyright {
-    font-size: 0.9rem;
-    color: #94a3b8;
-    padding-top: 15px;
-    border-top: 1px solid #475569;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
     .footer-links {
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .footer-links a {
+      color: #e2e8f0;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .separator {
+      color: #64748b;
+      font-weight: bold;
+      margin: 0 5px;
+    }
+
+    .footer-copyright {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      padding-top: 15px;
+      border-top: 1px solid #475569;
+    }
+
+    @media (max-width: 768px) {
+      .footer-links {
         flex-direction: column;
         gap: 5px;
-    }
-    
-    .separator {
+      }
+      
+      .separator {
         display: none;
-    }
-    
-    .footer-links a {
+      }
+      
+      .footer-links a {
         display: block;
         width: auto;
-    }
-    
-    .footer-copyright {
+      }
+      
+      .footer-copyright {
         font-size: 0.8rem;
+      }
     }
-}
-
   </style>
 
-  <script src="../src/js/index.js"></script>
+  <!-- Scripts otimizados -->
+  <script>
+    // Função para acessar ferramentas otimizada
+    function acessarFerramenta(ferramenta) {
+      const urls = {
+        'abaco': 'pages/Abaco_digital.html',
+        'material-dourado': 'pages/Material_dourado.html',
+        'alfabeto-movel': 'pages/Alfabeto_movel.html',
+        'piramide-alimentar': 'pages/piramide_alimentar.html',
+        'mapa-brasil': 'pages/mapa_brasil.html',
+        'tres-poderes': 'pages/tres_poderes.html'
+      };
+      
+      if (urls[ferramenta]) {
+        window.open(urls[ferramenta], '_blank');
+      }
+    }
+
+    // Event listeners otimizados
+    document.addEventListener('DOMContentLoaded', function() {
+      // Cards das ferramentas
+      document.querySelectorAll('.tool-card').forEach(card => {
+        const tool = card.getAttribute('data-tool');
+        
+        card.addEventListener('click', () => acessarFerramenta(tool));
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            acessarFerramenta(tool);
+          }
+        });
+      });
+
+      // Botão do karaokê
+      const karaokeBtn = document.querySelector('.btn-karaoke');
+      if (karaokeBtn) {
+        karaokeBtn.addEventListener('click', () => {
+          window.open('https://www.youtube.com/channel/UCfwZCL3gq8PaIg_i1VcnocQ', '_blank');
+        });
+      }
+    });
+
+    // Service Worker otimizado
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/AmadoPlay/service-worker.js')
+          .then(reg => console.log('Service Worker registrado:', reg))
+          .catch(err => console.error('Erro ao registrar o Service Worker:', err));
+      });
+    }
+  </script>
+
+  <!-- Script principal carregado de forma assíncrona -->
+  <script src="src/js/index.js" defer></script>
 </body>
 </html>

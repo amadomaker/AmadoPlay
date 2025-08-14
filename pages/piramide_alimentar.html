@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pirâmide Alimentar Interativa - Sistema Educativo</title>
     <link rel="stylesheet" href="../src/css/piramide_alimentar.css">
+    <link rel="stylesheet" href="../src/css/global.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -66,6 +67,9 @@
                 </button>
                 <h1>🥗 Desafio da Pirâmide Alimentar</h1>
                 <p>Agora é hora de testar seus conhecimentos!</p>
+                <button class="header-toggle-btn" onclick="toggleGameHeader()" title="Esconder/Mostrar Header">
+                    <span class="header-toggle-arrow">▲</span>
+                </button>
             </div>
 
             <main class="game-container">
@@ -230,7 +234,12 @@
                 <button id="quiz-next" class="control-btn primary" style="display: none;">Continuar</button>
             </div>
         </div>
+
     </div>
+        <!-- Footer -->
+        <footer class="game-footer">
+            <p>Ferramenta Educacional - Pirâmide Alimentar | Criado e desenvolvido por Ana Paula e João Jr</p>
+        </footer>
 
     <script src="../src/js/piramide_alimentar.js"></script>
 </body>
