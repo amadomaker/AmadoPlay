@@ -1425,16 +1425,7 @@ body {
 
 
 
-/* ===== FOOTER ===== */
-.game-footer {
-    background: var(--secondary-bg);
-    padding: 1rem;
-    text-align: center;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
-    margin-top: auto;
-}
+
 
 /* ===== UTILITÁRIOS ===== */
 .hidden {
