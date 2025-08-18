@@ -712,7 +712,7 @@ function enableClickToRead() {
 
   ttsClickHandler = (e) => {
   if (!ttsClickModeActive) return;
-
+  if (e.detail > 1) return;
 // === 1) CARD: lê título/descrição se clicou neles; senão, lê o resumo ===
 const card = e.target.closest(CARD_SELECTOR);
 if (card && !isInA11yUi(card)) {
@@ -801,6 +801,50 @@ function disableClickToRead() {
   if (ttsLastTarget) ttsLastTarget.classList.remove('a11y-tts-highlight'), ttsLastTarget = null;
 
   if (currentSpeech && !currentSpeech.ended) speechSynthesis.cancel(), currentSpeech = null;
+}
+// --- ABERTURA DE CARDS ---
+// Duplo clique: SEMPRE abre a ferramenta (mesmo com TTS ativo)
+document.addEventListener('dblclick', function(e) {
+  const card = e.target.closest(CARD_SELECTOR);
+  if (!card) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+  openToolFromCard(card);
+}, true); // <-- capture
+
+// Teclado em cards:
+// - TTS OFF: Enter ou Espaço abre
+// - TTS ON : Shift+Enter abre
+document.addEventListener('keydown', function(e) {
+  const card = e.target.closest?.(CARD_SELECTOR);
+  if (!card) return;
+
+  if (!ttsClickModeActive && (e.key === 'Enter' || e.key === ' ')) {
+    e.preventDefault();
+    openToolFromCard(card);
+    return;
+  }
+
+  if (ttsClickModeActive && e.key === 'Enter' && e.shiftKey) {
+    e.preventDefault();
+    openToolFromCard(card);
+    return;
+  }
+}, true); // <-- capture
+
+// Helper que centraliza a abertura do card
+function openToolFromCard(card){
+  const tool = card?.dataset?.tool;
+  if (!tool) return;
+
+  if (typeof window.acessarFerramenta === 'function') {
+    window.acessarFerramenta(tool);
+  } else {
+    // fallback: tenta um link interno
+    const link = card.querySelector('a[href]');
+    if (link) window.open(link.href, '_blank');
+  }
 }
 
 function speakText(text) {
