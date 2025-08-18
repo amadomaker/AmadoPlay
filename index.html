@@ -41,6 +41,7 @@
   
   <!-- CSS -->
   <link rel="stylesheet" href="src/css/main.css" />
+  <link rel="stylesheet" href="src/css/global.css" />
   
   <!-- Preload critical resources -->
   <link rel="preload" href="src/assets/images/Diyogo-02.png" as="image" type="image/png" />
@@ -578,8 +579,132 @@
       });
     }
   </script>
+  <!-- Widget de Acessibilidade -->
+  <!-- Botão Flutuante de Acessibilidade -->
+<div class="accessibility-float-btn" id="accessibilityFloatBtn" onclick="toggleAccessibilityPanel()">
+    <span class="accessibility-icon">♿</span>
+</div>
 
+<!-- Painel de Acessibilidade Avançado -->
+<div class="accessibility-panel-overlay" id="accessibilityOverlay" onclick="closeAccessibilityPanel()"></div>
+<div class="accessibility-panel-modern" id="accessibilityPanel">
+    <div class="panel-header-modern">
+        <h2>Menu de Acessibilidade</h2>
+        <button class="close-btn" onclick="closeAccessibilityPanel()">×</button>
+    </div>
+    
+    <!-- Perfis de Acessibilidade -->
+    <div class="accessibility-profiles">
+        <h3>Selecione seu perfil de acessibilidade</h3>
+        <div class="profiles-grid">
+            <button class="profile-btn" onclick="applyProfile('motor')" data-profile="motor">
+                <span class="profile-icon">🦽</span>
+                <span class="profile-text">Deficiência Motora</span>
+            </button>
+            <button class="profile-btn" onclick="applyProfile('visual')" data-profile="visual">
+                <span class="profile-icon">👁️</span>
+                <span class="profile-text">Deficiência Visual</span>
+            </button>
+            <button class="profile-btn" onclick="applyProfile('cognitive')" data-profile="cognitive">
+                <span class="profile-icon">🧠</span>
+                <span class="profile-text">Deficiência Cognitiva</span>
+            </button>
+            <button class="profile-btn" onclick="applyProfile('hearing')" data-profile="hearing">
+                <span class="profile-icon">🦻</span>
+                <span class="profile-text">Deficiência Auditiva</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Ferramentas Individuais -->
+    <div class="tools-grid">
+        <!-- Linha 1 -->
+        <button class="tool-btn" onclick="toggleTextToSpeech()" id="ttsBtn">
+            <span class="tool-icon">🔊</span>
+            <span class="tool-text">Clique para Ouvir</span>
+        </button>
+        
+        <button class="tool-btn" onclick="toggleHighContrast()" id="contrastBtn">
+            <span class="tool-icon">🌓</span>
+            <span class="tool-text">Alto Contraste</span>
+        </button>
+        
+        <button class="tool-btn" onclick="toggleDarkMode()" id="darkModeBtn">
+            <span class="tool-icon">🌙</span>
+            <span class="tool-text">Alterar Cor de Fundo</span>
+        </button>
+
+        <!-- Linha 2 -->
+        <button class="tool-btn" onclick="decreaseFontSize()" id="decreaseFontBtn">
+            <span class="tool-icon">🔤</span>
+            <span class="tool-text">Diminuir Fonte</span>
+        </button>
+        
+        <button class="tool-btn" onclick="increaseFontSize()" id="increaseFontBtn">
+            <span class="tool-icon">🔠</span>
+            <span class="tool-text">Aumentar Fonte</span>
+        </button>
+        
+        <button class="tool-btn" onclick="toggleDyslexiaFont()" id="dyslexiaBtn">
+            <span class="tool-icon">📝</span>
+            <span class="tool-text">Fonte Dislexia</span>
+        </button>
+
+        <!-- Linha 3 -->
+        <button class="tool-btn" onclick="toggleGrayscale()" id="grayscaleBtn">
+            <span class="tool-icon">⚫</span>
+            <span class="tool-text">Monocromático</span>
+        </button>
+        
+        <button class="tool-btn" onclick="toggleLowSaturation()" id="lowSatBtn">
+            <span class="tool-icon">🔘</span>
+            <span class="tool-text">Baixa Saturação</span>
+        </button>
+        
+        <button class="tool-btn" onclick="toggleHighSaturation()" id="highSatBtn">
+            <span class="tool-icon">🟡</span>
+            <span class="tool-text">Alta Saturação</span>
+        </button>
+
+        <!-- Linha 4 -->
+        <button class="tool-btn" onclick="toggleReadingRuler()" id="rulerBtn">
+            <span class="tool-icon">📏</span>
+            <span class="tool-text">Régua de Leitura</span>
+        </button>
+        
+        <button class="tool-btn" onclick="toggleMagnifier()" id="magnifierBtn">
+            <span class="tool-icon">🔍</span>
+            <span class="tool-text">Lupa</span>
+        </button>
+        
+        <button class="tool-btn" onclick="toggleFocusHighlight()" id="focusBtn">
+            <span class="tool-icon">🎯</span>
+            <span class="tool-text">Destacar Links</span>
+        </button>
+
+        <!-- Linha 5 -->
+        <button class="tool-btn" onclick="pauseAnimations()" id="animationBtn">
+            <span class="tool-icon">⏸️</span>
+            <span class="tool-text">Pausar Animações</span>
+        </button>
+        
+        <button class="tool-btn" onclick="showKeyboardShortcuts()">
+            <span class="tool-icon">⌨️</span>
+            <span class="tool-text">Atalhos Teclado</span>
+        </button>
+        
+        <button class="tool-btn" onclick="resetAll()" id="resetBtn">
+            <span class="tool-icon">🔄</span>
+            <span class="tool-text">Resetar Tudo</span>
+        </button>
+    </div>
+</div>
+
+<!-- Elementos auxiliares -->
+<div class="reading-ruler" id="readingRuler"></div>
+<div class="magnifier-circle" id="magnifier"></div>
   <!-- Script principal carregado de forma assíncrona -->
   <script src="src/js/index.js" defer></script>
+  <script src="src/js/acessibilidade.js" defer></script>
 </body>
 </html>
