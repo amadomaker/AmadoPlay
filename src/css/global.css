@@ -36,428 +36,397 @@
 }
 
 /* ==========================================
-   FERRAMENTAS DE ACESSIBILIDADE - CSS MODERNO
+   FERRAMENTAS DE ACESSIBILIDADE - CSS MODERNO (corrigido)
    ========================================== */
+
+/* Reset de overflow horizontal "fantasma" */
+html, body {
+  min-height: 100%;
+  overflow-x: clip; /* evita barra de rolagem horizontal intermitente */
+}
 
 /* Botão Flutuante */
 .accessibility-float-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #4a90e2, #357abd);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 20px rgba(74, 144, 226, 0.4);
-    z-index: 9999;
-    transition: all 0.3s ease;
-    border: none;
-    font-family: Arial, sans-serif;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(74, 144, 226, 0.4);
+  z-index: 9999;
+  transition: all 0.3s ease;
+  border: none;
+  font-family: Arial, sans-serif;
 }
 
 .accessibility-float-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 25px rgba(74, 144, 226, 0.6);
+  transform: scale(1.1);
+  box-shadow: 0 6px 25px rgba(74, 144, 226, 0.6);
 }
 
 .accessibility-icon {
-    color: white;
-    font-size: 24px;
+  color: white;
+  font-size: 24px;
 }
 
 /* Overlay */
 .accessibility-panel-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 10000;
-    display: none;
-    transition: opacity 0.3s ease;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
 .accessibility-panel-overlay.active {
-    display: block;
+  opacity: 1;
+  visibility: visible;
 }
 
-/* Painel Principal */
+/* Painel Principal como Drawer à Direita */
 .accessibility-panel-modern {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    width: 90%;
-    max-width: 600px;
-    max-height: 90vh;
-    background: #f5f6fa;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    z-index: 10001;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: min(90vw, 560px);
+  background: #f5f6fa;
+  border-radius: 16px 0 0 16px;
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.25);
+  z-index: 10001;
+  overflow: hidden;
+  transform: translateX(100%); /* inicia fora da tela */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Garante que os filtros/transform do conteúdo não afetem o painel */
+  isolation: isolate;
 }
 
 .accessibility-panel-modern.active {
-    transform: translate(-50%, -50%) scale(1);
+  transform: translateX(0);
 }
+
+/* Suporte a variante explícita (HTML adicionou .right-drawer) */
+.accessibility-panel-modern.right-drawer { right: 0; left: auto; }
 
 /* Header */
 .panel-header-modern {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .panel-header-modern h2 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .close-btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .close-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.08);
 }
 
-/* Área de Conteúdo */
+/* Área de Conteúdo (rolagem interna) */
 .accessibility-panel-modern .panel-content {
-    padding: 24px;
-    max-height: calc(90vh - 140px);
-    overflow-y: auto;
+  padding: 20px;
+  height: calc(100vh - 64px);
+  overflow: auto; /* rolável somente dentro do painel */
 }
 
 /* Perfis de Acessibilidade */
 .accessibility-profiles {
-    margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
 .accessibility-profiles h3 {
-    color: #2c3e50;
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 16px;
-    text-align: center;
+  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  text-align: center;
 }
 
 .profiles-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .profile-btn {
-    background: white;
-    border: 2px solid #e1e8ed;
-    border-radius: 12px;
-    padding: 16px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    font-family: inherit;
+  background: white;
+  border: 2px solid #e1e8ed;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
 }
 
 .profile-btn:hover {
-    border-color: #4a90e2;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+  border-color: #4a90e2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
 }
 
 .profile-btn.active {
-    background: #4a90e2;
-    border-color: #4a90e2;
-    color: white;
+  background: #4a90e2;
+  border-color: #4a90e2;
+  color: white;
 }
 
-.profile-icon {
-    font-size: 24px;
-}
-
+.profile-icon { font-size: 24px; }
 .profile-text {
-    font-size: 12px;
-    font-weight: 500;
-    text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
 }
 
 /* Grid de Ferramentas */
 .tools-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
 }
 
 .tool-btn {
-    background: white;
-    border: 2px solid #e1e8ed;
-    border-radius: 12px;
-    padding: 16px 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    min-height: 80px;
-    font-family: inherit;
+  background: white;
+  border: 2px solid #e1e8ed;
+  border-radius: 12px;
+  padding: 16px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-height: 80px;
+  font-family: inherit;
+
+  /* evita que pseudo-elemento cause overflow externo */
+  position: relative;
+  overflow: hidden;
 }
 
 .tool-btn:hover {
-    border-color: #4a90e2;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+  border-color: #4a90e2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
 }
 
 .tool-btn.active {
-    background: #4a90e2;
-    border-color: #4a90e2;
-    color: white;
+  background: #4a90e2;
+  border-color: #4a90e2;
+  color: white;
 }
 
-.tool-icon {
-    font-size: 24px;
-}
-
+.tool-icon { font-size: 24px; }
 .tool-text {
-    font-size: 11px;
-    font-weight: 500;
-    text-align: center;
-    line-height: 1.2;
+  font-size: 11px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.2;
 }
 
 /* ==========================================
-   ESTADOS DE ACESSIBILIDADE CORRIGIDOS
+   ESTADOS DE ACESSIBILIDADE - ESCOPADOS
+   (evitam aplicar filtros no painel/overlay)
    ========================================== */
 
 /* Alto Contraste */
-body.high-contrast {
-    filter: contrast(2) !important;
+body.high-contrast *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle) {
+  background: #000 !important;
+  color: #fff !important;
+  border-color: #fff !important;
 }
 
-body.high-contrast *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn) {
-    background: #000 !important;
-    color: #fff !important;
-    border-color: #fff !important;
+/* O FILTER é aplicado somente no conteúdo, não no body/painel */
+body.high-contrast :not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle) {
+  filter: contrast(2) !important;
 }
 
-/* Modo Escuro */
+/* Modo Escuro (protege painel/overlay) */
+body.dark-mode *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay) {
+  background: #2d2d2d !important;
+  color: #e0e0e0 !important;
+  border-color: #555 !important;
+}
+
 body.dark-mode {
-    background: #1a1a1a !important;
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn) {
-    background: #2d2d2d !important;
-    color: #e0e0e0 !important;
-    border-color: #555 !important;
+  background: #1a1a1a !important;
+  color: #e0e0e0 !important;
 }
 
 /* Fonte para Dislexia */
-body.dyslexia-friendly {
-    font-family: 'OpenDyslexic', 'Comic Sans MS', cursive !important;
+body.dyslexia-friendly, body.dyslexia-friendly * {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', cursive !important;
+  letter-spacing: 0.05em !important;
+  word-spacing: 0.1em !important;
 }
 
-body.dyslexia-friendly * {
-    font-family: 'OpenDyslexic', 'Comic Sans MS', cursive !important;
-    letter-spacing: 0.05em !important;
-    word-spacing: 0.1em !important;
+/* Monocromático (escopado) */
+body.grayscale :not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle) {
+  filter: grayscale(100%) !important;
 }
 
-/* Monocromático */
-body.grayscale {
-    filter: grayscale(100%) !important;
+/* Baixa/Alta Saturação (escopado) */
+body.low-saturation :not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle) {
+  filter: saturate(0.5) !important;
 }
-
-/* Saturação */
-body.low-saturation {
-    filter: saturate(0.5) !important;
-}
-
-body.high-saturation {
-    filter: saturate(2) !important;
+body.high-saturation :not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle) {
+  filter: saturate(2) !important;
 }
 
 /* Pausar Animações */
-body.no-animations *,
-body.no-animations *::before,
-body.no-animations *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+body.no-animations *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay) ,
+body.no-animations *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay)::before,
+body.no-animations *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay)::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
 }
 
-/* Destaque de Foco/Links CORRIGIDO */
+/* Destaque de Foco/Links */
 body.focus-highlight a,
 body.focus-highlight button,
 body.focus-highlight input,
 body.focus-highlight select,
 body.focus-highlight textarea {
-    outline: 3px solid #ffff00 !important;
-    outline-offset: 2px !important;
-    box-shadow: 0 0 10px rgba(255, 255, 0, 0.7) !important;
+  outline: 3px solid #ffff00 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 10px rgba(255, 255, 0, 0.7) !important;
 }
 
 body.focus-highlight a:hover,
 body.focus-highlight button:hover {
-    background: #ffff00 !important;
-    color: #000 !important;
+  background: #ffff00 !important;
+  color: #000 !important;
 }
 
-/* Régua de Leitura CORRIGIDA */
+/* Régua de Leitura */
 .reading-ruler {
-    position: fixed;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #ff0000, #ff6600, #ff0000);
-    z-index: 9999;
-    display: none;
-    opacity: 0.8;
-    pointer-events: none;
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ff0000, #ff6600, #ff0000);
+  z-index: 9999;
+  display: none;
+  opacity: 0.8;
+  pointer-events: none;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
 }
 
-.reading-ruler.active {
-    display: block;
-}
+.reading-ruler.active { display: block; }
 
-/* Lupa CORRIGIDA */
+/* Lupa */
 .magnifier-circle {
-    position: fixed;
-    width: 150px;
-    height: 150px;
-    border: 4px solid #4a90e2;
-    border-radius: 50%;
-    z-index: 9998;
-    display: none;
-    pointer-events: none;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(2px);
+  position: fixed;
+  width: 150px;
+  height: 150px;
+  border: 4px solid #4a90e2;
+  border-radius: 50%;
+  z-index: 9998;
+  display: none;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(2px);
 }
 
-.magnifier-circle.active {
-    display: block;
-}
+.magnifier-circle.active { display: block; }
 
 .magnifier-circle::before {
-    content: '🔍';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 40px;
+  content: '🔍';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 40px;
 }
 
 /* ==========================================
    RESPONSIVIDADE
    ========================================== */
-
 @media (max-width: 768px) {
-    .accessibility-panel-modern {
-        width: 95%;
-        max-height: 95vh;
-    }
-    
-    .profiles-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .tools-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .accessibility-float-btn {
-        width: 50px;
-        height: 50px;
-        bottom: 15px;
-        right: 15px;
-    }
-    
-    .accessibility-icon {
-        font-size: 20px;
-    }
+  .accessibility-panel-modern {
+    width: min(95vw, 520px);
+    border-radius: 12px 0 0 12px;
+  }
+  .profiles-grid { grid-template-columns: 1fr; }
+  .tools-grid { grid-template-columns: repeat(2, 1fr); }
+  .accessibility-float-btn {
+    width: 50px; height: 50px; bottom: 15px; right: 15px;
+  }
+  .accessibility-icon { font-size: 20px; }
 }
 
 @media (max-width: 480px) {
-    .tools-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .panel-content {
-        padding: 16px;
-    }
+  .tools-grid { grid-template-columns: 1fr; }
+  .accessibility-panel-modern .panel-content { padding: 16px; }
 }
 
 /* ==========================================
    MELHORIAS VISUAIS
    ========================================== */
 
-/* Scroll customizado */
-.accessibility-panel-modern .panel-content::-webkit-scrollbar {
-    width: 6px;
-}
-
+/* Scroll customizado apenas dentro do painel */
+.accessibility-panel-modern .panel-content::-webkit-scrollbar { width: 6px; }
 .accessibility-panel-modern .panel-content::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
+  background: #f1f1f1; border-radius: 3px;
 }
-
 .accessibility-panel-modern .panel-content::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 3px;
+  background: #c1c1c1; border-radius: 3px;
 }
+.accessibility-panel-modern .panel-content::-webkit-scrollbar-thumb:hover { background: #a1a1a1; }
 
-.accessibility-panel-modern .panel-content::-webkit-scrollbar-thumb:hover {
-    background: #a1a1a1;
-}
-
-/* Animações suaves */
-.tool-btn, .profile-btn {
-    position: relative;
-    overflow: hidden;
-}
-
+/* Efeito de onda seguro (sem overflow externo) */
 .tool-btn::before, .profile-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(74, 144, 226, 0.1);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.3s ease, height 0.3s ease;
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(74, 144, 226, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
+  pointer-events: none;
 }
 
 .tool-btn:hover::before, .profile-btn:hover::before {
-    width: 200px;
-    height: 200px;
+  width: 200px;
+  height: 200px;
 }
