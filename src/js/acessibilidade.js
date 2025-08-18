@@ -568,10 +568,16 @@ function closeVLibrasPanel() {
 }
 
 /** Oculta apenas o botão flutuante oficial (deixa o painel livre). */
+// coloque isso logo após o snippet que esconde a mãozinha
 function hideVLibrasAccessButton() {
   const ab = document.querySelector('[vw-access-button]');
-  if (ab) ab.style.display = 'none';
+  if (ab) {
+    ab.style.opacity = '0';
+    ab.style.pointerEvents = 'none';
+    ab.setAttribute('aria-hidden', 'true'); // <- novo
+  }
 }
+
 
 /** Mostra novamente o botão oficial (se precisar). */
 function showVLibrasAccessButton() {
@@ -702,6 +708,11 @@ function setupKeyboardShortcuts() {
           e.preventDefault();
           toggleFocusHighlight();
           break;
+          case 'v':
+            e.preventDefault();
+            enableVLibras();     
+            break;
+
         case 'p':
           e.preventDefault();
           pauseAnimations();
