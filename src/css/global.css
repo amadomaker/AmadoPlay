@@ -70,10 +70,22 @@ html, body {
   box-shadow: 0 6px 25px rgba(74, 144, 226, 0.6);
 }
 
+/* Ícone como imagem dentro do botão flutuante */
 .accessibility-icon {
-  color: white;
-  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.accessibility-icon img {
+  width: 60px;
+  height: 60px;
+  display: block;
+  /* evita selecionar/arrastar */
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 
 /* Overlay */
 .accessibility-panel-overlay {
