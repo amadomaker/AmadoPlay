@@ -1,5 +1,5 @@
 // ==========================================
-// FERRAMENTAS DE ACESSIBILIDADE - JAVASCRIPT ATUALIZADO
+// FERRAMENTAS DE ACESSIBILIDADE - JAVASCRIPT ATUALIZADO (+ VLibras sem botão externo)
 // ==========================================
 
 // Variáveis globais
@@ -16,7 +16,8 @@ let accessibilitySettings = {
   grayscale: false,
   lowSaturation: false,
   highSaturation: false,
-  currentProfile: null
+  currentProfile: null,
+  vlibrasEnabled: false // controla se o recurso está ativo pelo seu painel
 };
 
 let magnifierActive = false;
@@ -96,7 +97,7 @@ function openAccessibilityPanel() {
   triggerBtn.setAttribute('aria-expanded', 'true');
   overlay.setAttribute('aria-hidden', 'false');
 
-  // Evitar scroll do body (compensa largura da barra para evitar "jump")
+  // Evitar scroll do body (compensa a barra para evitar "jump")
   const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
   document.body.style.overflow = 'hidden';
   if (scrollBarWidth > 0) {
@@ -289,12 +290,7 @@ function decreaseFontSize() {
   showNotification(`Fonte diminuída para ${newSize}px`);
 }
 
-/**
- * Garante exclusividade visual entre os botões de fonte.
- * - Se igual ao tamanho original, limpa ambos;
- * - Se maior: "aumentar" ativo e "diminuir" inativo;
- * - Se menor: "diminuir" ativo e "aumentar" inativo.
- */
+/** Exclusividade visual entre os botões de fonte. */
 function setFontButtonsState() {
   const incBtn = document.getElementById('increaseFontBtn');
   const decBtn = document.getElementById('decreaseFontBtn');
@@ -315,7 +311,7 @@ function setFontButtonsState() {
 }
 
 // ==========================================
-// CONTRASTE / CORES / FILTROS (escopados no CSS)
+// CONTRASTE / CORES / FILTROS
 // ==========================================
 
 function toggleHighContrast() {
@@ -544,6 +540,115 @@ function startTextToSpeech() {
 }
 
 // ==========================================
+// VLibras – Gerenciado pelo seu botão
+// ==========================================
+
+function vlibrasIsOpen() {
+  const pw = document.querySelector('[vw-plugin-wrapper]');
+  if (!pw) return false;
+  const cs = window.getComputedStyle(pw);
+  const rect = pw.getBoundingClientRect();
+  return cs.display !== 'none' && rect.width > 0 && rect.height > 0;
+}
+
+/** Abre o painel do VLibras simulando o clique no botão oficial. */
+function openVLibrasPanel() {
+  const ab = document.querySelector('[vw-access-button]');
+  if (ab && !vlibrasIsOpen()) {
+    ab.click(); // abre o painel do VLibras
+  }
+}
+
+/** Fecha o painel do VLibras simulando o clique no botão oficial. */
+function closeVLibrasPanel() {
+  const ab = document.querySelector('[vw-access-button]');
+  if (ab && vlibrasIsOpen()) {
+    ab.click();
+  }
+}
+
+/** Oculta apenas o botão flutuante oficial (deixa o painel livre). */
+function hideVLibrasAccessButton() {
+  const ab = document.querySelector('[vw-access-button]');
+  if (ab) ab.style.display = 'none';
+}
+
+/** Mostra novamente o botão oficial (se precisar). */
+function showVLibrasAccessButton() {
+  const ab = document.querySelector('[vw-access-button]');
+  if (ab) ab.style.display = '';
+}
+
+
+// === Botão do painel: Ativar VLibras (SEM toggle) ===
+function enableVLibras() {
+  // 1) Se já carregou em algum momento (SPA ou clique anterior):
+  if (window.__vlibrasLoaded) {
+    hideVLibrasAccessButton(); // garante que a "mãozinha" siga oculta
+    openVLibrasPanel();        // abre o VLibras (se já não estiver aberto)
+    closeAccessibilityPanel(); // fecha o seu drawer
+    return;
+  }
+
+  // 2) Ainda não carregou: cria o container e injeta o script
+  if (!document.querySelector('[vw]')) {
+    const wrapper = document.createElement('div');
+    wrapper.setAttribute('vw', '');
+    wrapper.className = 'enabled vlibras-icon';
+    wrapper.innerHTML = `
+      <div vw-access-button class="active"></div>
+      <div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div>
+    `;
+    document.body.appendChild(wrapper);
+  }
+
+  const script = document.createElement('script');
+  script.src = 'https://vlibras.gov.br/app/vlibras-plugin.js';
+  script.async = true;
+
+  script.onload = () => {
+    try {
+      new window.VLibras.Widget('https://vlibras.gov.br/app');
+      window.__vlibrasLoaded = true;
+
+      // Nunca mostrar o botão oficial
+      hideVLibrasAccessButton();
+
+      // Abre o VLibras e fecha o seu painel
+      openVLibrasPanel();
+      closeAccessibilityPanel();
+    } catch (err) {
+      console.warn('Erro ao iniciar VLibras:', err);
+      showNotification('Falha ao iniciar VLibras');
+    }
+  };
+
+  script.onerror = () => {
+    showNotification('Erro ao carregar VLibras');
+  };
+
+  document.body.appendChild(script);
+  // (opcional) feedback curto
+  // showNotification('Ativando VLibras...');
+}
+
+/** Esconde totalmente a UI (painel + botão). Usado no reset. */
+function hideVLibrasUI() {
+  const ab = document.querySelector('[vw-access-button]');
+  const pw = document.querySelector('[vw-plugin-wrapper]');
+  if (ab) ab.style.display = 'none';
+  if (pw) pw.style.display = 'none';
+}
+
+/** Reexibe a UI (caso queira mostrar de novo manualmente). */
+function showVLibrasUI() {
+  const ab = document.querySelector('[vw-access-button]');
+  const pw = document.querySelector('[vw-plugin-wrapper]');
+  if (ab) ab.style.display = '';
+  if (pw) pw.style.display = '';
+}
+
+// ==========================================
 // ATALHOS DE TECLADO
 // ==========================================
 
@@ -631,6 +736,9 @@ function updateButtonState(buttonId, isActive) {
 }
 
 function resetAll(showNotif = true) {
+  // Guardar estado anterior do VLibras para esconder UI
+  const wasVLibrasOn = accessibilitySettings.vlibrasEnabled;
+
   // Resetar configurações
   accessibilitySettings = {
     fontSize: originalFontSize,
@@ -645,7 +753,8 @@ function resetAll(showNotif = true) {
     grayscale: false,
     lowSaturation: false,
     highSaturation: false,
-    currentProfile: null
+    currentProfile: null,
+    vlibrasEnabled: false
   };
 
   // Parar speech
@@ -654,7 +763,7 @@ function resetAll(showNotif = true) {
     currentSpeech = null;
   }
 
-  // Remover todas as classes do body
+  // Remover classes do body
   const body = document.body;
   body.classList.remove(
     'high-contrast', 'dark-mode', 'dyslexia-friendly',
@@ -681,6 +790,14 @@ function resetAll(showNotif = true) {
   if (magnifier) magnifier.classList.remove('active');
   if (ruler) ruler.classList.remove('active');
 
+  // VLibras: esconde UI e volta o texto do botão
+  if (wasVLibrasOn) {
+    hideVLibrasUI();
+    const vbtn = document.getElementById('vlibrasBtn');
+    if (vbtn) vbtn.querySelector('.tool-text').textContent = 'Ativar VLibras';
+    updateButtonState('vlibrasBtn', false);
+  }
+
   // Atualizar UI
   updateAllButtons();
   setFontButtonsState();
@@ -694,7 +811,8 @@ function resetAll(showNotif = true) {
 function updateAllButtons() {
   const buttons = ['contrastBtn', 'darkModeBtn', 'dyslexiaBtn', 'focusBtn',
     'magnifierBtn', 'rulerBtn', 'animationBtn', 'ttsBtn',
-    'grayscaleBtn', 'lowSatBtn', 'highSatBtn'];
+    'grayscaleBtn', 'lowSatBtn', 'highSatBtn', 'vlibrasBtn'
+  ];
 
   buttons.forEach(btnId => {
     const btn = document.getElementById(btnId);
@@ -707,7 +825,7 @@ function updateAllButtons() {
 }
 
 // ==========================================
-// PERSISTÊNCIA (escopo da página)
+// PERSISTÊNCIA
 // ==========================================
 
 function saveSettings() {
@@ -716,7 +834,6 @@ function saveSettings() {
       ...accessibilitySettings,
       timestamp: Date.now()
     };
-    // console.log('Configurações salvas');
   } catch (error) {
     console.warn('Erro ao salvar configurações:', error);
   }
@@ -731,7 +848,6 @@ function loadSettings() {
       if (Date.now() - savedSettings.timestamp < oneDayInMs) {
         accessibilitySettings = { ...accessibilitySettings, ...savedSettings };
         applyLoadedSettings();
-        // console.log('Configurações carregadas');
       }
     }
   } catch (error) {
@@ -773,9 +889,40 @@ function applyLoadedSettings() {
     if (profileBtn) profileBtn.classList.add('active');
   }
 
-  // Atualizar botões
+  // Atualizar botões de estado
   updateAllButtonsFromSettings();
   setFontButtonsState();
+
+  // VLibras: se estava habilitado, assegura que o script/DOM existem, esconde a mãozinha e deixa fechado até o usuário abrir
+  if (accessibilitySettings.vlibrasEnabled) {
+    if (window.__vlibrasLoaded) {
+      hideVLibrasAccessButton();
+      // Não abre automaticamente para não surpreender; o seu botão alterna abrir/ocultar
+      const vbtn = document.getElementById('vlibrasBtn');
+      if (vbtn) vbtn.querySelector('.tool-text').textContent = 'Mostrar VLibras';
+    } else {
+      // injeta e não abre (o usuário abre pelo botão)
+      const ensure = () => {
+        if (!document.querySelector('[vw]')) {
+          const wrapper = document.createElement('div');
+          wrapper.setAttribute('vw', '');
+          wrapper.className = 'enabled vlibras-icon';
+          wrapper.innerHTML = `
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+              <div class="vw-plugin-top-wrapper"></div>
+            </div>`;
+          document.body.appendChild(wrapper);
+        }
+        const s = document.createElement('script');
+        s.src = 'https://vlibras.gov.br/app/vlibras-plugin.js';
+        s.async = true;
+        s.onload = () => { new window.VLibras.Widget('https://vlibras.gov.br/app'); window.__vlibrasLoaded = true; hideVLibrasAccessButton(); };
+        document.body.appendChild(s);
+      };
+      ensure();
+    }
+  }
 }
 
 function updateAllButtonsFromSettings() {
@@ -789,6 +936,18 @@ function updateAllButtonsFromSettings() {
   updateButtonState('grayscaleBtn', accessibilitySettings.grayscale);
   updateButtonState('lowSatBtn', accessibilitySettings.lowSaturation);
   updateButtonState('highSatBtn', accessibilitySettings.highSaturation);
+
+  // VLibras
+  const vbtn = document.getElementById('vlibrasBtn');
+  if (vbtn) {
+    if (accessibilitySettings.vlibrasEnabled) {
+      vbtn.querySelector('.tool-text').textContent = vlibrasIsOpen() ? 'Ocultar VLibras' : 'Mostrar VLibras';
+      updateButtonState('vlibrasBtn', vlibrasIsOpen());
+    } else {
+      vbtn.querySelector('.tool-text').textContent = 'Ativar VLibras';
+      updateButtonState('vlibrasBtn', false);
+    }
+  }
 }
 
 // ==========================================

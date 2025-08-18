@@ -36,7 +36,7 @@
 }
 
 /* ==========================================
-   FERRAMENTAS DE ACESSIBILIDADE - CSS MODERNO (corrigido)
+   FERRAMENTAS DE ACESSIBILIDADE - CSS MODERNO (corrigido + VLibras)
    ========================================== */
 
 /* Reset de overflow horizontal "fantasma" */
@@ -106,9 +106,7 @@ html, body {
   transform: translateX(100%); /* inicia fora da tela */
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-
-  /* Garante que os filtros/transform do conteúdo não afetem o painel */
-  isolation: isolate;
+  isolation: isolate; /* evita filtros/transform do conteúdo afetarem o painel */
 }
 
 .accessibility-panel-modern.active {
@@ -261,24 +259,36 @@ html, body {
 }
 
 /* ==========================================
-   ESTADOS DE ACESSIBILIDADE - ESCOPADOS
-   (evitam aplicar filtros no painel/overlay)
+   VLibras – Camadas e proteção contra filtros
    ========================================== */
 
-/* Alto Contraste */
-body.high-contrast *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle) {
+/* Garante que o botão e a janela do VLibras fiquem visíveis acima do overlay/painel */
+[vw-access-button],
+[vw-plugin-wrapper],
+.vlibras-icon {
+  z-index: 10020 !important; /* acima do painel (10001) e notificações (10002) */
+  position: fixed; /* o plugin já usa, aqui apenas reforço */
+}
+
+/* ==========================================
+   ESTADOS DE ACESSIBILIDADE - ESCOPADOS
+   (evitam aplicar filtros no painel/overlay/VLibras)
+   ========================================== */
+
+/* Alto Contraste (cores) – não aplicar no painel/overlay/VLibras/ferramentas auxiliares */
+body.high-contrast *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper]) {
   background: #000 !important;
   color: #fff !important;
   border-color: #fff !important;
 }
 
-/* O FILTER é aplicado somente no conteúdo, não no body/painel */
-body.high-contrast :not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle) {
+/* Alto Contraste (filtro) – escopado fora do painel e do VLibras */
+body.high-contrast :not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper]) {
   filter: contrast(2) !important;
 }
 
-/* Modo Escuro (protege painel/overlay) */
-body.dark-mode *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay) {
+/* Modo Escuro – escopado fora do painel/overlay/VLibras */
+body.dark-mode *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper]) {
   background: #2d2d2d !important;
   color: #e0e0e0 !important;
   border-color: #555 !important;
@@ -289,30 +299,30 @@ body.dark-mode {
   color: #e0e0e0 !important;
 }
 
-/* Fonte para Dislexia */
+/* Fonte para Dislexia (ok aplicar globalmente; o VLibras é imagem/canvas/iframe) */
 body.dyslexia-friendly, body.dyslexia-friendly * {
   font-family: 'OpenDyslexic', 'Comic Sans MS', cursive !important;
   letter-spacing: 0.05em !important;
   word-spacing: 0.1em !important;
 }
 
-/* Monocromático (escopado) */
-body.grayscale :not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle) {
+/* Monocromático – não afetar painel/VLibras */
+body.grayscale :not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper]) {
   filter: grayscale(100%) !important;
 }
 
-/* Baixa/Alta Saturação (escopado) */
-body.low-saturation :not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle) {
+/* Baixa/Alta Saturação – não afetar painel/VLibras */
+body.low-saturation :not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper]) {
   filter: saturate(0.5) !important;
 }
-body.high-saturation :not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle) {
+body.high-saturation :not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper]) {
   filter: saturate(2) !important;
 }
 
-/* Pausar Animações */
-body.no-animations *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay) ,
-body.no-animations *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay)::before,
-body.no-animations *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay)::after {
+/* Pausar Animações – não afetar painel/overlay/VLibras */
+body.no-animations *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper]),
+body.no-animations *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper])::before,
+body.no-animations *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper])::after {
   animation-duration: 0.01ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
@@ -430,3 +440,5 @@ body.focus-highlight button:hover {
   width: 200px;
   height: 200px;
 }
+/* Força ocultar o botão flutuante oficial do VLibras, se existir */
+[vw-access-button] { display: none !important; }
