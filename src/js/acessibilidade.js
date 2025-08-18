@@ -316,27 +316,79 @@ function setFontButtonsState() {
 
 function toggleHighContrast() {
   const body = document.body;
+  const willEnable = !body.classList.contains('high-contrast');
 
-  body.classList.toggle('high-contrast');
-  accessibilitySettings.highContrast = body.classList.contains('high-contrast');
+  body.classList.toggle('high-contrast', willEnable);
+  accessibilitySettings.highContrast = willEnable;
+  updateButtonState('contrastBtn', willEnable);
 
-  updateButtonState('contrastBtn', accessibilitySettings.highContrast);
+  if (willEnable) {
+    // se ligou alto contraste, desliga escuro
+    body.classList.remove('dark-mode');
+    accessibilitySettings.darkMode = false;
+    updateButtonState('darkModeBtn', false);
+
+    // zera filtros de cor e bloqueia os botões (se você já implementou isso)
+    body.classList.remove('grayscale', 'low-saturation', 'high-saturation');
+    accessibilitySettings.grayscale = false;
+    accessibilitySettings.lowSaturation = false;
+    accessibilitySettings.highSaturation = false;
+    updateButtonState('grayscaleBtn', false);
+    updateButtonState('lowSatBtn', false);
+    updateButtonState('highSatBtn', false);
+
+    if (typeof setColorFilterButtonsEnabled === 'function') {
+      setColorFilterButtonsEnabled(false);
+    }
+  } else {
+    // ao desligar alto contraste, reabilite os filtros
+    if (typeof setColorFilterButtonsEnabled === 'function') {
+      setColorFilterButtonsEnabled(true);
+    }
+  }
+
   saveSettings();
-
-  showNotification('Alto contraste ' + (accessibilitySettings.highContrast ? 'ativado' : 'desativado'));
+  showNotification('Alto contraste ' + (willEnable ? 'ativado' : 'desativado'));
 }
+
+/* Garante que nunca fiquem os dois ligados ao carregar a página
+   (prioriza Alto contraste se houver conflito salvo) */
+function enforceThemeExclusivity() {
+  const body = document.body;
+  if (body.classList.contains('high-contrast') && body.classList.contains('dark-mode')) {
+    // mantém alto contraste, desliga escuro
+    body.classList.remove('dark-mode');
+    accessibilitySettings.darkMode = false;
+    updateButtonState('darkModeBtn', false);
+  }
+}
+
 
 function toggleDarkMode() {
   const body = document.body;
+  const willEnable = !body.classList.contains('dark-mode');
 
-  body.classList.toggle('dark-mode');
-  accessibilitySettings.darkMode = body.classList.contains('dark-mode');
+  // liga/desliga escuro
+  body.classList.toggle('dark-mode', willEnable);
+  accessibilitySettings.darkMode = willEnable;
+  updateButtonState('darkModeBtn', willEnable);
 
-  updateButtonState('darkModeBtn', accessibilitySettings.darkMode);
+  if (willEnable) {
+    // se ligou escuro, desliga alto contraste
+    body.classList.remove('high-contrast');
+    accessibilitySettings.highContrast = false;
+    updateButtonState('contrastBtn', false);
+
+    // reabilita filtros de cor, caso fossem bloqueados pelo alto contraste
+    if (typeof setColorFilterButtonsEnabled === 'function') {
+      setColorFilterButtonsEnabled(true);
+    }
+  }
+
   saveSettings();
-
-  showNotification('Modo escuro ' + (accessibilitySettings.darkMode ? 'ativado' : 'desativado'));
+  showNotification('Modo escuro ' + (willEnable ? 'ativado' : 'desativado'));
 }
+
 
 function toggleDyslexiaFont() {
   const body = document.body;
@@ -653,6 +705,18 @@ function showVLibrasUI() {
   if (ab) ab.style.display = '';
   if (pw) pw.style.display = '';
 }
+// Helper para habilitar/desabilitar os três botões
+function setColorFilterButtonsEnabled(enabled) {
+  ['grayscaleBtn','lowSatBtn','highSatBtn'].forEach(id => {
+    const b = document.getElementById(id);
+    if (!b) return;
+    b.disabled = !enabled;
+    b.setAttribute('aria-disabled', String(!enabled));
+    b.title = enabled ? '' : 'Indisponível enquanto Alto contraste estiver ativo';
+  });
+}
+
+
 
 // ==========================================
 // ATALHOS DE TECLADO
@@ -734,6 +798,7 @@ function setupKeyboardShortcuts() {
     }
   });
 }
+
 
 // ==========================================
 // UTILITÁRIOS
@@ -868,6 +933,7 @@ function loadSettings() {
 
 function applyLoadedSettings() {
   const body = document.body;
+  setColorFilterButtonsEnabled(!accessibilitySettings.highContrast);
 
   // Aplicar classes
   body.classList.toggle('high-contrast', accessibilitySettings.highContrast);
@@ -934,6 +1000,7 @@ function applyLoadedSettings() {
       ensure();
     }
   }
+  enforceThemeExclusivity();
 }
 
 function updateAllButtonsFromSettings() {
