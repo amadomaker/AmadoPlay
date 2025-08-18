@@ -373,30 +373,55 @@ body.focus-highlight button:hover {
 
 .reading-ruler.active { display: block; }
 
-/* Lupa */
-.magnifier-circle {
+/* ===== Máscara de Leitura: centro transparente + entorno escuro ===== */
+:root{
+  --maskH: 180px;              /* altura da janela livre (ajuste a gosto) */
+  --maskY: 50vh;               /* posição vertical – o JS atualiza */
+  --maskDim: rgba(0,0,0,.85);  /* escurecimento do entorno */
+  --maskEdge: rgba(255,255,255,.15); /* linhas finas para “bordas” */
+  --maskEdgeW: 2px;            /* espessura das linhas das bordas */
+}
+
+.reading-mask{
   position: fixed;
-  width: 150px;
-  height: 150px;
-  border: 4px solid #4a90e2;
-  border-radius: 50%;
-  z-index: 9998;
+  inset: 0;
+  pointer-events: none;        /* não bloqueia cliques no conteúdo */
   display: none;
-  pointer-events: none;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(2px);
+  z-index: 9999;
+
+  /* 1) camada principal: entorno escuro + centro transparente */
+  /* 2) e 3) camadas: linhas de borda (superior e inferior)  */
+  background:
+    /* entorno escuro com “janela” livre */
+    linear-gradient(
+      to bottom,
+      var(--maskDim) 0,
+      var(--maskDim) calc(var(--maskY) - var(--maskH)/2),
+      transparent   calc(var(--maskY) - var(--maskH)/2),
+      transparent   calc(var(--maskY) + var(--maskH)/2),
+      var(--maskDim) calc(var(--maskY) + var(--maskH)/2),
+      var(--maskDim) 100%
+    ),
+    /* borda superior */
+    linear-gradient(
+      to bottom,
+      transparent                     calc(var(--maskY) - var(--maskH)/2 - var(--maskEdgeW)),
+      var(--maskEdge)                 calc(var(--maskY) - var(--maskH)/2 - var(--maskEdgeW)),
+      var(--maskEdge)                 calc(var(--maskY) - var(--maskH)/2),
+      transparent                     calc(var(--maskY) - var(--maskH)/2)
+    ),
+    /* borda inferior */
+    linear-gradient(
+      to bottom,
+      transparent                     calc(var(--maskY) + var(--maskH)/2),
+      var(--maskEdge)                 calc(var(--maskY) + var(--maskH)/2),
+      var(--maskEdge)                 calc(var(--maskY) + var(--maskH)/2 + var(--maskEdgeW)),
+      transparent                     calc(var(--maskY) + var(--maskH)/2 + var(--maskEdgeW))
+    );
 }
 
-.magnifier-circle.active { display: block; }
+.reading-mask.active{ display:block; }
 
-.magnifier-circle::before {
-  content: '🔍';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 40px;
-}
 
 /* ==========================================
    RESPONSIVIDADE
@@ -454,3 +479,31 @@ body.focus-highlight button:hover {
 }
 /* Força ocultar o botão flutuante oficial do VLibras, se existir */
 [vw-access-button] { display: none !important; }
+
+/* ==========================================
+   LEITURA POR CLIQUE (TTS) - CSS MODERNO
+   ========================================== */
+body.tts-mode { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"><text y="22" font-size="22">🔊</text></svg>') 0 0, pointer; }
+
+body.tts-mode .a11y-tts-hover {
+  outline: 2px dashed rgba(74, 144, 226, .85);
+  outline-offset: 2px;
+}
+.a11y-tts-highlight {
+  position: relative;
+  background: none !important;
+  outline: 3px solid rgba(74, 144, 226, .95);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(74, 144, 226, .12);
+  border-radius: 6px;
+}
+/* …mas se for texto (título/descrição), usa sublinhado suave ao invés da caixa inteira */
+.a11y-tts-highlight:where(h1,h2,h3,h4,h5,h6,p,span,.card-title,.card-description) {
+  outline: none;
+  box-shadow: none;
+  background-image: linear-gradient(transparent 60%, rgba(74,144,226,.25) 0);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  border-radius: 2px;
+}
+

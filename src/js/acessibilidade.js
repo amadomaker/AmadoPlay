@@ -18,6 +18,7 @@ let accessibilitySettings = {
   highSaturation: false,
   currentProfile: null,
   vlibrasEnabled: false // controla se o recurso está ativo pelo seu painel
+  
 };
 
 let magnifierActive = false;
@@ -25,11 +26,24 @@ let rulerActive = false;
 let speechSynthesis = window.speechSynthesis;
 let currentSpeech = null;
 let originalFontSize = 16;
-
+let readingMaskActive = false; 
 // A11y/foco
 let lastFocusedElement = null;
 let focusTrapHandler = null;
 let escapeHandler = null;
+// TTS
+let ttsClickModeActive = false;
+let ttsHoverHandler = null;
+let ttsClickHandler = null;
+let ttsEscHandler = null;
+let ttsLastTarget = null;
+const TTS_ACTIVATION_DELAY = 900; // ms para 2º clique ativar
+const CARD_SELECTOR = '.tool-card';
+const CARD_TITLE_SELECTOR = '.card-title, h3.card-title';
+const CARD_DESC_SELECTOR  = '.card-description, .card-text';
+
+
+
 
 // ==========================================
 // INICIALIZAÇÃO
@@ -55,11 +69,12 @@ function initializeAccessibility() {
 }
 
 function setupEventListeners() {
-  // Mouse move para lupa
-  document.addEventListener('mousemove', handleMagnifier);
 
   // Mouse move para régua de leitura
   document.addEventListener('mousemove', handleReadingRuler);
+
+  document.addEventListener('mousemove', handleReadingMask);
+
 
   // Clique no overlay fecha
   const overlay = document.getElementById('accessibilityOverlay');
@@ -67,6 +82,15 @@ function setupEventListeners() {
     overlay.addEventListener('click', closeAccessibilityPanel);
   }
 }
+document.addEventListener('wheel', function(e){
+  if (!readingMaskActive || !e.altKey) return;
+  e.preventDefault();
+  const root = document.documentElement;
+  const cur = parseFloat(getComputedStyle(root).getPropertyValue('--maskH')) || 180;
+  const step = 20 * (e.deltaY > 0 ? -1 : 1); // para cima aumenta
+  const next = Math.min(600, Math.max(60, cur + step));
+  root.style.setProperty('--maskH', next + 'px');
+}, { passive: false });
 
 // ==========================================
 // CONTROLE DO PAINEL (Drawer à direita)
@@ -465,27 +489,104 @@ function toggleHighSaturation() {
 // ==========================================
 
 function toggleMagnifier() {
-  magnifierActive = !magnifierActive;
-
-  const magnifier = document.getElementById('magnifier');
-  magnifier.classList.toggle('active', magnifierActive);
-
-  updateButtonState('magnifierBtn', magnifierActive);
-  accessibilitySettings.magnifierEnabled = magnifierActive;
-  saveSettings();
-
-  showNotification('Lupa ' + (magnifierActive ? 'ativada - mova o mouse' : 'desativada'));
+  // compat: reaproveita o atalho/ID antigo para acionar a máscara
+  toggleReadingMask();
 }
 
-function handleMagnifier(e) {
+// Agora o botão "Lupa" ativa/desativa a Máscara de Leitura
+function ensureReadingMask() {
+  let mask = document.getElementById('readingMask');
+  if (!mask) {
+    mask = document.createElement('div');
+    mask.id = 'readingMask';
+    mask.className = 'reading-mask'; // precisa existir no CSS
+    document.body.appendChild(mask);
+  }
+  return mask;
+}
+
+
+function toggleReadingMask() {
+  readingMaskActive = !readingMaskActive;
+
+  const mask = ensureReadingMask();
+
+  if (readingMaskActive) {
+    // Exclusividade com a régua tradicional (se estiver ligada)
+    if (rulerActive) {
+      rulerActive = false;
+      const ruler = document.getElementById('readingRuler');
+      if (ruler) ruler.classList.remove('active');
+      updateButtonState('rulerBtn', false);
+    }
+
+    // Posição inicial no centro da viewport
+    document.documentElement.style.setProperty('--maskY', (window.innerHeight / 2) + 'px');
+    mask.classList.add('active');
+
+    // Fecha o painel ao ativar, para focar na leitura
+    const panel = document.getElementById('accessibilityPanel');
+    if (panel?.classList.contains('active')) closeAccessibilityPanel();
+
+    showNotification('Máscara de leitura ativada - mova o mouse');
+  } else {
+    mask.classList.remove('active');
+    showNotification('Máscara de leitura desativada');
+  }
+
+  // Reaproveitamos o estado do botão da “lupa”
+  updateButtonState('magnifierBtn', readingMaskActive);
+  accessibilitySettings.magnifierEnabled = readingMaskActive; // mantém persistência sem quebrar
+  saveSettings();
+}
+
+function handleReadingMask(e) {
+  if (!readingMaskActive) return;
+  document.documentElement.style.setProperty('--maskY', e.clientY + 'px');
+}
+
+
+/* Move a lente e atualiza o zoom no clone */
+function handleMagnifier(e){
   if (!magnifierActive) return;
 
-  const magnifier = document.getElementById('magnifier');
+  __a11yLastMouse = { x: e.clientX, y: e.clientY };
 
-  // Posicionar a lupa seguindo o cursor
-  magnifier.style.left = (e.clientX - 75) + 'px';
-  magnifier.style.top = (e.clientY - 75) + 'px';
+  const docEl = document.documentElement;
+  const ring  = document.getElementById('magnifier');
+
+  const lens = parseFloat(getComputedStyle(docEl).getPropertyValue('--lens')) || 180;
+
+  // posição visual do aro
+  ring.style.left = (e.clientX - lens/2) + 'px';
+  ring.style.top  = (e.clientY - lens/2) + 'px';
+
+  // variáveis CSS para máscara/clip-path
+  docEl.style.setProperty('--mx', e.clientX + 'px');
+  docEl.style.setProperty('--my', e.clientY + 'px');
+
+  updateMagnifierTransform();
 }
+
+/* Mantém o clone alinhado ao scroll/resize também */
+function updateMagnifierTransform(){
+  if (!magnifierActive) return;
+
+  const clone = document.getElementById('a11y-zoom-clone');
+  if (!clone) return;
+
+  const s = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--mag-scale')) || 1.8;
+
+  // fórmula: translate(-scroll) + translate((1-s)*mouse) + scale(s)
+  const tx = -window.scrollX + (1 - s) * __a11yLastMouse.x;
+  const ty = -window.scrollY + (1 - s) * __a11yLastMouse.y;
+
+  clone.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
+}
+
+// mantém alinhado quando a página rola ou redimensiona
+window.addEventListener('scroll',  ()=>magnifierActive && updateMagnifierTransform(), { passive: true });
+window.addEventListener('resize', ()=>magnifierActive && updateMagnifierTransform());
 
 // ==========================================
 // RÉGUA DE LEITURA
@@ -544,17 +645,19 @@ function pauseAnimations() {
 }
 
 function toggleTextToSpeech() {
-  if (currentSpeech && !currentSpeech.ended) {
-    speechSynthesis.cancel();
-    updateButtonState('ttsBtn', false);
-    currentSpeech = null;
-    showNotification('Leitura interrompida');
+  if (ttsClickModeActive) {
+    disableClickToRead();
+    showNotification('Modo de leitura por clique desativado');
     return;
   }
-
-  updateButtonState('ttsBtn', true);
-  startTextToSpeech();
+  if (currentSpeech && !currentSpeech.ended) {
+    speechSynthesis.cancel();
+    currentSpeech = null;
+  }
+  enableClickToRead();
+  showNotification('Clique em um texto para ouvir. ESC para sair.');
 }
+
 
 function startTextToSpeech() {
   // Pegar o texto principal da página (excluindo o painel de acessibilidade)
@@ -590,6 +693,237 @@ function startTextToSpeech() {
 
   showNotification('Iniciando leitura do texto...');
 }
+function enableClickToRead() {
+  ttsClickModeActive = true;
+  document.body.classList.add('tts-mode');
+  updateButtonState('ttsBtn', true);
+
+  // fecha o painel ao entrar no modo
+  const panel = document.getElementById('accessibilityPanel');
+  if (panel && panel.classList.contains('active')) closeAccessibilityPanel();
+
+  ttsHoverHandler = (e) => {
+    if (!ttsClickModeActive) return;
+    const target = pickSpeakableElement(e.target);
+    if (!target || isInA11yUi(target)) return;
+    document.querySelectorAll('.a11y-tts-hover').forEach(n => n.classList.remove('a11y-tts-hover'));
+    target.classList.add('a11y-tts-hover');
+  };
+
+  ttsClickHandler = (e) => {
+  if (!ttsClickModeActive) return;
+
+// === 1) CARD: lê título/descrição se clicou neles; senão, lê o resumo ===
+const card = e.target.closest(CARD_SELECTOR);
+if (card && !isInA11yUi(card)) {
+  e.preventDefault();
+  e.stopImmediatePropagation();
+
+  // Se clicou exatamente em título ou descrição, lê só aquilo
+  const specific = e.target.closest(`${CARD_TITLE_SELECTOR}, ${CARD_DESC_SELECTOR}`);
+  let text;
+
+  if (specific) {
+    text = extractReadableText(specific);
+    highlightTtsTarget(specific);
+  } else {
+    // Senão, monta “título — descrição”
+    text = buildCardText(card);
+    // Destaca o título do card (ou o card se não tiver)
+    const titleEl = card.querySelector(CARD_TITLE_SELECTOR);
+    highlightTtsTarget(titleEl || card);
+  }
+
+  if (text) speakText(text);
+  return;
+}
+
+  // === 2) ELEMENTO ACIONÁVEL: 2-passos (1º fala, 2º executa) ===
+  const actionable = findActionable(e.target);
+  if (actionable && !isInA11yUi(actionable)) {
+    const armedUntil = parseInt(actionable.dataset.ttsArmedUntil || '0', 10);
+    const now = Date.now();
+
+    if (now < armedUntil) {
+      actionable.dataset.ttsArmedUntil = '';
+      return; // 2º clique dentro da janela -> deixa ação acontecer
+    } else {
+      // 1º clique: fala e BLOQUEIA a ação
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+      const label = extractReadableText(actionable);
+      if (label) speakText(label);
+
+      actionable.classList.add('a11y-tts-highlight');
+      if (ttsLastTarget && ttsLastTarget !== actionable) {
+        ttsLastTarget.classList.remove('a11y-tts-highlight');
+      }
+      ttsLastTarget = actionable;
+
+      actionable.dataset.ttsArmedUntil = String(now + TTS_ACTIVATION_DELAY);
+      return;
+    }
+  }
+
+  // === 3) Conteúdo textual comum: só fala ===
+  const target = pickSpeakableElement(e.target);
+  if (!target || isInA11yUi(target)) return;
+
+  e.preventDefault();
+  const text = extractReadableText(target);
+  if (!text) return;
+
+  if (ttsLastTarget) ttsLastTarget.classList.remove('a11y-tts-highlight');
+  ttsLastTarget = target;
+  ttsLastTarget.classList.add('a11y-tts-highlight');
+
+  speakText(text);
+};
+
+  ttsEscHandler = (e) => { if (e.key === 'Escape') { disableClickToRead(); showNotification('Modo de leitura por clique desativado'); } };
+
+  document.addEventListener('mousemove', ttsHoverHandler);
+  document.addEventListener('click', ttsClickHandler, true); // captura p/ bloquear no 1º clique
+  document.addEventListener('keydown', ttsEscHandler);
+}
+
+function disableClickToRead() {
+  ttsClickModeActive = false;
+  document.body.classList.remove('tts-mode');
+  updateButtonState('ttsBtn', false);
+
+  if (ttsHoverHandler) document.removeEventListener('mousemove', ttsHoverHandler), ttsHoverHandler = null;
+  if (ttsClickHandler) document.removeEventListener('click', ttsClickHandler, true), ttsClickHandler = null;
+  if (ttsEscHandler) document.removeEventListener('keydown', ttsEscHandler), ttsEscHandler = null;
+
+  document.querySelectorAll('.a11y-tts-hover').forEach(n => n.classList.remove('a11y-tts-hover'));
+  if (ttsLastTarget) ttsLastTarget.classList.remove('a11y-tts-highlight'), ttsLastTarget = null;
+
+  if (currentSpeech && !currentSpeech.ended) speechSynthesis.cancel(), currentSpeech = null;
+}
+
+function speakText(text) {
+  if (!text) return;
+  if (currentSpeech && !currentSpeech.ended) speechSynthesis.cancel();
+
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'pt-BR';
+  u.rate = 0.9;
+
+  u.onend = () => { if (ttsLastTarget) ttsLastTarget.classList.remove('a11y-tts-highlight'); ttsLastTarget = null; };
+  u.onerror = () => { if (ttsLastTarget) ttsLastTarget.classList.remove('a11y-tts-highlight'); ttsLastTarget = null; showNotification('Erro ao ler o texto'); };
+
+  currentSpeech = u;
+  speechSynthesis.speak(u);
+}
+
+// ——— utilidades do TTS ———
+
+// o que consideramos "acionável" (exige 2 cliques no modo TTS)
+function findActionable(node) {
+  if (!(node instanceof HTMLElement)) return null;
+  // Elementos que executam uma ação (ficam 2-cliques no modo TTS)
+  const el = node.closest('button, a[href], [role="button"], input[type="button"], input[type="submit"], summary, [onclick]');
+  if (!el) return null;
+  // EXCEÇÃO: cards nunca disparam ação no modo TTS
+  if (el.closest(CARD_SELECTOR)) return null;
+  return el;
+}
+
+
+// sobe a árvore até achar um bloco de texto bom p/ leitura
+function pickSpeakableElement(start) {
+  if (!(start instanceof HTMLElement)) return null;
+
+  // Prioriza título/descrição dentro do card
+  const inTitle = start.closest(CARD_TITLE_SELECTOR);
+  if (inTitle) return inTitle;
+
+  const inDesc = start.closest(CARD_DESC_SELECTOR);
+  if (inDesc) return inDesc;
+
+  // Se está dentro de um card, devolve o próprio card (para resumo)
+  const card = start.closest(CARD_SELECTOR);
+  if (card) return card;
+
+  // Fallback padrão
+  const preferred = new Set(['P','LI','BLOCKQUOTE','ARTICLE','SECTION','MAIN','ASIDE',
+                             'H1','H2','H3','H4','H5','H6','TD','TH','CAPTION','FIGCAPTION','BUTTON','A']);
+  let el = start;
+  for (let i = 0; i < 6 && el; i++, el = el.parentElement) {
+    if (!(el instanceof HTMLElement)) break;
+    if (preferred.has(el.tagName)) return el;
+    const t = (el.innerText || '').trim();
+    if (t.length >= 30) return el;
+  }
+  return start;
+}
+
+
+// remove ícones/emoji e nós sem relevância de leitura
+function extractReadableText(el) {
+  const aria = el.getAttribute?.('aria-label') || el.getAttribute?.('alt');
+  if (aria && aria.trim()) return aria.trim();
+
+  // Título/descrição isolados
+  const titleHit = el.matches?.(CARD_TITLE_SELECTOR) ? el : el.closest?.(CARD_TITLE_SELECTOR);
+  if (titleHit) {
+    const t = titleHit.textContent?.trim();
+    if (t) return t;
+  }
+  const descHit = el.matches?.(CARD_DESC_SELECTOR) ? el : el.closest?.(CARD_DESC_SELECTOR);
+  if (descHit) {
+    const d = descHit.textContent?.trim();
+    if (d) return d;
+  }
+
+  // Card inteiro -> “título — descrição”
+  if (el.matches?.(CARD_SELECTOR)) {
+    const assembled = buildCardText(el);
+    if (assembled) return assembled;
+  }
+
+  // Clona e tira ícones/emoji
+  const clone = el.cloneNode(true);
+  const stripSel = [
+    '[aria-hidden="true"]','[role="img"]','[role="presentation"]','svg','img','picture','use','i',
+    '.tool-icon','.nav-icon','.profile-icon','.accessibility-icon','.icon','.fa','.material-icons'
+  ].join(',');
+  clone.querySelectorAll(stripSel).forEach(n => n.remove());
+
+  const isEmojiOnly = (s) => /\p{Extended_Pictographic}/u.test(s || '');
+  [...clone.querySelectorAll('*')].forEach(n => {
+    const txt = (n.textContent || '').trim();
+    if (txt && isEmojiOnly(txt)) n.remove();
+  });
+
+  let txt = (clone.innerText || '').replace(/\s+/g,' ').trim();
+  if (txt.length < 2) {
+    const raw = (el.innerText || el.textContent || '').replace(/\s+/g,' ').trim();
+    if (raw && !isEmojiOnly(raw)) txt = raw;
+  }
+  return txt;
+}
+
+
+
+function isInA11yUi(node) {
+  if (!(node instanceof HTMLElement)) return false;
+  return !!node.closest('.accessibility-panel-modern, #accessibilityOverlay, #accessibilityFloatBtn, [vw], [vw-access-button], [vw-plugin-wrapper]');
+}
+function buildCardText(cardEl) {
+  const title = cardEl.querySelector(CARD_TITLE_SELECTOR)?.textContent?.trim() || '';
+  const desc  = cardEl.querySelector(CARD_DESC_SELECTOR)?.textContent?.trim()  || '';
+  return [title, desc].filter(Boolean).join(' — ');
+}
+
+function highlightTtsTarget(el) {
+  if (ttsLastTarget) ttsLastTarget.classList.remove('a11y-tts-highlight');
+  ttsLastTarget = el;
+  el.classList.add('a11y-tts-highlight');
+}
+
 
 // ==========================================
 // VLibras – Gerenciado pelo seu botão
@@ -729,7 +1063,7 @@ Ctrl + Alt + A = Abrir/Fechar painel
 Ctrl + Alt + C = Alto contraste
 Ctrl + Alt + D = Modo escuro
 Ctrl + Alt + F = Fonte para dislexia
-Ctrl + Alt + M = Lupa
+Alt  + Roda do mouse = Ajustar altura da máscara
 Ctrl + Alt + R = Régua de leitura
 Ctrl + Alt + + = Aumentar fonte
 Ctrl + Alt + - = Diminuir fonte
@@ -797,6 +1131,36 @@ function setupKeyboardShortcuts() {
       }
     }
   });
+}
+
+// guarda último ponto do cursor (para scroll/resize)
+let __a11yLastMouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
+
+/* Cria a "cópia visual" da página (sem painel/overlays) */
+function buildMagnifierClone(){
+  let clone = document.getElementById('a11y-zoom-clone');
+  if (clone) return clone;
+
+  clone = document.createElement('div');
+  clone.id = 'a11y-zoom-clone';
+  document.body.appendChild(clone);
+
+  const keepOut = (el)=>{
+    if (!el || el.nodeType !== 1) return true;
+    const ids = ['a11y-zoom-clone','accessibilityPanel','accessibilityOverlay','accessibilityFloatBtn','readingRuler','magnifier','magnifierDim'];
+    if (ids.includes(el.id)) return true;
+    if (el.matches?.('[vw], [vw-access-button], [vw-plugin-wrapper]')) return true; // VLibras
+    if (el.classList?.contains('accessibility-panel-modern')) return true;
+    if (el.classList?.contains('accessibility-float-btn')) return true;
+    return false;
+  };
+
+  // clona só os filhos visuais do body
+  [...document.body.children].forEach(child=>{
+    if (!keepOut(child)) clone.appendChild(child.cloneNode(true));
+  });
+
+  return clone;
 }
 
 
@@ -969,6 +1333,14 @@ function applyLoadedSettings() {
   // Atualizar botões de estado
   updateAllButtonsFromSettings();
   setFontButtonsState();
+
+  // Ativar ferramentas
+  if (accessibilitySettings.magnifierEnabled) {
+  ensureReadingMask().classList.add('active');
+  readingMaskActive = true;
+  updateButtonState('magnifierBtn', true);
+}
+
 
   // VLibras: se estava habilitado, assegura que o script/DOM existem, esconde a mãozinha e deixa fechado até o usuário abrir
   if (accessibilitySettings.vlibrasEnabled) {
