@@ -44,31 +44,88 @@ html, body {
   min-height: 100%;
   overflow-x: clip; /* evita barra de rolagem horizontal intermitente */
 }
-
-/* Botão Flutuante */
-.accessibility-float-btn {
+/* ===== Botão flutuante (limpo) ===== */
+.accessibility-float-btn,
+#accessibilityFloatBtn {
   position: fixed;
   bottom: 20px;
   right: 20px;
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #4a90e2, #357abd);
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(74, 144, 226, 0.4);
+
+  /* visual padrão */
+  background: linear-gradient(135deg, #d6d8da, #d6d8da);
+  border-radius: 9999px;
+  border: 3px solid #fff;
+  box-shadow:
+    0 0 0 3px rgba(255,255,255,.18),
+    0 8px 22px rgba(0,0,0,.28);
+
+  transition: transform .2s ease, box-shadow .2s ease;
   z-index: 9999;
-  transition: all 0.3s ease;
-  border: none;
   font-family: Arial, sans-serif;
+  outline: none;
 }
 
-.accessibility-float-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 25px rgba(74, 144, 226, 0.6);
+.accessibility-float-btn:hover,
+#accessibilityFloatBtn:hover,
+.accessibility-float-btn:focus-visible,
+#accessibilityFloatBtn:focus-visible {
+  transform: translateY(-1px) scale(1.04);
+  box-shadow:
+    0 0 0 4px rgba(255,255,255,.28),
+    0 10px 26px rgba(0,0,0,.36);
 }
+
+/* Anel de foco forte para teclado */
+.accessibility-float-btn:focus-visible,
+#accessibilityFloatBtn:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+/* ===== EXCEÇÕES para ALTO CONTRASTE ===== */
+.high-contrast .accessibility-float-btn,
+.high-contrast #accessibilityFloatBtn {
+  background: transparent !important;
+  background-image: none !important;
+  border-radius: 9999px !important;
+  border: 3px solid #fff !important;
+
+  /* duas sombras, separadas por vírgula */
+  box-shadow:
+    0 0 0 3px rgba(255,255,255,.45),
+    0 8px 22px rgba(0,0,0,.8) !important;
+
+  clip-path: circle(50% at 50% 50%);
+}
+
+
+/* Ícone dentro do botão: tira fundo forçado e inverte para branco se preciso */
+.high-contrast .accessibility-float-btn img,
+.high-contrast #accessibilityFloatBtn img {
+  background: transparent !important;
+  filter: invert(1) contrast(1.2);
+  border-radius: 0 !important; /* garante que a imagem não crie “cantos” */
+}
+
+/* Se existir regra global que zera bordas em alto contraste, reverte aqui */
+.high-contrast .accessibility-float-btn *,
+.high-contrast #accessibilityFloatBtn * {
+  background: transparent !important;
+}
+
+/* Opcional: foco mais visível ainda no alto contraste */
+.high-contrast .accessibility-float-btn:focus-visible,
+.high-contrast #accessibilityFloatBtn:focus-visible {
+  outline: 3px solid #ff0;
+  outline-offset: 4px;
+}
+
 
 /* Ícone como imagem dentro do botão flutuante */
 .accessibility-icon {
@@ -78,8 +135,8 @@ html, body {
 }
 
 .accessibility-icon img {
-  width: 60px;
-  height: 60px;
+  width: 194px;
+  height: 102px;
   display: block;
   /* evita selecionar/arrastar */
   user-select: none;
