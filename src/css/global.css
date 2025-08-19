@@ -34,3 +34,562 @@
     border-bottom: 0;
   }
 }
+/* Footer para a página abaco digital  */
+.game-footer-abaco{
+  /* não precisa duplicar margin-top */
+  margin-top: 20px;
+  width: 100%;
+  box-sizing: border-box;         /* padding não estoura a largura */
+  text-align: center;
+  padding: .25rem .5rem;
+  background: rgba(255,255,255,.1);
+  color: rgba(255,255,255,.8);
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-weight: 400;
+  font-size: .75em;
+  line-height: 1.2;
+  border-top: 1px solid rgba(255,255,255,.1);
+  backdrop-filter: blur(5px);
+  position: relative;
+}
+
+
+@media (max-width: 768px) {
+    .title { font-size: 2.2em; }
+    .number-display { font-size: 2.5em; }
+    .rod-container { gap: 10px; }
+    .bead { width: 35px; height: 22px; }
+    .heaven-bead { width: 40px; height: 25px; }
+    .place-label { font-size: 0.9em; padding: 8px 10px; }
+    .game-footer-abaco { font-size: 0.7em; padding: 6px 8px; }
+}
+
+/* ==========================================
+   FERRAMENTAS DE ACESSIBILIDADE - CSS MODERNO (corrigido + VLibras)
+   ========================================== */
+
+/* Reset de overflow horizontal "fantasma" */
+html, body {
+  min-height: 100%;
+  overflow-x: clip; /* evita barra de rolagem horizontal intermitente */
+}
+/* ===== Botão flutuante (limpo) ===== */
+.accessibility-float-btn,
+#accessibilityFloatBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  /* visual padrão */
+  background: linear-gradient(135deg, #d6d8da, #d6d8da);
+  border-radius: 9999px;
+  border: 3px solid #fff;
+  box-shadow:
+    0 0 0 3px rgba(255,255,255,.18),
+    0 8px 22px rgba(0,0,0,.28);
+
+  transition: transform .2s ease, box-shadow .2s ease;
+  z-index: 9999;
+  font-family: Arial, sans-serif;
+  outline: none;
+}
+
+.accessibility-float-btn:hover,
+#accessibilityFloatBtn:hover,
+.accessibility-float-btn:focus-visible,
+#accessibilityFloatBtn:focus-visible {
+  transform: translateY(-1px) scale(1.04);
+  box-shadow:
+    0 0 0 4px rgba(255,255,255,.28),
+    0 10px 26px rgba(0,0,0,.36);
+}
+
+/* Anel de foco forte para teclado */
+.accessibility-float-btn:focus-visible,
+#accessibilityFloatBtn:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+/* ===== EXCEÇÕES para ALTO CONTRASTE ===== */
+.high-contrast .accessibility-float-btn,
+.high-contrast #accessibilityFloatBtn {
+  background: transparent !important;
+  background-image: none !important;
+  border-radius: 9999px !important;
+  border: 3px solid #fff !important;
+
+  /* duas sombras, separadas por vírgula */
+  box-shadow:
+    0 0 0 3px rgba(255,255,255,.45),
+    0 8px 22px rgba(0,0,0,.8) !important;
+
+  clip-path: circle(50% at 50% 50%);
+}
+
+
+/* Ícone dentro do botão: tira fundo forçado e inverte para branco se preciso */
+.high-contrast .accessibility-float-btn img,
+.high-contrast #accessibilityFloatBtn img {
+  background: transparent !important;
+  filter: invert(1) contrast(1.2);
+  border-radius: 0 !important; /* garante que a imagem não crie “cantos” */
+}
+
+/* Se existir regra global que zera bordas em alto contraste, reverte aqui */
+.high-contrast .accessibility-float-btn *,
+.high-contrast #accessibilityFloatBtn * {
+  background: transparent !important;
+}
+
+/* Opcional: foco mais visível ainda no alto contraste */
+.high-contrast .accessibility-float-btn:focus-visible,
+.high-contrast #accessibilityFloatBtn:focus-visible {
+  outline: 3px solid #ff0;
+  outline-offset: 4px;
+}
+
+
+/* Ícone como imagem dentro do botão flutuante */
+.accessibility-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.accessibility-icon img {
+  width: 194px;
+  height: 102px;
+  display: block;
+  /* evita selecionar/arrastar */
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+
+/* Overlay */
+.accessibility-panel-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.accessibility-panel-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Painel Principal como Drawer à Direita */
+.accessibility-panel-modern {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: min(90vw, 560px);
+  background: #f5f6fa;
+  border-radius: 16px 0 0 16px;
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.25);
+  z-index: 10001;
+  overflow: hidden;
+  transform: translateX(100%); /* inicia fora da tela */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  isolation: isolate; /* evita filtros/transform do conteúdo afetarem o painel */
+}
+
+.accessibility-panel-modern.active {
+  transform: translateX(0);
+}
+
+/* Suporte a variante explícita (HTML adicionou .right-drawer) */
+.accessibility-panel-modern.right-drawer { right: 0; left: auto; }
+
+/* Header */
+.panel-header-modern {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel-header-modern h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.08);
+}
+
+/* Área de Conteúdo (rolagem interna) */
+.accessibility-panel-modern .panel-content {
+  padding: 20px;
+  height: calc(100vh - 64px);
+  overflow: auto; /* rolável somente dentro do painel */
+}
+
+/* Perfis de Acessibilidade */
+.accessibility-profiles {
+  margin-bottom: 24px;
+}
+
+.accessibility-profiles h3 {
+  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.profiles-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.profile-btn {
+  background: white;
+  border: 2px solid #e1e8ed;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+}
+
+.profile-btn:hover {
+  border-color: #4a90e2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+}
+
+.profile-btn.active {
+  background: #4a90e2;
+  border-color: #4a90e2;
+  color: white;
+}
+
+.profile-icon { font-size: 24px; }
+.profile-text {
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Grid de Ferramentas */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.tool-btn {
+  background: white;
+  border: 2px solid #e1e8ed;
+  border-radius: 12px;
+  padding: 16px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-height: 80px;
+  font-family: inherit;
+
+  /* evita que pseudo-elemento cause overflow externo */
+  position: relative;
+  overflow: hidden;
+}
+
+.tool-btn:hover {
+  border-color: #4a90e2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+}
+
+.tool-btn.active {
+  background: #4a90e2;
+  border-color: #4a90e2;
+  color: white;
+}
+
+.tool-icon { font-size: 24px; }
+.tool-text {
+  font-size: 11px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* ==========================================
+   VLibras – Camadas e proteção contra filtros
+   ========================================== */
+
+/* Garante que o botão e a janela do VLibras fiquem visíveis acima do overlay/painel */
+[vw-access-button],
+[vw-plugin-wrapper],
+.vlibras-icon {
+  z-index: 10020 !important; /* acima do painel (10001) e notificações (10002) */
+  position: fixed; /* o plugin já usa, aqui apenas reforço */
+}
+
+/* ==========================================
+   ESTADOS DE ACESSIBILIDADE - ESCOPADOS
+   (evitam aplicar filtros no painel/overlay/VLibras)
+   ========================================== */
+
+/* Alto Contraste (cores) – não aplicar no painel/overlay/VLibras/ferramentas auxiliares */
+body.high-contrast *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper]) {
+  background: #000 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+
+/* Alto Contraste (filtro) – escopado fora do painel e do VLibras */
+body.high-contrast :not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper]) {
+  filter: contrast(2) !important;
+}
+
+/* Modo Escuro – escopado fora do painel/overlay/VLibras */
+body.dark-mode *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper]) {
+  background: #2d2d2d !important;
+  color: #e0e0e0 !important;
+  border-color: #555 !important;
+}
+
+body.dark-mode {
+  background: #1a1a1a !important;
+  color: #e0e0e0 !important;
+}
+
+/* Fonte para Dislexia (ok aplicar globalmente; o VLibras é imagem/canvas/iframe) */
+body.dyslexia-friendly, body.dyslexia-friendly * {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', cursive !important;
+  letter-spacing: 0.05em !important;
+  word-spacing: 0.1em !important;
+}
+
+/* Monocromático – não afetar painel/VLibras */
+body.grayscale :not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper]) {
+  filter: grayscale(100%) !important;
+}
+
+/* Baixa/Alta Saturação – não afetar painel/VLibras */
+body.low-saturation :not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper]) {
+  filter: saturate(0.5) !important;
+}
+body.high-saturation :not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not(.reading-ruler):not(.magnifier-circle):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper]) {
+  filter: saturate(2) !important;
+}
+
+/* Pausar Animações – não afetar painel/overlay/VLibras */
+body.no-animations *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper]),
+body.no-animations *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper])::before,
+body.no-animations *:not(.accessibility-panel-modern):not(.accessibility-panel-modern *):not(.accessibility-float-btn):not(#accessibilityOverlay):not([vw]):not([vw] *):not([vw-access-button]):not([vw-plugin-wrapper])::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Destaque de Foco/Links */
+body.focus-highlight a,
+body.focus-highlight button,
+body.focus-highlight input,
+body.focus-highlight select,
+body.focus-highlight textarea {
+  outline: 3px solid #ffff00 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 10px rgba(255, 255, 0, 0.7) !important;
+}
+
+body.focus-highlight a:hover,
+body.focus-highlight button:hover {
+  background: #ffff00 !important;
+  color: #000 !important;
+}
+
+/* Régua de Leitura */
+.reading-ruler {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ff0000, #ff6600, #ff0000);
+  z-index: 9999;
+  display: none;
+  opacity: 0.8;
+  pointer-events: none;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+.reading-ruler.active { display: block; }
+
+/* ===== Máscara de Leitura: centro transparente + entorno escuro ===== */
+:root{
+  --maskH: 180px;              /* altura da janela livre (ajuste a gosto) */
+  --maskY: 50vh;               /* posição vertical – o JS atualiza */
+  --maskDim: rgba(0,0,0,.85);  /* escurecimento do entorno */
+  --maskEdge: rgba(255,255,255,.15); /* linhas finas para “bordas” */
+  --maskEdgeW: 2px;            /* espessura das linhas das bordas */
+}
+
+.reading-mask{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;        /* não bloqueia cliques no conteúdo */
+  display: none;
+  z-index: 9999;
+
+  /* 1) camada principal: entorno escuro + centro transparente */
+  /* 2) e 3) camadas: linhas de borda (superior e inferior)  */
+  background:
+    /* entorno escuro com “janela” livre */
+    linear-gradient(
+      to bottom,
+      var(--maskDim) 0,
+      var(--maskDim) calc(var(--maskY) - var(--maskH)/2),
+      transparent   calc(var(--maskY) - var(--maskH)/2),
+      transparent   calc(var(--maskY) + var(--maskH)/2),
+      var(--maskDim) calc(var(--maskY) + var(--maskH)/2),
+      var(--maskDim) 100%
+    ),
+    /* borda superior */
+    linear-gradient(
+      to bottom,
+      transparent                     calc(var(--maskY) - var(--maskH)/2 - var(--maskEdgeW)),
+      var(--maskEdge)                 calc(var(--maskY) - var(--maskH)/2 - var(--maskEdgeW)),
+      var(--maskEdge)                 calc(var(--maskY) - var(--maskH)/2),
+      transparent                     calc(var(--maskY) - var(--maskH)/2)
+    ),
+    /* borda inferior */
+    linear-gradient(
+      to bottom,
+      transparent                     calc(var(--maskY) + var(--maskH)/2),
+      var(--maskEdge)                 calc(var(--maskY) + var(--maskH)/2),
+      var(--maskEdge)                 calc(var(--maskY) + var(--maskH)/2 + var(--maskEdgeW)),
+      transparent                     calc(var(--maskY) + var(--maskH)/2 + var(--maskEdgeW))
+    );
+}
+
+.reading-mask.active{ display:block; }
+
+
+/* ==========================================
+   RESPONSIVIDADE
+   ========================================== */
+@media (max-width: 768px) {
+  .accessibility-panel-modern {
+    width: min(95vw, 520px);
+    border-radius: 12px 0 0 12px;
+  }
+  .profiles-grid { grid-template-columns: 1fr; }
+  .tools-grid { grid-template-columns: repeat(2, 1fr); }
+  .accessibility-float-btn {
+    width: 50px; height: 50px; bottom: 15px; right: 15px;
+  }
+  .accessibility-icon { font-size: 20px; }
+}
+
+@media (max-width: 480px) {
+  .tools-grid { grid-template-columns: 1fr; }
+  .accessibility-panel-modern .panel-content { padding: 16px; }
+}
+
+/* ==========================================
+   MELHORIAS VISUAIS
+   ========================================== */
+
+/* Scroll customizado apenas dentro do painel */
+.accessibility-panel-modern .panel-content::-webkit-scrollbar { width: 6px; }
+.accessibility-panel-modern .panel-content::-webkit-scrollbar-track {
+  background: #f1f1f1; border-radius: 3px;
+}
+.accessibility-panel-modern .panel-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1; border-radius: 3px;
+}
+.accessibility-panel-modern .panel-content::-webkit-scrollbar-thumb:hover { background: #a1a1a1; }
+
+/* Efeito de onda seguro (sem overflow externo) */
+.tool-btn::before, .profile-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(74, 144, 226, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
+  pointer-events: none;
+}
+
+.tool-btn:hover::before, .profile-btn:hover::before {
+  width: 200px;
+  height: 200px;
+}
+/* Força ocultar o botão flutuante oficial do VLibras, se existir */
+[vw-access-button] { display: none !important; }
+
+/* ==========================================
+   LEITURA POR CLIQUE (TTS) - CSS MODERNO
+   ========================================== */
+body.tts-mode { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"><text y="22" font-size="22">🔊</text></svg>') 0 0, pointer; }
+
+body.tts-mode .a11y-tts-hover {
+  outline: 2px dashed rgba(74, 144, 226, .85);
+  outline-offset: 2px;
+}
+.a11y-tts-highlight {
+  position: relative;
+  background: none !important;
+  outline: 3px solid rgba(74, 144, 226, .95);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(74, 144, 226, .12);
+  border-radius: 6px;
+}
+/* …mas se for texto (título/descrição), usa sublinhado suave ao invés da caixa inteira */
+.a11y-tts-highlight:where(h1,h2,h3,h4,h5,h6,p,span,.card-title,.card-description) {
+  outline: none;
+  box-shadow: none;
+  background-image: linear-gradient(transparent 60%, rgba(74,144,226,.25) 0);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  border-radius: 2px;
+}
+
