@@ -1,140 +1,620 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../src/css/privacidade.css">
-    <title>Política de Privacidade</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Importa o layout base primeiro -->
+  <link rel="stylesheet" href="../src/css/main.css" />
+    <link rel="stylesheet" href="../src/css/global.css" />
+
+
+  <!-- (Opcional) Seu CSS específico da página; mantenha-o sem regras para o header -->
+
+  <title>Política de Privacidade</title>
+
+  <!-- Estilos ESPECÍFICOS do miolo desta página (não tocam no header) -->
+  <style>
+    /* Reset básico e layout de página igual ao "Contato" */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body{
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Centraliza apenas o conteúdo principal, como na página Contato */
+    main.page{
+      flex: 1;
+      display: flex;
+      align-items: flex-start;     /* como o conteúdo é longo, alinha no topo */
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* Cartão do conteúdo */
+    .container {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      padding: 40px;
+      max-width: 900px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Faixa decorativa no topo do cartão (opcional) */
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+      background-size: 300% 100%;
+      animation: gradient 3s ease infinite;
+    }
+    @keyframes gradient {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    /* Títulos e texto */
+    h1, h2, h3 {
+      color: #1a202c;
+      font-weight: 700;
+    }
+    h1 {
+      font-size: 2.2rem;
+      margin: 0 0 1rem 0;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    h2 {
+      font-size: 1.5rem;
+      margin: 1.5rem 0 0.5rem 0;
+      color: #2d3748;
+    }
+    h3 {
+      font-size: 1.15rem;
+      margin: 1rem 0 0.5rem 0;
+      color: #374151;
+    }
+
+    p, li {
+      color: #374151;
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    ol, ul { margin-left: 1.25rem; }
+    ol > li { margin-bottom: 0.75rem; }
+    ul > li { margin-bottom: 0.4rem; }
+
+    a { color: #5b6fe6; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      main.page { padding: 10px; }
+      .container { padding: 24px; margin: 10px; border-radius: 16px; }
+      h1 { font-size: 1.8rem; }
+    }
+    @media (max-width: 480px) {
+      .container { padding: 20px 16px; }
+    }
+  </style>
 </head>
+
 <body>
-    
-    <h1>Política de Privacidade</h1>
+  <!-- HEADER (sem estilos inline; fica exatamente como no main.css) -->
+  <header class="main-header" role="banner">
+    <div class="header-top">
+      <div class="header-container">
+        <!-- Logo -->
+        <div class="logo-section">
+          <img
+            src="../src/assets/images/Diyogo-02.png"
+            alt="Logo AmadoPlay - Plataforma Educacional Interativa"
+            width="90"
+            height="90"
+            loading="eager"
+          />
+          <div class="logo-text">
+            <h1>AmadoPlay</h1>
+            <p>Plataforma Educacional Interativa</p>
+          </div>
+        </div>
 
-    <p>A <strong><em>AMADO TECNOLOGIA LTDA (AMADOTEC)</em></strong> desenvolve ferramentas educacionais digitais com o objetivo de auxiliar no processo de aprendizagem e desenvolvimento educacional. Nossa plataforma oferece recursos pedagógicos digitais de uso livre e aberto, focados na educação e no aprendizado.</p>
+        <!-- Ações topo -->
+        <div class="nav-actions">
+          <div class="search-bar" role="search">
+            <label for="search-input" class="sr-only">Buscar ferramentas e atividades</label>
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Buscar ferramentas, atividades…"
+              aria-label="Campo de busca"
+              autocomplete="off"
+            />
+            <button type="submit" aria-label="Buscar">🔍</button>
+          </div>
+          <div class="user-menu">
+            <button class="btn-login" aria-label="Fazer login na plataforma">Entrar</button>
+          </div>
+        </div>
 
-    <p>Esta Política de Privacidade visa informar sobre como tratamos as informações dos usuários de nossa plataforma educacional, em conformidade com a Lei Geral de Proteção de Dados (LGPD - Lei Federal 13.709/2018) e demais normas aplicáveis do ordenamento jurídico brasileiro.</p>
+        <!-- Botão mobile -->
+        <button
+          class="mobile-menu-toggle"
+          aria-label="Abrir menu de navegação"
+          aria-expanded="false"
+          aria-controls="main-navigation"
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
+    </div>
 
-    <p>A <strong><em>AMADO TECNOLOGIA LTDA (AMADOTEC)</em></strong>, pessoa jurídica de direito privado, inscrita no CNPJ/MF sob o nº 21.580.609/0001-57, atua como Controladora de Dados nos termos desta Política de Privacidade.</p>
+    <!-- MENU PRINCIPAL -->
+    <nav class="main-nav" role="navigation" id="main-navigation" aria-label="Menu principal">
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="../index.html" class="nav-link" aria-current="page">
+            <span class="nav-icon" aria-hidden="true">🏠</span>
+            <span>Início</span>
+          </a>
+        </li>
 
-    <ol>
+        <!-- Área do Conhecimento -->
+        <li class="nav-item dropdown-parent">
+          <a
+            class="nav-link dropdown-trigger"
+            href="#"
+            aria-expanded="false"
+            aria-haspopup="true"
+          >
+            <span class="nav-icon" aria-hidden="true">📚</span>
+            <span>Área do Conhecimento</span>
+            <span class="arrow" aria-hidden="true">▼</span>
+          </a>
+          <div class="dropdown" aria-label="Submenu Área do Conhecimento">
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🧮</span>
+              <span>Matemática</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">📖</span>
+              <span>Língua Portuguesa</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🔬</span>
+              <span>Ciências</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🏛️</span>
+              <span>História</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🌎</span>
+              <span>Geografia</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🎨</span>
+              <span>Artes</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🤸</span>
+              <span>Educação Física</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🗣️</span>
+              <span>Língua Estrangeira</span>
+            </a>
+          </div>
+        </li>
+
+        <!-- Ano de Ensino -->
+        <li class="nav-item dropdown-parent">
+          <a
+            class="nav-link dropdown-trigger"
+            href="#"
+            aria-expanded="false"
+            aria-haspopup="true"
+          >
+            <span class="nav-icon" aria-hidden="true">🎒</span>
+            <span>Ano de Escolaridade</span>
+            <span class="arrow" aria-hidden="true">▼</span>
+          </a>
+          <div class="dropdown" aria-label="Submenu Ano de Escolaridade">
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">👶</span>
+              <span>Educação Infantil</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">1️⃣</span>
+              <span>1º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">2️⃣</span>
+              <span>2º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">3️⃣</span>
+              <span>3º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">4️⃣</span>
+              <span>4º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">5️⃣</span>
+              <span>5º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">6️⃣</span>
+              <span>6º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">7️⃣</span>
+              <span>7º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">8️⃣</span>
+              <span>8º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">9️⃣</span>
+              <span>9º Ano</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">📘</span>
+              <span>EJA</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon" aria-hidden="true">🎓</span>
+              <span>Ensino Médio</span>
+            </a>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">👨‍🏫</span>
+            <span>Para Professores</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="../pages/quem_somos.html" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">ℹ️</span>
+            <span>Quem Somos</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="page">
+    <div class="container">
+      <h1>Política de Privacidade</h1>
+
+      <p>A <strong><em>AMADO TECNOLOGIA LTDA (AMADOTEC)</em></strong> desenvolve ferramentas educacionais digitais com o objetivo de auxiliar no processo de aprendizagem e desenvolvimento educacional. Nossa plataforma oferece recursos pedagógicos digitais de uso livre e aberto, focados na educação e no aprendizado.</p>
+
+      <p>Esta Política de Privacidade visa informar sobre como tratamos as informações dos usuários de nossa plataforma educacional, em conformidade com a Lei Geral de Proteção de Dados (LGPD - Lei Federal 13.709/2018) e demais normas aplicáveis do ordenamento jurídico brasileiro.</p>
+
+      <p>A <strong><em>AMADO TECNOLOGIA LTDA (AMADOTEC)</em></strong>, pessoa jurídica de direito privado, inscrita no CNPJ/MF sob o nº 21.580.609/0001-57, atua como Controladora de Dados nos termos desta Política de Privacidade.</p>
+
+      <ol>
         <li>
-            <h2>Coleta de Informações</h2>
-            <p>Atualmente, nossa plataforma educacional <strong>NÃO COLETA</strong> dados pessoais dos usuários. As ferramentas são de uso livre e aberto, não sendo necessário cadastro, login ou fornecimento de qualquer informação pessoal para utilização.</p>
-            
-            <p>Nossa plataforma funciona de forma completamente anônima, permitindo que os usuários acessem e utilizem todas as ferramentas educacionais sem necessidade de identificação.</p>
+          <h2>Coleta de Informações</h2>
+          <p>Atualmente, nossa plataforma educacional <strong>NÃO COLETA</strong> dados pessoais dos usuários. As ferramentas são de uso livre e aberto, não sendo necessário cadastro, login ou fornecimento de qualquer informação pessoal para utilização.</p>
 
-            <ol>
-                <li>
-                    <h3>Dados Técnicos Básicos</h3>
-                    <p>Apenas dados técnicos mínimos podem ser coletados automaticamente para o funcionamento básico da aplicação, como:</p>
-                    <ul>
-                        <li>Informações básicas do dispositivo (tipo de sistema operacional)</li>
-                        <li>Dados técnicos necessários para compatibilidade da aplicação</li>
-                    </ul>
-                    <p>Estes dados são utilizados exclusivamente para garantir o funcionamento adequado da plataforma e não permitem identificação dos usuários.</p>
-                </li>
-            </ol>
+          <p>Nossa plataforma funciona de forma completamente anônima, permitindo que os usuários acessem e utilizem todas as ferramentas educacionais sem necessidade de identificação.</p>
+
+          <ol>
+            <li>
+              <h3>Dados Técnicos Básicos</h3>
+              <p>Apenas dados técnicos mínimos podem ser coletados automaticamente para o funcionamento básico da aplicação, como:</p>
+              <ul>
+                <li>Informações básicas do dispositivo (tipo de sistema operacional)</li>
+                <li>Dados técnicos necessários para compatibilidade da aplicação</li>
+              </ul>
+              <p>Estes dados são utilizados exclusivamente para garantir o funcionamento adequado da plataforma e não permitem identificação dos usuários.</p>
+            </li>
+          </ol>
         </li>
 
         <li>
-            <h2>Finalidade do Tratamento</h2>
-            <p>Como não coletamos dados pessoais, não há tratamento de informações pessoais em nossa plataforma atual.</p>
-            <p>Os únicos dados técnicos básicos que podem ser processados têm as seguintes finalidades:</p>
-            <ul>
-                <li>Garantir o funcionamento adequado das ferramentas educacionais</li>
-                <li>Manter a compatibilidade com diferentes dispositivos</li>
-                <li>Assegurar a estabilidade e performance da aplicação</li>
-            </ul>
+          <h2>Finalidade do Tratamento</h2>
+          <p>Como não coletamos dados pessoais, não há tratamento de informações pessoais em nossa plataforma atual.</p>
+          <p>Os únicos dados técnicos básicos que podem ser processados têm as seguintes finalidades:</p>
+          <ul>
+            <li>Garantir o funcionamento adequado das ferramentas educacionais</li>
+            <li>Manter a compatibilidade com diferentes dispositivos</li>
+            <li>Assegurar a estabilidade e performance da aplicação</li>
+          </ul>
         </li>
 
         <li>
-            <h2>Proteção de Dados de Menores</h2>
-            <p>Nossa plataforma é segura para uso por crianças e adolescentes, pois:</p>
-            <ul>
-                <li>Não coleta nenhum dado pessoal</li>
-                <li>Não requer cadastro ou identificação</li>
-                <li>Não possui recursos de comunicação ou interação entre usuários</li>
-                <li>Funciona de forma completamente offline após o carregamento inicial</li>
-                <li>Não contém publicidade ou conteúdo inapropriado</li>
-            </ul>
+          <h2>Proteção de Dados de Menores</h2>
+          <p>Nossa plataforma é segura para uso por crianças e adolescentes, pois:</p>
+          <ul>
+            <li>Não coleta nenhum dado pessoal</li>
+            <li>Não requer cadastro ou identificação</li>
+            <li>Não possui recursos de comunicação ou interação entre usuários</li>
+            <li>Funciona de forma completamente offline após o carregamento inicial</li>
+            <li>Não contém publicidade ou conteúdo inapropriado</li>
+          </ul>
         </li>
 
         <li>
-            <h2>Seus Direitos</h2>
-            <p>Como não coletamos dados pessoais atualmente, os direitos relacionados ao tratamento de dados pessoais não se aplicam no momento.</p>
-            <p>Caso implementemos coleta de dados no futuro, você será informado e poderá exercer todos os direitos previstos na LGPD, incluindo:</p>
-            <ul>
-                <li>Confirmação da existência de tratamento de dados</li>
-                <li>Acesso aos dados pessoais</li>
-                <li>Correção de dados incompletos ou inexatos</li>
-                <li>Eliminação dos dados pessoais</li>
-                <li>Revogação do consentimento</li>
-                <li>Portabilidade dos dados</li>
-            </ul>
+          <h2>Seus Direitos</h2>
+          <p>Como não coletamos dados pessoais atualmente, os direitos relacionados ao tratamento de dados pessoais não se aplicam no momento.</p>
+          <p>Caso implementemos coleta de dados no futuro, você será informado e poderá exercer todos os direitos previstos na LGPD, incluindo:</p>
+          <ul>
+            <li>Confirmação da existência de tratamento de dados</li>
+            <li>Acesso aos dados pessoais</li>
+            <li>Correção de dados incompletos ou inexatos</li>
+            <li>Eliminação dos dados pessoais</li>
+            <li>Revogação do consentimento</li>
+            <li>Portabilidade dos dados</li>
+          </ul>
         </li>
 
         <li>
-            <h2>Como Exercer Seus Direitos</h2>
-            <p>Para esclarecer dúvidas sobre esta Política de Privacidade ou questões relacionadas à proteção de dados, entre em contato conosco através de:</p>
-            <p>E-mail: <a href="mailto:maa.amado@gmail.com">maa.amado@gmail.com</a></p>
+          <h2>Como Exercer Seus Direitos</h2>
+          <p>Para esclarecer dúvidas sobre esta Política de Privacidade ou questões relacionadas à proteção de dados, entre em contato conosco através de:</p>
+          <p>E-mail: <a href="mailto:maa.amado@gmail.com">maa.amado@gmail.com</a></p>
         </li>
 
         <li>
-            <h2>Segurança</h2>
-            <p>Mesmo não coletando dados pessoais, implementamos medidas de segurança para garantir que nossa plataforma seja segura e confiável:</p>
-            <ul>
-                <li>Conexões seguras para acesso à plataforma</li>
-                <li>Código desenvolvido seguindo melhores práticas de segurança</li>
-                <li>Monitoramento para garantir funcionamento adequado</li>
-                <li>Ausência de vulnerabilidades que possam comprometer a experiência do usuário</li>
-            </ul>
+          <h2>Segurança</h2>
+          <p>Mesmo não coletando dados pessoais, implementamos medidas de segurança para garantir que nossa plataforma seja segura e confiável:</p>
+          <ul>
+            <li>Conexões seguras para acesso à plataforma</li>
+            <li>Código desenvolvido seguindo melhores práticas de segurança</li>
+            <li>Monitoramento para garantir funcionamento adequado</li>
+            <li>Ausência de vulnerabilidades que possam comprometer a experiência do usuário</li>
+          </ul>
         </li>
 
         <li>
-            <h2>Compartilhamento de Informações</h2>
-            <p>Como não coletamos dados pessoais, não há informações pessoais para compartilhar.</p>
-            <p>Dados técnicos básicos podem ser compartilhados apenas com prestadores de serviços essenciais para o funcionamento da plataforma, sempre sob termos rígidos de confidencialidade e segurança.</p>
+          <h2>Compartilhamento de Informações</h2>
+          <p>Como não coletamos dados pessoais, não há informações pessoais para compartilhar.</p>
+          <p>Dados técnicos básicos podem ser compartilhados apenas com prestadores de serviços essenciais para o funcionamento da plataforma, sempre sob termos rígidos de confidencialidade e segurança.</p>
         </li>
 
         <li>
-            <h2>Cookies e Tecnologias Similares</h2>
-            <p>Nossa plataforma pode utilizar cookies técnicos mínimos apenas para:</p>
-            <ul>
-                <li>Garantir o funcionamento adequado da aplicação</li>
-                <li>Manter configurações básicas de interface</li>
-                <li>Assegurar a performance das ferramentas educacionais</li>
-            </ul>
-            <p>Não utilizamos cookies para rastreamento, publicidade ou coleta de dados pessoais.</p>
+          <h2>Cookies e Tecnologias Similares</h2>
+          <p>Nossa plataforma pode utilizar cookies técnicos mínimos apenas para:</p>
+          <ul>
+            <li>Garantir o funcionamento adequado da aplicação</li>
+            <li>Manter configurações básicas de interface</li>
+            <li>Assegurar a performance das ferramentas educacionais</li>
+          </ul>
+          <p>Não utilizamos cookies para rastreamento, publicidade ou coleta de dados pessoais.</p>
         </li>
 
         <li>
-            <h2>Futuras Atualizações</h2>
-            <p>Caso decidamos implementar funcionalidades que envolvam coleta de dados pessoais no futuro, esta Política de Privacidade será atualizada e você será devidamente informado sobre:</p>
-            <ul>
-                <li>Que dados serão coletados</li>
-                <li>Para que finalidades</li>
-                <li>Como exercer seus direitos</li>
-                <li>Como revogar consentimento</li>
-            </ul>
-            <p>Qualquer nova funcionalidade será implementada apenas com consentimento adequado e transparência total.</p>
+          <h2>Futuras Atualizações</h2>
+          <p>Caso decidamos implementar funcionalidades que envolvam coleta de dados pessoais no futuro, esta Política de Privacidade será atualizada e você será devidamente informado sobre:</p>
+          <ul>
+            <li>Que dados serão coletados</li>
+            <li>Para que finalidades</li>
+            <li>Como exercer seus direitos</li>
+            <li>Como revogar consentimento</li>
+          </ul>
+          <p>Qualquer nova funcionalidade será implementada apenas com consentimento adequado e transparência total.</p>
         </li>
 
         <li>
-            <h2>Alterações nesta Política</h2>
-            <p>Esta Política de Privacidade pode ser atualizada periodicamente para refletir melhorias em nossos serviços ou mudanças na legislação.</p>
-            <p>Alterações significativas serão comunicadas através da própria plataforma. Recomendamos que revise esta política regularmente.</p>
-            <p>Data da última atualização: 29 de julho de 2025</p>
+          <h2>Alterações nesta Política</h2>
+          <p>Esta Política de Privacidade pode ser atualizada periodicamente para refletir melhorias em nossos serviços ou mudanças na legislação.</p>
+          <p>Alterações significativas serão comunicadas através da própria plataforma. Recomendamos que revise esta política regularmente.</p>
+          <p>Data da última atualização: 29 de julho de 2025</p>
         </li>
 
         <li>
-            <h2>Contato</h2>
-            <p>Para questões relacionadas à privacidade e proteção de dados, entre em contato com nosso Encarregado de Proteção de Dados:</p>
-            <ul>
-                <li>Responsável: Marina Amado</li>
-                <li>CPF: 379.390.958-11</li>
-                <li>E-mail: <a href="mailto:maa.amado@gmail.com">maa.amado@gmail.com</a></li>
-            </ul>
+          <h2>Contato</h2>
+          <p>Para questões relacionadas à privacidade e proteção de dados, entre em contato com nosso Encarregado de Proteção de Dados:</p>
+          <ul>
+            <li>Responsável: Marina Amado</li>
+            <li>CPF: 379.390.958-11</li>
+            <li>E-mail: <a href="mailto:maa.amado@gmail.com">maa.amado@gmail.com</a></li>
+          </ul>
         </li>
-    </ol>
+      </ol>
+    </div>
+  </main>
+  <!-- ===========================
+      Widget de Acessibilidade
+      =========================== -->
+
+  <!-- Botão Flutuante de Acessibilidade -->
+  <button
+    class="accessibility-float-btn"
+    id="accessibilityFloatBtn"
+    aria-label="Abrir menu de acessibilidade"
+    aria-controls="accessibilityPanel"
+    aria-expanded="false"
+    onclick="toggleAccessibilityPanel()"
+  >
+  <span class="accessibility-icon" aria-hidden="true">
+    <img src="../src/assets/images/icon-acessibilidade.png" alt="">
+  </span>
+
+  </button>
+
+  <!-- Overlay -->
+  <div
+    class="accessibility-panel-overlay"
+    id="accessibilityOverlay"
+    onclick="closeAccessibilityPanel()"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Painel de Acessibilidade (drawer à direita) -->
+  <div
+    class="accessibility-panel-modern right-drawer"
+    id="accessibilityPanel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="accessibilityPanelTitle"
+  >
+    <div class="panel-header-modern">
+      <h2 id="accessibilityPanelTitle">Menu de Acessibilidade</h2>
+      <button
+        class="close-btn"
+        type="button"
+        aria-label="Fechar menu de acessibilidade"
+        onclick="closeAccessibilityPanel()"
+      >
+        ×
+      </button>
+    </div>
+
+    <!-- Área rolável do painel -->
+    <div class="panel-content" id="accessibilityPanelContent" tabindex="-1">
+      <!-- Perfis de Acessibilidade -->
+      <div class="accessibility-profiles">
+        <h3>Selecione seu perfil de acessibilidade</h3>
+        <div class="profiles-grid">
+          <button class="profile-btn" onclick="applyProfile('motor')" data-profile="motor" type="button">
+            <span class="profile-icon" aria-hidden="true">🦽</span>
+            <span class="profile-text">Deficiência Motora</span>
+          </button>
+          <button class="profile-btn" onclick="applyProfile('visual')" data-profile="visual" type="button">
+            <span class="profile-icon" aria-hidden="true">👁️</span>
+            <span class="profile-text">Deficiência Visual</span>
+          </button>
+          <button class="profile-btn" onclick="applyProfile('cognitive')" data-profile="cognitive" type="button">
+            <span class="profile-icon" aria-hidden="true">🧠</span>
+            <span class="profile-text">Deficiência Cognitiva</span>
+          </button>
+          <button class="profile-btn" onclick="applyProfile('hearing')" data-profile="hearing" type="button">
+            <span class="profile-icon" aria-hidden="true">🦻</span>
+            <span class="profile-text">Deficiência Auditiva</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ferramentas Individuais -->
+      <div class="tools-grid" role="group" aria-label="Ferramentas de acessibilidade">
+        <!-- Linha 1 -->
+        <button class="tool-btn" onclick="toggleTextToSpeech()" id="ttsBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔊</span>
+          <span class="tool-text">Clique para Ouvir</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleHighContrast()" id="contrastBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🌓</span>
+          <span class="tool-text">Alto Contraste</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleDarkMode()" id="darkModeBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🌙</span>
+          <span class="tool-text">Modo Escuro</span>
+        </button>
+
+        <!-- Linha 2 -->
+        <button class="tool-btn" onclick="decreaseFontSize()" id="decreaseFontBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔤</span>
+          <span class="tool-text">Diminuir Fonte</span>
+        </button>
+
+        <button class="tool-btn" onclick="increaseFontSize()" id="increaseFontBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔠</span>
+          <span class="tool-text">Aumentar Fonte</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleDyslexiaFont()" id="dyslexiaBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">📝</span>
+          <span class="tool-text">Fonte Dislexia</span>
+        </button>
+
+        <!-- Linha 3 -->
+        <button class="tool-btn" onclick="toggleGrayscale()" id="grayscaleBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">⚫</span>
+          <span class="tool-text">Monocromático</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleLowSaturation()" id="lowSatBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔘</span>
+          <span class="tool-text">Baixa Saturação</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleHighSaturation()" id="highSatBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🟡</span>
+          <span class="tool-text">Alta Saturação</span>
+        </button>
+
+        <!-- Linha 4 -->
+        <button class="tool-btn" onclick="toggleReadingRuler()" id="rulerBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">📏</span>
+          <span class="tool-text">Régua de Leitura</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleMagnifier()" id="magnifierBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">📖</span>
+          <span class="tool-text">Mascara de Leitura</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleFocusHighlight()" id="focusBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🎯</span>
+          <span class="tool-text">Destacar Links</span>
+        </button>
+
+        <!-- Linha 5 -->
+        <button class="tool-btn" onclick="pauseAnimations()" id="animationBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">⏸️</span>
+          <span class="tool-text">Pausar Animações</span>
+        </button>
+
+        <button class="tool-btn" onclick="showKeyboardShortcuts()" type="button">
+          <span class="tool-icon" aria-hidden="true">⌨️</span>
+          <span class="tool-text">Atalhos Teclado</span>
+        </button>
+
+        <!-- NOVO: Botão para ativar VLibras -->
+        <button class="tool-btn" onclick="enableVLibras()" id="vlibrasBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🤟</span>
+          <span class="tool-text">Ativar VLibras</span>
+        </button>
+
+        <button class="tool-btn" onclick="resetAll()" id="resetBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔄</span>
+          <span class="tool-text">Resetar Tudo</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Elementos auxiliares fora do painel -->
+  <div class="reading-ruler" id="readingRuler" aria-hidden="true"></div>
+  <div class="magnifier-circle" id="magnifier" aria-hidden="true"></div>
+
+  <!-- VLibras -->
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+  </script>
+
+  <script src="../src/js/index.js" defer></script>
+  <script src="../src/js/acessibilidade.js" defer></script>
+
 </body>
 </html>
