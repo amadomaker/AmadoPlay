@@ -513,11 +513,190 @@
 
         <!-- Footer -->
         <footer class="game-footer">
-            <p>Ferramenta Educacional - Os Três Poderes | Criado e desenvolvido por Ana Paula Camara e João Jr</p>
+            <p>Ferramenta Educacional - Os Três Poderes | Criação e desenvolvimento por Ana Paula Camara e João Jr</p>
         </footer>
     </div>
+    <!-- ===========================
+      Widget de Acessibilidade
+      =========================== -->
+
+  <!-- Botão Flutuante de Acessibilidade -->
+  <button
+    class="accessibility-float-btn"
+    id="accessibilityFloatBtn"
+    aria-label="Abrir menu de acessibilidade"
+    aria-controls="accessibilityPanel"
+    aria-expanded="false"
+    onclick="toggleAccessibilityPanel()"
+  >
+  <span class="accessibility-icon" aria-hidden="true">
+    <img src="../src/assets/images/icon-acessibilidade.png" alt="">
+  </span>
+
+  </button>
+
+  <!-- Overlay -->
+  <div
+    class="accessibility-panel-overlay"
+    id="accessibilityOverlay"
+    onclick="closeAccessibilityPanel()"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Painel de Acessibilidade (drawer à direita) -->
+  <div
+    class="accessibility-panel-modern right-drawer"
+    id="accessibilityPanel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="accessibilityPanelTitle"
+  >
+    <div class="panel-header-modern">
+      <h2 id="accessibilityPanelTitle">Menu de Acessibilidade</h2>
+      <button
+        class="close-btn"
+        type="button"
+        aria-label="Fechar menu de acessibilidade"
+        onclick="closeAccessibilityPanel()"
+      >
+        ×
+      </button>
+    </div>
+
+    <!-- Área rolável do painel -->
+    <div class="panel-content" id="accessibilityPanelContent" tabindex="-1">
+      <!-- Perfis de Acessibilidade -->
+      <div class="accessibility-profiles">
+        <h3>Selecione seu perfil de acessibilidade</h3>
+        <div class="profiles-grid">
+          <button class="profile-btn" onclick="applyProfile('motor')" data-profile="motor" type="button">
+            <span class="profile-icon" aria-hidden="true">🦽</span>
+            <span class="profile-text">Deficiência Motora</span>
+          </button>
+          <button class="profile-btn" onclick="applyProfile('visual')" data-profile="visual" type="button">
+            <span class="profile-icon" aria-hidden="true">👁️</span>
+            <span class="profile-text">Deficiência Visual</span>
+          </button>
+          <button class="profile-btn" onclick="applyProfile('cognitive')" data-profile="cognitive" type="button">
+            <span class="profile-icon" aria-hidden="true">🧠</span>
+            <span class="profile-text">Deficiência Cognitiva</span>
+          </button>
+          <button class="profile-btn" onclick="applyProfile('hearing')" data-profile="hearing" type="button">
+            <span class="profile-icon" aria-hidden="true">🦻</span>
+            <span class="profile-text">Deficiência Auditiva</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ferramentas Individuais -->
+      <div class="tools-grid" role="group" aria-label="Ferramentas de acessibilidade">
+        <!-- Linha 1 -->
+        <button class="tool-btn" onclick="toggleTextToSpeech()" id="ttsBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔊</span>
+          <span class="tool-text">Clique para Ouvir</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleHighContrast()" id="contrastBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🌓</span>
+          <span class="tool-text">Alto Contraste</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleDarkMode()" id="darkModeBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🌙</span>
+          <span class="tool-text">Modo Escuro</span>
+        </button>
+
+        <!-- Linha 2 -->
+        <button class="tool-btn" onclick="decreaseFontSize()" id="decreaseFontBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔤</span>
+          <span class="tool-text">Diminuir Fonte</span>
+        </button>
+
+        <button class="tool-btn" onclick="increaseFontSize()" id="increaseFontBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔠</span>
+          <span class="tool-text">Aumentar Fonte</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleDyslexiaFont()" id="dyslexiaBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">📝</span>
+          <span class="tool-text">Fonte Dislexia</span>
+        </button>
+
+        <!-- Linha 3 -->
+        <button class="tool-btn" onclick="toggleGrayscale()" id="grayscaleBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">⚫</span>
+          <span class="tool-text">Monocromático</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleLowSaturation()" id="lowSatBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔘</span>
+          <span class="tool-text">Baixa Saturação</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleHighSaturation()" id="highSatBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🟡</span>
+          <span class="tool-text">Alta Saturação</span>
+        </button>
+
+        <!-- Linha 4 -->
+        <button class="tool-btn" onclick="toggleReadingRuler()" id="rulerBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">📏</span>
+          <span class="tool-text">Régua de Leitura</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleMagnifier()" id="magnifierBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">📖</span>
+          <span class="tool-text">Mascara de Leitura</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleFocusHighlight()" id="focusBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🎯</span>
+          <span class="tool-text">Destacar Links</span>
+        </button>
+
+        <!-- Linha 5 -->
+        <button class="tool-btn" onclick="pauseAnimations()" id="animationBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">⏸️</span>
+          <span class="tool-text">Pausar Animações</span>
+        </button>
+
+        <button class="tool-btn" onclick="showKeyboardShortcuts()" type="button">
+          <span class="tool-icon" aria-hidden="true">⌨️</span>
+          <span class="tool-text">Atalhos Teclado</span>
+        </button>
+
+        <!-- NOVO: Botão para ativar VLibras -->
+        <button class="tool-btn" onclick="enableVLibras()" id="vlibrasBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🤟</span>
+          <span class="tool-text">Ativar VLibras</span>
+        </button>
+
+        <button class="tool-btn" onclick="resetAll()" id="resetBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔄</span>
+          <span class="tool-text">Resetar Tudo</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Elementos auxiliares fora do painel -->
+  <div class="reading-ruler" id="readingRuler" aria-hidden="true"></div>
+  <div class="magnifier-circle" id="magnifier" aria-hidden="true"></div>
+
+  <!-- VLibras -->
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+  </script>
 
     <!-- JavaScript -->
     <script src="../src/js/tres_poderes.js"></script>
+    <script src="../src/js/acessibilidade.js"></script>
 </body>
 </html>

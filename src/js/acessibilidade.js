@@ -49,19 +49,34 @@ const CARD_DESC_SELECTOR  = '.card-description, .card-text';
 // INICIALIZAÇÃO
 // ==========================================
 
-document.addEventListener('DOMContentLoaded', function () {
-  initializeAccessibility();
-  loadSettings();
-  setupEventListeners();
+function detectOriginalFontSize() {
+  const fs = parseFloat(getComputedStyle(document.body).fontSize);
+  originalFontSize = isNaN(fs) ? 16 : fs;  // só define o baseline
+}
 
-  // Detectar tamanho de fonte original
-  const computedStyle = window.getComputedStyle(document.body);
-  const bodyFontSize = parseFloat(computedStyle.fontSize);
-  if (bodyFontSize) {
-    originalFontSize = bodyFontSize;
-    accessibilitySettings.fontSize = bodyFontSize;
-  }
+document.addEventListener('DOMContentLoaded', function () {
+  detectOriginalFontSize();        // 1) baseline antes de tudo
+  initializeAccessibility();
+  loadSettings();                  // 2) aplica o que foi salvo
+  setupEventListeners();
+  setFontButtonsState();           // 3) recalcula com baseline correto
 });
+
+function setFontButtonsState() {
+  const incBtn = document.getElementById('increaseFontBtn');
+  const decBtn = document.getElementById('decreaseFontBtn');
+  if (!incBtn || !decBtn) return;
+
+  // limpa primeiro
+  incBtn.classList.remove('active');
+  decBtn.classList.remove('active');
+
+  const size = accessibilitySettings.fontSize;
+  if (Math.abs(size - originalFontSize) < 0.01) return; // baseline => nenhum ativo
+  if (size > originalFontSize) incBtn.classList.add('active');
+  else decBtn.classList.add('active');
+}
+
 
 function initializeAccessibility() {
   setupKeyboardShortcuts();
@@ -1323,6 +1338,9 @@ function saveSettings() {
   }
 }
 
+/*
+//Sem persistencia no localStorage, mas sim em window.accessibilityData
+// (para evitar problemas de CORS e compatibilidade com SPAs que não usam localStorage
 function loadSettings() {
   try {
     const savedSettings = window.accessibilityData;
@@ -1338,6 +1356,36 @@ function loadSettings() {
     console.warn('Erro ao carregar configurações:', error);
   }
 }
+*/
+
+// saveSettings()
+
+//Salva as configurações no localStorage de uma página para outra
+function saveSettings() {
+  try {
+    localStorage.setItem('a11ySettings', JSON.stringify({
+      ...accessibilitySettings,
+      timestamp: Date.now()
+    }));
+  } catch (e) { console.warn('Erro ao salvar configurações:', e); }
+}
+
+// loadSettings()
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem('a11ySettings');
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    const oneDay = 24*60*60*1000;
+    if (saved && saved.timestamp && (Date.now() - saved.timestamp) < oneDay) {
+      accessibilitySettings = { ...accessibilitySettings, ...saved };
+      applyLoadedSettings();
+    }
+  } catch (e) { console.warn('Erro ao carregar configurações:', e); }
+}
+
+// (opcional) limpar no resetAll
+// localStorage.removeItem('a11ySettings');
 
 function applyLoadedSettings() {
   const body = document.body;
