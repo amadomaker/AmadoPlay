@@ -1740,3 +1740,27 @@ body {
         background: white !important;
     }
 }
+
+/* Adicione isso no final do arquivo */
+
+/* Ajuste específico para a página dos Três Poderes */
+body[data-page="tres-poderes"] .accessibility-panel-modern {
+    left: 0 !important;
+    right: auto !important;
+    transform: translateX(-100%);
+}
+
+body[data-page="tres-poderes"] .accessibility-panel-modern.active {
+    transform: translateX(0);
+}
+
+body[data-page="tres-poderes"] .accessibility-float-btn {
+    left: 20px;
+    right: auto;
+}
+
+@media (max-width: 768px) {
+    body[data-page="tres-poderes"] .accessibility-float-btn {
+        left: 10px;
+    }
+}
