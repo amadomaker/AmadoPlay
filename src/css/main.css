@@ -1727,3 +1727,298 @@ mark {
   }
 
 }
+
+
+/* ===== Mobile/Tablet filtros como accordion ===== */
+/* Esconde o toggle no desktop por padrão */
+.filters-mobile-toggle { display: none; }
+
+/* ===== Mobile/Tablet ===== */
+@media (max-width: 1024px) {
+  .filters-section {
+    background: transparent;
+    border: 0;
+    padding: 1rem 0 .5rem;
+    margin-bottom: .75rem;
+  }
+
+  .filters-mobile-toggle {
+    display: block;
+    position: sticky;
+    top: 64px;             /* ajuste conforme seu header */
+    z-index: 20;
+    margin-bottom: .5rem;
+  }
+
+  .btn-filters {
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: .5rem;
+    padding: .55rem .9rem;
+    border-radius: 999px;
+    border: 1px solid #dee2e6;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+  .btn-filters .badge {
+    font-size: .75rem;
+    background: #0d6efd;
+    color: #fff;
+    padding: .1rem .45rem;
+    border-radius: 999px;
+  }
+  /* foco acessível sem “borda amarela enorme” */
+  .btn-filters:focus-visible {
+    outline: 3px solid #0d6efd;
+    outline-offset: 2px;
+    box-shadow: none;
+  }
+
+  /* Painel recolhível: card branco bonito */
+  .filters-content.is-collapsed { display: none; }
+  .filters-content {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,.04);
+    margin-bottom: .75rem;
+  }
+
+  /* compactar itens dentro do painel */
+  .filters-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .filter-chips { gap: .4rem; }
+  .chip { font-size: .85rem; padding: .35rem .7rem; }
+  .range-filter { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+
+  /* aproximar título e cards */
+  .cards-intro { margin-bottom: .5rem; text-align: center; }
+  .cards-section { padding-top: 0; }
+}
+
+
+/*Ajustes para os filtros em telas menores celular/tablet */
+/* ===== Mobile/Tablet refinado ===== */
+@media (max-width: 1024px) {
+  /* seção vira um cartão leve p/ facilitar leitura sobre o gradiente */
+  .filters-section {
+    background: rgba(255,255,255,.92);
+    backdrop-filter: blur(6px);
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: .75rem;
+    box-shadow: 0 6px 18px rgba(0,0,0,.06);
+  }
+
+  /* header dos filtros em grid elegante */
+  .filters-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: .75rem 1rem;
+  }
+  /* em telas menores: tudo em uma coluna */
+  @media (max-width: 768px) {
+    .filters-header { grid-template-columns: 1fr; }
+  }
+
+  /* contador + lógica alinhados */
+  .results-info {
+    display: flex;
+    align-items: center;
+    gap: .5rem .75rem;
+    flex-wrap: wrap;
+  }
+
+  /* segmented control para E/OU */
+  .logic-toggle {
+    display: inline-flex;
+    border: 1px solid #dee2e6;
+    border-radius: 999px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .logic-toggle .toggle-switch { margin: 0; }
+  .logic-toggle input { display: none; }
+  .logic-toggle .toggle-switch span {
+    display: inline-block;
+    padding: .4rem .75rem;
+    font-size: .9rem;
+    line-height: 1;
+    color: #495057;
+  }
+  .logic-toggle input:checked + span {
+    background: #0d6efd;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  /* select + botão alinhados, mesma altura */
+  .filters-actions {
+    display: inline-flex;
+    gap: .5rem;
+    justify-self: end;
+  }
+  .sort-select,
+  .clear-btn {
+    height: 38px;
+    padding: 0 .9rem;
+    border-radius: 8px;
+  }
+  /* em telas bem pequenas: ocupam 100% */
+  @media (max-width: 768px) {
+    .filters-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .5rem;
+      width: 100%;
+      justify-self: stretch;
+    }
+    .sort-select, .clear-btn { width: 100%; }
+  }
+
+  /* busca full-width com toque confortável */
+  .search-wrapper { max-width: none; }
+  .search-input {
+    height: 42px;
+    font-size: 1rem;
+  }
+
+  /* botão “Filtros (N)” já existente — visual discreto */
+  .filters-mobile-toggle {
+    display: block;
+    position: sticky;
+    top: 64px;
+    z-index: 20;
+    margin: .5rem 0;
+  }
+  .btn-filters {
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: .5rem;
+    padding: .55rem .9rem;
+    border-radius: 999px;
+    border: 1px solid #dee2e6;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+  .btn-filters .badge {
+    font-size: .75rem;
+    background: #0d6efd;
+    color: #fff;
+    padding: .1rem .45rem;
+    border-radius: 999px;
+  }
+  .btn-filters:focus-visible {
+    outline: 3px solid #0d6efd;
+    outline-offset: 2px;
+    box-shadow: none;
+  }
+
+  /* painel recolhível como cartão */
+  .filters-content.is-collapsed { display: none; }
+  .filters-content {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,.04);
+    margin-bottom: .75rem;
+  }
+
+  /* grid de chips mais “arrumadinho” */
+  .filters-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .filter-chips {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: .5rem;
+  }
+  .chip { 
+    justify-content: center;
+    font-size: .9rem; 
+    padding: .4rem .6rem; 
+  }
+
+  /* selects “De/Até” bem alinhados */
+  .range-filter {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .75rem;
+  }
+  .range-filter select {
+    width: 100%;
+    height: 38px;
+    border-radius: 8px;
+  }
+
+  /* respiro entre título e cards */
+  .cards-intro { margin-bottom: .5rem; text-align: center; }
+  .cards-section { padding-top: 0; }
+}
+/* Paleta do tema (ajuste se já tiver essas vars) */
+:root{
+  --brand: var(--primary-color, #7c3aed);      /* roxo principal */
+  --brand-2: var(--primary-color-2, #8b5cf6);  /* roxo secundário */
+}
+
+/* Container do toggle */
+.logic-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:0;
+  padding:2px;
+  border:1px solid #e2e8f0;
+  border-radius:999px;
+  background:#f8fafc; /* cinza bem claro p/ contraste */
+}
+
+/* Botões (labels) */
+.logic-toggle .toggle-switch{
+  margin:0;
+}
+.logic-toggle .toggle-switch span{
+  display:inline-block;
+  padding:.42rem .8rem;
+  line-height:1;
+  border-radius:999px;
+  color:#475569;              /* texto inativo */
+  background:transparent;
+  transition:background .2s,color .2s, box-shadow .2s;
+  user-select:none;
+}
+
+/* Estado selecionado → roxinho */
+.logic-toggle input[type="radio"]{ display:none; }
+.logic-toggle input[type="radio"]:checked + span{
+  color:#fff;
+  /* use 1 das opções abaixo */
+
+  /* 1) Roxo sólido */
+  background: var(--brand);
+
+  /* 2) (opcional) Degradê do seu herói
+     background: linear-gradient(135deg, var(--brand), var(--brand-2)); */
+  box-shadow: 0 1px 0 rgba(0,0,0,.04) inset, 0 0 0 2px rgba(124,58,237,.12);
+  font-weight:700;
+}
+
+/* Acessibilidade no foco do label */
+.logic-toggle .toggle-switch span:focus-visible{
+  outline: 3px solid rgba(124,58,237,.35); /* roxo */
+  outline-offset: 2px;
+}
+#toggle-filters[aria-expanded="true"] .label::after {
+  content: " ▲";
+}
+#toggle-filters[aria-expanded="false"] .label::after {
+  content: " ▼";
+}

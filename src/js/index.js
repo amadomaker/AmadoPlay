@@ -1010,6 +1010,10 @@ if (typeof module !== 'undefined' && module.exports) {
       this.applyFilters();
       this.renderTools();
       this.updateResultsCount();
+      this.updateActiveFiltersBadge();
+      this.setupMobileFiltersToggle();
+      this.updateActiveFiltersBadge();
+
     }
 
     // Estado e Persistência
@@ -1060,6 +1064,81 @@ if (typeof module !== 'undefined' && module.exports) {
       
       window.history.replaceState({}, '', newUrl);
     }
+    updateActiveFiltersBadge() {
+      const el = document.getElementById('active-filters-count');
+      if (!el) return;
+
+      const s = this.state;
+      let count = 0;
+      count += s.materia.length;
+      count += s.tipo.length;
+      count += s.dificuldade ? 1 : 0;
+      count += (s.series.min || s.series.max) ? 1 : 0;
+      // se quiser incluir a busca no número, descomente:
+      // count += s.search ? 1 : 0;
+
+      el.textContent = String(count);
+    }
+    // Atualiza o texto do botão conforme aberto/fechado
+    updateFiltersToggleLabel() {
+      const btn = document.getElementById('toggle-filters');
+      if (!btn) return;
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      const labelEl = btn.querySelector('.label');
+      if (labelEl) labelEl.textContent = open ? 'Ocultar filtros' : 'Filtros';
+    }
+
+    // Toggle mobile (abre/fecha painel e ajusta a label)
+    setupMobileFiltersToggle() {
+      const toggleBtn = document.getElementById('toggle-filters');
+      const panel = document.getElementById('filters-content');
+      if (!toggleBtn || !panel) return;
+
+      // evita registrar mais de uma vez
+      if (toggleBtn.dataset.bound === '1') return;
+      toggleBtn.dataset.bound = '1';
+
+      const sync = () => {
+        const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+        // se expanded = true → painel visível → NÃO colapsado
+        panel.classList.toggle('is-collapsed', !expanded);
+        this.updateFiltersToggleLabel();
+      };
+
+      // estado inicial coerente com aria-expanded
+      if (!toggleBtn.hasAttribute('aria-expanded')) {
+        toggleBtn.setAttribute('aria-expanded', 'false');
+      }
+      sync();
+
+      toggleBtn.addEventListener('click', () => {
+        const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+        toggleBtn.setAttribute('aria-expanded', String(!expanded));
+        sync();
+      });
+    }
+
+
+    // Contador de filtros ativos (e atualiza a label do botão)
+    updateActiveFiltersBadge() {
+      const el = document.getElementById('active-filters-count');
+      if (!el) return;
+
+      const s = this.state;
+      let count = 0;
+      count += s.materia.length;
+      count += s.tipo.length;
+      count += s.dificuldade ? 1 : 0;
+      count += (s.series.min || s.series.max) ? 1 : 0;
+      // Se quiser contar a busca também:
+      // count += s.search ? 1 : 0;
+
+      el.textContent = String(count);
+
+      // Mantém o texto coerente (Filtros/Ocultar filtros)
+      this.updateFiltersToggleLabel();
+    }
+
 
     // Event Listeners
     setupEventListeners() {
@@ -1260,6 +1339,9 @@ if (typeof module !== 'undefined' && module.exports) {
       this.updateResultsCount();
       this.saveStateToStorage();
       this.updateURL();
+      this.updateActiveFiltersBadge();
+      this.updateActiveFiltersBadge();
+
     }
 
     // Autocomplete
@@ -1341,6 +1423,7 @@ if (typeof module !== 'undefined' && module.exports) {
       });
 
       this.sortTools();
+      
     }
 
 
@@ -1552,6 +1635,7 @@ if (typeof module !== 'undefined' && module.exports) {
       const text = count === 1 ? 'ferramenta encontrada' : 'ferramentas encontradas';
       document.getElementById('results-count').textContent = `${count} ${text}`;
     }
+    
 
     clearAllFilters() {
       this.state = {
@@ -1577,6 +1661,9 @@ if (typeof module !== 'undefined' && module.exports) {
       this.syncSearchInputs();
       this.updateFilters();
       this.hideAutocomplete();
+      this.updateActiveFiltersBadge();
+      this.updateActiveFiltersBadge();
+
     }
   }
 
