@@ -867,6 +867,7 @@ class AmadoPlayApp {
     }
   }
   
+  
   // Método público para acessar ferramentas (compatibilidade)
   acessarFerramenta(toolName) {
     if (this.components.toolsManager) {
@@ -874,6 +875,41 @@ class AmadoPlayApp {
     }
   }
 }
+
+// ===============================
+// HOOKS DE ABERTURA DE FERRAMENTAS
+// ===============================
+(function () {
+  // 1) Função ÚNICA para abrir ferramentas (usa interno → externo)
+  window.acessarFerramenta = function (id) {
+    const tool = (window.EducationalToolsData || []).find(t => t.id === id);
+    if (!tool) { console.warn('Ferramenta desconhecida:', id); return; }
+
+    // contabiliza (opcional)
+    tool.acessos = (tool.acessos || 0) + 1;
+
+    // resolve caminho relativo com segurança
+    const raw = tool.interno || tool.externo;
+    if (!raw) { console.warn('Sem URL definida para:', id, tool); return; }
+    const url = new URL(raw, window.location.href).href;
+
+    window.open(url, '_blank', 'noopener,noreferrer');
+
+    if (window.educationalToolsFilter?.state.sort === 'popular') {
+      window.educationalToolsFilter.updateFilters?.();
+    }
+  };
+
+  // 2) Override do legado: qualquer chamada vira a função acima
+  if (!window.ToolsManager) window.ToolsManager = {};
+  window.ToolsManager.openTool = (id) => window.acessarFerramenta(id);
+  // Evita o erro ".style" em addClickFeedback
+  window.ToolsManager.addClickFeedback = () => {};
+
+  // 3) Remova listeners redundantes se ainda existirem no HTML
+  // (Você pode APAGAR o bloco "Event listeners otimizados" que estava no <script> do index.html)
+  console.info('✅ Hooks de abertura prontos. Qualquer ToolsManager.openTool agora usa acessarFerramenta.');
+})();
 
 // ===============================
 // CSS ADICIONAL PARA ANIMAÇÕES
@@ -934,12 +970,6 @@ document.head.appendChild(styleSheet);
 // Instancia a aplicação
 const app = new AmadoPlayApp();
 
-// Compatibilidade com código antigo (função global)
-window.acessarFerramenta = function(toolName) {
-  if (app && app.components.toolsManager) {
-    app.components.toolsManager.openTool(toolName);
-  }
-};
 
 // Exporta para uso em outros scripts se necessário
 if (typeof module !== 'undefined' && module.exports) {
@@ -1490,15 +1520,14 @@ if (typeof module !== 'undefined' && module.exports) {
 
         // Clique no card (abre ferramenta)
         card.addEventListener('click', (e) => {
-          if (e.target.closest('.expand-btn')) return; // não aciona se clicou no botão
+          if (e.target.closest('.expand-btn')) return;
           const toolId = card.dataset.tool;
-          const tool = this.tools.find(t => t.id === toolId);
-          if (tool && tool.externo) {
-            window.open(tool.externo, '_blank');
-          } else if (typeof window.acessarFerramenta === 'function') {
+          if (typeof window.acessarFerramenta === 'function') {
             window.acessarFerramenta(toolId);
           }
         });
+
+      ;
 
         // Acessível via teclado (Enter/Espaço), exceto quando focado no botão
         card.addEventListener('keydown', (e) => {
@@ -1520,7 +1549,7 @@ if (typeof module !== 'undefined' && module.exports) {
         });
       });
     }
-
+    
     // Utilitários
     getMateriaLabel(materia) {
       const labels = {

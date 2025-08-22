@@ -66,7 +66,7 @@
       titulo: 'Pirâmide Alimentar',
       descricao: 'Organize os alimentos nos níveis corretos da pirâmide e aprenda sobre alimentação saudável.',
       imagem: 'src/assets/images/piramide_alimentar1.png',
-      interno: 'pages/Piramide_alimentar.html',
+      interno: 'pages/piramide_alimentar.html',
       materia: 'ciencias',
       series: [3, 4, 5, 6],
       tipo: ['visual', 'interativo'],
@@ -84,7 +84,7 @@
       titulo: 'Mapa do Brasil',
       descricao: 'Identifique estados e regiões do Brasil de forma interativa e educativa.',
       imagem: 'src/assets/images/mapa_brasil1.png',
-      interno: 'pages/Mapa_brasil.html',
+      interno: 'pages/mapa_brasil.html',
       materia: 'geografia',
       series: [4, 5, 6],
       tipo: ['visual', 'interativo'],
@@ -102,7 +102,7 @@
       titulo: 'Três Poderes do Brasil',
       descricao: 'Aprenda sobre Executivo, Legislativo e Judiciário de forma didática e interativa.',
       imagem: 'src/assets/images/tres_poderes1.png',
-      interno: 'pages/Tres_poderes.html',
+      interno: 'pages/tres_poderes.html',
       materia: 'historia',
       series: [7, 8, 9],
       tipo: ['visual', 'interativo'],
@@ -121,10 +121,12 @@
       descricao: 'Cante e aprenda com músicas educativas! Conteúdo parceiro para complementar o aprendizado.',
       imagem: 'src/assets/images/karaoke.jpg', 
       materia: 'multidisciplinar',
+      externo: 'https://www.youtube.com/channel/UCfwZCL3gq8PaIg_i1VcnocQ',
       series: [1,2,3,4,5,6,7,8,9],
       tipo: ['auditivo','visual','interativo'],
       dificuldade: 'basico',
-
+      bncc: [],        
+      tags: [], 
  
 
       popular: false, 
@@ -137,20 +139,23 @@
   ];
 
   // Autocomplete inclui BNCC (títulos + tags + códigos)
-  window.AutocompleteData = window.EducationalToolsData
+  window.AutocompleteData = (window.EducationalToolsData || [])
     .sort((a, b) => b.acessos - a.acessos)
     .reduce((acc, tool) => {
       acc.push({ text: tool.titulo, type: 'titulo' });
-      tool.tags.forEach(tag => {
+
+      (tool.tags || []).forEach(tag => {
         if (!acc.some(item => item.text === tag)) {
           acc.push({ text: tag, type: 'tag' });
         }
       });
+
       (tool.bncc || []).forEach(b => {
-        if (b.codigo && !acc.some(item => item.text === b.codigo)) {
+        if (b?.codigo && !acc.some(item => item.text === b.codigo)) {
           acc.push({ text: b.codigo, type: 'bncc' });
         }
       });
+
       return acc;
     }, []);
 

@@ -296,7 +296,7 @@
   <div class="filters-grid">
     <!-- Matéria -->
     <div class="filter-group">
-      <h4>Área do Conhecimento
+      <h4>Área do Conhecimento</h4>
       <div class="filter-chips" data-filter="materia">
         <label class="chip"><input type="checkbox" value="matematica"><span>Matemática</span></label>
         <label class="chip"><input type="checkbox" value="portugues"><span>Português</span></label>
@@ -518,51 +518,20 @@
     }
   </style>
 
-  <!-- Scripts otimizados -->
+  <!-- Scripts otimizados para abrir as ferramentas -->
+   
   <script>
-    // Função para acessar ferramentas otimizada
-    window.acessarFerramenta = function (id) {
-      const tool = (window.EducationalToolsData || []).find(t => t.id === id);
-      if (!tool) return;
 
-      const url = tool.externo || tool.interno;
-      if (url) {
-        window.open(url, '_blank', 'noopener');
-      }
-    };
 
-    // Event listeners otimizados
-    document.addEventListener('DOMContentLoaded', function() {
-      // Cards das ferramentas
-      document.querySelectorAll('.tool-card').forEach(card => {
-        const tool = card.getAttribute('data-tool');
-        
-        card.addEventListener('click', () => acessarFerramenta(tool));
-        card.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            acessarFerramenta(tool);
-          }
-        });
-      });
-
-      // Botão do karaokê
-      const karaokeBtn = document.querySelector('.btn-karaoke');
-      if (karaokeBtn) {
-        karaokeBtn.addEventListener('click', () => {
-          window.open('https://www.youtube.com/channel/UCfwZCL3gq8PaIg_i1VcnocQ', '_blank');
-        });
-      }
-    });
 
     // Service Worker otimizado
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/AmadoPlay/service-worker.js')
-          .then(reg => console.log('Service Worker registrado:', reg))
-          .catch(err => console.error('Erro ao registrar o Service Worker:', err));
-      });
-    }
+    //if ('serviceWorker' in navigator) {
+      //window.addEventListener('load', () => {
+        //navigator.serviceWorker.register('/AmadoPlay/service-worker.js')
+          //.then(reg => console.log('Service Worker registrado:', reg))
+          //.catch(err => console.error('Erro ao registrar o Service Worker:', err));
+      //});
+    //}
   </script>
   <!-- ===========================
       Widget de Acessibilidade
@@ -747,5 +716,8 @@
   <script src="src/js/educational-tools-data.js" defer></script>
   <script src="src/js/index.js" defer></script>
   <script src="src/js/acessibilidade.js" defer></script>
+
+
+
 </body>
 </html>
