@@ -484,11 +484,12 @@ body::before {
 
 .hero-title {
   font-size: clamp(2rem, 6vw, 3rem);
-  margin-bottom: clamp(15px, 3vw, 20px);
+  margin-bottom: clamp(10px, 1vw, 10px);
   animation: fadeInUp 0.8s ease-out;
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   font-weight: 800;
   line-height: 1.2;
+
 }
 
 .hero-subtitle {
@@ -534,7 +535,7 @@ body::before {
 /*=== CONTAINER PRINCIPAL ===*/
 .main-container {
   max-width: var(--max-width);
-  margin: 20px auto;
+  margin: 1px auto;
   padding: 0 20px;
   position: relative;
   z-index: 2;
@@ -1567,60 +1568,33 @@ mark {
   .tool-card:hover { transform: none; box-shadow: none; }
 }
 
-/* descrição com clamp + fade */
+/* Descrição SEM clamp/fade */
 .tool-card .desc {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  /* 3 linhas por padrão */
-  line-clamp: 3;
-  -webkit-line-clamp: 3;
-
-  position: relative;
-}
-
-/* gradiente de desvanecimento no final do texto */
-.tool-card .desc.fade::after {
-  content: "";
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  height: 1.8em; /* ~ 1 a 2 linhas, ajuste se quiser */
-  pointer-events: none;
-  background: linear-gradient(to bottom, rgba(255,255,255,0), #fff 70%);
-}
-
-/* estado expandido: sem clamp e sem fade */
-.tool-card.expanded .desc {
-  line-clamp: unset;
-  -webkit-line-clamp: unset;
+  display: block;
+  overflow: visible;
+  text-overflow: initial;
   max-height: none;
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  -webkit-box-orient: initial;
 }
-.tool-card.expanded .desc.fade::after { display: none; }
 
-/* botão Ver mais / Ver menos */
-.card-actions { margin-top: .5rem; }
-.expand-btn {
-  appearance: none;
-  border: 0;
-  background: none;
-  color: #007bff;
-  padding: 0;
-  font: inherit;
-  cursor: pointer;
-}
-.expand-btn:hover { text-decoration: underline; }
+/* Remove qualquer gradiente/fade */
+.tool-card .desc.fade::after { display: none !important; }
 
-/* (opcional) h3 também com clamp de 2 linhas */
+/* Some com a área do botão, se existir */
+.card-actions { display: none !important; }
+
+/* (opcional) manter o título com 2 linhas para não estourar o card */
 .tool-card h3 {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-clamp: 2;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
+
 
 /* Estilos para os codigos da BNCC */
 /* Chips BNCC */
@@ -1690,6 +1664,7 @@ mark {
 }
 .bncc-close:hover { background: #e9ecef; }
 
+
 /*Estilos para o titulo  antes dos cards*/
 /* Título acima dos cards */
 .cards-intro {
@@ -1717,4 +1692,38 @@ mark {
   margin: .35rem 0 0;
   color: #6c757d;
   font-size: .95rem;
+}
+
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .cards-intro { 
+    margin-bottom: .75rem;   /* menos espaço abaixo do título */
+    text-align: center;
+  }
+  .cards-section {
+    padding-top: .25rem;     /* encosta um pouco mais os cards no título */
+    margin-top: 0;
+  }
+    .filters-section {
+    margin-top: -20px; 
+}
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .cards-intro { 
+    margin-top: 6px;
+    margin-bottom: .5rem;    /* ainda mais perto no mobile */
+  }
+  .cards-section {
+    padding-top: 0.35;          /* cola de vez no título */
+  }
+  .cards-section .cards-grid {
+    margin-top: 0;
+  }
+  .filters-section {
+    margin-top: -20px; 
+  }
+
 }

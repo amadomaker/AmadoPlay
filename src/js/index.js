@@ -1449,20 +1449,18 @@ if (typeof module !== 'undefined' && module.exports) {
           <img src="${tool.imagem}" alt="${tool.titulo}" loading="lazy">
           <div class="card-content">
             <h3>${highlight(tool.titulo)}</h3>
-            <p id="${descId}" class="desc fade">${highlight(tool.descricao)}</p>
+            <p id="${descId}" class="desc">${highlight(tool.descricao)}</p>
 
             ${bnccChips ? `<div class="bncc-list" aria-label="Códigos BNCC">${bnccChips}</div>` : ''}
 
             <div class="card-tags">
               ${tags.map(tag => `<span class="card-tag ${tag.class}">${tag.text}</span>`).join('')}
             </div>
-            <div class="card-actions">
-              <button class="expand-btn" type="button" aria-expanded="false" aria-controls="${descId}">Ver mais</button>
-            </div>
           </div>
         </div>
       `;
     }
+
 
     ensureBNCCModal() {
       if (document.getElementById('bncc-modal')) return;
@@ -1506,49 +1504,26 @@ if (typeof module !== 'undefined' && module.exports) {
             this.showBNCCModal(code, desc);
           });
         });
-        // Botão Ver mais/Ver menos
-        const btn = card.querySelector('.expand-btn');
-        if (btn) {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            const expanded = card.classList.toggle('expanded');
-            btn.setAttribute('aria-expanded', expanded);
-            btn.textContent = expanded ? 'Ver menos' : 'Ver mais';
-          });
-        }
 
         // Clique no card (abre ferramenta)
-        card.addEventListener('click', (e) => {
-          if (e.target.closest('.expand-btn')) return;
+        card.addEventListener('click', () => {
           const toolId = card.dataset.tool;
           if (typeof window.acessarFerramenta === 'function') {
             window.acessarFerramenta(toolId);
           }
         });
 
-      ;
-
-        // Acessível via teclado (Enter/Espaço), exceto quando focado no botão
+        // Teclado: Enter/Espaço abre o card
         card.addEventListener('keydown', (e) => {
-          if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('.expand-btn')) {
+          if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             card.click();
           }
         });
       });
 
-      // Esconde o botão quando o texto não “estoura”
-      requestAnimationFrame(() => {
-        document.querySelectorAll('.tool-card').forEach(card => {
-          const p = card.querySelector('.desc');
-          const b = card.querySelector('.expand-btn');
-          if (p && b && p.scrollHeight <= p.clientHeight + 1) {
-            b.style.display = 'none';
-          }
-        });
-      });
     }
+
     
     // Utilitários
     getMateriaLabel(materia) {
