@@ -131,39 +131,37 @@
             <span class="arrow" aria-hidden="true">▼</span>
           </a>
           <div class="dropdown" aria-label="Submenu Área do Conhecimento">
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">🧮</span>
-              <span>Matemática</span>
+            <a href="#" class="dropdown-item" data-materia="matematica">
+              <span class="dropdown-icon" aria-hidden="true">🧮</span><span>Matemática</span>
             </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">📖</span>
-              <span>Língua Portuguesa</span>
+            <a href="#" class="dropdown-item" data-materia="portugues">
+              <span class="dropdown-icon" aria-hidden="true">📖</span><span>Língua Portuguesa</span>
             </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">🔬</span>
-              <span>Ciências</span>
+            <a href="#" class="dropdown-item" data-materia="ciencias">
+              <span class="dropdown-icon" aria-hidden="true">🔬</span><span>Ciências</span>
             </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">🏛️</span>
-              <span>História</span>
+            <a href="#" class="dropdown-item" data-materia="historia">
+              <span class="dropdown-icon" aria-hidden="true">🏛️</span><span>História</span>
             </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">🌎</span>
-              <span>Geografia</span>
+            <a href="#" class="dropdown-item" data-materia="geografia">
+              <span class="dropdown-icon" aria-hidden="true">🌎</span><span>Geografia</span>
             </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">🎨</span>
-              <span>Artes</span>
+            <a href="#" class="dropdown-item" data-materia="multidisciplinar">
+              <span class="dropdown-icon" aria-hidden="true">🎨</span><span>Multidisciplinar</span>
             </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">🤸</span>
-              <span>Educação Física</span>
+
+            <!-- Estes três, por enquanto, só disparam a BUSCA -->
+            <a href="#" class="dropdown-item" data-search="artes">
+              <span class="dropdown-icon" aria-hidden="true">🎨</span><span>Artes</span>
             </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">🗣️</span>
-              <span>Língua Estrangeira</span>
+            <a href="#" class="dropdown-item" data-search="educação física">
+              <span class="dropdown-icon" aria-hidden="true">🤸</span><span>Educação Física</span>
+            </a>
+            <a href="#" class="dropdown-item" data-search="língua estrangeira">
+              <span class="dropdown-icon" aria-hidden="true">🗣️</span><span>Língua Estrangeira</span>
             </a>
           </div>
+
         </li>
 
         <!-- Ano de Ensino -->
@@ -179,56 +177,31 @@
             <span class="arrow" aria-hidden="true">▼</span>
           </a>
           <div class="dropdown" aria-label="Submenu Ano de Escolaridade">
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">👶</span>
-              <span>Educação Infantil</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">1️⃣</span>
-              <span>1º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">2️⃣</span>
-              <span>2º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">3️⃣</span>
-              <span>3º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">4️⃣</span>
-              <span>4º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">5️⃣</span>
-              <span>5º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">6️⃣</span>
-              <span>6º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">7️⃣</span>
-              <span>7º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">8️⃣</span>
-              <span>8º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">9️⃣</span>
-              <span>9º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">📘</span>
-              <span>EJA</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">🎓</span>
-              <span>Ensino Médio</span>
+            <!-- Por enquanto busca simples para estes -->
+            <a href="#" class="dropdown-item" data-search="educação infantil">
+              <span class="dropdown-icon" aria-hidden="true">👶</span><span>Educação Infantil</span>
             </a>
 
+            <!-- 1 a 9 com data-serie -->
+            <a href="#" class="dropdown-item" data-serie="1"><span class="dropdown-icon" aria-hidden="true">1️⃣</span><span>1º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="2"><span class="dropdown-icon" aria-hidden="true">2️⃣</span><span>2º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="3"><span class="dropdown-icon" aria-hidden="true">3️⃣</span><span>3º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="4"><span class="dropdown-icon" aria-hidden="true">4️⃣</span><span>4º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="5"><span class="dropdown-icon" aria-hidden="true">5️⃣</span><span>5º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="6"><span class="dropdown-icon" aria-hidden="true">6️⃣</span><span>6º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="7"><span class="dropdown-icon" aria-hidden="true">7️⃣</span><span>7º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="8"><span class="dropdown-icon" aria-hidden="true">8️⃣</span><span>8º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="9"><span class="dropdown-icon" aria-hidden="true">9️⃣</span><span>9º Ano</span></a>
+
+            <!-- Por enquanto busca simples para estes -->
+            <a href="#" class="dropdown-item" data-search="eja">
+              <span class="dropdown-icon" aria-hidden="true">📘</span><span>EJA</span>
+            </a>
+            <a href="#" class="dropdown-item" data-search="ensino médio">
+              <span class="dropdown-icon" aria-hidden="true">🎓</span><span>Ensino Médio</span>
+            </a>
           </div>
+
         </li>
 
         <li class="nav-item">

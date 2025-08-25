@@ -1180,7 +1180,7 @@ body::before {
 }
 
 .clear-btn, .reset-btn {
-  background: #6c757d;
+  background: #7c3aed;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -2021,4 +2021,10 @@ mark {
 }
 #toggle-filters[aria-expanded="false"] .label::after {
   content: " ▼";
+}
+
+/* Visualização do item ativo no menu de dropdown */
+.main-header .dropdown .dropdown-item.active {
+  font-weight: 700;
+  color: var(--primary-color, #7c3aed);
 }

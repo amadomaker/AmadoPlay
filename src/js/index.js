@@ -1006,6 +1006,7 @@ if (typeof module !== 'undefined' && module.exports) {
       this.loadStateFromURL();
       this.loadStateFromStorage();
       this.setupEventListeners();
+      this.setupHeaderShortcuts();
       this.syncSearchInputs();
       this.applyFilters();
       this.renderTools();
@@ -1014,6 +1015,80 @@ if (typeof module !== 'undefined' && module.exports) {
       this.setupMobileFiltersToggle();
       this.updateActiveFiltersBadge();
 
+    }
+
+    // Liga itens do header aos filtros
+    setupHeaderShortcuts() {
+      if (this._headerBound) return;
+      this._headerBound = true;
+
+      // 2.1 Matéria (chips existentes)
+      document.querySelectorAll('.main-header .dropdown .dropdown-item[data-materia]')
+        .forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault(); e.stopPropagation();
+            const materia = link.dataset.materia;
+
+            // estado
+            this.state.materia = [materia];
+
+            // marca o checkbox correspondente
+            document.querySelectorAll('[data-filter="materia"] input').forEach(i => {
+              i.checked = (i.value === materia);
+            });
+
+            // aplica
+            this.updateFilters();
+
+            // fecha menu mobile, se aberto
+            window.app?.components?.mobileMenu?.closeMenu?.();
+
+            // rola até a listagem
+            document.getElementById('tools-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        });
+
+      // 2.2 Série (fixa min=max)
+      document.querySelectorAll('.main-header .dropdown .dropdown-item[data-serie]')
+        .forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault(); e.stopPropagation();
+            const serie = link.dataset.serie;
+
+            this.state.series = { min: serie, max: serie };
+
+            // aplica nos selects
+            const minSel = document.getElementById('serie-min');
+            const maxSel = document.getElementById('serie-max');
+            if (minSel) minSel.value = serie;
+            if (maxSel) maxSel.value = serie;
+
+            this.updateFilters();
+            window.app?.components?.mobileMenu?.closeMenu?.();
+            document.getElementById('tools-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        });
+
+      // 2.3 Itens que disparam busca (Artes, EF, LE, EI, EJA, EM)
+      document.querySelectorAll('.main-header .dropdown .dropdown-item[data-search]')
+        .forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault(); e.stopPropagation();
+            const term = link.dataset.search || '';
+
+            this.state.search = term;
+
+            // sincroniza campos de busca (header + principal)
+            const mainSearch = document.getElementById('main-search');
+            const headerSearch = document.getElementById('search-input');
+            if (mainSearch) mainSearch.value = term;
+            if (headerSearch) headerSearch.value = term;
+
+            this.updateFilters();
+            window.app?.components?.mobileMenu?.closeMenu?.();
+            document.getElementById('tools-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        });
     }
 
     // Estado e Persistência

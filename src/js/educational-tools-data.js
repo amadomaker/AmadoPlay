@@ -10,15 +10,16 @@
       descricao: 'Aprenda matemática de forma visual com nosso ábaco interativo e desenvolva habilidades numéricas.',
       imagem: 'src/assets/images/abaco_digital1.png',
       interno: 'pages/Abaco_digital.html',
-      materia: 'matematica',
-      series: [1, 2, 3, 4],
+      materia: 'matemática',
+      series: [1, 2, 3],
       tipo: ['interativo', 'visual', 'pratico'],
       dificuldade: 'basico',
       bncc: [
-        { codigo: 'EF01MA06', descricao: 'Compor e decompor números naturais (unidades/dezenas/centenas) com materiais concretos.' },
-        { codigo: 'EF02MA06', descricao: 'Relacionar diferentes representações do sistema de numeração decimal.' }
+        { codigo: 'EF01MA07', descricao: 'Compor e decompor número de até duas ordens, por meio de diferentes adições, com o suporte de material manipulável, contribuindo para a compreensão de características do sistema de numeração decimal e o desenvolvimento de estratégias de cálculo.' },
+        { codigo: 'EF02MA01', descricao: ' Comparar e ordenar números naturais (até a ordem de centenas) pela compreensão de características do sistema de numeração decimal (valor posicional e função do zero).' },
+        { codigo: 'EF03MA02', descricao: 'Identificar características do sistema de numeração decimal, utilizando a composição e a decomposição de número natural de até quatro ordens.' }
       ],
-      tags: ['ábaco', 'aritmética', 'valor posicional', 'sistema decimal', 'EF01MA06', 'EF02MA06'],
+      tags: ['ábaco', 'aritmética', 'valor posicional', 'sistema decimal', 'EF01MA07', 'EF02MA01', 'EF03MA02'],
       popular: true,
       novo: false,
       acessos: 15000
@@ -29,15 +30,17 @@
       descricao: 'Explore o sistema decimal com blocos virtuais interativos e compreenda melhor os números.',
       imagem: 'src/assets/images/material_dourado4.png',
       interno: 'pages/Material_dourado.html',
-      materia: 'matematica',
-      series: [2, 3, 4],
+      materia: 'matemática',
+      series: [1, 2, 3],
       tipo: ['interativo', 'visual', 'pratico'],
       dificuldade: 'intermediario',
       bncc: [
-        { codigo: 'EF02MA07', descricao: 'Compor/decompor números naturais até centenas com apoio de material estruturado.' },
-        { codigo: 'EF03MA01', descricao: 'Ampliar compreensão do valor posicional e comparações entre números naturais.' }
+        { codigo: 'EF01MA07', descricao: 'Compor e decompor número de até duas ordens, por meio de diferentes adições, com o suporte de material manipulável, contribuindo para a compreensão de características do sistema de numeração decimal e o desenvolvimento de estratégias de cálculo.' },
+        { codigo: 'EF02MA04', descricao: 'Compor e decompor números naturais de até três ordens, com suporte de material manipulável, por meio de diferentes adições.' },
+        { codigo: 'EF02MA06', descricao: 'Resolver e elaborar problemas de adição e de subtração, envolvendo números de até três ordens, com os significados de juntar, acrescentar, separar, retirar, utilizando estratégias pessoais.'},
+        { codigo: 'EF03MA02', descricao: 'Identificar características do sistema de numeração decimal, utilizando a composição e a decomposição de número natural de até quatro ordens.'},
       ],
-      tags: ['material dourado', 'base 10', 'sistema decimal', 'EF02MA07', 'EF03MA01'],
+      tags: ['material dourado', 'base 10', 'sistema decimal', 'EF01MA07', 'EF02MA04', 'EF02MA06', 'EF03MA02'],
       popular: true,
       novo: false,
       acessos: 13200
@@ -48,15 +51,18 @@
       descricao: 'Forme palavras e desenvolva habilidades de leitura de forma lúdica e interativa.',
       imagem: 'src/assets/images/Alfabeto_movel1.png',
       interno: 'pages/Alfabeto_movel.html',
-      materia: 'portugues',
-      series: [1, 2, 3],
+      materia: 'Língua Portuguesa',
+      series: [1, 2],
       tipo: ['interativo', 'visual'],
       dificuldade: 'basico',
       bncc: [
-        { codigo: 'EF01LP02', descricao: 'Reconhecer relações entre letras e sons (consciência fonêmica inicial).' },
-        { codigo: 'EF01LP07', descricao: 'Formar palavras a partir de letras móveis e/ou sílabas.' }
+        { codigo: 'EI03EF09', descricao: 'Levantar hipóteses em relação à linguagem escrita, realizando registros de palavras e textos, por meio de escrita espontânea.' },
+        { codigo: 'EF01LP02', descricao: 'Escrever, espontaneamente ou por ditado, palavras e frases de forma alfabética – usando letras/grafemas que representem fonemas.' },
+        { codigo: 'EF01LP05', descricao: 'Reconhecer o sistema de escrita alfabética como representação dos sons da fala.' },
+        { codigo: 'EF02LP02', descricao: 'Segmentar palavras em sílabas e remover e substituir sílabas iniciais, mediais ou finais para criar novas palavras.' },
+
       ],
-      tags: ['alfabetização', 'consciência fonêmica', 'letras', 'formação de palavras', 'EF01LP02', 'EF01LP07'],
+      tags: ['alfabetização', 'consciência fonêmica', 'letras', 'formação de palavras', 'EI03EF09', 'EF01LP02', 'EF01LP05', 'EF02LP02'],
       popular: false,
       novo: false,
       acessos: 8900
@@ -68,13 +74,14 @@
       imagem: 'src/assets/images/piramide_alimentar1.png',
       interno: 'pages/piramide_alimentar.html',
       materia: 'ciencias',
-      series: [3, 4, 5, 6],
+      series: [5, 6,7],
       tipo: ['visual', 'interativo'],
       dificuldade: 'intermediario',
       bncc: [
-        { codigo: 'EF04CI03', descricao: 'Compreender a importância de uma alimentação equilibrada para a saúde.' }
+        { codigo: 'EF05CI08', descricao: 'Organizar um cardápio equilibrado com base nas características dos grupos alimentares (nutrientes e calorias) e nas necessidades individuais (atividades realizadas, idade, sexo etc.) para a manutenção da saúde do organismo.' },
+        { codigo: 'EF05CI09', descricao: 'Discutir a ocorrência de distúrbios nutricionais (como obesidade, subnutrição etc.) entre crianças e jovens a partir da análise de seus hábitos (tipos e quantidade de alimento ingerido, prática de atividade física etc.).' },
       ],
-      tags: ['alimentação', 'nutrição', 'saúde', 'hábitos saudáveis', 'EF04CI03'],
+      tags: ['alimentação', 'nutrição', 'saúde', 'hábitos saudáveis', 'EF04CI03', 'EF05CI08'],
       popular: false,
       novo: true,
       acessos: 6200
@@ -86,13 +93,15 @@
       imagem: 'src/assets/images/mapa_brasil1.png',
       interno: 'pages/mapa_brasil.html',
       materia: 'geografia',
-      series: [4, 5, 6],
+      series: [3, 4, 5],
       tipo: ['visual', 'interativo'],
       dificuldade: 'basico',
       bncc: [
-        { codigo: 'EF04GE03', descricao: 'Localizar e identificar unidades federativas e regiões brasileiras em mapas.' }
+        { codigo: 'EF03GE03', descricao: 'Reconhecer os diferentes modos de vida de povos e comunidades tradicionais em distintos lugares.' },
+        { codigo: 'EF03GE07', descricao: 'Reconhecer e elaborar legendas com símbolos de diversos tipos de representações em diferentes escalas cartográficas.' },
+
       ],
-      tags: ['mapa', 'estados', 'regiões', 'cartografia', 'EF04GE03'],
+      tags: ['mapa', 'estados', 'regiões', 'cartografia', 'EF03GE03', 'EF03GE07'],
       popular: false,
       novo: false,
       acessos: 7700
@@ -104,13 +113,14 @@
       imagem: 'src/assets/images/tres_poderes1.png',
       interno: 'pages/tres_poderes.html',
       materia: 'historia',
-      series: [7, 8, 9],
+      series: [5, 6, 7, 8, 9],
       tipo: ['visual', 'interativo'],
       dificuldade: 'intermediario',
       bncc: [
-        { codigo: 'EF09HI28', descricao: 'Analisar a organização do Estado brasileiro e a separação dos poderes.' }
+        { codigo: 'EF05HI02', descricao: 'Identificar os mecanismos de organização do poder político com vistas à compreensão da ideia de Estado e/ou de outras formas de ordenação social.' },
+        { codigo: 'EF05GE12', descricao: ' Identificar órgãos do poder público e canais de participação social responsáveis por buscar soluções para a melhoria da qualidade de vida (em áreas como meio ambiente, mobilidade, moradia e direito à cidade) e discutir as propostas implementadas por esses órgãos que afetam a comunidade em que vive.' }
       ],
-      tags: ['cidadania', 'constituição', 'poderes', 'estado', 'EF09HI28'],
+      tags: ['cidadania', 'constituição', 'poderes', 'poderes', 'EF09HI28', 'EF05GE12'],
       popular: false,
       novo: false,
       acessos: 5400
