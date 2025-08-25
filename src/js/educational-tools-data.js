@@ -10,7 +10,7 @@
       descricao: 'Aprenda matemática de forma visual com nosso ábaco interativo e desenvolva habilidades numéricas.',
       imagem: 'src/assets/images/abaco_digital1.png',
       interno: 'pages/Abaco_digital.html',
-      materia: 'matemática',
+      materia: 'matematica',
       series: [1, 2, 3],
       tipo: ['interativo', 'visual', 'pratico'],
       dificuldade: 'basico',
@@ -30,7 +30,7 @@
       descricao: 'Explore o sistema decimal com blocos virtuais interativos e compreenda melhor os números.',
       imagem: 'src/assets/images/material_dourado4.png',
       interno: 'pages/Material_dourado.html',
-      materia: 'matemática',
+      materia: 'matematica',
       series: [1, 2, 3],
       tipo: ['interativo', 'visual', 'pratico'],
       dificuldade: 'intermediario',
@@ -51,7 +51,7 @@
       descricao: 'Forme palavras e desenvolva habilidades de leitura de forma lúdica e interativa.',
       imagem: 'src/assets/images/Alfabeto_movel1.png',
       interno: 'pages/Alfabeto_movel.html',
-      materia: 'Língua Portuguesa',
+      materia: 'portugues',
       series: [1, 2],
       tipo: ['interativo', 'visual'],
       dificuldade: 'basico',
@@ -90,7 +90,7 @@
       id: 'mapa-brasil',
       titulo: 'Mapa do Brasil',
       descricao: 'Identifique estados e regiões do Brasil de forma interativa e educativa.',
-      imagem: 'src/assets/images/mapa_brasil1.png',
+      imagem: 'src/assets/images/mapa_brasil4.png',
       interno: 'pages/mapa_brasil.html',
       materia: 'geografia',
       series: [3, 4, 5],
@@ -125,6 +125,7 @@
       novo: false,
       acessos: 5400
     },
+    
     {
       id: 'karaoke-educativo',
       titulo: 'Canal de Karaokê Educativo',

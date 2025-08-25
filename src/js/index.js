@@ -1691,7 +1691,10 @@ if (typeof module !== 'undefined' && module.exports) {
         ciencias: 'Ciências',
         geografia: 'Geografia',
         historia: 'História',
-        multidisciplinar: 'Multidisciplinar'
+        multidisciplinar: 'Multidisciplinar',
+        artes: 'Artes',
+        educacao_fisica: 'Educação Física',
+        lingua_estrangeira: 'Língua Estrangeira',
       };
       return labels[materia] || materia;
     }
