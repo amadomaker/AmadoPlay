@@ -1,0 +1,173 @@
+
+(function() {
+  'use strict';
+
+  // Dados das ferramentas educacionais
+  window.EducationalToolsData = [
+     {
+      id: 'abaco',
+      titulo: 'Ábaco Digital',
+      descricao: 'Aprenda matemática de forma visual com nosso ábaco interativo e desenvolva habilidades numéricas.',
+      imagem: 'src/assets/images/abaco_digital1.png',
+      interno: 'pages/Abaco_digital.html',
+      materia: 'matematica',
+      series: [1, 2, 3],
+      tipo: ['interativo', 'visual', 'pratico'],
+      dificuldade: 'basico',
+      bncc: [
+        { codigo: 'EF01MA07', descricao: 'Compor e decompor número de até duas ordens, por meio de diferentes adições, com o suporte de material manipulável, contribuindo para a compreensão de características do sistema de numeração decimal e o desenvolvimento de estratégias de cálculo.' },
+        { codigo: 'EF02MA01', descricao: ' Comparar e ordenar números naturais (até a ordem de centenas) pela compreensão de características do sistema de numeração decimal (valor posicional e função do zero).' },
+        { codigo: 'EF03MA02', descricao: 'Identificar características do sistema de numeração decimal, utilizando a composição e a decomposição de número natural de até quatro ordens.' }
+      ],
+      tags: ['ábaco', 'aritmética', 'valor posicional', 'sistema decimal', 'EF01MA07', 'EF02MA01', 'EF03MA02'],
+      popular: true,
+      novo: false,
+      acessos: 15000
+    },
+    {
+      id: 'material-dourado',
+      titulo: 'Material Dourado',
+      descricao: 'Explore o sistema decimal com blocos virtuais interativos e compreenda melhor os números.',
+      imagem: 'src/assets/images/material_dourado4.png',
+      interno: 'pages/Material_dourado.html',
+      materia: 'matematica',
+      series: [1, 2, 3],
+      tipo: ['interativo', 'visual', 'pratico'],
+      dificuldade: 'intermediario',
+      bncc: [
+        { codigo: 'EF01MA07', descricao: 'Compor e decompor número de até duas ordens, por meio de diferentes adições, com o suporte de material manipulável, contribuindo para a compreensão de características do sistema de numeração decimal e o desenvolvimento de estratégias de cálculo.' },
+        { codigo: 'EF02MA04', descricao: 'Compor e decompor números naturais de até três ordens, com suporte de material manipulável, por meio de diferentes adições.' },
+        { codigo: 'EF02MA06', descricao: 'Resolver e elaborar problemas de adição e de subtração, envolvendo números de até três ordens, com os significados de juntar, acrescentar, separar, retirar, utilizando estratégias pessoais.'},
+        { codigo: 'EF03MA02', descricao: 'Identificar características do sistema de numeração decimal, utilizando a composição e a decomposição de número natural de até quatro ordens.'},
+      ],
+      tags: ['material dourado', 'base 10', 'sistema decimal', 'EF01MA07', 'EF02MA04', 'EF02MA06', 'EF03MA02'],
+      popular: true,
+      novo: false,
+      acessos: 13200
+    },
+    {
+      id: 'alfabeto-movel',
+      titulo: 'Alfabeto Móvel',
+      descricao: 'Forme palavras e desenvolva habilidades de leitura de forma lúdica e interativa.',
+      imagem: 'src/assets/images/Alfabeto_movel1.png',
+      interno: 'pages/Alfabeto_movel.html',
+      materia: 'portugues',
+      series: [1, 2],
+      tipo: ['interativo', 'visual'],
+      dificuldade: 'basico',
+      bncc: [
+        { codigo: 'EI03EF09', descricao: 'Levantar hipóteses em relação à linguagem escrita, realizando registros de palavras e textos, por meio de escrita espontânea.' },
+        { codigo: 'EF01LP02', descricao: 'Escrever, espontaneamente ou por ditado, palavras e frases de forma alfabética – usando letras/grafemas que representem fonemas.' },
+        { codigo: 'EF01LP05', descricao: 'Reconhecer o sistema de escrita alfabética como representação dos sons da fala.' },
+        { codigo: 'EF02LP02', descricao: 'Segmentar palavras em sílabas e remover e substituir sílabas iniciais, mediais ou finais para criar novas palavras.' },
+
+      ],
+      tags: ['alfabetização', 'consciência fonêmica', 'letras', 'formação de palavras', 'EI03EF09', 'EF01LP02', 'EF01LP05', 'EF02LP02'],
+      popular: false,
+      novo: false,
+      acessos: 8900
+    },
+    {
+      id: 'piramide-alimentar',
+      titulo: 'Pirâmide Alimentar',
+      descricao: 'Organize os alimentos nos níveis corretos da pirâmide e aprenda sobre alimentação saudável.',
+      imagem: 'src/assets/images/piramide_alimentar1.png',
+      interno: 'pages/piramide_alimentar.html',
+      materia: 'ciencias',
+      series: [5, 6,7],
+      tipo: ['visual', 'interativo'],
+      dificuldade: 'intermediario',
+      bncc: [
+        { codigo: 'EF05CI08', descricao: 'Organizar um cardápio equilibrado com base nas características dos grupos alimentares (nutrientes e calorias) e nas necessidades individuais (atividades realizadas, idade, sexo etc.) para a manutenção da saúde do organismo.' },
+        { codigo: 'EF05CI09', descricao: 'Discutir a ocorrência de distúrbios nutricionais (como obesidade, subnutrição etc.) entre crianças e jovens a partir da análise de seus hábitos (tipos e quantidade de alimento ingerido, prática de atividade física etc.).' },
+      ],
+      tags: ['alimentação', 'nutrição', 'saúde', 'hábitos saudáveis', 'EF04CI03', 'EF05CI08'],
+      popular: false,
+      novo: true,
+      acessos: 6200
+    },
+    {
+      id: 'mapa-brasil',
+      titulo: 'Mapa do Brasil',
+      descricao: 'Identifique estados e regiões do Brasil de forma interativa e educativa.',
+      imagem: 'src/assets/images/mapa_brasil4.png',
+      interno: 'pages/mapa_brasil.html',
+      materia: 'geografia',
+      series: [3, 4, 5],
+      tipo: ['visual', 'interativo'],
+      dificuldade: 'basico',
+      bncc: [
+        { codigo: 'EF03GE03', descricao: 'Reconhecer os diferentes modos de vida de povos e comunidades tradicionais em distintos lugares.' },
+        { codigo: 'EF03GE07', descricao: 'Reconhecer e elaborar legendas com símbolos de diversos tipos de representações em diferentes escalas cartográficas.' },
+
+      ],
+      tags: ['mapa', 'estados', 'regiões', 'cartografia', 'EF03GE03', 'EF03GE07'],
+      popular: false,
+      novo: false,
+      acessos: 7700
+    },
+    {
+      id: 'tres-poderes',
+      titulo: 'Três Poderes do Brasil',
+      descricao: 'Aprenda sobre Executivo, Legislativo e Judiciário de forma didática e interativa.',
+      imagem: 'src/assets/images/tres_poderes1.png',
+      interno: 'pages/tres_poderes.html',
+      materia: 'historia',
+      series: [5, 6, 7, 8, 9],
+      tipo: ['visual', 'interativo'],
+      dificuldade: 'intermediario',
+      bncc: [
+        { codigo: 'EF05HI02', descricao: 'Identificar os mecanismos de organização do poder político com vistas à compreensão da ideia de Estado e/ou de outras formas de ordenação social.' },
+        { codigo: 'EF05GE12', descricao: ' Identificar órgãos do poder público e canais de participação social responsáveis por buscar soluções para a melhoria da qualidade de vida (em áreas como meio ambiente, mobilidade, moradia e direito à cidade) e discutir as propostas implementadas por esses órgãos que afetam a comunidade em que vive.' }
+      ],
+      tags: ['cidadania', 'constituição', 'poderes', 'poderes', 'EF09HI28', 'EF05GE12'],
+      popular: false,
+      novo: false,
+      acessos: 5400
+    },
+    
+    {
+      id: 'karaoke-educativo',
+      titulo: 'Canal de Karaokê Educativo',
+      descricao: 'Cante e aprenda com músicas educativas! Conteúdo parceiro para complementar o aprendizado.',
+      imagem: 'src/assets/images/karaoke.jpg', 
+      materia: 'multidisciplinar',
+      externo: 'https://www.youtube.com/channel/UCfwZCL3gq8PaIg_i1VcnocQ',
+      series: [1,2,3,4,5,6,7,8,9],
+      tipo: ['auditivo','visual','interativo'],
+      dificuldade: 'basico',
+      bncc: [],        
+      tags: [], 
+ 
+
+      popular: false, 
+      novo: false,      
+      acessos: 9100
+    }
+
+
+
+  ];
+
+  // Autocomplete inclui BNCC (títulos + tags + códigos)
+  window.AutocompleteData = (window.EducationalToolsData || [])
+    .sort((a, b) => b.acessos - a.acessos)
+    .reduce((acc, tool) => {
+      acc.push({ text: tool.titulo, type: 'titulo' });
+
+      (tool.tags || []).forEach(tag => {
+        if (!acc.some(item => item.text === tag)) {
+          acc.push({ text: tag, type: 'tag' });
+        }
+      });
+
+      (tool.bncc || []).forEach(b => {
+        if (b?.codigo && !acc.some(item => item.text === b.codigo)) {
+          acc.push({ text: b.codigo, type: 'bncc' });
+        }
+      });
+
+      return acc;
+    }, []);
+
+})();

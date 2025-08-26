@@ -131,39 +131,37 @@
             <span class="arrow" aria-hidden="true">▼</span>
           </a>
           <div class="dropdown" aria-label="Submenu Área do Conhecimento">
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">🧮</span>
-              <span>Matemática</span>
+            <a href="#" class="dropdown-item" data-materia="matematica">
+              <span class="dropdown-icon" aria-hidden="true">🧮</span><span>Matemática</span>
             </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">📖</span>
-              <span>Língua Portuguesa</span>
+            <a href="#" class="dropdown-item" data-materia="portugues">
+              <span class="dropdown-icon" aria-hidden="true">📖</span><span>Língua Portuguesa</span>
             </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">🔬</span>
-              <span>Ciências</span>
+            <a href="#" class="dropdown-item" data-materia="ciencias">
+              <span class="dropdown-icon" aria-hidden="true">🔬</span><span>Ciências</span>
             </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">🏛️</span>
-              <span>História</span>
+            <a href="#" class="dropdown-item" data-materia="historia">
+              <span class="dropdown-icon" aria-hidden="true">🏛️</span><span>História</span>
             </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">🌎</span>
-              <span>Geografia</span>
+            <a href="#" class="dropdown-item" data-materia="geografia">
+              <span class="dropdown-icon" aria-hidden="true">🌎</span><span>Geografia</span>
             </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">🎨</span>
-              <span>Artes</span>
+            <a href="#" class="dropdown-item" data-materia="multidisciplinar">
+              <span class="dropdown-icon" aria-hidden="true">🎨</span><span>Multidisciplinar</span>
             </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">🤸</span>
-              <span>Educação Física</span>
+
+            <!-- Estes três, por enquanto, só disparam a BUSCA -->
+            <a href="#" class="dropdown-item" data-materia="artes">
+              <span class="dropdown-icon" aria-hidden="true">🎨</span><span>Artes</span>
             </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">🗣️</span>
-              <span>Língua Estrangeira</span>
+            <a href="#" class="dropdown-item" data-materia="educação física">
+              <span class="dropdown-icon" aria-hidden="true">🤸</span><span>Educação Física</span>
+            </a>
+            <a href="#" class="dropdown-item" data-materia="língua estrangeira">
+              <span class="dropdown-icon" aria-hidden="true">🗣️</span><span>Língua Estrangeira</span>
             </a>
           </div>
+
         </li>
 
         <!-- Ano de Ensino -->
@@ -179,56 +177,31 @@
             <span class="arrow" aria-hidden="true">▼</span>
           </a>
           <div class="dropdown" aria-label="Submenu Ano de Escolaridade">
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">👶</span>
-              <span>Educação Infantil</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">1️⃣</span>
-              <span>1º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">2️⃣</span>
-              <span>2º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">3️⃣</span>
-              <span>3º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">4️⃣</span>
-              <span>4º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">5️⃣</span>
-              <span>5º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">6️⃣</span>
-              <span>6º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">7️⃣</span>
-              <span>7º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">8️⃣</span>
-              <span>8º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">9️⃣</span>
-              <span>9º Ano</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">📘</span>
-              <span>EJA</span>
-            </a>
-            <a href="#" class="dropdown-item">
-              <span class="dropdown-icon" aria-hidden="true">🎓</span>
-              <span>Ensino Médio</span>
+            <!-- Por enquanto busca simples para estes -->
+            <a href="#" class="dropdown-item" data-search="educação infantil">
+              <span class="dropdown-icon" aria-hidden="true">👶</span><span>Educação Infantil</span>
             </a>
 
+            <!-- 1 a 9 com data-serie -->
+            <a href="#" class="dropdown-item" data-serie="1"><span class="dropdown-icon" aria-hidden="true">1️⃣</span><span>1º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="2"><span class="dropdown-icon" aria-hidden="true">2️⃣</span><span>2º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="3"><span class="dropdown-icon" aria-hidden="true">3️⃣</span><span>3º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="4"><span class="dropdown-icon" aria-hidden="true">4️⃣</span><span>4º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="5"><span class="dropdown-icon" aria-hidden="true">5️⃣</span><span>5º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="6"><span class="dropdown-icon" aria-hidden="true">6️⃣</span><span>6º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="7"><span class="dropdown-icon" aria-hidden="true">7️⃣</span><span>7º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="8"><span class="dropdown-icon" aria-hidden="true">8️⃣</span><span>8º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="9"><span class="dropdown-icon" aria-hidden="true">9️⃣</span><span>9º Ano</span></a>
+
+            <!-- Por enquanto busca simples para estes -->
+            <a href="#" class="dropdown-item" data-search="eja">
+              <span class="dropdown-icon" aria-hidden="true">📘</span><span>EJA</span>
+            </a>
+            <a href="#" class="dropdown-item" data-search="ensino médio">
+              <span class="dropdown-icon" aria-hidden="true">🎓</span><span>Ensino Médio</span>
+            </a>
           </div>
+
         </li>
 
         <li class="nav-item">
@@ -251,146 +224,165 @@
   <section class="hero-section" role="banner">
     <div class="hero-content">
       <h1 class="hero-title">Transforme o Aprendizado em uma Aventura</h1>
-      <p class="hero-subtitle">Ferramentas interativas e atividades educacionais para engajar alunos de todas as idades</p>
+      <!--<p class="hero-subtitle">Ferramentas interativas e atividades educacionais para engajar alunos de todas as idades</p>-->
     </div>
   </section>
 
   <!-- CONTEÚDO PRINCIPAL -->
   <main class="main-container" role="main">
-
-
-    <!-- TODAS AS FERRAMENTAS EM DESTAQUE -->
-    <section class="section" aria-labelledby="tools-title">
-      <div class="section-header">
-        <h2 id="tools-title" class="section-title">
-          <div class="section-icon" aria-hidden="true">🧩</div> 
-          Nossas Ferramentas Interativas
-        </h2>
+    <section class="filters-section" id="filters-section">
+  <!-- Contadores e Controles Principais -->
+  <div class="filters-header">
+    <div class="results-info">
+      <span id="results-count" aria-live="polite">0 ferramentas encontradas</span>
+      <div class="logic-toggle">
+        <label class="toggle-switch">
+          <input type="radio" name="logic" value="AND" checked>
+          <span>E (todos)</span>
+        </label>
+        <label class="toggle-switch">
+          <input type="radio" name="logic" value="OR">
+          <span>OU (qualquer)</span>
+        </label>
       </div>
+    </div>
+    <div class="filters-actions">
+      <select id="sort-select" class="sort-select">
+        <option value="popular">Mais usados</option>
+        <option value="alphabetic">Alfabética</option>
+        <option value="recent">Mais recentes</option>
+        <option value="difficulty">Dificuldade</option>
+      </select>
+      <button id="clear-filters" class="clear-btn">Limpar filtros</button>
+    </div>
+  </div>
 
-      <div class="cards-grid" role="group" aria-label="Lista de ferramentas educacionais">
-        <!-- Ferramenta 1 -->
-        <article class="tool-card" data-tool="abaco" tabindex="0" role="button" aria-label="Acessar Ábaco Digital">
-          <div class="card-image">
-            <img 
-              src="src/assets/images/abaco_digital1.png" 
-              alt="Interface do Ábaco Digital - ferramenta para aprender matemática visualmente"
-              width="300" 
-              height="200"
-              loading="lazy"
-            />
-            <span class="card-badge">Popular</span>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Ábaco Digital</h3>
-            <p class="card-description">Aprenda matemática de forma visual com nosso ábaco interativo e desenvolva habilidades numéricas.</p>
-          </div>
-        </article>
+  <!-- Busca com Autocomplete -->
+  <div class="search-container">
+    <div class="search-wrapper">
+      <input type="text" id="main-search" placeholder="Buscar por título, descrição ou tags..." class="search-input">
+      <div id="autocomplete-dropdown" class="autocomplete-dropdown hidden"></div>
+    </div>
+  </div>
 
-        <!-- Ferramenta 2 -->
-        <article class="tool-card" data-tool="material-dourado" tabindex="0" role="button" aria-label="Acessar Material Dourado">
-          <div class="card-image">
-            <img 
-              src="src/assets/images/material_dourado4.png" 
-              alt="Interface do Material Dourado - blocos virtuais para aprender sistema decimal"
-              width="300" 
-              height="200"
-              loading="lazy"
-            />
-            <span class="card-badge">Popular</span>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Material Dourado</h3>
-            <p class="card-description">Explore o sistema decimal com blocos virtuais interativos e compreenda melhor os números.</p>
-          </div>
-        </article>
+  <!-- Toggle só para mobile/tablet -->
+  <div class="filters-mobile-toggle">
+    <button id="toggle-filters" class="btn-filters" aria-expanded="false" aria-controls="filters-content">
+      <span class="label">Filtros</span>
+      <span class="badge" id="active-filters-count">0</span>
+    </button>
 
-        <!-- Ferramenta 3 -->
-        <article class="tool-card" data-tool="alfabeto-movel" tabindex="0" role="button" aria-label="Acessar Alfabeto Móvel">
-          <div class="card-image">
-            <img 
-              src="src/assets/images/Alfabeto_movel1.png" 
-              alt="Interface do Alfabeto Móvel - ferramenta para formar palavras"
-              width="300" 
-              height="200"
-              loading="lazy"
-            />
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Alfabeto Móvel</h3>
-            <p class="card-description">Forme palavras e desenvolva habilidades de leitura de forma lúdica e interativa.</p>
-          </div>
-        </article>
-
-        <!-- Ferramenta 4 -->
-        <article class="tool-card" data-tool="piramide-alimentar" tabindex="0" role="button" aria-label="Acessar Pirâmide Alimentar">
-          <div class="card-image">
-            <img 
-              src="src/assets/images/piramide_alimentar1.png" 
-              alt="Interface da Pirâmide Alimentar - ferramenta para aprender sobre alimentação saudável"
-              width="300" 
-              height="200"
-              loading="lazy"
-            />
-            <span class="card-badge">Novo</span>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Pirâmide Alimentar</h3>
-            <p class="card-description">Organize os alimentos nos níveis corretos da pirâmide e aprenda sobre alimentação saudável.</p>
-          </div>
-        </article>
-
-        <!-- Ferramenta 5 -->
-        <article class="tool-card" data-tool="mapa-brasil" tabindex="0" role="button" aria-label="Acessar Mapa do Brasil">
-          <div class="card-image">
-            <img 
-              src="src/assets/images/mapa_brasil1.png" 
-              alt="Interface do Mapa do Brasil - ferramenta para identificar estados e regiões"
-              width="300" 
-              height="200"
-              loading="lazy"
-            />
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Mapa do Brasil</h3>
-            <p class="card-description">Identifique estados e regiões do Brasil de forma interativa e educativa.</p>
-          </div>
-        </article>
-
-        <!-- Ferramenta 6 -->
-        <article class="tool-card" data-tool="tres-poderes" tabindex="0" role="button" aria-label="Acessar Três Poderes">
-          <div class="card-image">
-            <img 
-              src="src/assets/images/tres_poderes1.png" 
-              alt="Interface dos Três Poderes - ferramenta para aprender sobre governo brasileiro"
-              width="300" 
-              height="200"
-              loading="lazy"
-            />
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Três Poderes do Brasil</h3>
-            <p class="card-description">Aprenda sobre Executivo, Legislativo e Judiciário de forma didática e interativa.</p>
-          </div>
-        </article>
+  </div>
+  <div id="filters-content" class="filters-content is-collapsed">
+  <!-- Filtros -->
+  <div class="filters-grid">
+    <!-- Matéria -->
+    <div class="filter-group">
+      <h4>Área do Conhecimento</h4>
+      <div class="filter-chips" data-filter="materia">
+        <label class="chip"><input type="checkbox" value="matematica"><span>Matemática</span></label>
+        <label class="chip"><input type="checkbox" value="portugues"><span>Português</span></label>
+        <label class="chip"><input type="checkbox" value="ciencias"><span>Ciências</span></label>
+        <label class="chip"><input type="checkbox" value="geografia"><span>Geografia</span></label>
+        <label class="chip"><input type="checkbox" value="historia"><span>História</span></label>
+        <label class="chip"><input type="checkbox" value="multidisciplinar"><span>Multidisciplinar</span></label>
+        <label class="chip"><input type="checkbox" value="artes"><span>Artes</span></label>
+        <label class="chip"><input type="checkbox" value="educacao_fisica"><span>Educação Física</span></label>
+        <label class="chip"><input type="checkbox" value="lingua_estrangeira"><span>Língua Estrangeira</span></label>
       </div>
-    </section>
+    </div>
 
-    <!-- CANAL DE KARAOKÊ COMO CARD ESPECIAL -->
-    <section class="special-section" aria-labelledby="karaoke-title">
-      <article class="karaoke-card">
-        <div class="karaoke-content">
-          <div class="karaoke-icon" aria-hidden="true">🎵</div>
-          <div class="karaoke-text">
-            <h3 id="karaoke-title">Canal de Karaokê Educativo</h3>
-            <p>Cante e aprenda com músicas educativas! Conteúdo externo parceiro para complementar o aprendizado.</p>
-          </div>
-          <button class="btn-karaoke" aria-label="Acessar canal de karaokê educativo no YouTube">
-            Acessar Canal
-          </button>
+    <!-- Série -->
+    <div class="filter-group">
+      <h4>Ano de Escolaridade</h4>
+      <div class="range-filter">
+        <label>De: <select id="serie-min">
+          <option value="">Todas</option>
+          <option value="0">E. Infantil</option>
+          <option value="1">1º ano</option>
+          <option value="2">2º ano</option>
+          <option value="3">3º ano</option>
+          <option value="4">4º ano</option>
+          <option value="5">5º ano</option>
+          <option value="6">6º ano</option>
+          <option value="7">7º ano</option>
+          <option value="8">8º ano</option>
+          <option value="9">9º ano</option>
+          <option value="10">EJA</option>
+          <option value="11">Ensino Médio</option>
+        </select></label>
+        <label>Até: <select id="serie-max">
+          <option value="">Todas</option>
+          <option value="0">E. Infantil</option>
+          <option value="1">1º ano</option>
+          <option value="2">2º ano</option>
+          <option value="3">3º ano</option>
+          <option value="4">4º ano</option>
+          <option value="5">5º ano</option>
+          <option value="6">6º ano</option>
+          <option value="7">7º ano</option>
+          <option value="8">8º ano</option>
+          <option value="9">9º ano</option>
+          <option value="10">EJA</option>
+          <option value="11">Ensino Médio</option>
+        </select></label>
+      </div>
+    </div>
+
+    <!-- Tipo -->
+    <div class="filter-group">
+      <h4>Tipo de Recurso</h4>
+      <div class="filter-chips" data-filter="tipo">
+        <label class="chip"><input type="checkbox" value="interativo"><span>Interativo</span></label>
+        <label class="chip"><input type="checkbox" value="visual"><span>Visual</span></label>
+        <label class="chip"><input type="checkbox" value="auditivo"><span>Auditivo</span></label>
+        <label class="chip"><input type="checkbox" value="pratico"><span>Prático</span></label>
+      </div>
+    </div>
+
+    <!-- Dificuldade -->
+    <div class="filter-group">
+      <h4>Dificuldade</h4>
+      <div class="filter-chips" data-filter="dificuldade">
+        <label class="chip"><input type="radio" name="dificuldade" value="basico"><span>Básico</span></label>
+        <label class="chip"><input type="radio" name="dificuldade" value="intermediario"><span>Intermediário</span></label>
+        <label class="chip"><input type="radio" name="dificuldade" value="avancado"><span>Avançado</span></label>
+      </div>
+    </div>
+  </div>
+  </div>
+
+
+
+  
+  <!-- Cabeçalho da listagem -->
+  <section class="cards-intro" aria-labelledby="tools-title">
+    <h2 id="tools-title">Nossas ferramentas interativas</h2>
+  
+    <!-- <p class="cards-subtitle">Explore por matéria, série, tipo e dificuldade</p> -->
+  </section>
+
+    <!-- Lista de Cards -->
+  <section class="cards-section" aria-label="Resultados">
+      <!-- Estado Vazio -->
+      <div id="empty-state" class="empty-state hidden">
+        <div class="empty-content">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <h3>Nenhuma ferramenta encontrada</h3>
+          <p>Tente ajustar os filtros ou buscar por outros termos.</p>
+          <button id="reset-search" class="reset-btn">Limpar busca e filtros</button>
         </div>
-      </article>
-    </section>
+      </div>
+    <div class="cards-grid" aria-live="polite"></div>
+  </section>
+
+  
+</section>
+
+  
   </main>
 
   <!-- Rodapé -->
@@ -513,56 +505,20 @@
     }
   </style>
 
-  <!-- Scripts otimizados -->
+  <!-- Scripts otimizados para abrir as ferramentas -->
+   
   <script>
-    // Função para acessar ferramentas otimizada
-    function acessarFerramenta(ferramenta) {
-      const urls = {
-        'abaco': 'pages/Abaco_digital.html',
-        'material-dourado': 'pages/Material_dourado.html',
-        'alfabeto-movel': 'pages/Alfabeto_movel.html',
-        'piramide-alimentar': 'pages/piramide_alimentar.html',
-        'mapa-brasil': 'pages/mapa_brasil.html',
-        'tres-poderes': 'pages/tres_poderes.html'
-      };
-      
-      if (urls[ferramenta]) {
-        window.open(urls[ferramenta], '_blank');
-      }
-    }
 
-    // Event listeners otimizados
-    document.addEventListener('DOMContentLoaded', function() {
-      // Cards das ferramentas
-      document.querySelectorAll('.tool-card').forEach(card => {
-        const tool = card.getAttribute('data-tool');
-        
-        card.addEventListener('click', () => acessarFerramenta(tool));
-        card.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            acessarFerramenta(tool);
-          }
-        });
-      });
 
-      // Botão do karaokê
-      const karaokeBtn = document.querySelector('.btn-karaoke');
-      if (karaokeBtn) {
-        karaokeBtn.addEventListener('click', () => {
-          window.open('https://www.youtube.com/channel/UCfwZCL3gq8PaIg_i1VcnocQ', '_blank');
-        });
-      }
-    });
 
     // Service Worker otimizado
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/AmadoPlay/service-worker.js')
-          .then(reg => console.log('Service Worker registrado:', reg))
-          .catch(err => console.error('Erro ao registrar o Service Worker:', err));
-      });
-    }
+    //if ('serviceWorker' in navigator) {
+      //window.addEventListener('load', () => {
+        //navigator.serviceWorker.register('/AmadoPlay/service-worker.js')
+          //.then(reg => console.log('Service Worker registrado:', reg))
+          //.catch(err => console.error('Erro ao registrar o Service Worker:', err));
+      //});
+    //}
   </script>
   <!-- ===========================
       Widget de Acessibilidade
@@ -744,7 +700,11 @@
   </script>
 
   <!-- Script principal carregado de forma assíncrona -->
+  <script src="src/js/educational-tools-data.js" defer></script>
   <script src="src/js/index.js" defer></script>
   <script src="src/js/acessibilidade.js" defer></script>
+
+
+
 </body>
 </html>
