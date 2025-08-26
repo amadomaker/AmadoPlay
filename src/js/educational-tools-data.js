@@ -143,7 +143,27 @@
       popular: false, 
       novo: false,      
       acessos: 9100
+    },
+    {
+      id: 'conta-bolhas',
+      titulo: 'Conta-Bolhas',
+      descricao: 'Vamos brincar de estourar bolhinhas? Conte bem devagar e estoure uma por uma até chegar no número certo!',
+      imagem: 'src/assets/images/card-conta-bolha.png', 
+      materia: 'matematica',
+      series: [1, 2],                 
+      tipo: ['interativo', 'visual'],
+      dificuldade: 'basico',
+      tags: ['contagem', 'números', 'quantidade', 'jogo', 'infantil'],
+      bncc: [
+        { codigo: 'EF01MA01', descricao: 'Contar de forma oral ou por escrita numérica.' },
+        { codigo: 'EF01MA02', descricao: 'Ler, escrever e comparar números naturais em contextos do cotidiano.' }
+      ],
+      popular: false,
+      novo: true,
+      acessos: 0,
+      interno: 'pages/conta_bolhas.html' 
     }
+
 
 
 
