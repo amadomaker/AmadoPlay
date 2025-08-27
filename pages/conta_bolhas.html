@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Conte as Bolhas Mágicas! 🫧</title>
     <style>
         * {
@@ -51,6 +51,74 @@
             color: white;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
+        /* ======= Safe-area + unidades modernas ======= */
+        :root{
+        /* iOS safe area – volta 0 se não existir */
+        --safe-bottom: env(safe-area-inset-bottom, 0px);
+        --safe-top: env(safe-area-inset-top, 0px);
+        /* fallback para o truque de 100vh via JS (ver seção 3) */
+        --app-vh: 100vh;
+        }
+
+        /* O body pode rolar em telas pequenas; antes estava hidden e cortava */
+        @media (max-width: 768px){
+        body{
+            overflow-y: auto;
+        }
+        }
+
+        /* Container principal: usar dvh (área útil real) com fallbacks */
+        #mainContainer{
+        /* desktop mantém como está; em mobile use a área útil real */
+        height: 92dvh;                 /* browsers modernos (inclui iOS 16+ e Android) */
+        height: calc(var(--app-vh) * 0.92); /* fallback JS p/ Safari antigo */
+        max-height: none;
+        /* espaço para a barra do iPhone */
+        padding-bottom: calc(var(--safe-bottom) + 12px);
+        }
+
+        /* Área do conteúdo também respeita safe area, evitando o corte do botão */
+        #contentArea{
+        padding-bottom: calc(var(--safe-bottom) + 12px);
+        overflow: hidden; /* o jogo não rola; a página sim */
+        }
+
+        /* Menu inicial: garante que tudo caiba em telas baixinhas */
+        @media (max-height: 700px){
+        #menuTitle{ font-size: 24px; }
+        #menuCharacter{ width: 90px; height: 115px; }
+        #difficultySelector{ gap: 8px; }
+        .difficultyBtn{ padding: 8px 14px; font-size: 14px; }
+        #startBtn{ padding: 12px 28px; font-size: 18px; }
+        }
+
+        /* HUD e elementos no jogo menores em telas baixinhas */
+        @media (max-height: 700px){
+        #gameHUD{
+            top: 8px;
+            padding: 8px 14px;
+            gap: 6px;
+        }
+        #targetDisplay{ font-size: 16px; }
+        #counter{ font-size: 20px; }
+        #progressBar{ width: 130px; height: 6px; }
+        }
+
+        /* A varinha (lupa) nunca encosta na barra do iPhone */
+        #bubbleWand{
+        bottom: calc(20px + var(--safe-bottom));
+        }
+
+        /* Botões flutuantes no jogo: afastar do topo com notch */
+        #gameControls{
+        top: calc(12px + var(--safe-top));
+        }
+
+        /* Modal: dá um respiro com a safe-area também */
+        #victoryModal .victoryContent{
+        margin-bottom: var(--safe-bottom);
+        }
+
 
         /* Área de conteúdo */
         #contentArea {
@@ -1448,5 +1516,17 @@
             init();
         }
     </script>
+    <script>
+        (function fixMobileVH(){
+            const setVH = () => {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--app-vh', `${vh * 100}px`);
+            };
+            setVH();
+            window.addEventListener('resize', setVH);
+            window.addEventListener('orientationchange', setVH);
+        })();
+        </script>
+
 </body>
 </html>
