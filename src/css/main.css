@@ -1414,7 +1414,7 @@ mark {
     /* 1ª coluna 1.7x maior, restantes iguais */
     grid-template-columns: 2.1fr 1fr 1fr 1fr;
     column-gap: 1 rem;
-    row-gap: 3rem;
+    row-gap: 1.5rem;
     align-items: start;
   }
 

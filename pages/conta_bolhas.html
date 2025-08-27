@@ -395,56 +395,65 @@
         }
 
         /* Bolhas */
+        /* Bolhas (com hitbox maior e toque mais responsivo) */
         .bubble {
-            position: absolute;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: transform 0.1s;
-            pointer-events: all;
+        position: absolute;
+        border-radius: 50%;
+        cursor: pointer;
+        /* “anel” clicável invisível ao redor da bolha */
+        padding: clamp(6px, 1.2vw, 14px);
+        background-clip: content-box;         /* cor só no miolo, padding vira hitbox */
+        transition: transform 0.12s ease;
+        pointer-events: all;
+        touch-action: manipulation;           /* reduz atraso no toque */
+        -webkit-tap-highlight-color: transparent;
+        will-change: transform;               /* performance */
         }
 
         .bubble:hover {
-            transform: scale(1.1);
+        transform: scale(1.06);
         }
 
         .bubble::before {
-            content: '';
-            position: absolute;
-            top: 15%;
-            left: 20%;
-            width: 30%;
-            height: 30%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.9), transparent);
-            border-radius: 50%;
+        content: '';
+        position: absolute;
+        top: 15%;
+        left: 20%;
+        width: 30%;
+        height: 30%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.9), transparent);
+        border-radius: 50%;
+        pointer-events: none;                 /* não bloqueia o toque */
         }
 
         /* Efeito de estouro */
         .pop {
-            position: absolute;
-            pointer-events: none;
-            animation: popAnimation 0.4s ease-out forwards;
+        position: absolute;
+        pointer-events: none;
+        animation: popAnimation 0.4s ease-out forwards;
         }
 
         @keyframes popAnimation {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(2); opacity: 0; }
+        0%   { transform: scale(1); opacity: 1; }
+        100% { transform: scale(2); opacity: 0; }
         }
 
         .popParticle {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: radial-gradient(circle, #fff, transparent);
-            border-radius: 50%;
-            animation: particleFly 0.6s ease-out forwards;
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background: radial-gradient(circle, #fff, transparent);
+        border-radius: 50%;
+        animation: particleFly 0.6s ease-out forwards;
         }
 
         @keyframes particleFly {
-            100% {
-                transform: translate(var(--tx), var(--ty));
-                opacity: 0;
-            }
+        100% {
+            transform: translate(var(--tx), var(--ty));
+            opacity: 0;
         }
+        }
+
 
         /* Modal de vitória */
         #victoryModal {
@@ -900,38 +909,40 @@
         };
 
         // Configurações por nível e rodada
+        // ===== AJUSTE DE TAMANHO E LIMITE DE BOLHAS =====
         const levelConfig = {
-            1: { 
-                name: 'Fácil',
-                rounds: [
-                    { min: 3, max: 5, size: { min: 80, max: 100 }, speed: { min: 0.8, max: 1.2 }, spawnRate: 2500, movement: 'straight' },
-                    { min: 4, max: 6, size: { min: 75, max: 95 }, speed: { min: 1, max: 1.4 }, spawnRate: 2300, movement: 'slight' },
-                    { min: 5, max: 7, size: { min: 70, max: 90 }, speed: { min: 1.2, max: 1.6 }, spawnRate: 2100, movement: 'slight' },
-                    { min: 6, max: 8, size: { min: 65, max: 85 }, speed: { min: 1.4, max: 1.8 }, spawnRate: 1900, movement: 'moderate' },
-                    { min: 7, max: 10, size: { min: 60, max: 80 }, speed: { min: 1.6, max: 2 }, spawnRate: 1700, movement: 'moderate' }
-                ]
-            },
-            2: { 
-                name: 'Médio',
-                rounds: [
-                    { min: 6, max: 9, size: { min: 55, max: 75 }, speed: { min: 1.5, max: 2.5 }, spawnRate: 1600, movement: 'moderate' },
-                    { min: 7, max: 11, size: { min: 50, max: 70 }, speed: { min: 1.8, max: 2.8 }, spawnRate: 1400, movement: 'zigzag' },
-                    { min: 8, max: 13, size: { min: 45, max: 65 }, speed: { min: 2, max: 3 }, spawnRate: 1200, movement: 'zigzag' },
-                    { min: 10, max: 14, size: { min: 45, max: 60 }, speed: { min: 2.2, max: 3.2 }, spawnRate: 1100, movement: 'curved' },
-                    { min: 12, max: 15, size: { min: 40, max: 55 }, speed: { min: 2.5, max: 3.5 }, spawnRate: 1000, movement: 'curved' }
-                ]
-            },
-            3: { 
-                name: 'Difícil',
-                rounds: [
-                    { min: 10, max: 14, size: { min: 40, max: 55 }, speed: { min: 2.5, max: 3.5 }, spawnRate: 900, movement: 'curved' },
-                    { min: 12, max: 16, size: { min: 38, max: 50 }, speed: { min: 2.8, max: 3.8 }, spawnRate: 850, movement: 'random' },
-                    { min: 14, max: 18, size: { min: 35, max: 48 }, speed: { min: 3, max: 4 }, spawnRate: 800, movement: 'random' },
-                    { min: 16, max: 19, size: { min: 35, max: 45 }, speed: { min: 3.2, max: 4.2 }, spawnRate: 750, movement: 'chaotic' },
-                    { min: 18, max: 20, size: { min: 32, max: 42 }, speed: { min: 3.5, max: 4.5 }, spawnRate: 700, movement: 'chaotic' }
-                ]
-            }
+        1: { 
+            name: 'Fácil',
+            rounds: [
+            { min: 3, max: 5,  size: { min: 80, max: 110 }, speed: { min: 0.8, max: 1.2 }, spawnRate: 2500, movement: 'straight',  maxBubbles: 10 },
+            { min: 4, max: 6,  size: { min: 78, max: 105 }, speed: { min: 1.0, max: 1.4 }, spawnRate: 2300, movement: 'slight',    maxBubbles: 10 },
+            { min: 5, max: 7,  size: { min: 74, max: 100 }, speed: { min: 1.2, max: 1.6 }, spawnRate: 2100, movement: 'slight',    maxBubbles: 10 },
+            { min: 6, max: 8,  size: { min: 70, max:  95 }, speed: { min: 1.4, max: 1.8 }, spawnRate: 1900, movement: 'moderate',  maxBubbles: 10 },
+            { min: 7, max: 10, size: { min: 66, max:  90 }, speed: { min: 1.6, max: 2.0 }, spawnRate: 1700, movement: 'moderate',  maxBubbles: 10 }
+            ]
+        },
+        2: { 
+            name: 'Médio',
+            rounds: [
+            { min: 6,  max:  9, size: { min: 62, max: 84 }, speed: { min: 1.5, max: 2.2 }, spawnRate: 1600, movement: 'moderate', maxBubbles: 9 },
+            { min: 7,  max: 11, size: { min: 58, max: 80 }, speed: { min: 1.8, max: 2.6 }, spawnRate: 1400, movement: 'zigzag',   maxBubbles: 9 },
+            { min: 8,  max: 13, size: { min: 54, max: 76 }, speed: { min: 2.0, max: 2.9 }, spawnRate: 1200, movement: 'zigzag',   maxBubbles: 9 },
+            { min: 10, max: 14, size: { min: 52, max: 74 }, speed: { min: 2.2, max: 3.1 }, spawnRate: 1100, movement: 'curved',   maxBubbles: 8 },
+            { min: 12, max: 15, size: { min: 50, max: 72 }, speed: { min: 2.4, max: 3.3 }, spawnRate: 1000, movement: 'curved',   maxBubbles: 8 }
+            ]
+        },
+        3: { 
+            name: 'Difícil',
+            rounds: [
+            { min: 10, max: 14, size: { min: 50, max: 70 }, speed: { min: 2.5, max: 3.5 }, spawnRate: 900,  movement: 'curved',   maxBubbles: 8 },
+            { min: 12, max: 16, size: { min: 48, max: 68 }, speed: { min: 2.8, max: 3.8 }, spawnRate: 850,  movement: 'random',   maxBubbles: 8 },
+            { min: 14, max: 18, size: { min: 46, max: 66 }, speed: { min: 3.0, max: 4.0 }, spawnRate: 800,  movement: 'random',   maxBubbles: 8 },
+            { min: 16, max: 19, size: { min: 44, max: 64 }, speed: { min: 3.2, max: 4.2 }, spawnRate: 750,  movement: 'chaotic',  maxBubbles: 7 },
+            { min: 18, max: 20, size: { min: 42, max: 62 }, speed: { min: 3.4, max: 4.4 }, spawnRate: 700,  movement: 'chaotic',  maxBubbles: 7 }
+            ]
+        }
         };
+
 
         // Cores vibrantes para bolhas
         const bubbleColors = [
@@ -1259,10 +1270,10 @@
             
             // Event listener para estourar
             bubble.addEventListener('click', () => popBubble(bubbleObj));
-            bubble.addEventListener('touchstart', (e) => {
+            bubble.addEventListener('pointerdown', (e) => {
                 e.preventDefault();
                 popBubble(bubbleObj);
-            });
+                });
             
             gameState.bubbles.push(bubbleObj);
             
