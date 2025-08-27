@@ -1408,6 +1408,39 @@ mark {
 .hidden {
   display: none !important;
 }
+/* === Desktop/Notebook: 4 colunas fluidas que NUNCA estouram o container === */
+@media (min-width: 1100px) {
+  .filters-grid{
+    /* 1ª coluna 1.7x maior, restantes iguais */
+    grid-template-columns: 2.1fr 1fr 1fr 1fr;
+    column-gap: 1 rem;
+    row-gap: 1.5rem;
+    align-items: start;
+  }
+
+  .range-filter{
+    display:grid;
+    grid-template-columns:auto minmax(140px,1fr) auto minmax(140px,1fr);
+    gap:.75rem 1rem;
+    align-items:center;
+  }
+
+  .range-filter select {
+    min-width: 180px;   /* pode reduzir para 130 se precisar caber mais */
+    max-width: 200px;   /* evita alongar demais */
+  }
+
+  /* chips podem quebrar linha dentro da coluna sem estourar */
+  .filter-chips {
+    flex-wrap: wrap;
+    gap: .6rem;
+  }
+}
+
+/* Ultra-wide: um pouco mais de respiro, mas ainda em 1 linha */
+@media (min-width: 1600px) {
+  .filters-grid { column-gap: 2.5rem; row-gap: 2rem; }
+}
 
 /* Responsividade */
 @media (max-width: 768px) {
