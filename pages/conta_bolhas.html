@@ -799,6 +799,27 @@
             white-space: nowrap;
             border: 0;
         }
+
+        /* A11y: garanta que o overlay não bloqueie cliques quando oculto */
+        .accessibility-panel-overlay { pointer-events: none; }
+        .accessibility-panel-overlay.active { pointer-events: auto; }
+
+        /* A11y: evite que o ícone gigante extrapole do botão flutuante */
+        .accessibility-float-btn,
+        #accessibilityFloatBtn { overflow: hidden; }
+
+        /* Garante que o wrapper do VLibras não intercepte cliques por padrão nesta página */
+        [vw-plugin-wrapper] { pointer-events: none !important; }
+
+        /* Ajuste do footer no mobile: evita "luz"/blur e garante sobreposição correta */
+        @media (max-width: 768px) {
+          .game-footer-bolhas {
+            z-index: 1200;
+            backdrop-filter: none;
+            background: rgba(0,0,0,0.25);
+            color: #fff;
+          }
+        }
     </style>
 </head>
 <body>
@@ -833,11 +854,11 @@
               <div class="startMenu-content" role="group" aria-label="Menu inicial">
                 <h2 id="menuTitle">Vamos Contar Bolhas!</h2>
                 <div id="difficultySelector">
-                  <button class="difficultyBtn selected" data-level="1">🌟 Fácil</button>
-                  <button class="difficultyBtn" data-level="2">⭐ Médio</button>
-                  <button class="difficultyBtn" data-level="3">💫 Difícil</button>
+                  <button class="difficultyBtn selected" data-level="1" type="button" onclick="selectDifficulty(1)">🌟 Fácil</button>
+                  <button class="difficultyBtn" data-level="2" type="button" onclick="selectDifficulty(2)">⭐ Médio</button>
+                  <button class="difficultyBtn" data-level="3" type="button" onclick="selectDifficulty(3)">💫 Difícil</button>
                 </div>
-                <button id="startBtn">INICIAR</button>
+                <button id="startBtn" type="button" onclick="startGame()">INICIAR</button>
               </div>
             </div>
 
@@ -863,9 +884,9 @@
 
                 <!-- Controles do Jogo -->
                 <div id="gameControls">
-                    <button class="gameControlBtn" id="menuBtnInGame" title="Menu Principal">🏠</button>
-                    <button class="gameControlBtn" id="soundBtn" title="Som">🔊</button>
-                    <button class="gameControlBtn" id="resetBtn" title="Reiniciar">🔄</button>
+                    <button class="gameControlBtn" id="menuBtnInGame" type="button" title="Menu Principal" onclick="backToMenu()">🏠</button>
+                    <button class="gameControlBtn" id="soundBtn" type="button" title="Som" onclick="toggleSound()">🔊</button>
+                    <button class="gameControlBtn" id="resetRoundBtn" type="button" title="Reiniciar" onclick="resetRound()">🔄</button>
                 </div>
 
                 <!-- Varinha de sabão -->
@@ -1046,14 +1067,16 @@
         // Configurar event listeners
         function setupEventListeners() {
             // Botão iniciar
-            document.getElementById('startBtn').addEventListener('click', startGame);
+            const sb = document.getElementById('startBtn');
+            if (sb) sb.addEventListener('click', startGame);
 
             // Seleção de dificuldade no menu
             document.querySelectorAll('.difficultyBtn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
+                    const target = e.currentTarget || e.target;
                     document.querySelectorAll('.difficultyBtn').forEach(b => b.classList.remove('selected'));
-                    e.target.classList.add('selected');
-                    gameState.level = parseInt(e.target.dataset.level);
+                    target.classList.add('selected');
+                    gameState.level = parseInt(target.dataset.level);
                     gameState.currentRound = 1;
                     saveProgress();
                 });
@@ -1062,7 +1085,7 @@
             // Controles do jogo
             document.getElementById('menuBtnInGame').addEventListener('click', backToMenu);
             document.getElementById('soundBtn').addEventListener('click', toggleSound);
-            document.getElementById('resetBtn').addEventListener('click', resetRound);
+            document.getElementById('resetRoundBtn').addEventListener('click', resetRound);
 
             // Botões de vitória
             document.getElementById('victoryMenuBtn').addEventListener('click', backToMenu);
@@ -1079,6 +1102,16 @@
                     }
                 }
             });
+        }
+
+        // Fallback direto para seleção de dificuldade, usado pelos onclick dos botões
+        function selectDifficulty(level) {
+            document.querySelectorAll('.difficultyBtn').forEach(b => b.classList.remove('selected'));
+            const btn = document.querySelector(`.difficultyBtn[data-level="${level}"]`);
+            if (btn) btn.classList.add('selected');
+            gameState.level = parseInt(level);
+            gameState.currentRound = 1;
+            saveProgress();
         }
 
         // Iniciar jogo
@@ -1531,7 +1564,7 @@
         } else {
             init();
         }
-    </script>
+</script>
     <script>
         (function fixMobileVH(){
             const setVH = () => {
@@ -1543,6 +1576,205 @@
             window.addEventListener('orientationchange', setVH);
         })();
         </script>
+
+  <!-- ===========================
+      Widget de Acessibilidade (cópia padronizada)
+      =========================== -->
+
+  <!-- Botão Flutuante de Acessibilidade -->
+  <button
+    class="accessibility-float-btn"
+    id="accessibilityFloatBtn"
+    aria-label="Abrir menu de acessibilidade"
+    aria-controls="accessibilityPanel"
+    aria-expanded="false"
+    onclick="toggleAccessibilityPanel()"
+  >
+    <span class="accessibility-icon" aria-hidden="true">
+      <img src="../src/assets/images/icon-acessibilidade.png" alt="">
+    </span>
+  </button>
+
+  <!-- Overlay -->
+  <div
+    class="accessibility-panel-overlay"
+    id="accessibilityOverlay"
+    onclick="closeAccessibilityPanel()"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Painel de Acessibilidade (drawer à direita) -->
+  <div
+    class="accessibility-panel-modern right-drawer"
+    id="accessibilityPanel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="accessibilityPanelTitle"
+  >
+    <div class="panel-header-modern">
+      <h2 id="accessibilityPanelTitle">Menu de Acessibilidade</h2>
+      <button
+        class="close-btn"
+        type="button"
+        aria-label="Fechar menu de acessibilidade"
+        onclick="closeAccessibilityPanel()"
+      >
+        ×
+      </button>
+    </div>
+
+    <!-- Área rolável do painel -->
+    <div class="panel-content" id="accessibilityPanelContent" tabindex="-1">
+      <!-- Perfis de Acessibilidade -->
+      <div class="accessibility-profiles">
+        <h3>Selecione seu perfil de acessibilidade</h3>
+        <div class="profiles-grid">
+          <button class="profile-btn" onclick="applyProfile('motor')" data-profile="motor" type="button">
+            <span class="profile-icon" aria-hidden="true">🦽</span>
+            <span class="profile-text">Deficiência Motora</span>
+          </button>
+          <button class="profile-btn" onclick="applyProfile('visual')" data-profile="visual" type="button">
+            <span class="profile-icon" aria-hidden="true">👁️</span>
+            <span class="profile-text">Deficiência Visual</span>
+          </button>
+          <button class="profile-btn" onclick="applyProfile('cognitive')" data-profile="cognitive" type="button">
+            <span class="profile-icon" aria-hidden="true">🧠</span>
+            <span class="profile-text">Deficiência Cognitiva</span>
+          </button>
+          <button class="profile-btn" onclick="applyProfile('hearing')" data-profile="hearing" type="button">
+            <span class="profile-icon" aria-hidden="true">🦻</span>
+            <span class="profile-text">Deficiência Auditiva</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ferramentas Individuais -->
+      <div class="tools-grid" role="group" aria-label="Ferramentas de acessibilidade">
+        <!-- Linha 1 -->
+        <button class="tool-btn" onclick="toggleTextToSpeech()" id="ttsBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔊</span>
+          <span class="tool-text">Clique para Ouvir</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleHighContrast()" id="contrastBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🌓</span>
+          <span class="tool-text">Alto Contraste</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleDarkMode()" id="darkModeBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🌙</span>
+          <span class="tool-text">Modo Escuro</span>
+        </button>
+
+        <!-- Linha 2 -->
+        <button class="tool-btn" onclick="decreaseFontSize()" id="decreaseFontBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔤</span>
+          <span class="tool-text">Diminuir Fonte</span>
+        </button>
+
+        <button class="tool-btn" onclick="increaseFontSize()" id="increaseFontBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔠</span>
+          <span class="tool-text">Aumentar Fonte</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleDyslexiaFont()" id="dyslexiaBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">📝</span>
+          <span class="tool-text">Fonte Dislexia</span>
+        </button>
+
+        <!-- Linha 3 -->
+        <button class="tool-btn" onclick="toggleGrayscale()" id="grayscaleBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">⚫</span>
+          <span class="tool-text">Monocromático</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleLowSaturation()" id="lowSatBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔘</span>
+          <span class="tool-text">Baixa Saturação</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleHighSaturation()" id="highSatBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🟡</span>
+          <span class="tool-text">Alta Saturação</span>
+        </button>
+
+        <!-- Linha 4 -->
+        <button class="tool-btn" onclick="toggleReadingRuler()" id="rulerBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">📏</span>
+          <span class="tool-text">Régua de Leitura</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleMagnifier()" id="magnifierBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">📖</span>
+          <span class="tool-text">Mascara de Leitura</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleFocusHighlight()" id="focusBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🎯</span>
+          <span class="tool-text">Destacar Links</span>
+        </button>
+
+        <!-- Linha 5 -->
+        <button class="tool-btn" onclick="pauseAnimations()" id="animationBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">⏸️</span>
+          <span class="tool-text">Pausar Animações</span>
+        </button>
+
+        <button class="tool-btn" onclick="showKeyboardShortcuts()" type="button">
+          <span class="tool-icon" aria-hidden="true">⌨️</span>
+          <span class="tool-text">Atalhos Teclado</span>
+        </button>
+
+        <!-- VLibras controlado pelo painel -->
+        <button class="tool-btn" onclick="enableVLibras()" id="vlibrasBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🤟</span>
+          <span class="tool-text">Ativar VLibras</span>
+        </button>
+
+        <!-- Reset de Acessibilidade (ID diferente para não conflitar com reset do jogo) -->
+        <button class="tool-btn" onclick="resetAll()" id="a11yResetBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔄</span>
+          <span class="tool-text">Resetar Tudo</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Elementos auxiliares fora do painel -->
+  <div class="reading-ruler" id="readingRuler" aria-hidden="true"></div>
+  <div class="magnifier-circle" id="magnifier" aria-hidden="true"></div>
+
+  <!-- VLibras -->
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    try { new window.VLibras.Widget('https://vlibras.gov.br/app'); } catch(e){}
+  </script>
+
+  <!-- Script do painel -->
+  <script src="../src/js/acessibilidade.js" defer></script>
+
+  <!-- Ajuste local: quando usuário ativar o VLibras pelo painel, reabilita interação do wrapper -->
+  <script>
+    window.addEventListener('DOMContentLoaded', function(){
+      if (typeof window.enableVLibras === 'function') {
+        const __origEnable = window.enableVLibras;
+        window.enableVLibras = function(){
+          const ret = __origEnable.apply(this, arguments);
+          setTimeout(function(){
+            var pw = document.querySelector('[vw-plugin-wrapper]');
+            if (pw) pw.style.pointerEvents = 'auto';
+          }, 250);
+          return ret;
+        };
+      }
+    });
+  </script>
 
 </body>
 </html>
