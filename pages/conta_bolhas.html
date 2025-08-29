@@ -823,7 +823,10 @@
           /* Permite rolar para que o rodapé nunca cubra conteúdo */
           body { overflow-y: auto; }
           /* Afasta o container do rodapé fixo */
-          #mainContainer { margin-bottom: calc(var(--footer-mobile-h) + env(safe-area-inset-bottom, 0px) + 6px); }
+          #mainContainer { 
+            margin-bottom: calc(var(--footer-mobile-h) + env(safe-area-inset-bottom, 0px) + 14px);
+            margin-top: 8px; /* respiro no topo */
+          }
           /* Sobe o botão flutuante de acessibilidade para não colidir com o rodapé */
           .accessibility-float-btn, #accessibilityFloatBtn {
             bottom: calc(var(--footer-mobile-h) + env(safe-area-inset-bottom, 0px) + 12px);
