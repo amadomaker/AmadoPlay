@@ -279,7 +279,7 @@
             display: block;
         }
 
-        /* HUD do jogo */
+        /* HUD do jogo para desktop - separado da sequência */
         #gameHUD {
             position: absolute;
             top: 20px;
@@ -289,10 +289,11 @@
             align-items: flex-start;
             gap: 10px;
             background: rgba(255, 255, 255, 0.95);
-            padding: 15px 40px;
+            padding: 15px 25px;
             border-radius: 25px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             z-index: 100;
+            /* Sem sequência agora */
         }
 
         #roundInfo {
@@ -311,16 +312,14 @@
         }
 
         #counter {
-        font-size: 28px;
-        font-weight: bold;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        background-clip: text;             /* versão padrão */
-        -webkit-background-clip: text;     /* versão com prefixo */
-        -webkit-text-fill-color: transparent;
-    }
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-
-        /* Indicador de progresso */
         #progressBar {
             width: 200px;
             height: 8px;
@@ -330,12 +329,66 @@
             margin-top: 5px;
         }
 
-        #progressFill {
-            height: 100%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            transition: width 0.3s ease;
-            width: 0%;
+        /* Sequência separada para desktop */
+        #sequenceTracker {
+            position: absolute;
+            top: 160px;
+            left: 280px;
+            display: grid;
+
+            /* ↑ aumenta a altura de cada linha (22px → 32px, por ex.) */
+            grid-auto-rows: 32px;
+
+            /* ↑ aumenta espaço entre itens (4px → 6 ou 8px) */
+            row-gap: 8px;
+
+            grid-template-columns: 1fr;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+
+            /* ↑ padding maior para dar “respiro” interno */
+            padding: 20px 28px;
+
+            border-radius: 24px;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+            z-index: 99;
+
+            /* ↑ largura máxima maior */
+            max-width: 160px;
         }
+
+        .seqItem {
+            width: 100%;
+
+            /* ↑ mínimo maior para caber o texto ampliado */
+            min-width: 110px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: rgba(118, 75, 162, 0.08);
+            color: #764ba2;
+            border: 1px solid rgba(118, 75, 162, 0.25);
+            border-radius: 10px;
+
+            /* ↑ fonte maior */
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: .6px;
+        }
+
+        /* seus estilos existentes… */
+        #gameHUD{ position:absolute; top:20px; left:20px; }
+
+        /* valores default (serão sobrescritos no desktop pelo JS) */
+        #sequenceTracker{ position:absolute; top:160px; left:280px; }
+
+        /* Desktop apenas: diga que vamos controlar pelo JS */
+        @media (min-width:1024px){
+        #sequenceTracker{ will-change: top, left; }
+        }
+        
 
         /* Controles do jogo */
         #gameControls {
@@ -404,7 +457,7 @@
 
         /* Bolhas */
         /* Bolhas (com hitbox maior e toque mais responsivo) */
-        .bubble {
+.bubble {
         position: absolute;
         border-radius: 50%;
         cursor: pointer;
@@ -416,7 +469,17 @@
         touch-action: manipulation;           /* reduz atraso no toque */
         -webkit-tap-highlight-color: transparent;
         will-change: transform;               /* performance */
-        }
+}
+
+.bubbleLabel{
+  position: absolute; inset: 0; display:flex; align-items:center; justify-content:center;
+  font-weight: 800; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,.35), 0 0 8px rgba(0,0,0,.25);
+  font-size: 18px; letter-spacing: .4px; user-select: none; pointer-events: none;
+}
+@media (min-width:1025px){ .bubbleLabel{ font-size: 20px; } }
+
+.bubble.wrong{ animation: bubbleShake .22s linear 1; }
+@keyframes bubbleShake { 25%{ transform: translateX(-6px); } 50%{ transform: translateX(6px);} 75%{ transform: translateX(-3px);} 100%{ transform: translateX(0);} }
 
         .bubble:hover {
         transform: scale(1.06);
@@ -569,6 +632,7 @@
         }
 
         /* Responsividade Tablet */
+/* Responsividade Tablet */
         @media (max-width: 1024px) {
             #mainContainer {
                 width: 92%;
@@ -597,22 +661,77 @@
                 gap: 15px;
             }
 
-            .difficultyBtn { padding: 14px 28px; font-size: 18px; }
+            .difficultyBtn { 
+                padding: 14px 28px; 
+                font-size: 18px; 
+            }
 
+            /* HUD principal para tablet - cantinho esquerdo */
             #gameHUD {
-                top: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                align-items: center;
-                padding: 12px 30px;
+                top: 8px;
+                left: 8px;
+                transform: none; /* Remove centralização */
+                align-items: flex-start; /* Volta alinhamento à esquerda */
+                padding: 10px 15px;
+                gap: 5px;
+                border-radius: 15px;
+                background: rgba(255, 255, 255, 0.9);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+                width: 200px;
+                height: 75px;
+            }
+
+            #roundInfo {
+                font-size: 12px;
+                line-height: 1.2;
+                margin-bottom: 3px;
+                white-space: nowrap;
             }
 
             #targetDisplay {
-                font-size: 20px;
+                font-size: 17px;
+                gap: 8px;
+                margin-bottom: 3px;
+                white-space: nowrap;
+                overflow: hidden;
             }
 
             #counter {
-                font-size: 26px;
+                font-size: 22px;
+                margin-bottom: 3px;
+            }
+
+            #progressBar {
+                width: 160px;
+                height: 6px;
+                margin-top: 2px;
+            }
+
+            /* Sequência separada para tablet */
+            #sequenceTracker {
+                position: absolute;
+                top: 95px; /* Posicionado abaixo do HUD principal com mais espaço */
+                left: 8px;
+                margin-top: 0;
+                background: rgba(255, 255, 255, 0.7);
+                backdrop-filter: blur(10px);
+                border-radius: 12px;
+                padding: 8px 10px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                max-width: 60px;
+                z-index: 99;
+                grid-template-columns: 1fr;
+                grid-auto-rows: 22px;
+                row-gap: 4px;
+                align-self: stretch;
+            }
+
+            .seqItem {
+                min-width: 40px;
+                font-size: 13px;
+                font-weight: 600;
+                border-radius: 5px;
+                letter-spacing: 0.2px;
             }
 
             .gameControlBtn {
@@ -624,9 +743,10 @@
 
         /* Responsividade Mobile */
         @media (max-width: 768px) {
-          .bg-video {
-            object-position: 90% center;
-}
+            .bg-video {
+                object-position: 90% center;
+            }
+            
             #mainContainer {
                 width: 95%;
                 height: 90vh;
@@ -657,34 +777,80 @@
                 width: 100%;
             }
 
-            .difficultyBtn { padding: 14px 28px; font-size: 18px; width: 100%; }
+            .difficultyBtn { 
+                padding: 14px 28px; 
+                font-size: 18px; 
+                width: 100%; 
+            }
 
-            #startBtn { padding: 18px 44px; font-size: 24px; }
+            #startBtn { 
+                padding: 18px 44px; 
+                font-size: 24px; 
+            }
 
+            /* HUD principal para mobile - cantinho esquerdo */
             #gameHUD {
-                top: 10px;
-                left: 50%;
-                transform: translateX(-50%);
-                align-items: center;
-                padding: 10px 20px;
-                width: 90%;
+                top: 6px;
+                left: 6px;
+                transform: none; /* Remove qualquer transform */
+                align-items: flex-start;
+                padding: 6px 10px;
+                gap: 3px;
+                background: rgba(255, 255, 255, 0.85);
+                border-radius: 12px;
+                width: 160px;
+                height: 55px;
             }
 
             #roundInfo {
-                font-size: 12px;
+                font-size: 10px;
+                line-height: 1.1;
+                margin-bottom: 1px;
+                white-space: nowrap;
             }
 
             #targetDisplay {
-                font-size: 18px;
+                font-size: 14px;
+                gap: 6px;
+                margin-bottom: 1px;
+                white-space: nowrap;
+                overflow: hidden;
             }
 
             #counter {
-                font-size: 22px;
+                font-size: 18px;
+                margin-bottom: 1px;
             }
 
             #progressBar {
-                width: 150px;
-                height: 6px;
+                width: 120px;
+                height: 4px;
+                margin-top: 1px;
+            }
+
+            /* Sequência separada para mobile */
+            #sequenceTracker {
+                position: absolute;
+                top: 73px; /* Ajustado para mobile */
+                left: 6px;
+                margin-top: 0;
+                max-width: 48px;
+                background: rgba(255, 255, 255, 0.6);
+                backdrop-filter: blur(8px);
+                padding: 5px 7px;
+                border-radius: 10px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+                grid-auto-rows: 18px;
+                row-gap: 3px;
+                z-index: 99;
+                align-self: stretch;
+            }
+
+            .seqItem {
+                min-width: 32px;
+                font-size: 11px;
+                font-weight: 600;
+                border-radius: 3px;
             }
 
             #gameControls {
@@ -730,7 +896,11 @@
                 gap: 10px;
             }
 
-            .victoryBtn { padding: 12px 22px; font-size: 16px; width: 100%; }
+            .victoryBtn { 
+                padding: 12px 22px; 
+                font-size: 16px; 
+                width: 100%; 
+            }
         }
 
         /* Responsividade para telas muito pequenas */
@@ -753,15 +923,77 @@
                 padding: 15px;
             }
 
+            /* HUD principal para telas pequenas */
             #gameHUD {
-                width: 85%;
-                padding: 8px 15px;
+                top: 5px;
+                left: 5px;
+                padding: 5px 8px;
+                gap: 2px;
+                width: 140px;
+                height: 50px;
+            }
+
+            #roundInfo {
+                font-size: 9px;
+                line-height: 1.1;
+                margin-bottom: 1px;
+                white-space: nowrap;
+            }
+
+            #targetDisplay {
+                font-size: 13px;
+                gap: 5px;
+                margin-bottom: 1px;
+                white-space: nowrap;
+                overflow: hidden;
             }
 
             #counter {
-                font-size: 20px;
+                font-size: 16px;
+                margin-bottom: 1px;
+            }
+
+            #progressBar {
+                width: 100px;
+                height: 3px;
+            }
+
+            /* Sequência para telas pequenas */
+            #sequenceTracker {
+                top: 68px; /* Ajustado para telas menores */
+                left: 5px;
+                max-width: 42px;
+                background: rgba(255, 255, 255, 0.5);
+                padding: 4px 6px;
+                border-radius: 8px;
+                grid-auto-rows: 16px;
+                row-gap: 2px;
+            }
+
+            .seqItem {
+                min-width: 28px;
+                font-size: 10px;
+                font-weight: 600;
             }
         }
+            /* Sequência para telas pequenas */
+            #sequenceTracker {
+                top: 85px; /* Ajustado para telas menores */
+                left: 5px;
+                max-width: 42px;
+                background: rgba(255, 255, 255, 0.5);
+                padding: 4px 6px;
+                border-radius: 8px;
+                grid-auto-rows: 16px;
+                row-gap: 2px;
+            }
+
+            .seqItem {
+                min-width: 28px;
+                font-size: 10px;
+                font-weight: 600;
+            }
+        
 
         /* Acessibilidade */
         @media (prefers-reduced-motion: reduce) {
@@ -898,6 +1130,7 @@
                     <div id="progressBar">
                         <div id="progressFill"></div>
                     </div>
+                    <div id="sequenceTracker" aria-label="Sequência" role="list"></div>
                 </div>
 
                 <!-- Controles do Jogo -->
@@ -1089,6 +1322,19 @@
                     }, i * 100);
                 });
             }
+
+            playError() {
+                if (!this.enabled || !this.context) return;
+                const now = this.context.currentTime;
+                const osc = this.context.createOscillator();
+                const g = this.context.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(260, now);
+                g.gain.setValueAtTime(0.18, now);
+                g.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+                osc.connect(g); g.connect(this.context.destination);
+                osc.start(now); osc.stop(now + 0.16);
+            }
         }
 
         const audio = new AudioManager();
@@ -1167,6 +1413,10 @@
             if (btn) btn.classList.add('selected');
             gameState.level = parseInt(level);
             gameState.currentRound = 1;
+
+            // ✅ CORREÇÃO: Reset completo ao trocar de nível
+            gameState.expected = 1;
+            gameState.current = 0;  
             saveProgress();
         }
 
@@ -1176,6 +1426,9 @@
             document.getElementById('gameContainer').classList.add('active');
             gameState.isPlaying = true;
             gameState.currentRound = 1;
+            // ✅ CORREÇÃO: Garantir reset completo ao iniciar
+            gameState.expected = 1;
+            gameState.current = 0;
             startNewRound();
             gameLoop();
             const heroVideo = document.getElementById('heroVideo');
@@ -1219,6 +1472,9 @@
 
         // Resetar rodada
         function resetRound() {
+            // ✅ CORREÇÃO: Reset completo da rodada
+            gameState.expected = 1;
+            gameState.current = 0;
             startNewRound();
         }
 
@@ -1243,11 +1499,17 @@
                     // Completou todos os níveis - reinicia do 1
                     gameState.level = 1;
                     gameState.currentRound = 1;
+                    // ✅ CORREÇÃO: Reset completo ao completar todos os níveis
+                    gameState.expected = 1;
+                    gameState.current = 0;
                     announce('Incrível! Você completou todos os níveis! Vamos jogar novamente!');
                 }
             } else {
                 // Próxima rodada do mesmo nível
                 gameState.currentRound++;
+                // ✅ CORREÇÃO: Reset da sequência para próxima rodada
+                gameState.expected = 1;
+                gameState.current = 0;
             }
             
             saveProgress();
@@ -1260,6 +1522,8 @@
             gameState.target = Math.floor(Math.random() * (config.max - config.min + 1)) + config.min;
             gameState.current = 0;
             
+            gameState.expected = 1;
+
             // Limpar bolhas existentes
             gameState.bubbles.forEach(bubble => bubble.element.remove());
             gameState.bubbles = [];
@@ -1269,14 +1533,15 @@
             updateProgressBar();
             // Garante primeira bolha 
             gameState.lastBubbleTime = 0;
-            createBubble();
+            createBubble(1);
             
             // Anunciar para leitores de tela
             announce(`Rodada ${gameState.currentRound} de ${gameState.roundsPerLevel}. Estoure ${gameState.target} bolhas. Nível ${levelConfig[gameState.level].name}`);
         }
 
         // Criar bolha com movimento dinâmico
-        function createBubble() {
+        // Função melhorada para criar bolhas com posições e movimentos mais variados
+        function createBubble(forcedNumber) {
             const config = levelConfig[gameState.level].rounds[gameState.currentRound - 1];
             const size = Math.random() * (config.size.max - config.size.min) + config.size.min;
             const speed = Math.random() * (config.speed.max - config.speed.min) + config.speed.min;
@@ -1287,25 +1552,91 @@
             bubble.style.height = size + 'px';
             bubble.style.background = bubbleColors[Math.floor(Math.random() * bubbleColors.length)];
             bubble.style.boxShadow = `0 0 20px rgba(255, 255, 255, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.3)`;
+
+            // Número da bolha conforme dificuldade
+            const maxByLevel = {1:20, 2:30, 3:40};
+            const maxNum = maxByLevel[gameState.level] || 20;
+            const value = forcedNumber || (Math.floor(Math.random() * maxNum) + 1);
+            bubble.dataset.value = String(value);
+            const label = document.createElement('span');
+            label.className = 'bubbleLabel';
+            label.textContent = value;
+            bubble.appendChild(label);
             
-            // Posição inicial com variação maior
-            const wandRect = document.getElementById('bubbleWand').getBoundingClientRect();
+            // ===== NOVO SISTEMA DE POSICIONAMENTO E DIREÇÃO =====
             const containerRect = document.getElementById('contentArea').getBoundingClientRect();
+            const containerWidth = containerRect.width;
+            const containerHeight = containerRect.height;
             
-            // Variar posição de saída baseado no movimento
-            let startXVariation = 0;
-            switch(config.movement) {
-                case 'slight': startXVariation = (Math.random() - 0.5) * 120; break;
-                case 'moderate': startXVariation = (Math.random() - 0.5) * 180; break;
-                case 'zigzag': startXVariation = (Math.random() - 0.5) * 250; break;
-                case 'curved': startXVariation = (Math.random() - 0.5) * 300; break;
-                case 'random': startXVariation = (Math.random() - 0.5) * 400; break;
-                case 'chaotic': startXVariation = (Math.random() - 0.5) * 500; break;
-                default: startXVariation = (Math.random() - 0.5) * 60;
+            // Várias opções de spawn (entrada das bolhas)
+            const spawnOptions = [
+                // Da varinha (comportamento original) - 30%
+                'wand',
+                // Das bordas laterais - 25% cada lado
+                'left-edge',
+                'right-edge', 
+                // Do topo (caindo) - 10%
+                'top-edge',
+                // De baixo (subindo) - 10%
+                'bottom-edge'
+            ];
+            
+            // Probabilidades ajustadas por dificuldade
+            let spawnWeights = {1: [0.5, 0.2, 0.2, 0.05, 0.05], 2: [0.3, 0.25, 0.25, 0.1, 0.1], 3: [0.2, 0.2, 0.2, 0.2, 0.2]};
+            const weights = spawnWeights[gameState.level];
+            const rand = Math.random();
+            let cumulative = 0;
+            let spawnType = 'wand';
+            
+            for (let i = 0; i < weights.length; i++) {
+                cumulative += weights[i];
+                if (rand < cumulative) {
+                    spawnType = spawnOptions[i];
+                    break;
+                }
             }
             
-            const startX = (wandRect.left - containerRect.left) + wandRect.width / 2 - size / 2 + startXVariation;
-            const startY = (wandRect.top - containerRect.top) - size + 100;
+            let startX, startY, vx, vy;
+            
+            switch(spawnType) {
+                case 'wand':
+                    // Posicionamento original da varinha com variação
+                    const wandRect = document.getElementById('bubbleWand').getBoundingClientRect();
+                    const wandVariation = (Math.random() - 0.5) * 100;
+                    startX = (wandRect.left - containerRect.left) + wandRect.width / 2 - size / 2 + wandVariation;
+                    startY = (wandRect.top - containerRect.top) - size + 50;
+                    vx = (Math.random() - 0.5) * speed * 0.5; // movimento horizontal leve
+                    vy = -speed; // para cima
+                    break;
+                    
+                case 'left-edge':
+                    startX = -size; // fora da tela à esquerda
+                    startY = Math.random() * (containerHeight - size);
+                    vx = speed * (0.7 + Math.random() * 0.6); // direção direita
+                    vy = (Math.random() - 0.5) * speed * 0.8; // movimento vertical variado
+                    break;
+                    
+                case 'right-edge':
+                    startX = containerWidth; // fora da tela à direita
+                    startY = Math.random() * (containerHeight - size);
+                    vx = -speed * (0.7 + Math.random() * 0.6); // direção esquerda
+                    vy = (Math.random() - 0.5) * speed * 0.8; // movimento vertical variado
+                    break;
+                    
+                case 'top-edge':
+                    startX = Math.random() * (containerWidth - size);
+                    startY = -size; // fora da tela em cima
+                    vx = (Math.random() - 0.5) * speed * 0.6; // movimento horizontal variado
+                    vy = speed * (0.5 + Math.random() * 0.8); // para baixo
+                    break;
+                    
+                case 'bottom-edge':
+                    startX = Math.random() * (containerWidth - size);
+                    startY = containerHeight; // fora da tela embaixo
+                    vx = (Math.random() - 0.5) * speed * 0.6; // movimento horizontal variado
+                    vy = -speed * (0.5 + Math.random() * 0.8); // para cima
+                    break;
+            }
             
             bubble.style.left = startX + 'px';
             bubble.style.top = startY + 'px';
@@ -1313,99 +1644,116 @@
             // Adicionar ao container do jogo
             document.getElementById('gameContainer').appendChild(bubble);
             
-            // Configurar movimento baseado no tipo
+            // ===== MOVIMENTO APRIMORADO =====
             let movementData = {
                 type: config.movement,
                 amplitude: 0,
                 frequency: 0,
                 phase: Math.random() * Math.PI * 2,
-                direction: Math.random() > 0.5 ? 1 : -1
+                direction: Math.random() > 0.5 ? 1 : -1,
+                spawnType: spawnType
             };
             
+            // Configurar amplitude e frequência baseado no movimento
             switch(config.movement) {
                 case 'slight':
-                    movementData.amplitude = 20 + Math.random() * 10;
-                    movementData.frequency = 0.01 + Math.random() * 0.01;
+                    movementData.amplitude = 15 + Math.random() * 10;
+                    movementData.frequency = 0.008 + Math.random() * 0.008;
                     break;
                 case 'moderate':
-                    movementData.amplitude = 30 + Math.random() * 20;
-                    movementData.frequency = 0.02 + Math.random() * 0.01;
+                    movementData.amplitude = 25 + Math.random() * 15;
+                    movementData.frequency = 0.015 + Math.random() * 0.01;
                     break;
                 case 'zigzag':
-                    movementData.amplitude = 40 + Math.random() * 30;
-                    movementData.frequency = 0.03 + Math.random() * 0.02;
+                    movementData.amplitude = 35 + Math.random() * 25;
+                    movementData.frequency = 0.025 + Math.random() * 0.015;
                     break;
                 case 'curved':
-                    movementData.amplitude = 50 + Math.random() * 40;
-                    movementData.frequency = 0.02 + Math.random() * 0.02;
+                    movementData.amplitude = 40 + Math.random() * 30;
+                    movementData.frequency = 0.02 + Math.random() * 0.015;
                     break;
                 case 'random':
+                    movementData.amplitude = 50 + Math.random() * 40;
+                    movementData.frequency = 0.03 + Math.random() * 0.02;
+                    movementData.changeRate = 0.015;
+                    break;
+                case 'chaotic':
                     movementData.amplitude = 60 + Math.random() * 50;
                     movementData.frequency = 0.04 + Math.random() * 0.03;
                     movementData.changeRate = 0.02;
-                    break;
-                case 'chaotic':
-                    movementData.amplitude = 80 + Math.random() * 60;
-                    movementData.frequency = 0.05 + Math.random() * 0.04;
-                    movementData.changeRate = 0.03;
                     movementData.chaos = true;
                     break;
             }
             
-            // Criar objeto de bolha
+            // Criar objeto de bolha com velocidades iniciais
             const bubbleObj = {
                 element: bubble,
                 x: startX,
                 y: startY,
                 baseX: startX,
-                vy: -speed,
+                vx: vx, // velocidade horizontal inicial
+                vy: vy, // velocidade vertical inicial
                 size: size,
                 popped: false,
                 movement: movementData,
-                time: 0
+                time: 0,
+                bounceCount: 0 // contador de quiques para variedade
             };
             
-            // Event listener para estourar
+            // Event listeners para estourar
             bubble.addEventListener('click', () => popBubble(bubbleObj));
             bubble.addEventListener('pointerdown', (e) => {
                 e.preventDefault();
                 popBubble(bubbleObj);
-                });
+            });
             
             gameState.bubbles.push(bubbleObj);
-            
             return bubbleObj;
         }
 
-        // Estourar bolha
+
+        // Estourar bolha (sequência)
         function popBubble(bubbleObj) {
             if (bubbleObj.popped || gameState.current >= gameState.target) return;
-            
+
+            const expected = gameState.expected || 1;
+            const val = parseInt(bubbleObj.element.dataset.value || '0', 10);
+
+            // Só estoura se estiver na sequência
+            if (val !== expected) {
+                bubbleObj.element.classList.remove('wrong');
+                void bubbleObj.element.offsetWidth; // reflow p/ reiniciar animação
+                bubbleObj.element.classList.add('wrong');
+                if (gameState.soundEnabled && audio.context && audio.playError) audio.playError();
+                return;
+            }
+
             bubbleObj.popped = true;
             gameState.current++;
-            
+            gameState.expected = expected + 1;
+
             // Efeito visual de estouro
             const rect = bubbleObj.element.getBoundingClientRect();
             const containerRect = document.getElementById('contentArea').getBoundingClientRect();
             createPopEffect(
-                rect.left - containerRect.left + bubbleObj.size / 2, 
+                rect.left - containerRect.left + bubbleObj.size / 2,
                 rect.top - containerRect.top + bubbleObj.size / 2,
                 bubbleObj.element
             );
-            
+
             // Som
             if (gameState.soundEnabled && audio.context) {
                 audio.playPop();
             }
-            
+
             // Remover bolha
             bubbleObj.element.remove();
             const index = gameState.bubbles.indexOf(bubbleObj);
             if (index > -1) gameState.bubbles.splice(index, 1);
-            
-            // Atualizar display
+
+            // Atualizar UI
             updateDisplay();
-            
+
             // Verificar vitória
             if (gameState.current === gameState.target) {
                 setTimeout(victory, 300);
@@ -1507,73 +1855,150 @@
         }
 
         // Game loop com movimento dinâmico
+        // ===== GAME LOOP COM FÍSICA APRIMORADA =====
         function gameLoop() {
             if (!gameState.isPlaying) return;
             
             const now = Date.now();
             const config = levelConfig[gameState.level].rounds[gameState.currentRound - 1];
             
-            // Criar novas bolhas
-            if (now - gameState.lastBubbleTime > config.spawnRate && gameState.bubbles.length < 10) {
-                createBubble();
+            // Lógica de criação de bolhas (mantém a mesma do código anterior)
+            const expectedNum = gameState.expected || 1;
+            const hasExpectedBubble = gameState.bubbles.some(b => 
+                !b.popped && parseInt(b.element.dataset.value || '0', 10) === expectedNum
+            );
+            
+            if (!hasExpectedBubble && expectedNum <= gameState.target) {
+                createBubble(expectedNum);
+                gameState.lastBubbleTime = now;
+            }
+            else if (now - gameState.lastBubbleTime > config.spawnRate && gameState.bubbles.length < config.maxBubbles) {
+                if (Math.random() < 0.7 && !hasExpectedBubble && expectedNum <= gameState.target) {
+                    createBubble(expectedNum);
+                } else {
+                    createBubble();
+                }
                 gameState.lastBubbleTime = now;
             }
             
-            // Atualizar posição das bolhas com movimento
+            // ===== FÍSICA DE MOVIMENTO APRIMORADA =====
+            const cont = document.getElementById('contentArea');
+            const containerWidth = cont.clientWidth;
+            const containerHeight = cont.clientHeight;
+            
             gameState.bubbles.forEach(bubble => {
                 if (!bubble.popped) {
                     bubble.time++;
+                    
+                    // ===== MOVIMENTO BASE (velocidade) =====
+                    bubble.x += bubble.vx;
                     bubble.y += bubble.vy;
                     
-                    // Aplicar movimento lateral baseado no tipo
-                    let deltaX = 0;
+                    // ===== MOVIMENTO ADICIONAL (padrões) =====
+                    let deltaX = 0, deltaY = 0;
+                    
                     switch(bubble.movement.type) {
                         case 'straight':
-                            // Sem movimento lateral
+                            // Só movimento base
                             break;
+                            
                         case 'slight':
                         case 'moderate':
                             deltaX = Math.sin(bubble.time * bubble.movement.frequency + bubble.movement.phase) * 
                                     bubble.movement.amplitude * bubble.movement.direction;
                             break;
+                            
                         case 'zigzag':
                             deltaX = Math.sin(bubble.time * bubble.movement.frequency) * 
                                     bubble.movement.amplitude * bubble.movement.direction;
+                            deltaY = Math.cos(bubble.time * bubble.movement.frequency * 0.7) * 
+                                    bubble.movement.amplitude * 0.3;
                             break;
+                            
                         case 'curved':
+                            const curveTime = bubble.time * 0.01;
                             deltaX = Math.sin(bubble.time * bubble.movement.frequency + bubble.movement.phase) * 
-                                    bubble.movement.amplitude * 
-                                    (1 + Math.sin(bubble.time * 0.005)) * bubble.movement.direction;
+                                    bubble.movement.amplitude * (1 + Math.sin(curveTime)) * bubble.movement.direction;
+                            deltaY = Math.cos(bubble.time * bubble.movement.frequency * 0.8) * 
+                                    bubble.movement.amplitude * 0.4;
                             break;
+                            
                         case 'random':
                             if (Math.random() < bubble.movement.changeRate) {
                                 bubble.movement.direction *= -1;
+                                // Adicionar pequena variação na velocidade base
+                                bubble.vx += (Math.random() - 0.5) * 0.2;
+                                bubble.vy += (Math.random() - 0.5) * 0.2;
                             }
                             deltaX = Math.sin(bubble.time * bubble.movement.frequency + bubble.movement.phase) * 
                                     bubble.movement.amplitude * bubble.movement.direction;
+                            deltaY = Math.cos(bubble.time * bubble.movement.frequency * 1.3) * 
+                                    bubble.movement.amplitude * 0.5;
                             break;
+                            
                         case 'chaotic':
                             if (Math.random() < bubble.movement.changeRate) {
                                 bubble.movement.direction *= -1;
-                                bubble.movement.frequency += (Math.random() - 0.5) * 0.01;
+                                bubble.movement.frequency += (Math.random() - 0.5) * 0.008;
+                                // Variação mais forte na velocidade
+                                bubble.vx += (Math.random() - 0.5) * 0.4;
+                                bubble.vy += (Math.random() - 0.5) * 0.4;
                             }
-                            deltaX = Math.sin(bubble.time * bubble.movement.frequency + bubble.movement.phase) * 
-                                    bubble.movement.amplitude * bubble.movement.direction * 
-                                    (1 + Math.random() * 0.5);
+                            const chaos1 = Math.sin(bubble.time * bubble.movement.frequency + bubble.movement.phase);
+                            const chaos2 = Math.cos(bubble.time * bubble.movement.frequency * 1.7 + bubble.movement.phase);
+                            deltaX = chaos1 * bubble.movement.amplitude * bubble.movement.direction * (1 + Math.random() * 0.3);
+                            deltaY = chaos2 * bubble.movement.amplitude * 0.6 * (1 + Math.random() * 0.4);
                             break;
                     }
                     
-                    bubble.x = bubble.baseX + deltaX;
+                    // Aplicar movimento adicional
+                    bubble.x += deltaX * 0.02; // escala menor para não sobrecarregar
+                    bubble.y += deltaY * 0.02;
                     
-                    // Aplicar transformação
-                    bubble.element.style.transform = `translate(${bubble.x - parseFloat(bubble.element.style.left)}px, ${bubble.y - parseFloat(bubble.element.style.top)}px)`;
+                    // ===== SISTEMA DE QUIQUE APRIMORADO =====
+                    const minX = 0;
+                    const maxX = containerWidth - bubble.size;
+                    const minY = 0;
+                    const maxY = containerHeight - bubble.size;
                     
-                    // Remover bolhas que saíram da tela
-                    if (bubble.y < -bubble.size - 100) {
-                        bubble.element.remove();
-                        const index = gameState.bubbles.indexOf(bubble);
-                        if (index > -1) gameState.bubbles.splice(index, 1);
+                    // Quique nas bordas com variação
+                    if (bubble.x <= minX) {
+                        bubble.x = minX;
+                        bubble.vx = Math.abs(bubble.vx) * (0.7 + Math.random() * 0.3); // quique com variação
+                        bubble.bounceCount++;
+                    } else if (bubble.x >= maxX) {
+                        bubble.x = maxX;
+                        bubble.vx = -Math.abs(bubble.vx) * (0.7 + Math.random() * 0.3);
+                        bubble.bounceCount++;
                     }
+                    
+                    if (bubble.y <= minY) {
+                        bubble.y = minY;
+                        bubble.vy = Math.abs(bubble.vy) * (0.7 + Math.random() * 0.3);
+                        bubble.bounceCount++;
+                    } else if (bubble.y >= maxY) {
+                        bubble.y = maxY;
+                        bubble.vy = -Math.abs(bubble.vy) * (0.7 + Math.random() * 0.3);
+                        bubble.bounceCount++;
+                    }
+                    
+                    // Adicionar pequena aleatoriedade após vários quiques para evitar loops
+                    if (bubble.bounceCount > 0 && bubble.bounceCount % 4 === 0) {
+                        bubble.vx += (Math.random() - 0.5) * 0.3;
+                        bubble.vy += (Math.random() - 0.5) * 0.3;
+                        
+                        // Limitar velocidade para não ficar muito rápido
+                        const maxSpeed = 4;
+                        const currentSpeed = Math.sqrt(bubble.vx * bubble.vx + bubble.vy * bubble.vy);
+                        if (currentSpeed > maxSpeed) {
+                            bubble.vx = (bubble.vx / currentSpeed) * maxSpeed;
+                            bubble.vy = (bubble.vy / currentSpeed) * maxSpeed;
+                        }
+                    }
+                    
+                    // Aplicar posição final
+                    bubble.element.style.left = bubble.x + 'px';
+                    bubble.element.style.top = bubble.y + 'px';
                 }
             });
             
@@ -1587,14 +2012,29 @@
             document.getElementById('currentRound').textContent = gameState.currentRound;
             document.getElementById('totalRounds').textContent = gameState.roundsPerLevel;
             document.getElementById('targetNumber').textContent = gameState.target;
-            document.getElementById('currentCount').textContent = gameState.current;
+            document.getElementById('currentCount').textContent = gameState.current; // mantém para acessibilidade
             document.getElementById('totalCount').textContent = gameState.target;
+
+            renderSequenceTracker();
         }
 
         // Atualizar barra de progresso
         function updateProgressBar() {
             const totalProgress = ((gameState.level - 1) * gameState.roundsPerLevel + gameState.currentRound - 1) / (3 * gameState.roundsPerLevel) * 100;
             document.getElementById('progressFill').style.width = totalProgress + '%';
+        }
+
+        function renderSequenceTracker(){
+            const cont = document.getElementById('sequenceTracker');
+            if (!cont) return;
+            cont.innerHTML = '';
+            for (let i=1; i<=gameState.target; i++){
+                const el = document.createElement('div');
+                el.className = 'seqItem' + (i < gameState.expected ? ' done' : i === gameState.expected ? ' current' : '');
+                el.setAttribute('role','listitem');
+                el.textContent = i;
+                cont.appendChild(el);
+            }
         }
 
         // Anunciar para leitores de tela
@@ -1656,6 +2096,30 @@
             window.addEventListener('orientationchange', setVH);
         })();
         </script>
+        <script>
+            (function(){
+            const GAP = 16; // espaço entre HUD e sequência
+
+            function placeSequence(){
+                if (window.innerWidth < 1024) return;          // não mexe em mobile/tablet
+
+                const hud = document.getElementById('gameHUD');
+                const seq = document.getElementById('sequenceTracker');
+                if (!hud || !seq) return;
+
+                const r = hud.getBoundingClientRect();
+                // alinha topo e encosta à direita do HUD com GAP
+                seq.style.top  = (r.top + 180 )+ 'px';
+                seq.style.left = (r.left + r.width + GAP) + 'px';
+                seq.style.zIndex = 99; // abaixo do HUD se a sombra cruzar
+            }
+
+            // roda no load e quando a janela mudar de tamanho
+            window.addEventListener('load', placeSequence);
+            window.addEventListener('resize', placeSequence);
+            })();
+            </script>
+
 
   <!-- ===========================
       Widget de Acessibilidade (cópia padronizada)
