@@ -108,7 +108,7 @@ html, body {
 .accessibility-float-btn,
 #accessibilityFloatBtn {
   position: fixed;
-  bottom: 20px;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   right: 20px;
   width: 60px;
   height: 60px;
@@ -225,7 +225,11 @@ html, body {
   position: fixed;
   top: 0;
   right: 0;
-  height: 100vh;
+  height: 100vh; /* fallback */
+  /* Usa a viewport dinâmica em browsers modernos (iOS/Android) */
+  @supports (height: 100dvh) {
+    height: 100dvh;
+  }
   width: min(90vw, 560px);
   background: #f5f6fa;
   border-radius: 16px 0 0 16px;
@@ -286,6 +290,11 @@ html, body {
   padding: 20px;
   height: calc(100vh - 64px);
   overflow: auto; /* rolável somente dentro do painel */
+  padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); /* deixa espaço para o último botão */
+  scroll-padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+}
+@supports (height: 100dvh) {
+  .accessibility-panel-modern .panel-content { height: calc(100dvh - 64px); }
 }
 
 /* Perfis de Acessibilidade */
