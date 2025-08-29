@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WordCloud Live — Single File</title>
+  <style>
+    :root { --bg:#f6f7fb; --card:#ffffff; --ink:#111; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--ink);} 
+    .wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;min-height:100vh;padding:16px}
+    .card{background:var(--card);border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,.06)}
+    .panel{padding:16px}
+    .row{display:flex;gap:8px;align-items:center}
+    input,select,button{padding:10px 12px;border-radius:12px;border:1px solid #e5e7eb;font-size:14px}
+    button{background:#111;color:#fff;border:none;cursor:pointer}
+    .qr{display:flex;flex-direction:column;align-items:center;gap:8px}
+    .small{opacity:.7;font-size:12px}
+    .cloud{display:flex;align-items:center;justify-content:center;height:calc(100vh - 32px)}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .hidden{display:none}
+    .center{display:flex;min-height:100vh;align-items:center;justify-content:center;padding:16px}
+    .max{max-width:520px;width:100%}
+  </style>
+  <!-- QRCode & wordcloud2 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.js"></script>
+</head>
+<body>
+  <!-- HOST VIEW -->
+  <div id="host" class="wrap hidden">
+    <div class="card panel">
+      <h2 style="margin:.2rem 0">WordCloud Live</h2>
+      <div class="small">Arquivo único — escolha sala, gere QR e acompanhe ao vivo</div>
+
+      <div style="margin-top:12px">
+        <div class="small">Sala</div>
+        <div class="row" style="margin-top:6px">
+          <input id="room" style="flex:1" />
+          <button id="newRoom">Nova</button>
+        </div>
+        <div class="small" style="margin-top:6px">Compartilhe o QR para receber palavras</div>
+      </div>
+
+      <div class="card panel" style="margin-top:12px">
+        <div class="qr">
+          <div id="qrcode"></div>
+          <a id="shareLink" class="small" href="#" target="_blank" rel="noreferrer"></a>
+        </div>
+      </div>
+
+      <div class="card panel" style="margin-top:12px">
+        <div class="grid2">
+          <label class="small">Backend
+            <select id="backend">
+              <option value="broadcast">Local (este navegador)</option>
+              <option value="ws">WebSocket (opcional)</option>
+            </select>
+          </label>
+          <label class="small">WS URL
+            <input id="wsUrl" placeholder="ws://localhost:8080/ws" />
+          </label>
+          <label class="small">Rotação
+            <select id="rotate">
+              <option value="none">sem rotação</option>
+              <option value="random" selected>0°/90°</option>
+            </select>
+          </label>
+          <label class="small">Limite
+            <input id="limit" type="number" value="120" min="10" max="1000" />
+          </label>
+          <label class="small">Min font
+            <input id="minFont" type="number" value="16" min="8" max="200" />
+          </label>
+          <label class="small">Max font
+            <input id="maxFont" type="number" value="96" min="12" max="300" />
+          </label>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <button id="download">Exportar PNG</button>
+          <button id="clear" style="background:#ef4444">Limpar sala</button>
+        </div>
+        <div class="small" style="margin-top:8px">Dica: abra em tela cheia no projetor. Participantes usam o link/QR 📱</div>
+      </div>
+    </div>
+
+    <div class="card cloud">
+      <canvas id="cloud" width="1024" height="640"></canvas>
+    </div>
+  </div>
+
+  <!-- SENDER VIEW -->
+  <div id="send" class="center hidden">
+    <div class="card max panel">
+      <h2 style="margin:.2rem 0">Envie sua palavra</h2>
+      <div class="small" id="roomInfo"></div>
+      <input id="term" placeholder="ex: colaboração" maxlength="40" />
+      <button id="sendBtn">Enviar</button>
+      <p id="msg" class="small" style="margin-top:8px"></p>
+      <div class="small" style="margin-top:8px">Backend: <span id="modeInfo"></span></div>
+    </div>
+  </div>
+
+<script>
+// ========================= Configuração geral =========================
+const qs = new URLSearchParams(location.search);
+const view = qs.get('view') || 'host'; // host | send
+const room = qs.get('room') || Math.random().toString(36).slice(2,8);
+const backendParam = qs.get('backend'); // broadcast | ws
+const wsUrlParam = qs.get('ws');
+
+// Elements
+const $ = (id)=>document.getElementById(id);
+
+// Mostrar view certa
+$('#host').classList.toggle('hidden', view!=='host');
+$('#send').classList.toggle('hidden', view!=='send');
+
+// Link do participante (mesmo arquivo, view=send)
+const base = location.origin + location.pathname;
+const share = `${base}?view=send&room=${room}${backendParam?`&backend=${backendParam}`:''}${wsUrlParam?`&ws=${encodeURIComponent(wsUrlParam)}`:''}`;
+
+// QR e sala
+if(view==='host'){
+  $('#room').value = room;
+  new QRCode('qrcode', { text: share, width: 220, height: 220 });
+  $('#shareLink').textContent = share; $('#shareLink').href = share;
+}
+if(view==='send'){
+  $('#roomInfo').textContent = `Sala: ${room}`;
+}
+
+// ========================= Backend: BroadcastChannel (local) =========================
+function makeBroadcastBackend(room){
+  const ch = new BroadcastChannel('wc_'+room);
+  let counts = new Map();
+  const api = {
+    type: 'broadcast',
+    onSnapshot: null,
+    add(term){
+      const key = String(term).trim().toLowerCase(); if(!key) return;
+      counts.set(key, (counts.get(key)||0)+1);
+      ch.postMessage({t:'snapshot', list: Array.from(counts.entries())});
+      api.onSnapshot && api.onSnapshot(Array.from(counts.entries()));
+    },
+    clear(){ counts.clear(); ch.postMessage({t:'snapshot', list: []}); api.onSnapshot && api.onSnapshot([]); },
+    connect(){ ch.onmessage = (ev)=>{ if(ev.data && ev.data.t==='snapshot'){ counts = new Map(ev.data.list); api.onSnapshot && api.onSnapshot(ev.data.list); } }; ch.postMessage({t:'hello'}); },
+    disconnect(){ ch.close(); },
+  };
+  return api;
+}
+
+// ========================= Backend: WebSocket (opcional) =========================
+function makeWsBackend(room, url){
+  let ws; let counts = new Map();
+  const api = {
+    type: 'ws',
+    onSnapshot: null,
+    add(term){ ws && ws.send(JSON.stringify({ type:'add', room, term })); },
+    clear(){ ws && ws.send(JSON.stringify({ type:'clear', room })); },
+    connect(){
+      ws = new WebSocket(url);
+      ws.onopen = ()=> ws.send(JSON.stringify({ type:'join', room }));
+      ws.onmessage = (ev)=>{ try{ const data = JSON.parse(ev.data); if(data.type==='snapshot'&&data.room===room){ counts = new Map(data.list); api.onSnapshot && api.onSnapshot(data.list);} }catch{} };
+      ws.onclose = ()=> setTimeout(api.connect, 1000);
+    },
+    disconnect(){ try{ ws && ws.close(); }catch{} },
+  };
+  return api;
+}
+
+// Escolha do backend
+function pickBackend(){
+  const modeSel = $('#backend');
+  const wsInput = $('#wsUrl');
+  let mode = backendParam || (modeSel? modeSel.value : 'broadcast');
+  let url = wsUrlParam || (wsInput? wsInput.value : 'ws://localhost:8080/ws');
+  if(view==='host' && modeSel){ modeSel.value = mode; modeSel.onchange = ()=>{ location.href = `${base}?view=host&room=${room}&backend=${modeSel.value}&ws=${encodeURIComponent($('#wsUrl').value||'ws://localhost:8080/ws')}`; } }
+  if(view==='host' && wsInput){ wsInput.value = url; wsInput.onchange = ()=>{ location.href = `${base}?view=host&room=${room}&backend=${$('#backend').value}&ws=${encodeURIComponent(wsInput.value)}`; } }
+  if(view==='send'){ $('#modeInfo').textContent = backendParam==='ws' ? `WebSocket (${wsUrlParam||'ws://localhost:8080/ws'})` : 'Local (BroadcastChannel)'; }
+  return mode==='ws' ? makeWsBackend(room, url) : makeBroadcastBackend(room);
+}
+
+const backend = pickBackend();
+backend.connect();
+
+// ========================= HOST: nuvem e controles =========================
+if(view==='host'){
+  const canvas = $('#cloud');
+  function rerender(list){
+    list = (list||[]).sort((a,b)=>b[1]-a[1]).slice(0, Math.max(10, Math.min(1000, parseInt($('#limit').value||'120'))));
+    WordCloud(canvas, {
+      list,
+      weightFactor: (w) => {
+        const minF = parseInt($('#minFont').value||'16');
+        const maxF = parseInt($('#maxFont').value||'96');
+        const maxW = Math.max(...(list.length?list.map(i=>i[1]):[1]));
+        return minF + (w / maxW) * (maxF - minF);
+      },
+      rotateRatio: $('#rotate').value === 'random' ? 0.5 : 0,
+      rotationSteps: 2,
+      color: () => undefined,
+      backgroundColor: '#ffffff',
+      drawOutOfBound: false,
+      shuffle: true,
+    });
+  }
+  backend.onSnapshot = rerender;
+
+  $('#newRoom').onclick = () => location.href = `${base}?view=host&room=${Math.random().toString(36).slice(2,8)}${backendParam?`&backend=${backendParam}`:''}${wsUrlParam?`&ws=${encodeURIComponent(wsUrlParam)}`:''}`;
+  $('#clear').onclick = () => backend.clear();
+  $('#download').onclick = () => { const a = document.createElement('a'); a.download = `nuvem-${room}.png`; a.href = canvas.toDataURL('image/png'); a.click(); };
+  ;['rotate','limit','minFont','maxFont'].forEach(id=> $(id).addEventListener('change', ()=> backend.onSnapshot && backend.onSnapshot(Array.from([])) ));
+}
+
+// ========================= SENDER: envio =========================
+if(view==='send'){
+  const bad = ["idiota","burro","otário","merda","besta"]; // filtro simples
+  $('#sendBtn').onclick = () => {
+    const t = ($('#term').value||'').trim(); if(!t) return;
+    if(bad.some(b=>t.toLowerCase().includes(b))){ $('#msg').textContent = 'Essa palavra não é permitida.'; return; }
+    backend.add(t);
+    $('#term').value=''; $('#msg').textContent='Obrigado! Sua palavra entrou na nuvem.'; setTimeout(()=> $('#msg').textContent='', 2000);
+  };
+}
+
+// ========================= Navegação rápida =========================
+if(view==='host'){ history.replaceState(null, '', `${base}?view=host&room=${room}${backendParam?`&backend=${backendParam}`:''}${wsUrlParam?`&ws=${encodeURIComponent(wsUrlParam)}`:''}`); }
+</script>
+</body>
+</html>

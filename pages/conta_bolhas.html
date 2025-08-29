@@ -805,7 +805,7 @@
         /* Garante que o wrapper do VLibras não intercepte cliques por padrão nesta página */
         [vw-plugin-wrapper] { pointer-events: none !important; }
 
-        /* Ajuste do footer no mobile: menor, mais translúcido e com respiro */
+        /* Ajuste do footer no mobile: menor, translúcido e FIXO somente ao fim do conteúdo (não sobrepõe) */
         @media (max-width: 768px) {
           .game-footer-bolhas {
             z-index: 1200;
@@ -814,23 +814,34 @@
             color: rgba(255,255,255,0.8);
             font-size: 0.62em;   /* menor que antes */
             padding: 4px 6px;     /* mais compacto */
+            position: static !important;   /* deixa no fluxo da página */
+            bottom: auto; left: auto; right: auto;
+            margin-top: 8px;               /* pequeno respiro do container */
           }
         }
 
-        /* Espaço reservado para o footer fixo no mobile */
+        /* Layout mobile: sem footer fixo; remove compensações e mantém respiro */
         @media (max-width: 768px) {
-          :root { --footer-mobile-h: 32px; } /* altura efetiva mais baixa */
           /* Permite rolar para que o rodapé nunca cubra conteúdo */
-          body { overflow-y: auto; }
-          /* Afasta o container do rodapé fixo */
-          #mainContainer { 
-            margin-bottom: calc(var(--footer-mobile-h) + env(safe-area-inset-bottom, 0px) + 14px);
-            margin-top: 8px; /* respiro no topo */
+          body { 
+            overflow-y: auto; 
+            display: flex;                /* empilha container + footer */
+            flex-direction: column;       /* um embaixo do outro */
+            justify-content: flex-start;  /* começa do topo */
+            align-items: center;          /* centraliza horizontalmente o container */
+            min-height: 100vh;
           }
-          /* Sobe o botão flutuante de acessibilidade para não colidir com o rodapé */
+          @supports (height: 100dvh) {
+            body { min-height: 100dvh; }
+          }
+          /* Respiro no topo e no fim do container */
+          #mainContainer { margin: 8px 0 12px 0; }
+          /* Botão flutuante volta a usar offset padrão + safe-area */
           .accessibility-float-btn, #accessibilityFloatBtn {
-            bottom: calc(var(--footer-mobile-h) + env(safe-area-inset-bottom, 0px) + 12px);
+            bottom: calc(12px + env(safe-area-inset-bottom, 0px));
           }
+          /* Garante que o footer ocupe toda a largura do viewport */
+          .game-footer-bolhas { align-self: stretch; }
         }
     </style>
 </head>
