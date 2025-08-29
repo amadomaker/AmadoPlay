@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="../src/css/global.css">
+    <!-- Fonte Montserrat apenas para esta página -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
     <title>Conte as Bolhas Mágicas! 🫧</title>
     <style>
         * {
@@ -88,8 +93,8 @@
         #menuTitle{ font-size: 24px; }
         #menuCharacter{ width: 90px; height: 115px; }
         #difficultySelector{ gap: 8px; }
-        .difficultyBtn{ padding: 8px 14px; font-size: 14px; }
-        #startBtn{ padding: 12px 28px; font-size: 18px; }
+        .difficultyBtn{ padding: 12px 22px; font-size: 18px; }
+        #startBtn{ padding: 16px 40px; font-size: 24px; }
         }
 
         /* HUD e elementos no jogo menores em telas baixinhas */
@@ -213,15 +218,16 @@
         }
 
         .difficultyBtn {
-            padding: 15px 35px;
-            font-size: 18px;
+            padding: 16px 38px;
+            font-size: 20px; /* mais legível */
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 600;
             border: 3px solid white;
             border-radius: 25px;
             background: rgba(255, 255, 255, 0.9);
             color: #764ba2;
             cursor: pointer;
             transition: all 0.3s;
-            font-weight: bold;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
@@ -238,8 +244,10 @@
         }
 
         #startBtn {
-            padding: 18px 50px;
-            font-size: 26px;
+            padding: 20px 56px;
+            font-size: 28px; /* mais visível */
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 700;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: 3px solid white;
@@ -520,13 +528,14 @@
         }
 
         .victoryBtn {
-            padding: 12px 25px;
-            font-size: 16px;
+            padding: 14px 28px;
+            font-size: 18px;
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 600;
             border: none;
             border-radius: 25px;
             cursor: pointer;
             transition: all 0.3s;
-            font-weight: bold;
         }
 
         .nextRoundBtn {
@@ -593,10 +602,7 @@
                 gap: 15px;
             }
 
-            .difficultyBtn {
-                padding: 12px 25px;
-                font-size: 16px;
-            }
+            .difficultyBtn { padding: 14px 28px; font-size: 18px; }
 
             #gameHUD {
                 top: 20px;
@@ -656,16 +662,9 @@
                 width: 100%;
             }
 
-            .difficultyBtn {
-                padding: 12px 25px;
-                font-size: 16px;
-                width: 100%;
-            }
+            .difficultyBtn { padding: 14px 28px; font-size: 18px; width: 100%; }
 
-            #startBtn {
-                padding: 14px 35px;
-                font-size: 20px;
-            }
+            #startBtn { padding: 18px 44px; font-size: 24px; }
 
             #gameHUD {
                 top: 10px;
@@ -736,11 +735,7 @@
                 gap: 10px;
             }
 
-            .victoryBtn {
-                padding: 10px 20px;
-                font-size: 14px;
-                width: 100%;
-            }
+            .victoryBtn { padding: 12px 22px; font-size: 16px; width: 100%; }
         }
 
         /* Responsividade para telas muito pequenas */
@@ -798,6 +793,42 @@
             white-space: nowrap;
             border: 0;
         }
+
+        /* A11y: garanta que o overlay não bloqueie cliques quando oculto */
+        .accessibility-panel-overlay { pointer-events: none; }
+        .accessibility-panel-overlay.active { pointer-events: auto; }
+
+        /* A11y: evite que o ícone gigante extrapole do botão flutuante */
+        .accessibility-float-btn,
+        #accessibilityFloatBtn { overflow: hidden; }
+
+        /* Garante que o wrapper do VLibras não intercepte cliques por padrão nesta página */
+        [vw-plugin-wrapper] { pointer-events: none !important; }
+
+        /* Ajuste do footer no mobile: menor, mais translúcido e com respiro */
+        @media (max-width: 768px) {
+          .game-footer-bolhas {
+            z-index: 1200;
+            backdrop-filter: none;
+            background: rgba(255,255,255,0.08); /* próximo ao desktop, mais translúcido */
+            color: rgba(255,255,255,0.8);
+            font-size: 0.62em;   /* menor que antes */
+            padding: 4px 6px;     /* mais compacto */
+          }
+        }
+
+        /* Espaço reservado para o footer fixo no mobile */
+        @media (max-width: 768px) {
+          :root { --footer-mobile-h: 32px; } /* altura efetiva mais baixa */
+          /* Permite rolar para que o rodapé nunca cubra conteúdo */
+          body { overflow-y: auto; }
+          /* Afasta o container do rodapé fixo */
+          #mainContainer { margin-bottom: calc(var(--footer-mobile-h) + env(safe-area-inset-bottom, 0px) + 6px); }
+          /* Sobe o botão flutuante de acessibilidade para não colidir com o rodapé */
+          .accessibility-float-btn, #accessibilityFloatBtn {
+            bottom: calc(var(--footer-mobile-h) + env(safe-area-inset-bottom, 0px) + 12px);
+          }
+        }
     </style>
 </head>
 <body>
@@ -819,7 +850,7 @@
                     loop
                     playsinline
                     preload="metadata"
-                    poster="src/assets/images/cenario-poster.jpg"
+                    poster="../src/assets/images/cenario-poster.jpg"
                     aria-hidden="true">
                 <source src="../src/assets/videos/conta-bolhas-cenario.webm" type="video/webm">
                 <source src="../src/assets/videos/conta-bolhas-cenario.mp4" type="video/mp4">
@@ -832,11 +863,11 @@
               <div class="startMenu-content" role="group" aria-label="Menu inicial">
                 <h2 id="menuTitle">Vamos Contar Bolhas!</h2>
                 <div id="difficultySelector">
-                  <button class="difficultyBtn selected" data-level="1">🌟 Fácil</button>
-                  <button class="difficultyBtn" data-level="2">⭐ Médio</button>
-                  <button class="difficultyBtn" data-level="3">💫 Difícil</button>
+                  <button class="difficultyBtn selected" data-level="1" type="button" onclick="selectDifficulty(1)">🌟 Fácil</button>
+                  <button class="difficultyBtn" data-level="2" type="button" onclick="selectDifficulty(2)">⭐ Médio</button>
+                  <button class="difficultyBtn" data-level="3" type="button" onclick="selectDifficulty(3)">💫 Difícil</button>
                 </div>
-                <button id="startBtn">INICIAR</button>
+                <button id="startBtn" type="button" onclick="startGame()">INICIAR</button>
               </div>
             </div>
 
@@ -862,9 +893,9 @@
 
                 <!-- Controles do Jogo -->
                 <div id="gameControls">
-                    <button class="gameControlBtn" id="menuBtnInGame" title="Menu Principal">🏠</button>
-                    <button class="gameControlBtn" id="soundBtn" title="Som">🔊</button>
-                    <button class="gameControlBtn" id="resetBtn" title="Reiniciar">🔄</button>
+                    <button class="gameControlBtn" id="menuBtnInGame" type="button" title="Menu Principal" onclick="backToMenu()">🏠</button>
+                    <button class="gameControlBtn" id="soundBtn" type="button" title="Som" onclick="toggleSound()">🔊</button>
+                    <button class="gameControlBtn" id="resetRoundBtn" type="button" title="Reiniciar" onclick="resetRound()">🔄</button>
                 </div>
 
                 <!-- Varinha de sabão -->
@@ -891,6 +922,10 @@
         <!-- Área para leitores de tela -->
         <div class="sr-only" aria-live="polite" id="screenReaderAnnouncements"></div>
     </div>
+        <!-- Footer pequeno e discreto -->
+    <footer class="game-footer-bolhas">
+        <p>Ferramenta Educacional - Conta Bolhas | Criação e desenvolvimento por João Jr</p>
+    </footer>
 
     <script>
         // Estado do jogo
@@ -1041,14 +1076,16 @@
         // Configurar event listeners
         function setupEventListeners() {
             // Botão iniciar
-            document.getElementById('startBtn').addEventListener('click', startGame);
+            const sb = document.getElementById('startBtn');
+            if (sb) sb.addEventListener('click', startGame);
 
             // Seleção de dificuldade no menu
             document.querySelectorAll('.difficultyBtn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
+                    const target = e.currentTarget || e.target;
                     document.querySelectorAll('.difficultyBtn').forEach(b => b.classList.remove('selected'));
-                    e.target.classList.add('selected');
-                    gameState.level = parseInt(e.target.dataset.level);
+                    target.classList.add('selected');
+                    gameState.level = parseInt(target.dataset.level);
                     gameState.currentRound = 1;
                     saveProgress();
                 });
@@ -1057,7 +1094,7 @@
             // Controles do jogo
             document.getElementById('menuBtnInGame').addEventListener('click', backToMenu);
             document.getElementById('soundBtn').addEventListener('click', toggleSound);
-            document.getElementById('resetBtn').addEventListener('click', resetRound);
+            document.getElementById('resetRoundBtn').addEventListener('click', resetRound);
 
             // Botões de vitória
             document.getElementById('victoryMenuBtn').addEventListener('click', backToMenu);
@@ -1074,6 +1111,16 @@
                     }
                 }
             });
+        }
+
+        // Fallback direto para seleção de dificuldade, usado pelos onclick dos botões
+        function selectDifficulty(level) {
+            document.querySelectorAll('.difficultyBtn').forEach(b => b.classList.remove('selected'));
+            const btn = document.querySelector(`.difficultyBtn[data-level="${level}"]`);
+            if (btn) btn.classList.add('selected');
+            gameState.level = parseInt(level);
+            gameState.currentRound = 1;
+            saveProgress();
         }
 
         // Iniciar jogo
@@ -1526,7 +1573,7 @@
         } else {
             init();
         }
-    </script>
+</script>
     <script>
         (function fixMobileVH(){
             const setVH = () => {
@@ -1538,6 +1585,189 @@
             window.addEventListener('orientationchange', setVH);
         })();
         </script>
+
+  <!-- ===========================
+      Widget de Acessibilidade (cópia padronizada)
+      =========================== -->
+
+  <!-- Botão Flutuante de Acessibilidade -->
+  <button
+    class="accessibility-float-btn"
+    id="accessibilityFloatBtn"
+    aria-label="Abrir menu de acessibilidade"
+    aria-controls="accessibilityPanel"
+    aria-expanded="false"
+    onclick="toggleAccessibilityPanel()"
+  >
+    <span class="accessibility-icon" aria-hidden="true">
+      <img src="../src/assets/images/icon-acessibilidade.png" alt="">
+    </span>
+  </button>
+
+  <!-- Overlay -->
+  <div
+    class="accessibility-panel-overlay"
+    id="accessibilityOverlay"
+    onclick="closeAccessibilityPanel()"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Painel de Acessibilidade (drawer à direita) -->
+  <div
+    class="accessibility-panel-modern right-drawer"
+    id="accessibilityPanel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="accessibilityPanelTitle"
+  >
+    <div class="panel-header-modern">
+      <h2 id="accessibilityPanelTitle">Menu de Acessibilidade</h2>
+      <button
+        class="close-btn"
+        type="button"
+        aria-label="Fechar menu de acessibilidade"
+        onclick="closeAccessibilityPanel()"
+      >
+        ×
+      </button>
+    </div>
+
+    <!-- Área rolável do painel -->
+    <div class="panel-content" id="accessibilityPanelContent" tabindex="-1">
+      <!-- Perfis de Acessibilidade -->
+      <div class="accessibility-profiles">
+        <h3>Selecione seu perfil de acessibilidade</h3>
+        <div class="profiles-grid">
+          <button class="profile-btn" onclick="applyProfile('motor')" data-profile="motor" type="button">
+            <span class="profile-icon" aria-hidden="true">🦽</span>
+            <span class="profile-text">Deficiência Motora</span>
+          </button>
+          <button class="profile-btn" onclick="applyProfile('visual')" data-profile="visual" type="button">
+            <span class="profile-icon" aria-hidden="true">👁️</span>
+            <span class="profile-text">Deficiência Visual</span>
+          </button>
+          <button class="profile-btn" onclick="applyProfile('cognitive')" data-profile="cognitive" type="button">
+            <span class="profile-icon" aria-hidden="true">🧠</span>
+            <span class="profile-text">Deficiência Cognitiva</span>
+          </button>
+          <button class="profile-btn" onclick="applyProfile('hearing')" data-profile="hearing" type="button">
+            <span class="profile-icon" aria-hidden="true">🦻</span>
+            <span class="profile-text">Deficiência Auditiva</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ferramentas Individuais -->
+      <div class="tools-grid" role="group" aria-label="Ferramentas de acessibilidade">
+        <!-- Linha 1 -->
+        <button class="tool-btn" onclick="toggleTextToSpeech()" id="ttsBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔊</span>
+          <span class="tool-text">Clique para Ouvir</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleHighContrast()" id="contrastBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🌓</span>
+          <span class="tool-text">Alto Contraste</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleDarkMode()" id="darkModeBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🌙</span>
+          <span class="tool-text">Modo Escuro</span>
+        </button>
+
+        <!-- Linha 2 -->
+        <button class="tool-btn" onclick="decreaseFontSize()" id="decreaseFontBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔤</span>
+          <span class="tool-text">Diminuir Fonte</span>
+        </button>
+
+        <button class="tool-btn" onclick="increaseFontSize()" id="increaseFontBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔠</span>
+          <span class="tool-text">Aumentar Fonte</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleDyslexiaFont()" id="dyslexiaBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">📝</span>
+          <span class="tool-text">Fonte Dislexia</span>
+        </button>
+
+        <!-- Linha 3 -->
+        <button class="tool-btn" onclick="toggleGrayscale()" id="grayscaleBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">⚫</span>
+          <span class="tool-text">Monocromático</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleLowSaturation()" id="lowSatBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔘</span>
+          <span class="tool-text">Baixa Saturação</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleHighSaturation()" id="highSatBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🟡</span>
+          <span class="tool-text">Alta Saturação</span>
+        </button>
+
+        <!-- Linha 4 -->
+        <button class="tool-btn" onclick="toggleReadingRuler()" id="rulerBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">📏</span>
+          <span class="tool-text">Régua de Leitura</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleMagnifier()" id="magnifierBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">📖</span>
+          <span class="tool-text">Mascara de Leitura</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleFocusHighlight()" id="focusBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🎯</span>
+          <span class="tool-text">Destacar Links</span>
+        </button>
+
+        <!-- Linha 5 -->
+        <button class="tool-btn" onclick="pauseAnimations()" id="animationBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">⏸️</span>
+          <span class="tool-text">Pausar Animações</span>
+        </button>
+
+        <button class="tool-btn" onclick="showKeyboardShortcuts()" type="button">
+          <span class="tool-icon" aria-hidden="true">⌨️</span>
+          <span class="tool-text">Atalhos Teclado</span>
+        </button>
+
+        <!-- (VLibras removido do painel nesta página) -->
+
+        <!-- Reset de Acessibilidade (ID diferente para não conflitar com reset do jogo) -->
+        <button class="tool-btn" onclick="resetAll()" id="a11yResetBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔄</span>
+          <span class="tool-text">Resetar Tudo</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Elementos auxiliares fora do painel -->
+  <div class="reading-ruler" id="readingRuler" aria-hidden="true"></div>
+  <div class="magnifier-circle" id="magnifier" aria-hidden="true"></div>
+
+  <!-- VLibras removido nesta página -->
+
+  <!-- Desativa VLibras só nesta página: evita injeção automática pelo painel -->
+  <script>
+    try {
+      const raw = localStorage.getItem('a11ySettings');
+      const s = raw ? JSON.parse(raw) : {};
+      s.vlibrasEnabled = false;
+      s.timestamp = Date.now();
+      localStorage.setItem('a11ySettings', JSON.stringify(s));
+      // limpa qualquer flag de carregamento residual
+      window.__vlibrasLoaded = false;
+    } catch (e) {}
+  </script>
+
+  <!-- Script do painel -->
+  <script src="../src/js/acessibilidade.js" defer></script>
+
+  <!-- Sem ajustes de VLibras nesta página -->
 
 </body>
 </html>

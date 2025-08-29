@@ -53,6 +53,26 @@
   position: relative;
 }
 
+.game-footer-bolhas {
+  width: 100%;
+  text-align: center;
+  padding: .25rem .5rem;
+  background: rgba(255,255,255,.1);
+  color: rgba(255,255,255,.8);
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-weight: 400;
+  font-size: .75em;
+  line-height: 1.2;
+  border-top: 1px solid rgba(255,255,255,.1);
+  backdrop-filter: blur(5px);
+
+  position: fixed;   /* fixa no viewport */
+  bottom: 0;         /* encosta no fundo */
+  left: 0;
+  right: 0;          /* garante largura total mesmo com transforms */
+  z-index: 2000;     /* acima do container do jogo e overlays leves */
+  padding-bottom: calc(.25rem + env(safe-area-inset-bottom, 0px));
+}
 
 @media (max-width: 768px) {
     .title { font-size: 2.2em; }
@@ -62,6 +82,17 @@
     .heaven-bead { width: 40px; height: 25px; }
     .place-label { font-size: 0.9em; padding: 8px 10px; }
     .game-footer-abaco { font-size: 0.7em; padding: 6px 8px; }
+    .game-footer-bolhas {
+      font-size: 0.7em;
+      padding: 6px 8px;
+      z-index: 2000;             /* reforça sobreposição no mobile */
+      bottom: 0; left: 0; right: 0;
+      padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+      backdrop-filter: none;      /* evita blur pesado no mobile */
+      background: rgba(0,0,0,.25);/* melhora contraste sobre o jogo */
+      color: #fff;
+    }
+
 }
 
 /* ==========================================
@@ -592,4 +623,3 @@ body.tts-mode .a11y-tts-hover {
   background-repeat: no-repeat;
   border-radius: 2px;
 }
-

@@ -60,6 +60,8 @@ document.addEventListener('DOMContentLoaded', function () {
   loadSettings();                  // 2) aplica o que foi salvo
   setupEventListeners();
   setFontButtonsState();           // 3) recalcula com baseline correto
+  // Segurança: garante que o modo TTS não fique armado entre páginas
+  try { if (typeof disableClickToRead === 'function') disableClickToRead(); } catch (_) {}
 });
 
 function setFontButtonsState() {
@@ -969,7 +971,12 @@ function extractReadableText(el) {
 
 function isInA11yUi(node) {
   if (!(node instanceof HTMLElement)) return false;
-  return !!node.closest('.accessibility-panel-modern, #accessibilityOverlay, #accessibilityFloatBtn, [vw], [vw-access-button], [vw-plugin-wrapper]');
+  // Considere como "UI do painel" também a área do jogo para não bloquear cliques quando TTS estiver ativo
+  return !!node.closest(
+    '.accessibility-panel-modern, #accessibilityOverlay, #accessibilityFloatBtn,' +
+    ' [vw], [vw-access-button], [vw-plugin-wrapper],' +
+    ' #mainContainer, #startMenu, #gameContainer, .gameControlBtn, #startBtn, .difficultyBtn'
+  );
 }
 function buildCardText(cardEl) {
   const title = cardEl.querySelector(CARD_TITLE_SELECTOR)?.textContent?.trim() || '';
