@@ -155,8 +155,8 @@
       dificuldade: 'basico',
       tags: ['contagem', 'números', 'quantidade', 'jogo', 'infantil'],
       bncc: [
-        { codigo: 'EF01MA01', descricao: 'Contar de forma oral ou por escrita numérica.' },
-        { codigo: 'EF01MA02', descricao: 'Ler, escrever e comparar números naturais em contextos do cotidiano.' }
+        { codigo: 'EF01MA01', descricao: 'Utilizar números naturais como indicador de quantidade ou de ordem em diferentes situações cotidianas e reconhecer situações em que os números não indicam contagem nem ordem, mas sim código de identificação.' },
+        { codigo: 'EF01MA02', descricao: 'Contar de maneira exata ou aproximada, utilizando diferentes estratégias como o pareamento e outros agrupamentos.' }
       ],
       popular: false,
       novo: true,
