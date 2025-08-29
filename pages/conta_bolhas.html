@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <link rel="stylesheet" href="../src/css/global.css">
+    <!-- Fonte Montserrat apenas para esta página -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
     <title>Conte as Bolhas Mágicas! 🫧</title>
     <style>
         * {
@@ -89,8 +93,8 @@
         #menuTitle{ font-size: 24px; }
         #menuCharacter{ width: 90px; height: 115px; }
         #difficultySelector{ gap: 8px; }
-        .difficultyBtn{ padding: 8px 14px; font-size: 14px; }
-        #startBtn{ padding: 12px 28px; font-size: 18px; }
+        .difficultyBtn{ padding: 12px 22px; font-size: 18px; }
+        #startBtn{ padding: 16px 40px; font-size: 24px; }
         }
 
         /* HUD e elementos no jogo menores em telas baixinhas */
@@ -214,15 +218,16 @@
         }
 
         .difficultyBtn {
-            padding: 15px 35px;
-            font-size: 18px;
+            padding: 16px 38px;
+            font-size: 20px; /* mais legível */
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 600;
             border: 3px solid white;
             border-radius: 25px;
             background: rgba(255, 255, 255, 0.9);
             color: #764ba2;
             cursor: pointer;
             transition: all 0.3s;
-            font-weight: bold;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
@@ -239,8 +244,10 @@
         }
 
         #startBtn {
-            padding: 18px 50px;
-            font-size: 26px;
+            padding: 20px 56px;
+            font-size: 28px; /* mais visível */
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 700;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: 3px solid white;
@@ -521,13 +528,14 @@
         }
 
         .victoryBtn {
-            padding: 12px 25px;
-            font-size: 16px;
+            padding: 14px 28px;
+            font-size: 18px;
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 600;
             border: none;
             border-radius: 25px;
             cursor: pointer;
             transition: all 0.3s;
-            font-weight: bold;
         }
 
         .nextRoundBtn {
@@ -594,10 +602,7 @@
                 gap: 15px;
             }
 
-            .difficultyBtn {
-                padding: 12px 25px;
-                font-size: 16px;
-            }
+            .difficultyBtn { padding: 14px 28px; font-size: 18px; }
 
             #gameHUD {
                 top: 20px;
@@ -657,16 +662,9 @@
                 width: 100%;
             }
 
-            .difficultyBtn {
-                padding: 12px 25px;
-                font-size: 16px;
-                width: 100%;
-            }
+            .difficultyBtn { padding: 14px 28px; font-size: 18px; width: 100%; }
 
-            #startBtn {
-                padding: 14px 35px;
-                font-size: 20px;
-            }
+            #startBtn { padding: 18px 44px; font-size: 24px; }
 
             #gameHUD {
                 top: 10px;
@@ -737,11 +735,7 @@
                 gap: 10px;
             }
 
-            .victoryBtn {
-                padding: 10px 20px;
-                font-size: 14px;
-                width: 100%;
-            }
+            .victoryBtn { padding: 12px 22px; font-size: 16px; width: 100%; }
         }
 
         /* Responsividade para telas muito pequenas */
@@ -811,13 +805,28 @@
         /* Garante que o wrapper do VLibras não intercepte cliques por padrão nesta página */
         [vw-plugin-wrapper] { pointer-events: none !important; }
 
-        /* Ajuste do footer no mobile: evita "luz"/blur e garante sobreposição correta */
+        /* Ajuste do footer no mobile: menor, mais translúcido e com respiro */
         @media (max-width: 768px) {
           .game-footer-bolhas {
             z-index: 1200;
             backdrop-filter: none;
-            background: rgba(0,0,0,0.25);
-            color: #fff;
+            background: rgba(255,255,255,0.08); /* próximo ao desktop, mais translúcido */
+            color: rgba(255,255,255,0.8);
+            font-size: 0.62em;   /* menor que antes */
+            padding: 4px 6px;     /* mais compacto */
+          }
+        }
+
+        /* Espaço reservado para o footer fixo no mobile */
+        @media (max-width: 768px) {
+          :root { --footer-mobile-h: 32px; } /* altura efetiva mais baixa */
+          /* Permite rolar para que o rodapé nunca cubra conteúdo */
+          body { overflow-y: auto; }
+          /* Afasta o container do rodapé fixo */
+          #mainContainer { margin-bottom: calc(var(--footer-mobile-h) + env(safe-area-inset-bottom, 0px) + 6px); }
+          /* Sobe o botão flutuante de acessibilidade para não colidir com o rodapé */
+          .accessibility-float-btn, #accessibilityFloatBtn {
+            bottom: calc(var(--footer-mobile-h) + env(safe-area-inset-bottom, 0px) + 12px);
           }
         }
     </style>
@@ -841,7 +850,7 @@
                     loop
                     playsinline
                     preload="metadata"
-                    poster="src/assets/images/cenario-poster.jpg"
+                    poster="../src/assets/images/cenario-poster.jpg"
                     aria-hidden="true">
                 <source src="../src/assets/videos/conta-bolhas-cenario.webm" type="video/webm">
                 <source src="../src/assets/videos/conta-bolhas-cenario.mp4" type="video/mp4">
@@ -1725,11 +1734,7 @@
           <span class="tool-text">Atalhos Teclado</span>
         </button>
 
-        <!-- VLibras controlado pelo painel -->
-        <button class="tool-btn" onclick="enableVLibras()" id="vlibrasBtn" type="button">
-          <span class="tool-icon" aria-hidden="true">🤟</span>
-          <span class="tool-text">Ativar VLibras</span>
-        </button>
+        <!-- (VLibras removido do painel nesta página) -->
 
         <!-- Reset de Acessibilidade (ID diferente para não conflitar com reset do jogo) -->
         <button class="tool-btn" onclick="resetAll()" id="a11yResetBtn" type="button">
@@ -1744,37 +1749,25 @@
   <div class="reading-ruler" id="readingRuler" aria-hidden="true"></div>
   <div class="magnifier-circle" id="magnifier" aria-hidden="true"></div>
 
-  <!-- VLibras -->
-  <div vw class="enabled">
-    <div vw-access-button class="active"></div>
-    <div vw-plugin-wrapper>
-      <div class="vw-plugin-top-wrapper"></div>
-    </div>
-  </div>
-  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <!-- VLibras removido nesta página -->
+
+  <!-- Desativa VLibras só nesta página: evita injeção automática pelo painel -->
   <script>
-    try { new window.VLibras.Widget('https://vlibras.gov.br/app'); } catch(e){}
+    try {
+      const raw = localStorage.getItem('a11ySettings');
+      const s = raw ? JSON.parse(raw) : {};
+      s.vlibrasEnabled = false;
+      s.timestamp = Date.now();
+      localStorage.setItem('a11ySettings', JSON.stringify(s));
+      // limpa qualquer flag de carregamento residual
+      window.__vlibrasLoaded = false;
+    } catch (e) {}
   </script>
 
   <!-- Script do painel -->
   <script src="../src/js/acessibilidade.js" defer></script>
 
-  <!-- Ajuste local: quando usuário ativar o VLibras pelo painel, reabilita interação do wrapper -->
-  <script>
-    window.addEventListener('DOMContentLoaded', function(){
-      if (typeof window.enableVLibras === 'function') {
-        const __origEnable = window.enableVLibras;
-        window.enableVLibras = function(){
-          const ret = __origEnable.apply(this, arguments);
-          setTimeout(function(){
-            var pw = document.querySelector('[vw-plugin-wrapper]');
-            if (pw) pw.style.pointerEvents = 'auto';
-          }, 250);
-          return ret;
-        };
-      }
-    });
-  </script>
+  <!-- Sem ajustes de VLibras nesta página -->
 
 </body>
 </html>
