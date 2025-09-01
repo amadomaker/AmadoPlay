@@ -811,7 +811,9 @@
                 background: rgba(255, 255, 255, 0.85);
                 border-radius: 12px;
                 width: 280px;
-                height: 55px;
+                height: 65px;
+                min-width: max-content; /* impede de encolher além do texto */
+
             }
 
             #roundInfo {
@@ -819,6 +821,9 @@
                 line-height: 1.1;
                 margin-bottom: 1px;
                 white-space: nowrap;
+                white-space: nowrap;     /* não deixa quebrar */
+                overflow: hidden;        /* corta o excesso se ultrapassar */
+                text-overflow: ellipsis; /* coloca "..." se cortar */
             }
 
             #targetDisplay {
