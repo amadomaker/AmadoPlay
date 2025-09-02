@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+    <link rel="stylesheet" href="../src/css/global.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+    <title>Sílabas Embaralhadas 📝</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* Safe-area + unidades modernas */
+        :root {
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-top: env(safe-area-inset-top, 0px);
+            --app-vh: 100vh;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                overflow-y: auto;
+            }
+        }
+
+        /* Container principal */
+        #mainContainer {
+            width: 90%;
+            max-width: 1200px;
+            height: 92dvh;
+            height: calc(var(--app-vh) * 0.92);
+            max-height: none;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: calc(var(--safe-bottom) + 12px);
+        }
+
+        /* Header */
+        #header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #activityTitle {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Área de conteúdo */
+        #contentArea {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            padding-bottom: calc(var(--safe-bottom) + 12px);
+        }
+
+        /* Menu inicial */
+        #startMenu {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 500;
+            transition: all 0.5s ease-out;
+        }
+
+        .bg-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .startMenu-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: linear-gradient(
+                180deg, 
+                rgba(0,0,0,.10) 0%,
+                rgba(255,255,255,.20) 50%,
+                rgba(255,255,255,.35) 100%
+            );
+        }
+
+        .startMenu-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            max-width: 600px;
+            margin-top: 20vh;
+        }
+
+        #startMenu.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(.8);
+            transition: all .5s ease-out;
+        }
+
+        #menuTitle {
+            font-size: 42px;
+            color: white;
+            margin-bottom: 30px;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            animation: floatTitle 3s ease-in-out infinite;
+        }
+
+        @keyframes floatTitle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Seletor de dificuldade */
+        #difficultySelector {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .difficultyBtn {
+            padding: 16px 38px;
+            font-size: 20px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            border: 3px solid white;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #764ba2;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .difficultyBtn:hover {
+            background: white;
+            color: #764ba2;
+            transform: scale(1.05);
+        }
+
+        .difficultyBtn.selected {
+            background: #764ba2;
+            color: white;
+            border-color: #764ba2;
+        }
+
+        #startBtn {
+            padding: 20px 56px;
+            font-size: 28px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: 3px solid white;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            animation: pulseButton 2s infinite;
+        }
+
+        @keyframes pulseButton {
+            0%, 100% { transform: scale(1); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6); }
+        }
+
+        #startBtn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Área do jogo */
+        #gameContainer {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: none;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,245,255,0.98) 100%);
+        }
+
+        #gameContainer.active {
+            display: block;
+        }
+
+        /* HUD do jogo */
+        #gameHUD {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 25px;
+            border-radius: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        #roundInfo {
+            font-size: 24px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        #wordHint {
+            font-size: 18px;
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        /* Controles do jogo */
+        #gameControls {
+            position: absolute;
+            top: calc(20px + var(--safe-top));
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .gameControlBtn {
+            width: 55px;
+            height: 55px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .gameControlBtn:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+
+        /* Área de formação da palavra */
+        #wordFormation {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 80%;
+        }
+
+        .syllableSlot {
+            width: 120px;
+            height: 80px;
+            border: 3px dashed #764ba2;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.7);
+            font-size: 24px;
+            font-weight: bold;
+            color: #764ba2;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .syllableSlot.filled {
+            border: 3px solid #34a853;
+            background: rgba(52, 168, 83, 0.1);
+        }
+
+        .syllableSlot.dragover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Área das sílabas embaralhadas */
+        #syllablesContainer {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 90%;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .syllableCard {
+            width: 100px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: grab;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        .syllableCard:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .syllableCard.dragging {
+            cursor: grabbing;
+            transform: rotate(5deg);
+            opacity: 0.8;
+            z-index: 1000;
+        }
+
+        .syllableCard.used {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* Modal de feedback */
+        #feedbackModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        #feedbackModal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .feedbackContent {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            text-align: center;
+            animation: bounceIn 0.5s ease-out;
+            max-width: 500px;
+            margin: 0 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .feedbackContent h2 {
+            font-size: 32px;
+            color: #34a853;
+            margin-bottom: 15px;
+        }
+
+        .feedbackContent.error h2 {
+            color: #ea4335;
+        }
+
+        #formedWord {
+            font-size: 48px;
+            font-weight: bold;
+            color: #764ba2;
+            margin: 20px 0;
+            text-transform: uppercase;
+        }
+
+        #wordMeaning {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        .feedbackButtons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .feedbackBtn {
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nextBtn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .tryAgainBtn {
+            background: white;
+            color: #764ba2;
+            border: 2px solid #764ba2;
+        }
+
+        .feedbackBtn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            #mainContainer {
+                width: 95%;
+                border-radius: 20px;
+            }
+
+            #activityTitle {
+                font-size: 20px;
+            }
+
+            #menuTitle {
+                font-size: 28px;
+            }
+
+            .startMenu-content {
+                margin-top: 30vh;
+            }
+
+            #difficultySelector {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .difficultyBtn {
+                width: 100%;
+                padding: 14px;
+            }
+
+            #gameHUD {
+                top: 10px;
+                left: 10px;
+                padding: 10px 15px;
+            }
+
+            #roundInfo {
+                font-size: 18px;
+            }
+
+            #wordHint {
+                font-size: 14px;
+            }
+
+            #wordFormation {
+                top: 40%;
+                gap: 10px;
+            }
+
+            .syllableSlot {
+                width: 80px;
+                height: 60px;
+                font-size: 18px;
+            }
+
+            #syllablesContainer {
+                bottom: 40px;
+                padding: 15px;
+                gap: 10px;
+            }
+
+            .syllableCard {
+                width: 70px;
+                height: 50px;
+                font-size: 16px;
+            }
+
+            .gameControlBtn {
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #wordFormation {
+                top: 35%;
+            }
+
+            .syllableSlot {
+                width: 60px;
+                height: 45px;
+                font-size: 14px;
+            }
+
+            .syllableCard {
+                width: 55px;
+                height: 40px;
+                font-size: 14px;
+            }
+
+            #syllablesContainer {
+                bottom: 25px;
+            }
+        }
+
+        /* Área para leitores de tela */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="mainContainer">
+        <!-- Header -->
+        <div id="header">
+            <h1 id="activityTitle">📝 Sílabas Embaralhadas 📝</h1>
+        </div>
+
+        <!-- Área de conteúdo -->
+        <div id="contentArea">
+            <!-- Menu Inicial -->
+            <div id="startMenu">
+                <!-- Vídeo de fundo -->
+                <video id="heroVideo"
+                       class="bg-video"
+                       autoplay
+                       muted
+                       loop
+                       playsinline
+                       preload="metadata"
+                       poster="../src/assets/images/cenario-poster.jpg"
+                       aria-hidden="true">
+                    <source src="../src/assets/videos/conta-bolhas-cenario.webm" type="video/webm">
+                    <source src="../src/assets/videos/conta-bolhas-cenario.mp4" type="video/mp4">
+                </video>
+
+                <!-- Overlay -->
+                <div class="startMenu-overlay"></div>
+
+                <!-- Conteúdo do menu -->
+                <div class="startMenu-content" role="group" aria-label="Menu inicial">
+                    <h2 id="menuTitle">Forme as Palavras!</h2>
+                    <div id="difficultySelector">
+                        <button class="difficultyBtn selected" data-level="1" type="button" onclick="selectDifficulty(1)">🌟 Fácil (2 sílabas)</button>
+                        <button class="difficultyBtn" data-level="2" type="button" onclick="selectDifficulty(2)">⭐ Médio (3 sílabas)</button>
+                        <button class="difficultyBtn" data-level="3" type="button" onclick="selectDifficulty(3)">💫 Difícil (4+ sílabas)</button>
+                    </div>
+                    <button id="startBtn" type="button" onclick="startGame()">INICIAR</button>
+                </div>
+            </div>
+
+            <!-- Área do Jogo -->
+            <div id="gameContainer">
+                <!-- HUD do Jogo -->
+                <div id="gameHUD">
+                    <div id="roundInfo">
+                        <span id="levelName">Nível Fácil</span> - Palavra <span id="currentRound">1</span> de <span id="totalRounds">7</span>
+                    </div>
+                    <div id="wordHint">
+                        Arraste as sílabas para formar a palavra
+                    </div>
+                </div>
+
+                <!-- Controles do Jogo -->
+                <div id="gameControls">
+                    <button class="gameControlBtn" id="menuBtnInGame" type="button" title="Menu Principal" onclick="backToMenu()">🏠</button>
+                    <button class="gameControlBtn" id="soundBtn" type="button" title="Som" onclick="toggleSound()">🔊</button>
+                    <button class="gameControlBtn" id="resetWordBtn" type="button" title="Reiniciar Palavra" onclick="resetWord()">🔄</button>
+                </div>
+
+                <!-- Área de formação da palavra -->
+                <div id="wordFormation"></div>
+
+                <!-- Sílabas embaralhadas -->
+                <div id="syllablesContainer"></div>
+            </div>
+        </div>
+
+        <!-- Modal de Feedback -->
+        <div id="feedbackModal" role="dialog">
+            <div class="feedbackContent">
+                <h2 id="feedbackTitle">Parabéns!</h2>
+                <div id="formedWord"></div>
+                <p id="wordMeaning"></p>
+                <div class="feedbackButtons">
+                    <button class="feedbackBtn tryAgainBtn" id="tryAgainBtn" type="button" onclick="tryAgain()">Tentar Novamente</button>
+                    <button class="feedbackBtn nextBtn" id="nextBtn" type="button" onclick="nextWord()">Próxima Palavra</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Área para leitores de tela -->
+        <div class="sr-only" aria-live="polite" id="screenReaderAnnouncements"></div>
+    </div>
+
+    <script>
+        // Estado do jogo
+        const gameState = {
+            level: 1,
+            currentRound: 1,
+            currentWord: null,
+            soundEnabled: true,
+            isPlaying: false,
+            wordsPerLevel: 7
+        };
+
+        // Base de palavras por nível
+        const wordDatabase = {
+            1: [ // 2 sílabas
+                { word: 'CASA', syllables: ['CA', 'SA'], meaning: 'lugar onde moramos' },
+                { word: 'BOLA', syllables: ['BO', 'LA'], meaning: 'brinquedo redondo usado para jogar' },
+                { word: 'PATO', syllables: ['PA', 'TO'], meaning: 'ave que nada e tem bico achatado' },
+                { word: 'FLOR', syllables: ['FLOR'], meaning: 'planta colorida que cresce nos jardins' },
+                { word: 'LIVRO', syllables: ['LI', 'VRO'], meaning: 'objeto usado para ler e estudar' },
+                { word: 'ÁGUA', syllables: ['Á', 'GUA'], meaning: 'líquido transparente essencial para a vida' },
+                { word: 'GATO', syllables: ['GA', 'TO'], meaning: 'animal doméstico que faz miau' }
+            ],
+            2: [ // 3 sílabas
+                { word: 'JANELA', syllables: ['JA', 'NE', 'LA'], meaning: 'abertura na parede para entrar luz e ar' },
+                { word: 'ESCOLA', syllables: ['ES', 'CO', 'LA'], meaning: 'lugar onde estudamos' },
+                { word: 'BANANA', syllables: ['BA', 'NA', 'NA'], meaning: 'fruta amarela rica em potássio' },
+                { word: 'CENOURA', syllables: ['CE', 'NOU', 'RA'], meaning: 'vegetal laranja que ajuda na visão' },
+                { word: 'CAMINHO', syllables: ['CA', 'MI', 'NHO'], meaning: 'rota para ir de um lugar a outro' },
+                { word: 'MENINO', syllables: ['ME', 'NI', 'NO'], meaning: 'criança do sexo masculino' },
+                { word: 'BONECA', syllables: ['BO', 'NE', 'CA'], meaning: 'brinquedo que representa uma pessoa' }
+            ],
+            3: [ // 4+ sílabas
+                { word: 'TELEFONE', syllables: ['TE', 'LE', 'FO', 'NE'], meaning: 'aparelho usado para falar com alguém à distância' },
+                { word: 'BORBOLETA', syllables: ['BOR', 'BO', 'LE', 'TA'], meaning: 'inseto colorido com asas grandes' },
+                { word: 'ELEFANTE', syllables: ['E', 'LE', 'FAN', 'TE'], meaning: 'maior animal terrestre com tromba longa' },
+                { word: 'COMPUTADOR', syllables: ['COM', 'PU', 'TA', 'DOR'], meaning: 'máquina usada para processar informações' },
+                { word: 'BIBLIOTECA', syllables: ['BI', 'BLI', 'O', 'TE', 'CA'], meaning: 'lugar onde ficam guardados muitos livros' },
+                { word: 'HOSPITAL', syllables: ['HOS', 'PI', 'TAL'], meaning: 'lugar onde pessoas recebem cuidados médicos' },
+                { word: 'BICICLETA', syllables: ['BI', 'CI', 'CLE', 'TA'], meaning: 'veículo de duas rodas movido a pedal' }
+            ]
+        };
+
+        // Sistema de áudio
+        class AudioManager {
+            constructor() {
+                this.context = null;
+                this.enabled = true;
+            }
+
+            init() {
+                if (!this.context && window.AudioContext) {
+                    this.context = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            playSuccess() {
+                if (!this.enabled || !this.context) return;
+                
+                const notes = [523, 659, 784];
+                notes.forEach((freq, i) => {
+                    setTimeout(() => {
+                        const osc = this.context.createOscillator();
+                        const gain = this.context.createGain();
+                        
+                        osc.connect(gain);
+                        gain.connect(this.context.destination);
+                        
+                        osc.frequency.value = freq;
+                        gain.gain.value = 0.3;
+                        gain.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.3);
+                        
+                        osc.start(this.context.currentTime);
+                        osc.stop(this.context.currentTime + 0.3);
+                    }, i * 100);
+                });
+            }
+
+            playError() {
+                if (!this.enabled || !this.context) return;
+                
+                const osc = this.context.createOscillator();
+                const gain = this.context.createGain();
+                
+                osc.connect(gain);
+                gain.connect(this.context.destination);
+                
+                osc.type = 'square';
+                osc.frequency.value = 200;
+                gain.gain.value = 0.2;
+                gain.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.4);
+                
+                osc.start(this.context.currentTime);
+                osc.stop(this.context.currentTime + 0.4);
+            }
+        }
+
+        const audio = new AudioManager();
+
+        // Inicialização
+        function init() {
+            audio.init();
+            setupEventListeners();
+            loadProgress();
+            
+            // Pré-tocar o vídeo
+            const heroVideo = document.getElementById('heroVideo');
+            if (heroVideo) {
+                heroVideo.play().catch(() => {});
+            }
+        }
+
+        // Event listeners
+        function setupEventListeners() {
+            // Drag and drop para desktop
+            document.addEventListener('dragstart', handleDragStart);
+            document.addEventListener('dragover', handleDragOver);
+            document.addEventListener('drop', handleDrop);
+            document.addEventListener('dragend', handleDragEnd);
+
+            // Touch events para mobile
+            document.addEventListener('touchstart', handleTouchStart, { passive: false });
+            document.addEventListener('touchmove', handleTouchMove, { passive: false });
+            document.addEventListener('touchend', handleTouchEnd, { passive: false });
+
+            // Controles
+            document.getElementById('menuBtnInGame').addEventListener('click', backToMenu);
+            document.getElementById('soundBtn').addEventListener('click', toggleSound);
+            document.getElementById('resetWordBtn').addEventListener('click', resetWord);
+            document.getElementById('nextBtn').addEventListener('click', nextWord);
+            document.getElementById('tryAgainBtn').addEventListener('click', tryAgain);
+        }
+
+        // Drag and drop handlers
+        let draggedElement = null;
+        let touchData = { element: null, startX: 0, startY: 0, currentX: 0, currentY: 0 };
+
+        function handleDragStart(e) {
+            if (e.target.classList.contains('syllableCard')) {
+                draggedElement = e.target;
+                e.target.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            }
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            if (e.target.classList.contains('syllableSlot') && !e.target.textContent) {
+                e.target.classList.add('dragover');
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const slot = e.target.closest('.syllableSlot');
+            if (slot && draggedElement && !slot.textContent) {
+                placeSyllableInSlot(draggedElement, slot);
+            }
+            clearDragEffects();
+        }
+
+        function handleDragEnd(e) {
+            clearDragEffects();
+        }
+
+        function clearDragEffects() {
+            if (draggedElement) {
+                draggedElement.classList.remove('dragging');
+                draggedElement = null;
+            }
+            document.querySelectorAll('.syllableSlot').forEach(slot => {
+                slot.classList.remove('dragover');
+            });
+        }
+
+        // Touch handlers para mobile
+        function handleTouchStart(e) {
+            if (e.target.classList.contains('syllableCard')) {
+                e.preventDefault();
+                touchData.element = e.target;
+                const touch = e.touches[0];
+                touchData.startX = touch.clientX;
+                touchData.startY = touch.clientY;
+                touchData.currentX = touch.clientX;
+                touchData.currentY = touch.clientY;
+                e.target.classList.add('dragging');
+            }
+        }
+
+        function handleTouchMove(e) {
+            if (touchData.element) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                touchData.currentX = touch.clientX;
+                touchData.currentY = touch.clientY;
+                
+                // Mover o elemento visualmente
+                const deltaX = touchData.currentX - touchData.startX;
+                const deltaY = touchData.currentY - touchData.startY;
+                touchData.element.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+                
+                // Verificar se está sobre um slot
+                const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+                const slot = elementBelow?.closest('.syllableSlot');
+                
+                document.querySelectorAll('.syllableSlot').forEach(s => s.classList.remove('dragover'));
+                if (slot && !slot.textContent) {
+                    slot.classList.add('dragover');
+                }
+            }
+        }
+
+        function handleTouchEnd(e) {
+            if (touchData.element) {
+                e.preventDefault();
+                const touch = e.changedTouches[0];
+                const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+                const slot = elementBelow?.closest('.syllableSlot');
+                
+                if (slot && !slot.textContent) {
+                    placeSyllableInSlot(touchData.element, slot);
+                }
+                
+                // Resetar posição visual
+                touchData.element.style.transform = '';
+                touchData.element.classList.remove('dragging');
+                document.querySelectorAll('.syllableSlot').forEach(s => s.classList.remove('dragover'));
+                
+                touchData.element = null;
+            }
+        }
+
+        // Colocar sílaba no slot
+        function placeSyllableInSlot(syllableCard, slot) {
+            const syllableText = syllableCard.textContent;
+            slot.textContent = syllableText;
+            slot.classList.add('filled');
+            syllableCard.classList.add('used');
+            syllableCard.draggable = false;
+            
+            // Verificar se a palavra está completa
+            checkWordCompletion();
+        }
+
+        // Verificar se a palavra foi formada corretamente
+        function checkWordCompletion() {
+            const slots = document.querySelectorAll('.syllableSlot');
+            const filledSlots = Array.from(slots).filter(slot => slot.textContent);
+            
+            if (filledSlots.length === slots.length) {
+                const formedWord = Array.from(slots).map(slot => slot.textContent).join('');
+                const correctWord = gameState.currentWord.word;
+                
+                setTimeout(() => {
+                    if (formedWord === correctWord) {
+                        showFeedback(true, formedWord, gameState.currentWord.meaning);
+                    } else {
+                        showFeedback(false);
+                    }
+                }, 500);
+            }
+        }
+
+        // Mostrar feedback
+        function showFeedback(success, word = '', meaning = '') {
+            const modal = document.getElementById('feedbackModal');
+            const content = modal.querySelector('.feedbackContent');
+            const title = document.getElementById('feedbackTitle');
+            const formedWordEl = document.getElementById('formedWord');
+            const meaningEl = document.getElementById('wordMeaning');
+            const tryAgainBtn = document.getElementById('tryAgainBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            content.classList.toggle('error', !success);
+            
+            if (success) {
+                if (gameState.soundEnabled) audio.playSuccess();
+                title.textContent = 'Parabéns!';
+                formedWordEl.textContent = word;
+                meaningEl.textContent = `${word} - ${meaning}`;
+                tryAgainBtn.style.display = 'none';
+                nextBtn.style.display = 'inline-block';
+                nextBtn.textContent = gameState.currentRound >= gameState.wordsPerLevel ? 'Finalizar Nível' : 'Próxima Palavra';
+                announce(`Parabéns! Você formou a palavra ${word}. ${meaning}`);
+            } else {
+                if (gameState.soundEnabled) audio.playError();
+                title.textContent = 'Não foi dessa vez!';
+                formedWordEl.textContent = '';
+                meaningEl.textContent = 'Tente novamente! Arraste as sílabas na ordem correta.';
+                tryAgainBtn.style.display = 'inline-block';
+                nextBtn.style.display = 'none';
+                announce('Não foi dessa vez. Tente novamente.');
+            }
+            
+            modal.classList.add('show');
+        }
+
+        // Seleção de dificuldade
+        function selectDifficulty(level) {
+            document.querySelectorAll('.difficultyBtn').forEach(b => b.classList.remove('selected'));
+            const btn = document.querySelector(`.difficultyBtn[data-level="${level}"]`);
+            if (btn) btn.classList.add('selected');
+            gameState.level = parseInt(level);
+            gameState.currentRound = 1;
+            saveProgress();
+        }
+
+        // Iniciar jogo
+        function startGame() {
+            document.getElementById('startMenu').classList.add('hidden');
+            document.getElementById('gameContainer').classList.add('active');
+            gameState.isPlaying = true;
+            gameState.currentRound = 1;
+            
+            const heroVideo = document.getElementById('heroVideo');
+            if (heroVideo) {
+                heroVideo.pause();
+                heroVideo.currentTime = 0;
+            }
+            
+            loadNextWord();
+        }
+
+        // Carregar próxima palavra
+        function loadNextWord() {
+            const words = wordDatabase[gameState.level];
+            if (!words || gameState.currentRound > gameState.wordsPerLevel) {
+                return completeLevel();
+            }
+            
+            const wordIndex = (gameState.currentRound - 1) % words.length;
+            gameState.currentWord = words[wordIndex];
+            
+            updateDisplay();
+            createWordSlots();
+            createSyllableCards();
+            
+            announce(`Palavra ${gameState.currentRound} de ${gameState.wordsPerLevel}. Forme a palavra com as sílabas disponíveis.`);
+        }
+
+        // Criar slots para a palavra
+        function createWordSlots() {
+            const container = document.getElementById('wordFormation');
+            container.innerHTML = '';
+            
+            gameState.currentWord.syllables.forEach((syllable, index) => {
+                const slot = document.createElement('div');
+                slot.className = 'syllableSlot';
+                slot.dataset.index = index;
+                slot.addEventListener('click', () => removeSyllableFromSlot(slot));
+                container.appendChild(slot);
+            });
+        }
+
+        // Criar cartões de sílabas embaralhadas
+        function createSyllableCards() {
+            const container = document.getElementById('syllablesContainer');
+            container.innerHTML = '';
+            
+            // Embaralhar as sílabas
+            const shuffledSyllables = [...gameState.currentWord.syllables].sort(() => Math.random() - 0.5);
+            
+            shuffledSyllables.forEach(syllable => {
+                const card = document.createElement('div');
+                card.className = 'syllableCard';
+                card.textContent = syllable;
+                card.draggable = true;
+                container.appendChild(card);
+            });
+        }
+
+        // Remover sílaba do slot (clique para desfazer)
+        function removeSyllableFromSlot(slot) {
+            if (slot.textContent) {
+                const syllableText = slot.textContent;
+                
+                // Encontrar o cartão correspondente e reativá-lo
+                const cards = document.querySelectorAll('.syllableCard');
+                cards.forEach(card => {
+                    if (card.textContent === syllableText && card.classList.contains('used')) {
+                        card.classList.remove('used');
+                        card.draggable = true;
+                        return;
+                    }
+                });
+                
+                // Limpar o slot
+                slot.textContent = '';
+                slot.classList.remove('filled');
+            }
+        }
+
+        // Tentar novamente
+        function tryAgain() {
+            document.getElementById('feedbackModal').classList.remove('show');
+            resetWord();
+        }
+
+        // Próxima palavra
+        function nextWord() {
+            document.getElementById('feedbackModal').classList.remove('show');
+            
+            if (gameState.currentRound >= gameState.wordsPerLevel) {
+                completeLevel();
+            } else {
+                gameState.currentRound++;
+                saveProgress();
+                loadNextWord();
+            }
+        }
+
+        // Completar nível
+        function completeLevel() {
+            const isLastLevel = gameState.level >= 3;
+            
+            if (isLastLevel) {
+                showLevelComplete('Parabéns! Você completou todos os níveis!', true);
+            } else {
+                showLevelComplete(`Nível ${getLevelName(gameState.level)} completo! Próximo: ${getLevelName(gameState.level + 1)}`, false);
+            }
+        }
+
+        // Mostrar tela de nível completo
+        function showLevelComplete(message, isGameComplete) {
+            const modal = document.getElementById('feedbackModal');
+            const content = modal.querySelector('.feedbackContent');
+            const title = document.getElementById('feedbackTitle');
+            const formedWordEl = document.getElementById('formedWord');
+            const meaningEl = document.getElementById('wordMeaning');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            content.classList.remove('error');
+            title.textContent = isGameComplete ? '🏆 Incrível!' : '⭐ Excelente!';
+            formedWordEl.textContent = '';
+            meaningEl.textContent = message;
+            
+            document.getElementById('tryAgainBtn').style.display = 'none';
+            nextBtn.style.display = 'inline-block';
+            nextBtn.textContent = isGameComplete ? 'Jogar Novamente' : 'Próximo Nível';
+            
+            if (!isGameComplete) {
+                gameState.level++;
+                gameState.currentRound = 1;
+                
+                // Atualizar seleção de dificuldade
+                document.querySelectorAll('.difficultyBtn').forEach(btn => {
+                    btn.classList.toggle('selected', parseInt(btn.dataset.level) === gameState.level);
+                });
+            } else {
+                gameState.level = 1;
+                gameState.currentRound = 1;
+            }
+            
+            saveProgress();
+            modal.classList.add('show');
+            announce(message);
+        }
+
+        // Voltar ao menu
+        function backToMenu() {
+            gameState.isPlaying = false;
+            gameState.currentRound = 1;
+            
+            document.getElementById('feedbackModal').classList.remove('show');
+            document.getElementById('gameContainer').classList.remove('active');
+            document.getElementById('startMenu').classList.remove('hidden');
+            
+            const heroVideo = document.getElementById('heroVideo');
+            if (heroVideo) {
+                heroVideo.play().catch(() => {});
+            }
+        }
+
+        // Alternar som
+        function toggleSound() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            audio.enabled = gameState.soundEnabled;
+            document.getElementById('soundBtn').textContent = gameState.soundEnabled ? '🔊' : '🔇';
+            saveProgress();
+        }
+
+        // Resetar palavra
+        function resetWord() {
+            // Limpar todos os slots
+            document.querySelectorAll('.syllableSlot').forEach(slot => {
+                slot.textContent = '';
+                slot.classList.remove('filled');
+            });
+            
+            // Reativar todos os cartões
+            document.querySelectorAll('.syllableCard').forEach(card => {
+                card.classList.remove('used');
+                card.draggable = true;
+            });
+        }
+
+        // Atualizar display
+        function updateDisplay() {
+            document.getElementById('levelName').textContent = `Nível ${getLevelName(gameState.level)}`;
+            document.getElementById('currentRound').textContent = gameState.currentRound;
+            document.getElementById('totalRounds').textContent = gameState.wordsPerLevel;
+        }
+
+        // Obter nome do nível
+        function getLevelName(level) {
+            const names = { 1: 'Fácil', 2: 'Médio', 3: 'Difícil' };
+            return names[level] || 'Fácil';
+        }
+
+        // Anunciar para leitores de tela
+        function announce(message) {
+            const announcer = document.getElementById('screenReaderAnnouncements');
+            announcer.textContent = message;
+        }
+
+        // Salvar progresso
+        function saveProgress() {
+            const saved = {
+                level: gameState.level,
+                currentRound: gameState.currentRound,
+                soundEnabled: gameState.soundEnabled
+            };
+            try {
+                localStorage.setItem('syllableGameState', JSON.stringify(saved));
+            } catch(e) {
+                console.log('LocalStorage não disponível');
+            }
+        }
+
+        // Carregar progresso
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('syllableGameState');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    gameState.level = data.level || 1;
+                    gameState.currentRound = data.currentRound || 1;
+                    gameState.soundEnabled = data.soundEnabled !== false;
+                    audio.enabled = gameState.soundEnabled;
+                    
+                    // Atualizar UI
+                    document.querySelectorAll('.difficultyBtn').forEach(btn => {
+                        btn.classList.toggle('selected', parseInt(btn.dataset.level) === gameState.level);
+                    });
+                    document.getElementById('soundBtn').textContent = gameState.soundEnabled ? '🔊' : '🔇';
+                }
+            } catch (e) {
+                console.error('Erro ao carregar progresso:', e);
+            }
+        }
+
+        // Iniciar quando DOM estiver pronto
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+
+        // Ajuste de altura para mobile
+        (function fixMobileVH(){
+            const setVH = () => {
+                const vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--app-vh', `${vh * 100}px`);
+            };
+            setVH();
+            window.addEventListener('resize', setVH);
+            window.addEventListener('orientationchange', setVH);
+        })();
+    </script>
+
+    <!-- Footer -->
+    <footer class="game-footer-silabas" style="z-index: 1200; backdrop-filter: none; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8); font-size: 0.62em; padding: 4px 6px; position: static; margin-top: 8px; text-align: center;">
+        <p>Ferramenta Educacional - Sílabas Embaralhadas | Criação e desenvolvimento por João Jr</p>
+    </footer>
+</body>
+</html>
