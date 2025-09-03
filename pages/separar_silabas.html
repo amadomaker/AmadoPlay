@@ -777,9 +777,9 @@
           z-index: 100;
       }
       }
-      /* ============== CELULARES MUITO PEQUENOS (menor que 390px) ============== */
-        @media (max-width: 376px) {
-        #menuTitle { font-size: 20px !important; }
+      /* ============== CELULARES MUITO PEQUENOS (menor que 306px) ============== */
+        @media (max-width: 375px) {
+        #menuTitle { font-size: 20px !important; margin-top: 110px; }
 
         #gameHUD {
           top: 10px;             
@@ -788,11 +788,11 @@
         }
 
         #roundInfo {
-          font-size: 19px;         
+          font-size: 15px;         
         }
 
         #wordHint {
-          font-size: 14px;       
+          font-size: 11px;       
         }
         #difficultySelector {
             flex-direction: column;
@@ -801,7 +801,7 @@
             gap: 12px;
             width: 100%;
             max-width: 190px;
-            margin: 0 auto;
+            margin: -30px;
         }
 
         .difficultyBtn {
@@ -818,9 +818,23 @@
             white-space: normal;
             line-height: 1.2;
         }
+        #startBtn {
+            padding: 20px 56px;
+            font-size: 16px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: 3px solid white;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            animation: pulseButton 2s infinite;
+        }
         /* Sobe o menu para o INICIAR não ficar cortado */
         .startMenu-content {
-            margin-top: 5vh;
+            margin-top: -10vh;
         }
 
         /* Afastar um pouco os slots das sílabas */
