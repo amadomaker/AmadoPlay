@@ -778,8 +778,8 @@
       }
       }
       /* ============== CELULARES MUITO PEQUENOS (menor que 390px) ============== */
-        @media (max-width: 380px) {
-        #menuTitle { font-size: 25px !important; }
+        @media (max-width: 376px) {
+        #menuTitle { font-size: 20px !important; }
 
         #gameHUD {
           top: 10px;             
@@ -794,9 +794,33 @@
         #wordHint {
           font-size: 14px;       
         }
+        #difficultySelector {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 190px;
+            margin: 0 auto;
+        }
+
+        .difficultyBtn {
+            width: 100%;
+            max-width: 190px;
+            max-height: 55px;
+            min-width: auto;
+            padding: 8px 14px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            white-space: normal;
+            line-height: 1.2;
+        }
         /* Sobe o menu para o INICIAR não ficar cortado */
         .startMenu-content {
-            margin-top: 8vh;
+            margin-top: 5vh;
         }
 
         /* Afastar um pouco os slots das sílabas */
@@ -806,6 +830,47 @@
         #syllablesContainer {
             bottom: 10px; /* antes ~25px; desce um pouco para dar respiro */
         }
+        .syllableSlot {
+          width: 70px;
+          height: 60px;
+          font-size: 20px;
+        }
+
+        #syllablesContainer {
+            bottom: 25px;
+            display: grid;                        
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 12px 16px;                        
+            justify-content: center;
+            align-items: center;
+            max-width: 220px;                    
+            margin: 0 auto;
+            background: none;
+            box-shadow: none;
+            padding: 0 8px;
+          }
+
+        .syllableCard {
+          width: 70px;
+          height: 60px;
+          font-size: 20px;
+        }
+
+        .gameControlBtn {
+          width: 40px;
+          height: 40px;
+          font-size: 24px;
+        }
+        #gameControls {
+          position: absolute;
+          top: calc(10px + var(--safe-top));
+          right: 10px;
+          display: flex;
+          flex-direction: column;  
+          gap: 10px;                
+          align-items: flex-end;    
+          z-index: 100;
+      }
         }
 
 
