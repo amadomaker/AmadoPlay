@@ -45,13 +45,18 @@
         #mainContainer {
             width: 90%;
             max-width: 1200px;
-            min-height: 92dvh;         /* troca height por min-height */
-            max-height: 100dvh;        /* nunca passa da viewport */
-            overflow-y: auto;          /* se faltar espaço, rola em vez de cortar */
+            height: 92dvh;
+            height: calc(var(--app-vh) * 0.92);
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            }
-
+            padding-bottom: calc(var(--safe-bottom) + 12px);
+            margin: 20px auto; /* Adicionado margin auto */
+        }
 
         /* Header */
         #header {
@@ -774,12 +779,7 @@
       }
       /* ============== CELULARES MUITO PEQUENOS (menor que 306px) ============== */
         @media (max-width: 375px) {
-        #menuTitle {
-        font-size: clamp(22px, 6vw, 42px); /* cresce proporcional à largura */
-        margin-bottom: 24px;
-        line-height: 1.1;
-        word-break: break-word;
-}
+        #menuTitle { font-size: 20px !important; margin-top: 110px; }
 
         #gameHUD {
           top: 10px;             
