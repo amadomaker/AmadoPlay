@@ -596,6 +596,81 @@
           font-size: 36px;
         }
       }
+      /* ============== TABLET PADRÃO (até 768px) ============== */
+        @media (max-width: 855px) {
+        #menuTitle { font-size: 45px !important; }
+
+        /* HUD menor para evitar sobreposição */
+        #gameHUD {
+            top: 16px;
+            left: 16px;
+            padding: 16px 20px;
+            border-radius: 20px;
+            gap: 8px;
+        }
+        #roundInfo { font-size: 26px; }
+        #wordHint  { font-size: 18px; }
+
+        /* Controles em coluna (como no mobile), sobrepondo o estilo do 1024px */
+        #gameControls {
+            top: calc(16px + var(--safe-top));
+            right: 16px;
+            display: flex;
+            flex-direction: column;  /* empilha os botões */
+            gap: 12px;
+            align-items: flex-end;
+            z-index: 100;
+        }
+        .gameControlBtn {
+            width: 72px;
+            height: 72px;
+            font-size: 32px;
+        }
+
+        /* Menu inicial: sobe para não cortar no container */
+        .startMenu-content {
+            margin-top: 24vh;
+        }
+        }
+
+
+      /* ============== TABLET ESTREITO (até 620px) ============== */
+        @media (max-width: 620px) {
+        #menuTitle { font-size: 45px !important; }
+
+        /* HUD menor para evitar sobreposição */
+        #gameHUD {
+            top: 12px;
+            left: 12px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            gap: 6px;
+        }
+        #roundInfo { font-size: 22px; }
+        #wordHint  { font-size: 16px; }
+
+        /* Controles em coluna, como no mobile */
+        #gameControls {
+            top: calc(12px + var(--safe-top));
+            right: 12px;
+            display: flex;
+            flex-direction: column; /* empilha */
+            gap: 10px;
+            align-items: flex-end;
+            z-index: 100;
+        }
+        .gameControlBtn {
+            width: 60px;
+            height: 60px;
+            font-size: 26px;
+        }
+
+        /* Menu inicial: sobe para não cortar dentro do container */
+        .startMenu-content {
+            margin-top: 18vh; /* antes estava muito baixo; assim evita corte */
+        }
+}
+
 
       /* ================= CELULAR (até 480px) ================= */
       @media (max-width: 480px) {
@@ -702,6 +777,34 @@
           z-index: 100;
       }
       }
+      /* ============== CELULARES MUITO PEQUENOS (menor que 390px) ============== */
+        @media (max-width: 389px) {
+                    #gameHUD {
+          top: 10px;             
+          left: 10px;
+          padding: 8px 12px; 
+        }
+
+        #roundInfo {
+          font-size: 19px;         
+        }
+
+        #wordHint {
+          font-size: 14px;       
+        }
+        /* Sobe o menu para o INICIAR não ficar cortado */
+        .startMenu-content {
+            margin-top: 8vh;
+        }
+
+        /* Afastar um pouco os slots das sílabas */
+        #wordFormation {
+            top: 46%; /* estava ~50% no mobile; sobe só um pouquinho */
+        }
+        #syllablesContainer {
+            bottom: 12px; /* antes ~25px; desce um pouco para dar respiro */
+        }
+        }
 
 
         /* Área para leitores de tela */
