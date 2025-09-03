@@ -886,6 +886,117 @@
           z-index: 100;
       }
         }
+        /* ============== CELULARES MUITO PEQUENOS (menor que 275px) Navegador no Iphone ============== */
+        @media (max-width: 275px) {
+        #menuTitle { font-size: 17px !important; margin-top: 110px; }
+
+        #gameHUD {
+          top: 7px;             
+          left: 7px;
+          padding: 8px 12px; 
+        }
+
+        #roundInfo {
+          font-size: 14px;         
+        }
+
+        #wordHint {
+          font-size: 10px;       
+        }
+        #difficultySelector {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 190px;
+            margin: -30px;
+        }
+
+        .difficultyBtn {
+            width: 100%;
+            max-width: 190px;
+            max-height: 55px;
+            min-width: auto;
+            padding: 8px 14px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            white-space: normal;
+            line-height: 1.2;
+        }
+        #startBtn {
+            padding: 20px 56px;
+            font-size: 16px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: 3px solid white;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            animation: pulseButton 2s infinite;
+        }
+        /* Sobe o menu para o INICIAR não ficar cortado */
+        .startMenu-content {
+            margin-top: -10vh;
+        }
+
+        /* Afastar um pouco os slots das sílabas */
+        #wordFormation {
+            top: 46%; /* estava ~50% no mobile; sobe só um pouquinho */
+        }
+        #syllablesContainer {
+            bottom: 10px; /* antes ~25px; desce um pouco para dar respiro */
+        }
+        .syllableSlot {
+          width: 60px;
+          height: 50px;
+          font-size: 20px;
+        }
+
+        #syllablesContainer {
+            bottom: 25px;
+            display: grid;                        
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 12px 16px;                        
+            justify-content: center;
+            align-items: center;
+            max-width: 280px;                    
+            margin: 0 auto;
+            background: none;
+            box-shadow: none;
+            padding: 0 4px;
+          }
+
+        .syllableCard {
+          width: 60px;
+          height: 50px;
+          font-size: 20px;
+        }
+
+        .gameControlBtn {
+          width: 35px;
+          height: 35px;
+          font-size: 24px;
+        }
+        #gameControls {
+          position: absolute;
+          top: calc(10px + var(--safe-top));
+          right: 7px;
+          display: flex;
+          flex-direction: column;  
+          gap: 10px;                
+          align-items: flex-end;    
+          z-index: 100;
+      }
+
+
+        }
 
 
         /* Área para leitores de tela */
