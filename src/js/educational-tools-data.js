@@ -83,7 +83,7 @@
       ],
       tags: ['alimentação', 'nutrição', 'saúde', 'hábitos saudáveis', 'EF04CI03', 'EF05CI08'],
       popular: false,
-      novo: true,
+      novo: false,
       acessos: 6200
     },
     {
@@ -162,7 +162,29 @@
       novo: true,
       acessos: 0,
       interno: 'pages/conta_bolhas.html' 
+    },
+    {
+      id: 'silabas-embaralhadas',
+      titulo: 'Sílabas Embaralhadas',
+      descricao: 'Vamos formar palavras? Arraste e solte as sílabas embaralhadas para construir palavras de forma divertida e interativa!',
+      imagem: 'src/assets/images/fundo_separar_silabas.png', 
+      materia: 'lingua-portuguesa',
+      series: [1, 2, 3],
+      tipo: ['interativo', 'ludico'],
+      dificuldade: 'basico',
+      tags: ['alfabetização', 'sílabas', 'formação de palavras', 'jogo', 'consciência fonológica'],
+      bncc: [
+        { codigo: 'EF01LP06', descricao: 'Segmentar oralmente palavras em sílabas.' },
+        { codigo: 'EF01LP09', descricao: 'Comparar palavras, identificando semelhanças e diferenças entre sons de sílabas iniciais.' },
+        { codigo: 'EF02LP02', descricao: 'Segmentar palavras em sílabas e remover e substituir sílabas iniciais, mediais ou finais para criar novas palavras.' },
+        { codigo: 'EF03LP02', descricao: 'Ler e escrever corretamente palavras com sílabas CV, V, CVC, CCV, VC, VV, CVV, identificando que existem vogais em todas as sílabas.' }
+      ],
+      popular: false,
+      novo: true,
+      acessos: 0,
+      interno: 'pages/separar_silabas.html'
     }
+
 
 
 
