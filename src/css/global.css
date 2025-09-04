@@ -1,60 +1,11 @@
 /* ===== FOOTER ===== */
 
-.game-footer {
-  background-color: var(--secondary-bg, #663399); /* fallback roxo se variável não existir */
-  padding: .25rem .5rem;                /* menos espaço */
-  text-align: center;
-  margin-top: auto;
-  color: var(--text-secondary);         /* já é secundário */
-  font-size: .75rem;                    /* menor */
-  line-height: 1.2;
-  font-weight: 400;
-  opacity: .65;                         /* baixa presença visual */
-  box-shadow: none;                     /* sem sombra */
-  border-top: 1px solid rgba(0,0,0,.06);/* separador sutil (opcional) */
-}
-
-/* links herdam a discrição */
-.game-footer a {
-  color: inherit;
-  text-decoration: none;
-  border-bottom: 1px dotted currentColor; /* marca só no hover abaixo */
-}
-
-/* revela um pouco ao interagir, mas continua discreto */
-@media (hover:hover) {
-  .game-footer { transition: opacity .2s ease; }
-  .game-footer:hover,
-  .game-footer:focus-within {
-    opacity: .75;
-  }
-  .game-footer a:hover,
-  .game-footer a:focus {
-    text-decoration: underline;
-    border-bottom: 0;
-  }
-}
-/* Footer para a página abaco digital  */
-.game-footer-abaco{
-  /* não precisa duplicar margin-top */
-  margin-top: 20px;
-  width: 100%;
-  box-sizing: border-box;         /* padding não estoura a largura */
-  text-align: center;
-  padding: .25rem .5rem;
-  background: rgba(255,255,255,.1);
-  color: rgba(255,255,255,.8);
-  font-family: 'Montserrat', Arial, sans-serif;
-  font-weight: 400;
-  font-size: .75em;
-  line-height: 1.2;
-  border-top: 1px solid rgba(255,255,255,.1);
-  backdrop-filter: blur(5px);
-  position: relative;
-}
-
+/* Estilos base compartilhados por todos os footers de jogos */
+.game-footer,
+.game-footer-abaco,
 .game-footer-bolhas {
   width: 100%;
+  box-sizing: border-box;
   text-align: center;
   padding: .25rem .5rem;
   background: rgba(255,255,255,.1);
@@ -65,7 +16,22 @@
   line-height: 1.2;
   border-top: 1px solid rgba(255,255,255,.1);
   backdrop-filter: blur(5px);
+}
 
+/* Footer padrão (usado em separar_silabas.html) */
+.game-footer {
+  position: relative;
+  z-index: 10;
+}
+
+/* Footer para páginas como Ábaco, Mapa do Brasil, etc. */
+.game-footer-abaco {
+  position: relative;
+  margin-top: 20px;
+}
+
+/* Footer para a página Conta Bolhas (fixo no fundo) */
+.game-footer-bolhas {
   position: fixed;   /* fixa no viewport */
   bottom: 0;         /* encosta no fundo */
   left: 0;
@@ -101,9 +67,10 @@
 
 /* Reset de overflow horizontal "fantasma" */
 html, body {
-  min-height: 100%;
+  min-height: 100vh; /* Garante que o body ocupe a altura da tela */
   overflow-x: clip; /* evita barra de rolagem horizontal intermitente */
 }
+
 /* ===== Botão flutuante (limpo) ===== */
 .accessibility-float-btn,
 #accessibilityFloatBtn {
@@ -631,4 +598,52 @@ body.tts-mode .a11y-tts-hover {
   background-size: 100% 100%;
   background-repeat: no-repeat;
   border-radius: 2px;
+}
+/*
+================================================================
+  CORREÇÕES ESPECÍFICAS PARA PÁGINAS
+================================================================
+*/
+
+/* ===== PÁGINAS COM FOOTER FIXO (Layout Flex) ===== */
+/* 
+  Garante que o rodapé fique no final da tela em páginas com pouco conteúdo,
+  como "Três Poderes" e "Alfabeto Móvel", sem quebrar layouts de outras páginas.
+  Esta é a solução definitiva para o problema em telas grandes e interativas.
+*/
+body[data-page="tres-poderes"],
+body[data-page="alfabeto-movel"] {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Garante que o body ocupe toda a altura da tela */
+}
+
+/* 
+  A propriedade margin-top: auto em um item flexível vertical
+  ocupa todo o espaço livre acima dele, empurrando-o para o fundo.
+  Isso resolve o problema do rodapé "flutuando" em telas altas.
+*/
+body[data-page="tres-poderes"] footer,
+body[data-page="alfabeto-movel"] footer {
+  margin-top: auto;
+}
+
+/* ===== ALFABETO MÓVEL (Ajustes Adicionais) ===== */
+/* 1. Remove o fundo branco do container para corrigir a "faixa de cor" */
+body[data-page="alfabeto-movel"] .container,
+body[data-page="alfabeto-movel"] main {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* 2. Ajusta o layout para telas de computador e interativas (> 1024px) */
+@media (min-width: 1024px) {
+  body[data-page="alfabeto-movel"] .game-container {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+  body[data-page="alfabeto-movel"] #word-display-area { flex: 3; min-height: 250px; height: auto; }
+  body[data-page="alfabeto-movel"] #letter-bank { flex: 2; height: 60vh; max-height: 450px; overflow-y: auto; }
 }
