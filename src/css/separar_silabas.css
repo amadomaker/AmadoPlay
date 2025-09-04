@@ -7,14 +7,13 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100dvh;
+    height: 100vh; /* Garante que o body tenha uma altura definida */
+    height: 100dvh; /* Unidade mais moderna para altura de viewport em mobiles */
     display: flex;
-    flex-direction: column; /* Alterado para column */
+    flex-direction: column; /* Empilha os itens verticalmente */
     justify-content: center;
     align-items: center;
     overflow-x: hidden; /* Previne scroll horizontal */
-    margin: 0;
-    padding: 0;
 }
 
 /* Safe-area + unidades modernas */
@@ -34,17 +33,16 @@ body {
 #mainContainer {
     width: 90%;
     max-width: 1200px;
-    height: 92dvh;
-    height: calc(var(--app-vh) * 0.92);
+    height: 95%; /* Ocupa 95% da altura do body */
+    max-height: 950px; /* Limite máximo para telas muito grandes */
     background: rgba(255, 255, 255, 0.98);
     border-radius: 30px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     position: relative;
-    overflow: hidden;
+    overflow-y: auto; /* Permite rolagem interna se o conteúdo for maior que o container */
     display: flex;
     flex-direction: column;
-    padding-bottom: calc(var(--safe-bottom) + 12px);
-    margin: 20px auto; /* Adicionado margin auto */
+    padding-bottom: calc(var(--safe-bottom) + 12px); 
 }
 
 /* Header */
@@ -77,10 +75,12 @@ body {
     height: 100%;
     background: transparent;
     display: flex;
-    justify-content: center;
+    flex-direction: column; /* Organiza os itens verticalmente */
+    justify-content: center; /* Centraliza o conteúdo verticalmente */
     align-items: center;
     z-index: 500;
     transition: all 0.5s ease-out;
+    padding: 1rem; /* Adiciona um respiro interno */
 }
 
 .bg-image {
@@ -120,8 +120,7 @@ body {
     background: transparent;
     border-radius: 0;
     box-shadow: none;
-    max-width: 600px;
-    margin-top: 20vh;
+    max-width: 600px; 
 }
 
 #startMenu.hidden {
@@ -512,7 +511,7 @@ body {
 
 #activityTitle { font-size: 20px; }
 #menuTitle { font-size: 55px !important; }
-.startMenu-content { margin-top: 35vh; }
+/* .startMenu-content { margin-top: 35vh; } */ /* Removido para usar flexbox */
 
 #difficultySelector { flex-direction: column; width: 100%;width: 400px; height: 270px; }
 .difficultyBtn {
@@ -617,9 +616,7 @@ body {
 }
 
 /* Menu inicial: sobe para não cortar no container */
-.startMenu-content {
-    margin-top: 24vh;
-}
+/* .startMenu-content { margin-top: 24vh; } */ /* Removido */
 }
 
 
@@ -655,9 +652,7 @@ body {
 }
 
 /* Menu inicial: sobe para não cortar dentro do container */
-.startMenu-content {
-    margin-top: 18vh; /* antes estava muito baixo; assim evita corte */
-}
+/* .startMenu-content { margin-top: 18vh; } */ /* Removido */
 }
 
 
@@ -678,7 +673,7 @@ body {
 
 }
 #menuTitle { font-size: 30px !important; }
-.startMenu-content { margin-top: 20vh; }
+/* .startMenu-content { margin-top: 20vh; } */ /* Removido */
 
 #difficultySelector {
     flex-direction: column;
@@ -711,11 +706,11 @@ body {
 }
 
 #roundInfo {
-  font-size: 20px;         
+  font-size: 18px; /* Reduzido para economizar espaço vertical */
 }
 
 #wordHint {
-  font-size: 14px;       
+  font-size: 13px; /* Reduzido para economizar espaço vertical */
 }
 #wordFormation {
   top: 50%;
@@ -777,11 +772,11 @@ body {
 }
 
 #roundInfo {
-  font-size: 15px;         
+  font-size: 14px; /* Ajuste fino */
 }
 
 #wordHint {
-  font-size: 11px;       
+  font-size: 10px; /* Ajuste fino */
 }
 #difficultySelector {
     flex-direction: column;
@@ -822,9 +817,7 @@ body {
     animation: pulseButton 2s infinite;
 }
 /* Sobe o menu para o INICIAR não ficar cortado */
-.startMenu-content {
-    margin-top: -10vh;
-}
+/* .startMenu-content { margin-top: -10vh; } */ /* Removido */
 
 /* Afastar um pouco os slots das sílabas */
 #wordFormation {
@@ -931,9 +924,7 @@ body {
     animation: pulseButton 2s infinite;
 }
 /* Sobe o menu para o INICIAR não ficar cortado */
-.startMenu-content {
-    margin-top: -10vh;
-}
+/* .startMenu-content { margin-top: -10vh; } */ /* Removido */
 
 /* Afastar um pouco os slots das sílabas */
 #wordFormation {
