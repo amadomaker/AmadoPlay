@@ -674,7 +674,7 @@ body {
     transform: scale(1.49) translateY(-10%);
 
 }
-#menuTitle { font-size: 24px !important; } /* Reduzido para não quebrar a linha */
+#menuTitle { font-size: 18px !important; } /* Reduzido para não quebrar a linha */
 /* .startMenu-content { margin-top: 20vh; } */ /* Removido */
 
 #difficultySelector {
