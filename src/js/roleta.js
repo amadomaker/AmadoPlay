@@ -28,25 +28,39 @@ const RING_CONFIG = {
     }
 };
 
-// === LISTA DE COMPLEMENTOS ===
-const COMPLEMENTS = [
-    'eat for breakfast', 'do on weekends', 'like to watch', 'think about the future',
-    'want for your birthday', 'need to buy', 'say about the project', 'go after class',
-    'play in the park', 'read before bed', 'learn this year', 'cook for dinner',
-    'see at the zoo', 'wear to the party', 'feel about the news', 'sing in the shower',
-    'dream about at night', 'usually do on holidays', 'study for the test',
-    'buy at the supermarket', 'find in the forest', 'hear in the city',
-    'smell in the kitchen', 'taste like', 'do for fun', 'talk about with friends',
-    'write in your journal', 'draw in your sketchbook', 'build with legos',
-    'plant in the garden', 'fix in the house', 'clean on Saturdays',
-    'organize in your room', 'give as a gift', 'receive for Christmas',
-    'explore in your city', 'visit on vacation', 'achieve this month'
-];
+// === LISTA DE COMPLEMENTOS POR TEMA ===
+const THEMED_COMPLEMENTS = {
+    daily_routine: [
+        'do in the morning', 'do after school', 'do before bed', 'wear today',
+        'help with at home', 'see on the way to school', 'eat for breakfast', 'say to your parents'
+    ],
+    food: [
+        'eat for lunch', 'like to drink', 'cook with your family', 'buy at the market',
+        'have for a snack', 'smell in the kitchen', 'taste for the first time', 'share with a friend'
+    ],
+    hobbies: [
+        'play with friends', 'watch on TV', 'read for fun', 'listen to',
+        'draw in your notebook', 'build with blocks', 'do on a rainy day', 'collect as a hobby'
+    ],
+    places: [
+        'go on vacation', 'see at the park', 'do at the beach', 'visit in your city',
+        'find at school', 'explore in the forest', 'buy at the mall', 'see at the museum'
+    ],
+    feelings: [
+        'feel happy about', 'get angry about', 'worry about', 'dream about',
+        'feel excited for', 'get scared of', 'laugh about', 'feel proud of'
+    ],
+    nature: [
+        'see in the sky', 'find on the ground', 'hear in the forest', 'smell after rain',
+        'touch in a garden', 'see at the river', 'find on a mountain', 'see at night'
+    ]
+};
 
 // === CONFIGURAÇÕES GERAIS ===
 const CONFIG = {
     spinSpeed: 4, // Velocidade equilibrada para um giro mais longo
     soundEnabled: true,
+    currentTheme: 'all', // Novo estado para o tema
     questionHistory: [],
     maxHistoryItems: 5,
     sounds: {
@@ -59,6 +73,7 @@ const CONFIG = {
 // === ELEMENTOS DOM ===
 const elements = {
     // Controles gerais
+    themeSelector: null,
     soundToggle: null,
     
     // Anéis da roleta
@@ -128,6 +143,7 @@ function initializeApp() {
 // === BUSCAR ELEMENTOS DOM ===
 function findDOMElements() {
     // Controles gerais
+    elements.themeSelector = document.getElementById('theme-selector');
     elements.soundToggle = document.getElementById('sound-toggle');
     
     // Anéis da roleta
@@ -172,6 +188,9 @@ function findDOMElements() {
 
 // === CONFIGURAR EVENTOS ===
 function setupEventListeners() {
+    // Seletor de tema
+    elements.themeSelector?.addEventListener('change', handleThemeChange);
+
     // Toggle de som
     elements.soundToggle?.addEventListener('click', toggleSound);
     
@@ -217,9 +236,17 @@ function setupEventListeners() {
     window.addEventListener('resize', debounce(handleResize, 250));
 }
 
+// === MUDANÇA DE TEMA ===
+function handleThemeChange(e) {
+    CONFIG.currentTheme = e.target.value;
+    // Apenas salva a nova preferência de tema.
+    // A mudança será refletida no próximo giro da roleta.
+    saveSettings(); // Salvar a preferência de tema
+}
+
 // === INICIALIZAR ÁUDIO ===
 function initializeAudio() {
-    // Função para criar som sintético
+    // Função para criar som sintético (para o som de 'win')
     const createSyntheticSound = (frequency, duration, type = 'sine') => {
         return () => {
             if (!CONFIG.soundEnabled) return;
@@ -246,9 +273,17 @@ function initializeAudio() {
         };
     };
     
-    // Configurar sons sintéticos
-    CONFIG.sounds.spin = createSyntheticSound(220, 0.1, 'sawtooth');
-    CONFIG.sounds.tick = createSyntheticSound(800, 0.05, 'square');
+    // Carregar o som principal da roleta
+    const spinSound = new Audio('../src/assets/sons/roleta-267662.mp3');
+    spinSound.preload = 'auto';
+
+    CONFIG.sounds.spin = () => {
+        if (!CONFIG.soundEnabled) return;
+        spinSound.currentTime = 0; // Garante que o som toque do início
+        spinSound.play().catch(error => console.warn('⚠️ Erro ao tocar som de giro:', error));
+    };
+    
+    CONFIG.sounds.tick = () => {}; // O som de tick não é mais necessário
     CONFIG.sounds.win = createSyntheticSound(440, 0.3, 'sine');
 }
 
@@ -379,28 +414,20 @@ function spinRing(ringType) {
     const randomAngle = Math.random() * 360;
     const totalRotation = config.currentRotation + (baseSpins * 360) + randomAngle;
     
-    // Aplicar rotação
-    ringElement.style.transition = `transform ${2 + CONFIG.spinSpeed * 0.3}s cubic-bezier(0.23, 1, 0.32, 1)`;
+    // Aplicar rotação com duração fixa de 3s para sincronizar com o áudio
+    ringElement.style.transition = `transform 3s cubic-bezier(0.23, 1, 0.32, 1)`;
     ringElement.style.transform = `rotate(${totalRotation}deg)`;
     config.currentRotation = totalRotation;
     
-    // Som de giro
+    // Som de giro (o novo MP3)
     if (CONFIG.sounds.spin) {
         CONFIG.sounds.spin();
     }
     
-    // Simular ticks durante o giro
-    const tickInterval = setInterval(() => {
-        if (CONFIG.sounds.tick && config.spinning) {
-            CONFIG.sounds.tick();
-        }
-    }, 150);
-    
-    // Finalizar giro
+    // Finalizar giro após 3 segundos
     setTimeout(() => {
-        clearInterval(tickInterval);
         config.spinning = false;
-    }, (2 + CONFIG.spinSpeed * 0.3) * 1000);
+    }, 3000);
     
     announceToScreenReader(`Girando anel ${ringType}`);
 }
@@ -430,25 +457,41 @@ function spinAllRings() {
     announceToScreenReader('Girando todos os anéis para formar uma nova pergunta');
 }
 
+// === OBTER COMPLEMENTOS PARA O TEMA ATUAL ===
+function getComplementsForTheme() {
+    if (CONFIG.currentTheme === 'all') {
+        // Junta todos os complementos em uma única lista
+        return Object.values(THEMED_COMPLEMENTS).flat();
+    }
+    return THEMED_COMPLEMENTS[CONFIG.currentTheme] || [];
+}
+
 // === ANIMAR E SELECIONAR COMPLEMENTO ===
 function animateAndSelectComplement(shouldAddToHistory = false) {
     const complementSpan = elements.complementResult;
     if (!complementSpan) return;
 
+    const complements = getComplementsForTheme();
+    if (complements.length === 0) { // Adiciona verificação para evitar erros
+        complementSpan.textContent = '...';
+        updateQuestion('...');
+        return;
+    }
+
     let animationCounter = 0;
     complementSpan.classList.add('animating');
 
     const animationInterval = setInterval(() => {
-        const randomIndex = Math.floor(Math.random() * COMPLEMENTS.length);
-        complementSpan.textContent = COMPLEMENTS[randomIndex];
+        const randomIndex = Math.floor(Math.random() * complements.length);
+        complementSpan.textContent = complements[randomIndex];
         animationCounter++;
         if (animationCounter > 20) { // Anima por ~2 segundos
             clearInterval(animationInterval);
             complementSpan.classList.remove('animating');
             
             // Seleciona o complemento final
-            const finalIndex = Math.floor(Math.random() * COMPLEMENTS.length);
-            const finalComplement = COMPLEMENTS[finalIndex];
+            const finalIndex = Math.floor(Math.random() * complements.length);
+            const finalComplement = complements[finalIndex];
             
             // Atualiza a UI com a pergunta completa
             updateQuestion(finalComplement);
@@ -495,7 +538,7 @@ function updateQuestion(finalComplement = null) {
     }
     if (elements.complementResult) {
         // Se um complemento final foi passado, usa ele. Senão, pega um aleatório.
-        selectedWords.complement = finalComplement || elements.complementResult.textContent || COMPLEMENTS[0];
+        selectedWords.complement = finalComplement || elements.complementResult.textContent || getComplementsForTheme()[0];
         elements.complementResult.textContent = selectedWords.complement;
     }
     
@@ -798,6 +841,7 @@ function handleResize() {
 // === SALVAR CONFIGURAÇÕES ===
 function saveSettings() {
     const settings = {
+        currentTheme: CONFIG.currentTheme,
         soundEnabled: CONFIG.soundEnabled,
         questionHistory: CONFIG.questionHistory,
         ringWords: {
@@ -828,6 +872,11 @@ function loadSavedSettings() {
         const settings = JSON.parse(saved);
         
         // Restaurar configurações gerais
+        if (settings.currentTheme && elements.themeSelector) {
+            CONFIG.currentTheme = settings.currentTheme;
+            elements.themeSelector.value = settings.currentTheme;
+        }
+
         if (typeof settings.soundEnabled === 'boolean' && !settings.soundEnabled) {
             toggleSound();
         }

@@ -195,6 +195,40 @@ body {
     transform: translateX(-50%);
 }
 
+/* === SEÇÃO DE SELEÇÃO DE TEMA === */
+.theme-selection-section {
+    margin-bottom: var(--space-6);
+    text-align: center;
+}
+
+.theme-selector-wrapper {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.theme-selector {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--dark-purple);
+    background-color: var(--white);
+    border: 2px solid var(--light-purple);
+    border-radius: var(--border-radius-lg);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.5em 1.5em;
+    transition: border-color var(--transition-fast);
+}
+
+.theme-selector:hover,
+.theme-selector:focus {
+    border-color: var(--primary-purple);
+}
+
 .toggle-button {
     background: var(--primary-purple);
     border: none;
@@ -309,7 +343,7 @@ body {
     pointer-events: none;
 }
 
-.outer-ring .ring-section-text { font-size: 10px; }
+.outer-ring .ring-section-text { font-size: 8px; }
 .middle-ring .ring-section-text { font-size: 10px; }
 .inner-ring .ring-section-text { font-size: 9px; }
 

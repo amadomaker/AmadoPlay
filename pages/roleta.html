@@ -37,6 +37,23 @@
     <!-- Main Content -->
     <main id="main-content" class="main-content" role="main">
         <div class="container">
+            <!-- SEÇÃO DE SELEÇÃO DE TEMA -->
+            <section class="theme-selection-section">
+                <h2 class="section-title">Escolha um Tema</h2>
+                <div class="theme-selector-wrapper">
+                    <label for="theme-selector" class="sr-only">Selecione o tema para as perguntas</label>
+                    <select id="theme-selector" class="theme-selector">
+                        <option value="all">Todos os Temas</option>
+                        <option value="daily_routine">Rotina Diária</option>
+                        <option value="food">Comida e Bebida</option>
+                        <option value="hobbies">Hobbies e Lazer</option>
+                        <option value="places">Lugares e Viagens</option>
+                        <option value="feelings">Sentimentos</option>
+                        <option value="nature">Natureza</option>
+                    </select>
+                </div>
+            </section>
+
             <!-- Área de Resultado - Pergunta Formada -->
             <section class="result-section" aria-labelledby="result-title">
                 <h2 id="result-title" class="section-title">Pergunta Formada</h2>
