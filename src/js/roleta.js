@@ -1,36 +1,51 @@
 /* ===================================
-   ROLETA DE FORMAÇÃO DE PERGUNTAS - JAVASCRIPT
-   Três Anéis Concêntricos: Pronomes Interrogativos + Verbos + Pronomes Pessoais
+   ENGLISH QUESTION WHEEL - JAVASCRIPT
+   Three Concentric Rings: WH-Words + Verbs + Subjects
    =================================== */
 
 // === CONFIGURAÇÕES DOS ANÉIS ===
 const RING_CONFIG = {
     outer: {
-        words: ['O quê', 'Quando', 'Onde', 'Quem', 'Por que', 'Como', 'Qual', 'Com que frequência'],
-        colors: ['#f3f4f6', '#e5e7eb', '#f3f4f6', '#e5e7eb', '#f3f4f6', '#e5e7eb', '#f3f4f6', '#e5e7eb'],
-        radius: { outer: 180, inner: 140 },
+        words: ['What', 'When', 'Where', 'Who', 'Why', 'How', 'Which', 'How often'],
+        colors: ['#818cf8', '#a78bfa', '#818cf8', '#a78bfa', '#818cf8', '#a78bfa', '#818cf8', '#a78bfa'],
+        radius: { outer: 200, inner: 130 },
         currentRotation: 0,
         spinning: false
     },
     middle: {
-        words: ['é/são', 'foi/eram', 'está/estavam', 'vai/vão', 'faz/fez', 'pode/podem', 'deve/deveriam', 'quer/querem'],
-        colors: ['#10b981', '#059669', '#047857', '#065f46', '#f97316', '#ea580c', '#c2410c', '#9a3412'],
-        radius: { outer: 135, inner: 100 },
+        words: ['is/are', 'was/were', 'do/does', 'did', 'will', 'can', 'should', 'would'], // 'is/are' e 'do/does' serão corrigidos pela lógica
+        colors: ['#5eead4', '#2dd4bf', '#5eead4', '#2dd4bf', '#5eead4', '#2dd4bf', '#5eead4', '#2dd4bf'],
+        radius: { outer: 130, inner: 70 },
         currentRotation: 0,
         spinning: false
     },
     inner: {
-        words: ['eu', 'tu', 'ele/ela', 'nós', 'vocês', 'eles/elas'],
-        colors: ['#4ade80', '#22c55e', '#16a34a', '#15803d', '#4ade80', '#22c55e', '#16a34a'],
-        radius: { outer: 95, inner: 30 },
+        words: ['I', 'you', 'he/she/it', 'we', 'they'],
+        colors: ['#fde047', '#facc15', '#fde047', '#facc15', '#fde047'],
+        radius: { outer: 70, inner: 30 },
         currentRotation: 0,
         spinning: false
     }
 };
 
+// === LISTA DE COMPLEMENTOS ===
+const COMPLEMENTS = [
+    'eat for breakfast', 'do on weekends', 'like to watch', 'think about the future',
+    'want for your birthday', 'need to buy', 'say about the project', 'go after class',
+    'play in the park', 'read before bed', 'learn this year', 'cook for dinner',
+    'see at the zoo', 'wear to the party', 'feel about the news', 'sing in the shower',
+    'dream about at night', 'usually do on holidays', 'study for the test',
+    'buy at the supermarket', 'find in the forest', 'hear in the city',
+    'smell in the kitchen', 'taste like', 'do for fun', 'talk about with friends',
+    'write in your journal', 'draw in your sketchbook', 'build with legos',
+    'plant in the garden', 'fix in the house', 'clean on Saturdays',
+    'organize in your room', 'give as a gift', 'receive for Christmas',
+    'explore in your city', 'visit on vacation', 'achieve this month'
+];
+
 // === CONFIGURAÇÕES GERAIS ===
 const CONFIG = {
-    spinSpeed: 3,
+    spinSpeed: 4, // Velocidade equilibrada para um giro mais longo
     soundEnabled: true,
     questionHistory: [],
     maxHistoryItems: 5,
@@ -44,7 +59,6 @@ const CONFIG = {
 // === ELEMENTOS DOM ===
 const elements = {
     // Controles gerais
-    speedControl: null,
     soundToggle: null,
     
     // Anéis da roleta
@@ -53,16 +67,14 @@ const elements = {
     innerRing: null,
     
     // Botões de controle dos anéis
-    spinOuter: null,
-    spinMiddle: null,
-    spinInner: null,
-    spinAll: null,
+    spinAll: null, // Agora é o único botão de giro
     
     // Exibição da pergunta
     questionDisplay: null,
     whResult: null,
     auxResult: null,
     subjectResult: null,
+    complementResult: null,
     
     // Histórico e configurações
     questionHistory: null,
@@ -71,13 +83,14 @@ const elements = {
     
     // Modais
     configModal: null,
-    accessibilityModal: null,
+    guideModal: null,
+    historyModal: null,
     closeConfigModal: null,
-    closeModal: null,
+    closeGuideModal: null,
+    closeHistoryModal: null,
     
     // Outros elementos
-    loadingOverlay: null,
-    accessibilityButton: null
+    loadingOverlay: null
 };
 
 // === INICIALIZAÇÃO ===
@@ -86,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeApp() {
-    console.log('🎯 Iniciando Roleta de Formação de Perguntas em Português...');
+    console.log('🎯 Iniciando Roleta de Perguntas em Inglês...');
     
     // Buscar elementos DOM
     findDOMElements();
@@ -109,13 +122,12 @@ function initializeApp() {
     // Gerar pergunta inicial
     updateQuestion();
     
-    console.log('✅ Roleta de português inicializada com sucesso!');
+    console.log('✅ Roleta de Perguntas em Inglês inicializada com sucesso!');
 }
 
 // === BUSCAR ELEMENTOS DOM ===
 function findDOMElements() {
     // Controles gerais
-    elements.speedControl = document.getElementById('speed-control');
     elements.soundToggle = document.getElementById('sound-toggle');
     
     // Anéis da roleta
@@ -124,9 +136,6 @@ function findDOMElements() {
     elements.innerRing = document.getElementById('inner-ring');
     
     // Botões de controle
-    elements.spinOuter = document.getElementById('spin-outer');
-    elements.spinMiddle = document.getElementById('spin-middle');
-    elements.spinInner = document.getElementById('spin-inner');
     elements.spinAll = document.getElementById('spin-all');
     
     // Exibição da pergunta
@@ -134,6 +143,7 @@ function findDOMElements() {
     elements.whResult = document.getElementById('wh-result');
     elements.auxResult = document.getElementById('aux-result');
     elements.subjectResult = document.getElementById('subject-result');
+    elements.complementResult = document.getElementById('complement-result');
     
     // Histórico e configurações
     elements.questionHistory = document.getElementById('question-history');
@@ -142,13 +152,14 @@ function findDOMElements() {
     
     // Modais
     elements.configModal = document.getElementById('config-modal');
-    elements.accessibilityModal = document.getElementById('accessibility-modal');
+    elements.guideModal = document.getElementById('guide-modal');
+    elements.historyModal = document.getElementById('history-modal');
     elements.closeConfigModal = document.getElementById('close-config-modal');
-    elements.closeModal = document.getElementById('close-modal');
+    elements.closeGuideModal = document.getElementById('close-guide-modal');
+    elements.closeHistoryModal = document.getElementById('close-history-modal');
     
     // Outros elementos
     elements.loadingOverlay = document.getElementById('loading-overlay');
-    elements.accessibilityButton = document.getElementById('accessibility-button');
     
     // Verificar elementos críticos
     const criticalElements = ['outerRing', 'middleRing', 'innerRing'];
@@ -161,21 +172,11 @@ function findDOMElements() {
 
 // === CONFIGURAR EVENTOS ===
 function setupEventListeners() {
-    // Controle de velocidade
-    elements.speedControl?.addEventListener('input', (e) => {
-        CONFIG.spinSpeed = parseInt(e.target.value);
-        saveSettings();
-        announceToScreenReader(`Velocidade alterada para ${CONFIG.spinSpeed}`);
-    });
-    
     // Toggle de som
     elements.soundToggle?.addEventListener('click', toggleSound);
     
     // Botões dos anéis
-    elements.spinOuter?.addEventListener('click', () => spinRing('outer'));
-    elements.spinMiddle?.addEventListener('click', () => spinRing('middle'));
-    elements.spinInner?.addEventListener('click', () => spinRing('inner'));
-    elements.spinAll?.addEventListener('click', spinAllRings);
+    elements.spinAll?.addEventListener('click', spinAllRings); // Apenas o botão principal
     
     // Histórico
     elements.clearHistoryBtn?.addEventListener('click', clearHistory);
@@ -184,9 +185,11 @@ function setupEventListeners() {
     elements.configWordsBtn?.addEventListener('click', openConfigModal);
     
     // Modais
+    document.getElementById('open-guide-btn')?.addEventListener('click', openGuideModal);
+    document.getElementById('open-history-btn')?.addEventListener('click', openHistoryModal);
     elements.closeConfigModal?.addEventListener('click', closeConfigModal);
-    elements.closeModal?.addEventListener('click', closeAccessibilityModal);
-    elements.accessibilityButton?.addEventListener('click', openAccessibilityModal);
+    elements.closeGuideModal?.addEventListener('click', closeGuideModal);
+    elements.closeHistoryModal?.addEventListener('click', closeHistoryModal);
     
     // Fechar modais ao clicar fora
     elements.configModal?.addEventListener('click', (e) => {
@@ -195,9 +198,15 @@ function setupEventListeners() {
         }
     });
     
-    elements.accessibilityModal?.addEventListener('click', (e) => {
-        if (e.target === elements.accessibilityModal) {
-            closeAccessibilityModal();
+    elements.guideModal?.addEventListener('click', (e) => {
+        if (e.target === elements.guideModal) {
+            closeGuideModal();
+        }
+    });
+
+    elements.historyModal?.addEventListener('click', (e) => {
+        if (e.target === elements.historyModal) {
+            closeHistoryModal();
         }
     });
     
@@ -278,7 +287,8 @@ function generateRing(ringType) {
             config.colors[index % config.colors.length],
             word,
             ringType,
-            index
+            index,
+            anglePerSection
         );
         
         ringElement.appendChild(section.path);
@@ -287,7 +297,7 @@ function generateRing(ringType) {
 }
 
 // === CRIAR SEÇÃO DO ANEL ===
-function createRingSection(centerX, centerY, outerRadius, innerRadius, startAngle, endAngle, color, text, ringType, index) {
+function createRingSection(centerX, centerY, outerRadius, innerRadius, startAngle, endAngle, color, text, ringType, index, anglePerSection) {
     const startRad = (startAngle * Math.PI) / 180;
     const endRad = (endAngle * Math.PI) / 180;
     
@@ -324,9 +334,6 @@ function createRingSection(centerX, centerY, outerRadius, innerRadius, startAngl
     path.setAttribute('data-ring', ringType);
     path.setAttribute('data-index', index);
     
-    // Adicionar evento de clique
-    path.addEventListener('click', () => selectSection(ringType, index));
-    
     // Criar texto
     const textAngle = startAngle + (endAngle - startAngle) / 2;
     const textRad = (textAngle * Math.PI) / 180;
@@ -341,6 +348,12 @@ function createRingSection(centerX, centerY, outerRadius, innerRadius, startAngl
     textElement.setAttribute('dominant-baseline', 'middle');
     textElement.classList.add('ring-section-text');
     textElement.textContent = text;
+
+    // Adiciona textLength para garantir que o texto caiba na fatia
+    const midRadius = (outerRadius + innerRadius) / 2;
+    const arcLength = midRadius * (anglePerSection * Math.PI / 180);
+    textElement.setAttribute('textLength', arcLength * 0.6); // Usa 60% do espaço para ter mais margem
+    textElement.setAttribute('lengthAdjust', 'spacingAndGlyphs');
     
     // Rotacionar texto para melhor legibilidade
     if (textAngle > 90 && textAngle < 270) {
@@ -356,12 +369,10 @@ function createRingSection(centerX, centerY, outerRadius, innerRadius, startAngl
 function spinRing(ringType) {
     const config = RING_CONFIG[ringType];
     const ringElement = elements[`${ringType}Ring`];
-    const button = elements[`spin${ringType.charAt(0).toUpperCase() + ringType.slice(1)}`];
     
     if (!config || !ringElement || config.spinning) return;
     
     config.spinning = true;
-    if (button) button.disabled = true;
     
     // Calcular nova rotação
     const baseSpins = 3 + CONFIG.spinSpeed * 0.5;
@@ -371,7 +382,7 @@ function spinRing(ringType) {
     // Aplicar rotação
     ringElement.style.transition = `transform ${2 + CONFIG.spinSpeed * 0.3}s cubic-bezier(0.23, 1, 0.32, 1)`;
     ringElement.style.transform = `rotate(${totalRotation}deg)`;
-    config.currentRotation = totalRotation % 360;
+    config.currentRotation = totalRotation;
     
     // Som de giro
     if (CONFIG.sounds.spin) {
@@ -389,15 +400,9 @@ function spinRing(ringType) {
     setTimeout(() => {
         clearInterval(tickInterval);
         config.spinning = false;
-        if (button) button.disabled = false;
-        updateQuestion();
-        
-        if (CONFIG.sounds.win) {
-            setTimeout(() => CONFIG.sounds.win(), 200);
-        }
     }, (2 + CONFIG.spinSpeed * 0.3) * 1000);
     
-    announceToScreenReader(`Girando anel ${ringType === 'outer' ? 'dos pronomes interrogativos' : ringType === 'middle' ? 'dos verbos' : 'dos pronomes pessoais'}`);
+    announceToScreenReader(`Girando anel ${ringType}`);
 }
 
 // === GIRAR TODOS OS ANÉIS ===
@@ -419,71 +424,79 @@ function spinAllRings() {
     // Habilitar botão após todos terminarem
     setTimeout(() => {
         allButton.disabled = false;
-        updateQuestion();
-        addToHistory();
-        
-        if (CONFIG.sounds.win) {
-            CONFIG.sounds.win();
-        }
+        animateAndSelectComplement(true); // true para adicionar ao histórico
     }, 4000);
     
-    announceToScreenReader('Girando todos os anéis para formar nova pergunta');
+    announceToScreenReader('Girando todos os anéis para formar uma nova pergunta');
 }
 
-// === SELECIONAR SEÇÃO DIRETAMENTE ===
-function selectSection(ringType, sectionIndex) {
-    const config = RING_CONFIG[ringType];
-    if (!config || config.spinning) return;
-    
-    // Calcular rotação necessária para alinhar a seção com o ponteiro
-    const anglePerSection = 360 / config.words.length;
-    const targetAngle = sectionIndex * anglePerSection;
-    const currentNormalized = config.currentRotation % 360;
-    
-    // Calcular menor rotação necessária
-    let rotationNeeded = targetAngle - currentNormalized;
-    if (rotationNeeded > 180) rotationNeeded -= 360;
-    if (rotationNeeded < -180) rotationNeeded += 360;
-    
-    const newRotation = config.currentRotation + rotationNeeded;
-    
-    // Aplicar rotação suave
-    const ringElement = elements[`${ringType}Ring`];
-    if (ringElement) {
-        ringElement.style.transition = 'transform 1s cubic-bezier(0.23, 1, 0.32, 1)';
-        ringElement.style.transform = `rotate(${newRotation}deg)`;
-        config.currentRotation = newRotation;
-    }
-    
-    // Atualizar pergunta após animação
-    setTimeout(() => {
-        updateQuestion();
-        if (CONFIG.sounds.tick) {
-            CONFIG.sounds.tick();
+// === ANIMAR E SELECIONAR COMPLEMENTO ===
+function animateAndSelectComplement(shouldAddToHistory = false) {
+    const complementSpan = elements.complementResult;
+    if (!complementSpan) return;
+
+    let animationCounter = 0;
+    complementSpan.classList.add('animating');
+
+    const animationInterval = setInterval(() => {
+        const randomIndex = Math.floor(Math.random() * COMPLEMENTS.length);
+        complementSpan.textContent = COMPLEMENTS[randomIndex];
+        animationCounter++;
+        if (animationCounter > 20) { // Anima por ~2 segundos
+            clearInterval(animationInterval);
+            complementSpan.classList.remove('animating');
+            
+            // Seleciona o complemento final
+            const finalIndex = Math.floor(Math.random() * COMPLEMENTS.length);
+            const finalComplement = COMPLEMENTS[finalIndex];
+            
+            // Atualiza a UI com a pergunta completa
+            updateQuestion(finalComplement);
+
+            if (shouldAddToHistory) {
+                addToHistory(finalComplement);
+            }
+
+            if (CONFIG.sounds.win) {
+                CONFIG.sounds.win();
+            }
         }
-    }, 1000);
-    
-    const word = config.words[sectionIndex];
-    announceToScreenReader(`Selecionado: ${word}`);
+    }, 100);
 }
 
 // === ATUALIZAR PERGUNTA ===
-function updateQuestion() {
+function updateQuestion(finalComplement = null) {
     const selectedWords = {
         wh: getSelectedWord('outer'),
-        subject: getSelectedWord('inner'),
-        aux: getSelectedWord('middle')
+        subject: getSelectedWord('inner')
     };
     
-    // Atualizar elementos visuais na ordem correta: Pronome Interrogativo + Pronome Pessoal + Verbo
+    // Lógica para corrigir a concordância verbal
+    let aux = getSelectedWord('middle');
+    if (aux === 'is/are') {
+        if (selectedWords.subject === 'I') aux = 'am';
+        else if (selectedWords.subject === 'he/she/it') aux = 'is';
+        else aux = 'are';
+    } else if (aux === 'do/does') {
+        if (selectedWords.subject === 'he/she/it') aux = 'does';
+        else aux = 'do';
+    }
+    selectedWords.aux = aux;
+
+    // Update visual elements in the correct English order: WH + AUX + SUBJECT
     if (elements.whResult) {
         elements.whResult.textContent = selectedWords.wh;
+    }
+    if (elements.auxResult) {
+        elements.auxResult.textContent = selectedWords.aux;
     }
     if (elements.subjectResult) {
         elements.subjectResult.textContent = selectedWords.subject;
     }
-    if (elements.auxResult) {
-        elements.auxResult.textContent = selectedWords.aux;
+    if (elements.complementResult) {
+        // Se um complemento final foi passado, usa ele. Senão, pega um aleatório.
+        selectedWords.complement = finalComplement || elements.complementResult.textContent || COMPLEMENTS[0];
+        elements.complementResult.textContent = selectedWords.complement;
     }
     
     // Animação de nova pergunta
@@ -495,7 +508,7 @@ function updateQuestion() {
     }
     
     // Anunciar para leitores de tela
-    const question = `${selectedWords.wh} ${selectedWords.subject} ${selectedWords.aux}?`;
+    const question = `${selectedWords.wh} ${selectedWords.aux} ${selectedWords.subject} ${selectedWords.complement}?`;
     announceToScreenReader(`Nova pergunta: ${question}`);
     
     return { question, selectedWords };
@@ -506,8 +519,9 @@ function getSelectedWord(ringType) {
     const config = RING_CONFIG[ringType];
     if (!config) return '';
     
-    // Normalizar ângulo (0-360)
-    const normalizedAngle = (360 - (config.currentRotation % 360)) % 360;
+    // O ponteiro está na posição de 9 horas (180 graus no espaço de coordenadas SVG).
+    // Precisamos encontrar qual segmento está nessa posição após a rotação.
+    const normalizedAngle = (180 - (config.currentRotation % 360) + 360) % 360;
     const sectionAngle = 360 / config.words.length;
     const selectedIndex = Math.floor(normalizedAngle / sectionAngle) % config.words.length;
     
@@ -515,12 +529,12 @@ function getSelectedWord(ringType) {
 }
 
 // === ADICIONAR AO HISTÓRICO ===
-function addToHistory() {
-    const questionData = updateQuestion();
+function addToHistory(finalComplement) {
+    const questionData = updateQuestion(finalComplement);
     if (!questionData) return;
     
     const historyItem = {
-        question: `${questionData.selectedWords.wh} ${questionData.selectedWords.subject} ${questionData.selectedWords.aux}?`,
+        question: questionData.question,
         timestamp: new Date().toLocaleTimeString('pt-BR', { 
             hour: '2-digit', 
             minute: '2-digit' 
@@ -571,15 +585,12 @@ function toggleSound() {
     CONFIG.soundEnabled = !CONFIG.soundEnabled;
     
     const toggleIcon = elements.soundToggle?.querySelector('.toggle-icon');
-    const toggleText = elements.soundToggle?.querySelector('.toggle-text');
     
     if (CONFIG.soundEnabled) {
         if (toggleIcon) toggleIcon.textContent = '🔊';
-        if (toggleText) toggleText.textContent = 'Som Ativado';
         elements.soundToggle?.setAttribute('aria-pressed', 'true');
     } else {
         if (toggleIcon) toggleIcon.textContent = '🔇';
-        if (toggleText) toggleText.textContent = 'Som Desativado';
         elements.soundToggle?.setAttribute('aria-pressed', 'false');
     }
     
@@ -591,26 +602,12 @@ function toggleSound() {
 function handleKeyboardShortcuts(e) {
     // Evitar ação quando estiver em input ou modal aberto
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || 
-        elements.configModal?.classList.contains('active')) {
+        elements.configModal?.classList.contains('active') ||
+        elements.guideModal?.classList.contains('active')) {
         return;
     }
     
     switch (e.key.toLowerCase()) {
-        case '1':
-            e.preventDefault();
-            spinRing('outer');
-            break;
-            
-        case '2':
-            e.preventDefault();
-            spinRing('middle');
-            break;
-            
-        case '3':
-            e.preventDefault();
-            spinRing('inner');
-            break;
-            
         case ' ':
         case 'enter':
             e.preventDefault();
@@ -629,18 +626,19 @@ function handleKeyboardShortcuts(e) {
             
         case 'h':
             e.preventDefault();
-            clearHistory();
+            openHistoryModal();
             break;
             
         case '?':
             e.preventDefault();
-            openAccessibilityModal();
+            openGuideModal();
             break;
             
         case 'escape':
             e.preventDefault();
             closeConfigModal();
-            closeAccessibilityModal();
+            closeGuideModal();
+            closeHistoryModal();
             break;
     }
 }
@@ -661,17 +659,31 @@ function closeConfigModal() {
     document.body.style.overflow = '';
 }
 
-function openAccessibilityModal() {
-    elements.accessibilityModal?.classList.add('active');
-    elements.accessibilityModal?.setAttribute('aria-hidden', 'false');
-    elements.closeModal?.focus();
+function openGuideModal() {
+    elements.guideModal?.classList.add('active');
+    elements.guideModal?.setAttribute('aria-hidden', 'false');
+    elements.closeGuideModal?.focus();
     document.body.style.overflow = 'hidden';
 }
 
-function closeAccessibilityModal() {
-    elements.accessibilityModal?.classList.remove('active');
-    elements.accessibilityModal?.setAttribute('aria-hidden', 'true');
-    elements.accessibilityButton?.focus();
+function closeGuideModal() {
+    elements.guideModal?.classList.remove('active');
+    elements.guideModal?.setAttribute('aria-hidden', 'true');
+    document.getElementById('open-guide-btn')?.focus();
+    document.body.style.overflow = '';
+}
+
+function openHistoryModal() {
+    elements.historyModal?.classList.add('active');
+    elements.historyModal?.setAttribute('aria-hidden', 'false');
+    elements.closeHistoryModal?.focus();
+    document.body.style.overflow = 'hidden';
+}
+
+function closeHistoryModal() {
+    elements.historyModal?.classList.remove('active');
+    elements.historyModal?.setAttribute('aria-hidden', 'true');
+    document.getElementById('open-history-btn')?.focus();
     document.body.style.overflow = '';
 }
 
@@ -679,9 +691,9 @@ function closeAccessibilityModal() {
 function generateConfigInputs() {
     const rings = ['outer', 'middle', 'inner'];
     const ringTitles = {
-        outer: 'Pronomes Interrogativos',
-        middle: 'Verbos e Tempos Verbais', 
-        inner: 'Pronomes Pessoais'
+        outer: 'Palavras WH (Anel Externo)',
+        middle: 'Verbos (Anel do Meio)', 
+        inner: 'Sujeitos (Anel Interno)'
     };
     
     rings.forEach(ringType => {
@@ -747,15 +759,15 @@ function saveConfiguration() {
     saveSettings();
     closeConfigModal();
     
-    announceToScreenReader('Configuração de palavras salva com sucesso');
+    announceToScreenReader('Configuração de palavras salva com sucesso!');
 }
 
 // === RESETAR CONFIGURAÇÃO ===
 function resetConfiguration() {
-    // Restaurar palavras padrão em português
-    RING_CONFIG.outer.words = ['O quê', 'Quando', 'Onde', 'Quem', 'Por que', 'Como', 'Qual', 'Com que frequência'];
-    RING_CONFIG.middle.words = ['é/são', 'foi/eram', 'está/estavam', 'vai/vão', 'faz/fez', 'pode/podem', 'deve/deveriam', 'quer/querem'];
-    RING_CONFIG.inner.words = ['eu', 'tu', 'ele/ela', 'nós', 'vocês', 'eles/elas'];
+    // Restaurar palavras padrão em inglês
+    RING_CONFIG.outer.words = ['What', 'When', 'Where', 'Who', 'Why', 'How', 'Which', 'How often'];
+    RING_CONFIG.middle.words = ['is/are', 'was/were', 'do/does', 'did', 'will', 'can', 'should', 'would'];
+    RING_CONFIG.inner.words = ['I', 'you', 'he/she/it', 'we', 'they'];
     
     // Regenerar anéis
     initializeRings();
@@ -763,7 +775,7 @@ function resetConfiguration() {
     generateConfigInputs(); // Atualizar inputs do modal
     saveSettings();
     
-    announceToScreenReader('Configuração restaurada para o padrão');
+    announceToScreenReader('Configuração restaurada para o padrão.');
 }
 
 // === CONFIGURAR ACESSIBILIDADE ===
@@ -771,7 +783,7 @@ function setupAccessibility() {
     // Configurar ARIA labels dinâmicos
     const wheelSvg = document.querySelector('.wheel-svg');
     if (wheelSvg) {
-        wheelSvg.setAttribute('aria-label', 'Roleta de três anéis para formação de perguntas em português');
+        wheelSvg.setAttribute('aria-label', 'Uma roleta com três anéis concêntricos para formar perguntas em inglês.');
     }
 }
 
@@ -786,7 +798,6 @@ function handleResize() {
 // === SALVAR CONFIGURAÇÕES ===
 function saveSettings() {
     const settings = {
-        spinSpeed: CONFIG.spinSpeed,
         soundEnabled: CONFIG.soundEnabled,
         questionHistory: CONFIG.questionHistory,
         ringWords: {
@@ -804,7 +815,7 @@ function saveSettings() {
     try {
         localStorage.setItem('questionWheelSettings', JSON.stringify(settings));
     } catch (error) {
-        console.warn('⚠️ Não foi possível salvar configurações:', error);
+        console.warn('⚠️ Could not save settings:', error);
     }
 }
 
@@ -817,11 +828,6 @@ function loadSavedSettings() {
         const settings = JSON.parse(saved);
         
         // Restaurar configurações gerais
-        if (typeof settings.spinSpeed === 'number' && elements.speedControl) {
-            CONFIG.spinSpeed = settings.spinSpeed;
-            elements.speedControl.value = settings.spinSpeed;
-        }
-        
         if (typeof settings.soundEnabled === 'boolean' && !settings.soundEnabled) {
             toggleSound();
         }
@@ -855,7 +861,7 @@ function loadSavedSettings() {
         }
         
     } catch (error) {
-        console.warn('⚠️ Erro ao carregar configurações salvas:', error);
+        console.warn('⚠️ Error loading saved settings:', error);
     }
 }
 
@@ -896,11 +902,11 @@ function debounce(func, wait) {
 // === ERROR HANDLING ===
 window.addEventListener('error', function(e) {
     console.error('❌ Erro global capturado:', e.error);
-    announceToScreenReader('Ocorreu um erro. Tente recarregar a página.');
+    announceToScreenReader('Ocorreu um erro. Por favor, tente recarregar a página.');
 });
 
 window.addEventListener('unhandledrejection', function(e) {
-    console.error('❌ Promise rejeitada:', e.reason);
+    console.error('❌ Promise rejeitada sem tratamento:', e.reason);
 });
 
 // === EXPORTAR PARA DEBUG (desenvolvimento) ===
@@ -915,8 +921,8 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         generateRing,
         initializeRings
     };
-    console.log('🔧 Modo debug ativado. Use window.QuestionWheelDebug para acessar funções.');
+    console.log('🔧 Modo de depuração ativado. Use window.QuestionWheelDebug para acessar funções.');
 }
 
 // === INICIALIZAÇÃO FINAL ===
-console.log('🎯 JavaScript da Roleta de Formação de Perguntas carregado!');
+console.log('🎯 JavaScript da Roleta de Perguntas carregado!');
