@@ -295,11 +295,11 @@ body {
 }
 .sound-toggle-icon:hover { transform: scale(1.1); }
 
-/* === PONTEIRO LATERAL === */
+/* === PONTEIRO LATERAL ESQUERDO === */
 .wheel-pointer-container {
     position: absolute;
     top: 50%;
-    left: -20px; /* Ajustado para ficar fora da roleta */
+    left: -20px; /* levemente fora da borda da roleta */
     transform: translateY(-50%);
     z-index: 10;
     pointer-events: none;
@@ -310,7 +310,7 @@ body {
     height: 0;
     border-top: 20px solid transparent;
     border-bottom: 20px solid transparent;
-    border-left: 30px solid var(--dark-purple);
+    border-left: 30px solid var(--dark-purple); /* seta apontando para a direita */
 }
 
 .pointer-label {
@@ -321,7 +321,10 @@ body {
 
 /* === ANÉIS DA ROLETA === */
 .ring {
+    /* Rotação dirigida por variável CSS para permitir contra-rotação dos textos */
+    --rot: 0deg;
     transform-origin: 200px 200px;
+    transform: rotate(var(--rot));
     transition: transform 2s cubic-bezier(0.23,1,0.32,1);
 }
 
@@ -341,6 +344,16 @@ body {
     text-anchor: middle;
     dominant-baseline: middle;
     pointer-events: none;
+}
+
+/* Mantém os textos dos anéis (externo, meio e interno) sempre horizontais,
+   mesmo quando os anéis giram (contra-rotação via --rot) */
+.outer-ring .ring-section-text,
+.middle-ring .ring-section-text,
+.inner-ring .ring-section-text {
+    transform: rotate(calc(-1 * var(--rot)));
+    transform-box: fill-box;   /* origem e caixa corretas para SVG */
+    transform-origin: center;  /* gira em torno do próprio centro */
 }
 
 .outer-ring .ring-section-text { font-size: 8px; }

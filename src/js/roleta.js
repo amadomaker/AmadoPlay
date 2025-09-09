@@ -28,33 +28,127 @@ const RING_CONFIG = {
     }
 };
 
-// === LISTA DE COMPLEMENTOS POR TEMA ===
-const THEMED_COMPLEMENTS = {
-    daily_routine: [
-        'do in the morning', 'do after school', 'do before bed', 'wear today',
-        'help with at home', 'see on the way to school', 'eat for breakfast', 'say to your parents'
-    ],
-    food: [
-        'eat for lunch', 'like to drink', 'cook with your family', 'buy at the market',
-        'have for a snack', 'smell in the kitchen', 'taste for the first time', 'share with a friend'
-    ],
-    hobbies: [
-        'play with friends', 'watch on TV', 'read for fun', 'listen to',
-        'draw in your notebook', 'build with blocks', 'do on a rainy day', 'collect as a hobby'
-    ],
-    places: [
-        'go on vacation', 'see at the park', 'do at the beach', 'visit in your city',
-        'find at school', 'explore in the forest', 'buy at the mall', 'see at the museum'
-    ],
-    feelings: [
-        'feel happy about', 'get angry about', 'worry about', 'dream about',
-        'feel excited for', 'get scared of', 'laugh about', 'feel proud of'
-    ],
-    nature: [
-        'see in the sky', 'find on the ground', 'hear in the forest', 'smell after rain',
-        'touch in a garden', 'see at the river', 'find on a mountain', 'see at night'
-    ]
-};
+// === NOVO BANCO CURADO DE COMPLEMENTOS (com metadados) ===
+// Campos:
+// - text: string anexada após WH + AUX + SUBJECT
+// - themes: temas aplicáveis (use 'all' para geral)
+// - wh: quais WH combinam (ex.: 'Where', 'When', ... ou 'ANY')
+// - aux: grupo de auxiliar: 'ACTION' (do/did/will/can/should/would) ou 'BE' (am/is/are/was/were) ou 'ANY'
+// - tags: categorias semânticas auxiliares (opcional)
+const COMPLEMENT_BANK = [
+  // ====== DAILY ROUTINE ======
+  { text: 'do in the morning', themes: ['daily_routine'], wh: ['What','How'], aux: ['ACTION'], tags: ['routine','time'] },
+  { text: 'do after school', themes: ['daily_routine'], wh: ['What','When'], aux: ['ACTION'], tags: ['routine'] },
+  { text: 'do before bed', themes: ['daily_routine'], wh: ['What','When'], aux: ['ACTION'], tags: ['routine','night'] },
+  { text: 'usually wake up', themes: ['daily_routine'], wh: ['When','How often'], aux: ['ACTION'], tags: ['sleep'] },
+  { text: 'go to school', themes: ['daily_routine'], wh: ['How','Where'], aux: ['ACTION'], tags: ['transport'] },
+  { text: 'get to school', themes: ['daily_routine'], wh: ['How'], aux: ['ACTION'], tags: ['transport'] },
+  { text: 'wear today', themes: ['daily_routine'], wh: ['What','Which'], aux: ['ACTION'], tags: ['clothes'] },
+  { text: 'help with at home', themes: ['daily_routine'], wh: ['What'], aux: ['ACTION'], tags: ['home'] },
+  { text: 'clean your room', themes: ['daily_routine'], wh: ['How often','When'], aux: ['ACTION'], tags: ['home'] },
+  { text: 'free', themes: ['daily_routine'], wh: ['When'], aux: ['BE'], tags: ['time'] },
+  { text: 'at home', themes: ['daily_routine'], wh: ['Where'], aux: ['BE'], tags: ['place'] },
+  { text: 'at school', themes: ['daily_routine'], wh: ['Where','When'], aux: ['BE'], tags: ['place'] },
+
+  // ====== FOOD ======
+  { text: 'eat for breakfast', themes: ['food'], wh: ['What'], aux: ['ACTION'], tags: ['meal'] },
+  { text: 'eat for lunch', themes: ['food'], wh: ['What'], aux: ['ACTION'], tags: ['meal'] },
+  { text: 'have for a snack', themes: ['food'], wh: ['What'], aux: ['ACTION'], tags: ['meal'] },
+  { text: 'like to drink', themes: ['food'], wh: ['What'], aux: ['ACTION'], tags: ['drink'] },
+  { text: 'prefer to eat at a party', themes: ['food'], wh: ['What','Which'], aux: ['ACTION'], tags: ['party'] },
+  { text: 'buy at the market', themes: ['food'], wh: ['What','Where'], aux: ['ACTION'], tags: ['shopping'] },
+  { text: 'cook with your family', themes: ['food'], wh: ['What'], aux: ['ACTION'], tags: ['home'] },
+  { text: 'cook with in your family', themes: ['food'], wh: ['Who'], aux: ['ACTION'], tags: ['home'] },
+  { text: 'share with a friend', themes: ['food'], wh: ['What','Who'], aux: ['ACTION'], tags: ['social'] },
+  { text: 'hungry for', themes: ['food'], wh: ['Why','What'], aux: ['BE'], tags: ['feeling'] },
+  { text: 'allergic to', themes: ['food'], wh: ['What','Why'], aux: ['BE'], tags: ['health'] },
+  { text: 'prefer: tea or coffee', themes: ['food'], wh: ['Which'], aux: ['DO'], tags: ['choice','drink'] },
+
+  // ====== HOBBIES ======
+  { text: 'play on weekends', themes: ['hobbies'], wh: ['What','When','How often'], aux: ['ACTION'], tags: ['games'] },
+  { text: 'like to watch on TV', themes: ['hobbies'], wh: ['What','Which'], aux: ['ACTION'], tags: ['tv'] },
+  { text: 'read for fun', themes: ['hobbies'], wh: ['What'], aux: ['ACTION'], tags: ['reading'] },
+  { text: 'listen to', themes: ['hobbies'], wh: ['What','Who'], aux: ['ACTION'], tags: ['music'] },
+  { text: 'draw in your notebook', themes: ['hobbies'], wh: ['What'], aux: ['ACTION'], tags: ['art'] },
+  { text: 'build with blocks', themes: ['hobbies'], wh: ['What'], aux: ['ACTION'], tags: ['craft'] },
+  { text: 'collect as a hobby', themes: ['hobbies'], wh: ['What'], aux: ['ACTION'], tags: ['collect'] },
+  { text: 'practice sports', themes: ['hobbies'], wh: ['What','How often'], aux: ['ACTION'], tags: ['sports'] },
+  { text: 'play with after school', themes: ['hobbies'], wh: ['Who'], aux: ['ACTION'], tags: ['friends'] },
+  { text: 'learn from on YouTube', themes: ['hobbies'], wh: ['Who'], aux: ['ACTION'], tags: ['learning'] },
+  { text: 'prefer: painting or dancing', themes: ['hobbies'], wh: ['Which'], aux: ['DO'], tags: ['choice','art'] },
+
+  // ====== PLACES ======
+  { text: 'go on vacation', themes: ['places'], wh: ['Where'], aux: ['ACTION'], tags: ['travel'] },
+  { text: 'visit in your city', themes: ['places'], wh: ['What','Where','Which'], aux: ['ACTION'], tags: ['city'] },
+  { text: 'see at the park', themes: ['places'], wh: ['What'], aux: ['ACTION'], tags: ['nature'] },
+  { text: 'do at the beach', themes: ['places'], wh: ['What','Where'], aux: ['ACTION'], tags: ['beach'] },
+  { text: 'find at school', themes: ['places'], wh: ['What','Where'], aux: ['ACTION'], tags: ['school'] },
+  { text: 'explore in the forest', themes: ['places'], wh: ['What','Where'], aux: ['ACTION'], tags: ['nature'] },
+  { text: 'buy at the mall', themes: ['places'], wh: ['What','Where'], aux: ['ACTION'], tags: ['shopping'] },
+  { text: 'see at the museum', themes: ['places'], wh: ['What','Where'], aux: ['ACTION'], tags: ['museum'] },
+  { text: 'at the park now', themes: ['places'], wh: ['Where','When'], aux: ['BE'], tags: ['place','time'] },
+  { text: 'on the bus', themes: ['places'], wh: ['Where'], aux: ['BE'], tags: ['transport'] },
+  { text: 'prefer to visit: the zoo or the museum', themes: ['places'], wh: ['Which'], aux: ['DO'], tags: ['choice','visit'] },
+
+  // ====== FEELINGS ======
+  { text: 'feel happy about', themes: ['feelings'], wh: ['Why','What'], aux: ['ACTION'], tags: ['emotion'] },
+  { text: 'get angry about', themes: ['feelings'], wh: ['Why','What'], aux: ['ACTION'], tags: ['emotion'] },
+  // Evita WH "Why" sem objeto; usa apenas "What" para perguntas do tipo
+  { text: 'worry about', themes: ['feelings'], wh: ['What'], aux: ['ACTION'], tags: ['emotion'] },
+  // Versão com BE para perguntas como "What are you worried about?"
+  { text: 'worried about', themes: ['feelings'], wh: ['What'], aux: ['BE'], tags: ['emotion'] },
+  { text: 'dream about', themes: ['feelings'], wh: ['What'], aux: ['ACTION'], tags: ['emotion'] },
+  { text: 'excited for', themes: ['feelings'], wh: ['Why','What'], aux: ['BE'], tags: ['emotion'] },
+  { text: 'afraid of', themes: ['feelings'], wh: ['Why','What'], aux: ['BE'], tags: ['emotion'] },
+  { text: 'proud of', themes: ['feelings'], wh: ['Why','What'], aux: ['BE'], tags: ['emotion'] },
+  { text: 'laugh about with friends', themes: ['feelings'], wh: ['What','Why','Who'], aux: ['ACTION'], tags: ['social'] },
+  { text: 'talk about when you are sad', themes: ['feelings'], wh: ['What','Why','Who','When'], aux: ['ACTION'], tags: ['support'] },
+  { text: 'prefer: sunny or rainy days', themes: ['feelings'], wh: ['Which'], aux: ['DO'], tags: ['choice','weather'] },
+
+  // ====== NATURE ======
+  { text: 'see in the sky', themes: ['nature'], wh: ['What','Where'], aux: ['ACTION'], tags: ['sky'] },
+  { text: 'find on the ground', themes: ['nature'], wh: ['What','Where'], aux: ['ACTION'], tags: ['ground'] },
+  { text: 'hear in the forest', themes: ['nature'], wh: ['What','Where'], aux: ['ACTION'], tags: ['forest'] },
+  { text: 'smell after rain', themes: ['nature'], wh: ['What','When'], aux: ['ACTION'], tags: ['weather'] },
+  { text: 'touch in a garden', themes: ['nature'], wh: ['What','Where'], aux: ['ACTION'], tags: ['garden'] },
+  { text: 'see at night', themes: ['nature'], wh: ['What','When'], aux: ['ACTION'], tags: ['night'] },
+  { text: 'see at the river', themes: ['nature'], wh: ['What','Where'], aux: ['ACTION'], tags: ['river'] },
+  { text: 'find on a mountain', themes: ['nature'], wh: ['What','Where'], aux: ['ACTION'], tags: ['mountain'] },
+  { text: 'near your house', themes: ['nature'], wh: ['Where'], aux: ['BE'], tags: ['place'] },
+  { text: 'common in your city', themes: ['nature'], wh: ['What','Where'], aux: ['BE'], tags: ['fact'] },
+
+  // ====== GERAIS (ALL) ======
+  { text: 'do on weekends', themes: ['all'], wh: ['What','When'], aux: ['ACTION'], tags: ['routine'] },
+  { text: 'do with your friends', themes: ['all'], wh: ['What'], aux: ['ACTION'], tags: ['friends'] },
+  { text: 'study at school', themes: ['all'], wh: ['What','Where'], aux: ['ACTION'], tags: ['school'] },
+  { text: 'like the most', themes: ['all'], wh: ['What','Which'], aux: ['ACTION'], tags: ['preference'] },
+  { text: 'need to do today', themes: ['all'], wh: ['What','When'], aux: ['ACTION'], tags: ['task'] },
+  { text: 'want to learn this year', themes: ['all'], wh: ['What','Why'], aux: ['ACTION'], tags: ['goal'] },
+  { text: 'from', themes: ['all'], wh: ['Where'], aux: ['BE'], tags: ['origin'] },
+  { text: 'now', themes: ['all'], wh: ['Where','When'], aux: ['BE'], tags: ['place','time'] },
+  { text: 'interested in', themes: ['all'], wh: ['What','Why'], aux: ['BE'], tags: ['interest'] },
+  { text: 'prefer: cats or dogs', themes: ['all'], wh: ['Which'], aux: ['DO'], tags: ['choice'] },
+  { text: 'prefer: movies or games', themes: ['all'], wh: ['Which'], aux: ['DO'], tags: ['choice'] },
+  { text: 'prefer: summer or winter', themes: ['all'], wh: ['Which'], aux: ['DO'], tags: ['choice','weather'] },
+  { text: 'visit on holidays', themes: ['all'], wh: ['Where','When'], aux: ['ACTION'], tags: ['travel'] },
+  { text: 'practice every day', themes: ['all'], wh: ['How often'], aux: ['ACTION'], tags: ['frequency'] },
+  { text: 'spend time after class', themes: ['all'], wh: ['Where','When'], aux: ['ACTION'], tags: ['after-school'] },
+  { text: 'talk to at school', themes: ['all'], wh: ['Who'], aux: ['ACTION'], tags: ['school','social'] },
+  { text: 'play with at recess', themes: ['all'], wh: ['Who','When'], aux: ['ACTION'], tags: ['friends'] },
+  { text: 'go to the park with', themes: ['all'], wh: ['Who'], aux: ['ACTION'], tags: ['friends'] },
+  { text: 'call when you need help', themes: ['all'], wh: ['Who','When'], aux: ['ACTION'], tags: ['support'] },
+  { text: 'arrive home', themes: ['all'], wh: ['When'], aux: ['ACTION'], tags: ['home'] },
+  { text: 'get ready for school', themes: ['all'], wh: ['When','What'], aux: ['ACTION'], tags: ['routine'] },
+  { text: 'go to sleep', themes: ['all'], wh: ['When'], aux: ['ACTION'], tags: ['night'] },
+  { text: 'feel tired', themes: ['all'], wh: ['Why','When'], aux: ['ACTION','BE'], tags: ['feeling'] },
+  { text: 'late', themes: ['all'], wh: ['Why','When'], aux: ['BE'], tags: ['time'] },
+  { text: 'with right now', themes: ['all'], wh: ['Who'], aux: ['BE'], tags: ['social'] },
+  { text: 'bring to school', themes: ['all'], wh: ['What','Which'], aux: ['ACTION'], tags: ['school'] },
+  { text: 'prefer to do after dinner', themes: ['all'], wh: ['What','Which','When'], aux: ['ACTION'], tags: ['evening'] }
+];
+
+// Assegura pelo menos 80 itens
+// console.log('COMPLEMENT_BANK size', COMPLEMENT_BANK.length);
 
 // === CONFIGURAÇÕES GERAIS ===
 const CONFIG = {
@@ -372,7 +466,12 @@ function createRingSection(centerX, centerY, outerRadius, innerRadius, startAngl
     // Criar texto
     const textAngle = startAngle + (endAngle - startAngle) / 2;
     const textRad = (textAngle * Math.PI) / 180;
-    const textRadius = (outerRadius + innerRadius) / 2;
+    // Posiciona o texto um pouco mais "em pé" (mais próximo da borda externa)
+    // para cada anel, melhorando a legibilidade
+    const radiusSpan = (outerRadius - innerRadius);
+    // Centraliza melhor dentro do anel (ligeiramente tendendo para fora, sem ultrapassar)
+    const radiusFactor = ringType === 'outer' ? 0.50 : (ringType === 'middle' ? 0.50 : 0.52);
+    const textRadius = innerRadius + radiusSpan * radiusFactor;
     const textX = centerX + textRadius * Math.cos(textRad);
     const textY = centerY + textRadius * Math.sin(textRad);
     
@@ -390,12 +489,13 @@ function createRingSection(centerX, centerY, outerRadius, innerRadius, startAngl
     textElement.setAttribute('textLength', arcLength * 0.6); // Usa 60% do espaço para ter mais margem
     textElement.setAttribute('lengthAdjust', 'spacingAndGlyphs');
     
-    // Rotacionar texto para melhor legibilidade
-    if (textAngle > 90 && textAngle < 270) {
-        textElement.setAttribute('transform', `rotate(${textAngle + 180}, ${textX}, ${textY})`);
-    } else {
-        textElement.setAttribute('transform', `rotate(${textAngle}, ${textX}, ${textY})`);
-    }
+    // Texto em pé (horizontal) para leitura normal
+    const midRadius2 = innerRadius + radiusSpan * radiusFactor;
+    const arcLength2 = midRadius2 * (anglePerSection * Math.PI / 180);
+    const lengthFactor = ringType === 'outer' ? 0.42 : (ringType === 'middle' ? 0.48 : 0.48);
+    textElement.setAttribute('textLength', Math.max(0, arcLength2 * lengthFactor));
+    textElement.setAttribute('lengthAdjust', 'spacingAndGlyphs');
+    // Não aplicar rotação no atributo SVG; a contra-rotação é feita via CSS usando --rot
     
     return { path, text: textElement };
 }
@@ -416,7 +516,7 @@ function spinRing(ringType) {
     
     // Aplicar rotação com duração fixa de 3s para sincronizar com o áudio
     ringElement.style.transition = `transform 3s cubic-bezier(0.23, 1, 0.32, 1)`;
-    ringElement.style.transform = `rotate(${totalRotation}deg)`;
+    ringElement.style.setProperty('--rot', `${totalRotation}deg`);
     config.currentRotation = totalRotation;
     
     // Som de giro (o novo MP3)
@@ -458,12 +558,110 @@ function spinAllRings() {
 }
 
 // === OBTER COMPLEMENTOS PARA O TEMA ATUAL ===
-function getComplementsForTheme() {
-    if (CONFIG.currentTheme === 'all') {
-        // Junta todos os complementos em uma única lista
-        return Object.values(THEMED_COMPLEMENTS).flat();
+// === AUXILIARES DE COMPATIBILIDADE ===
+function getAuxGroup(auxWord) {
+    const w = (auxWord || '').toLowerCase();
+    if (['am','is','are','was','were'].includes(w)) return 'BE';
+    if (['do','does','did'].includes(w)) return 'DO';
+    // Modais agrupados
+    if (['can','will','should','would'].includes(w)) return 'MODAL';
+    return 'ACTION';
+}
+
+function themedPool(theme, mode = 'strict') {
+    if (!theme || theme === 'all') return COMPLEMENT_BANK.slice();
+    if (mode === 'strict') {
+        return COMPLEMENT_BANK.filter(it => it.themes?.includes(theme));
     }
-    return THEMED_COMPLEMENTS[CONFIG.currentTheme] || [];
+    if (mode === 'withAll') {
+        return COMPLEMENT_BANK.filter(it => it.themes?.includes(theme) || it.themes?.includes('all'));
+    }
+    return COMPLEMENT_BANK.slice();
+}
+
+function filterByWh(item, wh) {
+    if (!wh) return true;
+    return item.wh?.includes(wh) || item.wh?.includes('ANY');
+}
+
+function filterByAux(item, auxGroup) {
+    if (!auxGroup) return true;
+    const auxes = item.aux || [];
+    if (auxes.includes('ANY')) return true;
+    if (auxes.includes(auxGroup)) return true;
+    // 'ACTION' é guarda-chuva para DO e MODAL
+    if (auxes.includes('ACTION') && (auxGroup === 'DO' || auxGroup === 'MODAL')) return true;
+    // Se a pergunta gerou 'ACTION', aceite DO ou MODAL definidos
+    if (auxGroup === 'ACTION' && (auxes.includes('DO') || auxes.includes('MODAL'))) return true;
+    return false;
+}
+
+// === VALIDADORES DE COMPATIBILIDADE (gramática/semântica) ===
+const ALLOWED_WH = ['What','When','Where','Who','Why','How','Which','How often'];
+const WHERE_ACTION_VERBS = new Set(['go','visit','travel','stay','live','work','study','meet','play','walk','come','eat','shop','swim','camp','hike']);
+const WHO_PREP_TOKENS = [' with ', ' to ', ' from '];
+const PLACE_PREP_TOKENS = [' at ', ' in ', ' on ', ' near ', ' from ', ' to '];
+const FREQ_TOKENS = [' every ', ' once ', ' twice ', ' times ', ' daily ', ' weekly ', ' monthly ', ' always ', ' usually ', ' often ', ' seldom ', ' rarely ', ' sometimes '];
+
+function includesAny(haystack, tokens) {
+  const s = ` ${haystack.toLowerCase()} `;
+  return tokens.some(t => s.includes(t));
+}
+
+function firstWord(text) {
+  const clean = text.replace(/^\s+|\s+$/g,'').toLowerCase();
+  const w = clean.split(/\s+|:/)[0];
+  return w;
+}
+
+function isCompatible(wh, auxGroup, text) {
+  if (!ALLOWED_WH.includes(wh)) return true; // não bloqueia wh desconhecido
+  const t = ` ${text.toLowerCase()} `;
+  const verb = firstWord(text);
+
+  switch (wh) {
+    case 'How often':
+      if (auxGroup === 'BE') return false; // How often + BE raramente forma pergunta do nosso modelo
+      if (includesAny(text, FREQ_TOKENS)) return false; // evita duplicar frequência no complemento
+      return true;
+    case 'Which':
+      // Exige pista de escolha (prefer, or list)
+      return t.includes(' prefer') || text.includes(':');
+    case 'Where':
+      if (auxGroup === 'BE') {
+        // precisa ser sintagma de lugar
+        return includesAny(text, PLACE_PREP_TOKENS);
+      }
+      // Ação: requer verbo de movimento/atividade + referência de lugar
+      if (!WHERE_ACTION_VERBS.has(verb)) return false;
+      return includesAny(text, PLACE_PREP_TOKENS) || verb === 'go' || verb === 'visit' || verb === 'travel';
+    case 'Who':
+      // Nosso modelo usa WHO como objeto; requer prep (talk to, play with, learn from...)
+      return includesAny(text, WHO_PREP_TOKENS) || t.includes(' with right now');
+    case 'How':
+      // Evita BE + adjetivo-prep do tipo feelings (How are you excited for?)
+      if (auxGroup === 'BE') return false;
+      return true;
+    default:
+      return true;
+  }
+}
+
+function selectCandidates(wh, auxGroup, theme) {
+    // Nunca relaxa WH e só relaxa tema (não AUX) para manter estrutura coerente
+    const pools = [
+        themedPool(theme, 'strict'),
+        themedPool(theme, 'withAll'),
+        themedPool(null, 'any')
+    ];
+    for (const pool of pools) {
+        const list = pool.filter(it => filterByWh(it, wh) && filterByAux(it, auxGroup) && isCompatible(wh, auxGroup, it.text));
+        if (list.length) return list.map(it => it.text);
+    }
+    // Fallback final: mantém WH e AUX no banco inteiro
+    const list = COMPLEMENT_BANK.filter(it => filterByWh(it, wh) && filterByAux(it, auxGroup) && isCompatible(wh, auxGroup, it.text));
+    if (list.length) return list.map(it => it.text);
+    return []; // nenhum compatível
 }
 
 // === ANIMAR E SELECIONAR COMPLEMENTO ===
@@ -471,8 +669,20 @@ function animateAndSelectComplement(shouldAddToHistory = false) {
     const complementSpan = elements.complementResult;
     if (!complementSpan) return;
 
-    const complements = getComplementsForTheme();
-    if (complements.length === 0) { // Adiciona verificação para evitar erros
+    // Determina WH/AUX/tema atuais
+    const wh = getSelectedWord('outer');
+    const subject = getSelectedWord('inner'); // não usado no filtro por enquanto
+    let aux = getSelectedWord('middle');
+    if (aux === 'is/are') {
+        aux = (subject === 'I') ? 'am' : (subject === 'he/she/it' ? 'is' : 'are');
+    } else if (aux === 'do/does') {
+        aux = (subject === 'he/she/it') ? 'does' : 'do';
+    }
+    const auxGroup = getAuxGroup(aux);
+    const theme = CONFIG.currentTheme;
+
+    const candidates = selectCandidates(wh, auxGroup, theme);
+    if (candidates.length === 0) {
         complementSpan.textContent = '...';
         updateQuestion('...');
         return;
@@ -482,16 +692,16 @@ function animateAndSelectComplement(shouldAddToHistory = false) {
     complementSpan.classList.add('animating');
 
     const animationInterval = setInterval(() => {
-        const randomIndex = Math.floor(Math.random() * complements.length);
-        complementSpan.textContent = complements[randomIndex];
+        const randomIndex = Math.floor(Math.random() * candidates.length);
+        complementSpan.textContent = candidates[randomIndex];
         animationCounter++;
         if (animationCounter > 20) { // Anima por ~2 segundos
             clearInterval(animationInterval);
             complementSpan.classList.remove('animating');
             
             // Seleciona o complemento final
-            const finalIndex = Math.floor(Math.random() * complements.length);
-            const finalComplement = complements[finalIndex];
+            const finalIndex = Math.floor(Math.random() * candidates.length);
+            const finalComplement = candidates[finalIndex];
             
             // Atualiza a UI com a pergunta completa
             updateQuestion(finalComplement);
@@ -537,8 +747,13 @@ function updateQuestion(finalComplement = null) {
         elements.subjectResult.textContent = selectedWords.subject;
     }
     if (elements.complementResult) {
-        // Se um complemento final foi passado, usa ele. Senão, pega um aleatório.
-        selectedWords.complement = finalComplement || elements.complementResult.textContent || getComplementsForTheme()[0];
+        // Se veio de animação, usa ele; senão, escolhe pela compatibilidade
+        if (finalComplement) {
+            selectedWords.complement = finalComplement;
+        } else {
+            const candidates = selectCandidates(selectedWords.wh, getAuxGroup(selectedWords.aux), CONFIG.currentTheme);
+            selectedWords.complement = candidates[0] || elements.complementResult.textContent || '...';
+        }
         elements.complementResult.textContent = selectedWords.complement;
     }
     
@@ -903,7 +1118,7 @@ function loadSavedSettings() {
                     RING_CONFIG[ringType].currentRotation = settings.ringRotations[ringType];
                     const ringElement = elements[`${ringType}Ring`];
                     if (ringElement) {
-                        ringElement.style.transform = `rotate(${settings.ringRotations[ringType]}deg)`;
+                        ringElement.style.setProperty('--rot', `${settings.ringRotations[ringType]}deg`);
                     }
                 }
             });
