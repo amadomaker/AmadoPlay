@@ -7,12 +7,23 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #6c63ff 0%, #7c4dff 35%, #9c27b0 70%, #673ab7 100%);
+            color: white;
             touch-action: manipulation; /* Melhora a resposta ao toque em dispositivos móveis */
             -webkit-text-size-adjust: 100%; /* Previne o zoom automático de fontes no iOS */
+        }
+        .game-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
         }
         .card {
             transition: transform 0.1s ease-in-out, background-color 0.2s ease-in-out, color 0.2s ease-in-out;
@@ -30,7 +41,7 @@
         }
         .card.selected {
             transform: scale(0.95);
-            background-color: #374151; /* gray-700 */
+            background-color: #6d28d9; /* violet-700 */
             color: white;
         }
         .solved-card {
@@ -117,6 +128,9 @@
             .card {
                 font-size: clamp(1rem, 2.5vw, 1.25rem);
             }
+            .game-wrapper {
+                padding: 2rem;
+            }
         }
         .card.hint-highlight {
             outline: 3px solid #3b82f6; /* blue-500 */
@@ -126,38 +140,38 @@
             width: 100%;
             box-sizing: border-box;
             text-align: center;
-            padding: 0.75rem 1rem;
+            padding: 0.5rem 1rem;
             margin-top: auto;
-            font-size: 0.8rem;
-            color: #4a5568; /* gray-600 */
-            background: rgba(248, 250, 252, 0.7); /* slate-50 com transparência */
-            border-top: 1px solid #e2e8f0; /* slate-200 */
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(0, 0, 0, 0.15);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(4px);
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 flex flex-col items-center min-h-screen p-2 sm:p-4">
+<body class="flex flex-col items-center min-h-screen p-2 sm:p-4">
 
-    <div class="w-full max-w-lg mx-auto flex-grow">
-        <header class="text-center mb-4">
-            <h1 class="text-3xl font-bold">Conexo</h1>
-            <p id="game-subtitle" class="text-gray-600">Crie quatro grupos de quatro!</p>
-            <div class="text-center text-sm text-gray-500 mb-4 -mt-2">
+    <div class="w-full max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto flex-grow flex flex-col">
+        <header class="text-center mb-6">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Conexo</h1>
+            <p id="game-subtitle" class="text-lg md:text-xl opacity-90">Crie quatro grupos de quatro!</p>
+            <div class="text-sm opacity-80 mt-1">
                 <span>3 jogos diários</span> &bull; <span id="current-date"></span>
             </div>
         </header>
 
-        <main id="game-container" class="w-full">
+        <main id="game-container" class="w-full game-wrapper">
             <!-- Grupos resolvidos aparecerão aqui -->
             <div id="solved-groups-container" class="mb-4 space-y-2"></div>
             
             <!-- Novos Controles Superiores -->
             <div class="flex justify-between items-center mb-4 text-sm font-semibold flex-wrap gap-y-2">
                 <div class="flex items-center gap-2">
-                    <button id="give-up-button" class="text-red-600 hover:text-red-800 transition-colors">Desistir</button>
-                    <button id="hint-button" class="px-3 py-1 bg-blue-200 text-blue-800 rounded-full hover:bg-blue-300 transition-colors">💡 Dica</button>
+                    <button id="give-up-button" class="text-red-500 hover:text-red-400 font-bold transition-colors">Desistir</button>
+                    <button id="hint-button" class="px-3 py-1 bg-violet-500 text-white rounded-full hover:bg-violet-600 transition-colors">💡 Dica</button>
                 </div>
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-4 text-gray-700">
                     <div>Dicas: <span id="hints-used-counter">0</span></div>
                     <div>Tentativas: <span id="attempts-counter">0</span></div>
                 </div>
@@ -171,9 +185,9 @@
             <!-- Controles Inferiores -->
             <div class="controls-container justify-center">
                 <div class="flex space-x-2">
-                    <button id="shuffle-button" class="px-3 py-2 bg-gray-200 rounded-md font-semibold hover:bg-gray-300 transition-colors">Misturar</button>
-                    <button id="deselect-button" class="px-3 py-2 bg-gray-200 rounded-md font-semibold hover:bg-gray-300 transition-colors">Limpar</button>
-                    <button id="submit-button" class="px-4 py-2 bg-gray-800 text-white rounded-md font-semibold transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">Enviar</button>
+                    <button id="shuffle-button" class="px-3 py-2 bg-gray-200 text-gray-700 rounded-md font-semibold hover:bg-gray-300 transition-colors">Misturar</button>
+                    <button id="deselect-button" class="px-3 py-2 bg-gray-200 text-gray-700 rounded-md font-semibold hover:bg-gray-300 transition-colors">Limpar</button>
+                    <button id="submit-button" class="px-4 py-2 bg-gray-800 text-white rounded-md font-semibold transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed hover:bg-gray-700">Enviar</button>
                 </div>
             </div>            
         </main>
@@ -183,7 +197,7 @@
     <div id="modal" class="modal-overlay">
         <div class="modal-content">
             <h2 id="modal-title" class="text-2xl font-bold mb-2"></h2>
-            <p id="modal-message" class="mb-4"></p>
+            <p id="modal-message" class="mb-4 text-gray-600"></p>
             <div id="modal-results" class="space-y-1 mb-6"></div>
             <button id="modal-close-button" class="w-full px-4 py-2 bg-gray-800 text-white rounded-md font-semibold hover:bg-gray-700 transition-colors">Próximo Jogo</button>
         </div>
@@ -320,8 +334,8 @@
                 shuffleArray(allWords);
                 allWords.forEach(word => {
                     const card = document.createElement('div');
-                    card.textContent = word;                    
-                    card.className = 'card text-center font-semibold uppercase bg-gray-200 rounded-lg cursor-pointer';
+                    card.textContent = word;
+                    card.className = 'card text-center font-semibold uppercase bg-gray-200 text-gray-800 rounded-lg cursor-pointer';
                     card.addEventListener('click', () => handleCardClick(card));
                     board.appendChild(card);
                 });
@@ -378,8 +392,8 @@
                     
                     remainingWords.forEach(word => {
                          const card = document.createElement('div');
-                        card.textContent = word;                        
-                        card.className = 'card text-center font-semibold uppercase bg-gray-200 rounded-lg cursor-pointer';
+                        card.textContent = word;
+                        card.className = 'card text-center font-semibold uppercase bg-gray-200 text-gray-800 rounded-lg cursor-pointer';
                         card.addEventListener('click', () => handleCardClick(card));
                         board.appendChild(card);
                     });
@@ -419,9 +433,9 @@
                 board.innerHTML = '';
                 remainingWords.forEach(word => {
                     const card = document.createElement('div');
-                    card.textContent = word;                    
-                    const isSelected = selectedWords.includes(word);                    
-                    card.className = `card text-center font-semibold uppercase rounded-lg cursor-pointer ${isSelected ? 'selected' : 'bg-gray-200'}`;
+                    card.textContent = word;
+                    const isSelected = selectedWords.includes(word);
+                    card.className = `card text-center font-semibold uppercase rounded-lg cursor-pointer ${isSelected ? 'selected' : 'bg-gray-200 text-gray-800'}`;
                     card.addEventListener('click', () => handleCardClick(card));
                     board.appendChild(card);
                 });
