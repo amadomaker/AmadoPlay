@@ -412,9 +412,17 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            display: flex;
+            display: grid;
             gap: 10px;
             z-index: 100;
+        }
+
+        /* Mantém os 3 botões (🏠🔊🔄) na horizontal em qualquer tamanho */
+        .control-buttons-wrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
         }
 
         .gameControlBtn {
@@ -863,8 +871,20 @@
             #gameControls {
                 top: 10px;
                 right: 10px;
-                flex-direction: column;
                 gap: 8px;
+            }
+
+            /* Botões em coluna no mobile */
+            .control-buttons-wrapper {
+                flex-direction: column;
+            }
+
+            /* No mobile, deixa o cronômetro posicionado fora do fluxo
+               para não deslocar os botões. Ele fica logo abaixo. */
+            #timerDisplay {
+                position: absolute;
+                top: calc(100% + 6px);
+                right: 0;
             }
 
             .gameControlBtn {
@@ -983,6 +1003,19 @@
 
         }
 
+        /* Tablet: mesma lógica do mobile para não deslocar os botões */
+        @media (min-width: 769px) and (max-width: 1100px) {
+            /* Botões em coluna no tablet */
+            .control-buttons-wrapper {
+                flex-direction: column;
+            }
+            #timerDisplay {
+                position: absolute;
+                top: calc(100% + 8px);
+                right: 0;
+            }
+        }
+
 
         
 
@@ -1065,6 +1098,40 @@
         -webkit-text-size-adjust: 100%; /* impede Safari de aumentar fonte sozinho */
         }
 
+        /* Responsividade para telas interativas grandes (horizontais) */
+        @media (min-width: 1800px) {
+            #sequenceTracker {
+                grid-template-columns: repeat(2, 1fr) !important;
+                column-gap: 8px !important;
+                max-width: 200px !important;
+            }
+        }
+
+        /* Classe para dividir em duas colunas quando há muitos itens em telas menores */
+        #sequenceTracker.two-columns-on-demand {
+            grid-template-columns: repeat(2, 1fr) !important;
+            column-gap: 8px !important;
+            max-width: 200px !important;
+        }
+
+        /* Estilo do cronômetro */
+        .timer-display {
+            background: rgba(255, 255, 255, 0.6);
+            color: #764ba2;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            opacity: 0.75; /* Menos opacidade, como solicitado */
+            transition: opacity 0.3s;
+        }
+
+        /* Estilo do tempo final no modal de vitória */
+        .final-time {
+            font-size: 18px;
+            font-weight: bold;
+            color: #34a853; /* Verde para sucesso */
+            margin: 5px 0 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -1127,9 +1194,12 @@
 
                 <!-- Controles do Jogo -->
                 <div id="gameControls">
-                    <button class="gameControlBtn" id="menuBtnInGame" type="button" title="Menu Principal" onclick="backToMenu()">🏠</button>
-                    <button class="gameControlBtn" id="soundBtn" type="button" title="Som" onclick="toggleSound()">🔊</button>
-                    <button class="gameControlBtn" id="resetRoundBtn" type="button" title="Reiniciar" onclick="resetRound()">🔄</button>
+                    <div class="control-buttons-wrapper">
+                        <button class="gameControlBtn" id="menuBtnInGame" type="button" title="Menu Principal" onclick="backToMenu()">🏠</button>
+                        <button class="gameControlBtn" id="soundBtn" type="button" title="Som" onclick="toggleSound()">🔊</button>
+                        <button class="gameControlBtn" id="resetRoundBtn" type="button" title="Reiniciar" onclick="resetRound()">🔄</button>
+                    </div>
+                    <div id="timerDisplay" class="timer-display">⏱️ 00:00</div>
                 </div>
 
                 <!-- Varinha de sabão -->
@@ -1145,6 +1215,7 @@
             <div class="victoryContent">
                 <h2 id="victoryTitle">🎉 Parabéns! 🎉</h2>
                 <div id="victoryCharacter"></div>
+                <p id="finalTime" class="final-time"></p>
                 <p id="victoryMessage">Você conseguiu!</p>
                 <div class="victoryButtons">
                     <button class="victoryBtn menuBtn" id="victoryMenuBtn" type="button" onclick="backToMenu()">Menu Principal</button>
@@ -1174,7 +1245,9 @@
             animationId: null,
             lastBubbleTime: 0,
             isPlaying: false,
-            completedRounds: 0
+            completedRounds: 0,
+            timerInterval: null,
+            startTime: 0
         };
 
         // Configurações por nível e rodada
@@ -1183,31 +1256,31 @@
         1: { 
             name: 'Fácil',
             rounds: [
-            { min: 3, max: 5,  size: { min: 80, max: 110 }, speed: { min: 0.8, max: 1.2 }, spawnRate: 2500, movement: 'straight',  maxBubbles: 10 },
-            { min: 4, max: 6,  size: { min: 78, max: 105 }, speed: { min: 1.0, max: 1.4 }, spawnRate: 2300, movement: 'slight',    maxBubbles: 10 },
-            { min: 5, max: 7,  size: { min: 74, max: 100 }, speed: { min: 1.2, max: 1.6 }, spawnRate: 2100, movement: 'slight',    maxBubbles: 10 },
-            { min: 6, max: 8,  size: { min: 70, max:  95 }, speed: { min: 1.4, max: 1.8 }, spawnRate: 1900, movement: 'moderate',  maxBubbles: 10 },
-            { min: 7, max: 10, size: { min: 66, max:  90 }, speed: { min: 1.6, max: 2.0 }, spawnRate: 1700, movement: 'moderate',  maxBubbles: 10 }
+            { min: 3, max: 5,  size: { min: 80, max: 110 }, speed: { min: 0.8, max: 1.2 }, spawnRate: 2500, movement: 'straight',  maxBubbles: 15 },
+            { min: 4, max: 6,  size: { min: 78, max: 105 }, speed: { min: 1.0, max: 1.4 }, spawnRate: 2300, movement: 'slight',    maxBubbles: 15 },
+            { min: 5, max: 7,  size: { min: 74, max: 100 }, speed: { min: 1.2, max: 1.6 }, spawnRate: 2100, movement: 'slight',    maxBubbles: 15 },
+            { min: 6, max: 8,  size: { min: 70, max:  95 }, speed: { min: 1.4, max: 1.8 }, spawnRate: 1900, movement: 'moderate',  maxBubbles: 15 },
+            { min: 7, max: 10, size: { min: 66, max:  90 }, speed: { min: 1.6, max: 2.0 }, spawnRate: 1700, movement: 'moderate',  maxBubbles: 15 }
             ]
         },
         2: { 
             name: 'Médio',
             rounds: [
-            { min: 6,  max:  9, size: { min: 62, max: 84 }, speed: { min: 1.5, max: 2.2 }, spawnRate: 1600, movement: 'moderate', maxBubbles: 9 },
-            { min: 7,  max: 11, size: { min: 58, max: 80 }, speed: { min: 1.8, max: 2.6 }, spawnRate: 1400, movement: 'zigzag',   maxBubbles: 9 },
-            { min: 8,  max: 13, size: { min: 54, max: 76 }, speed: { min: 2.0, max: 2.9 }, spawnRate: 1200, movement: 'zigzag',   maxBubbles: 9 },
-            { min: 10, max: 14, size: { min: 52, max: 74 }, speed: { min: 2.2, max: 3.1 }, spawnRate: 1100, movement: 'curved',   maxBubbles: 8 },
-            { min: 12, max: 15, size: { min: 50, max: 72 }, speed: { min: 2.4, max: 3.3 }, spawnRate: 1000, movement: 'curved',   maxBubbles: 8 }
+            { min: 6,  max:  9, size: { min: 62, max: 84 }, speed: { min: 1.5, max: 2.2 }, spawnRate: 1600, movement: 'moderate', maxBubbles: 14 },
+            { min: 7,  max: 11, size: { min: 58, max: 80 }, speed: { min: 1.8, max: 2.6 }, spawnRate: 1400, movement: 'zigzag',   maxBubbles: 14 },
+            { min: 8,  max: 13, size: { min: 54, max: 76 }, speed: { min: 2.0, max: 2.9 }, spawnRate: 1200, movement: 'zigzag',   maxBubbles: 13 },
+            { min: 10, max: 14, size: { min: 52, max: 74 }, speed: { min: 2.2, max: 3.1 }, spawnRate: 1100, movement: 'curved',   maxBubbles: 13 },
+            { min: 12, max: 15, size: { min: 50, max: 72 }, speed: { min: 2.4, max: 3.3 }, spawnRate: 1000, movement: 'curved',   maxBubbles: 13 }
             ]
         },
         3: { 
             name: 'Difícil',
             rounds: [
-            { min: 10, max: 14, size: { min: 50, max: 70 }, speed: { min: 2.5, max: 3.5 }, spawnRate: 900,  movement: 'curved',   maxBubbles: 8 },
-            { min: 12, max: 16, size: { min: 48, max: 68 }, speed: { min: 2.8, max: 3.8 }, spawnRate: 850,  movement: 'random',   maxBubbles: 8 },
-            { min: 14, max: 18, size: { min: 46, max: 66 }, speed: { min: 3.0, max: 4.0 }, spawnRate: 800,  movement: 'random',   maxBubbles: 8 },
-            { min: 16, max: 19, size: { min: 44, max: 64 }, speed: { min: 3.2, max: 4.2 }, spawnRate: 750,  movement: 'chaotic',  maxBubbles: 7 },
-            { min: 18, max: 20, size: { min: 42, max: 62 }, speed: { min: 3.4, max: 4.4 }, spawnRate: 700,  movement: 'chaotic',  maxBubbles: 7 }
+            { min: 10, max: 14, size: { min: 50, max: 70 }, speed: { min: 2.5, max: 3.5 }, spawnRate: 900,  movement: 'curved',   maxBubbles: 12 },
+            { min: 12, max: 16, size: { min: 48, max: 68 }, speed: { min: 2.8, max: 3.8 }, spawnRate: 850,  movement: 'random',   maxBubbles: 12 },
+            { min: 14, max: 18, size: { min: 46, max: 66 }, speed: { min: 3.0, max: 4.0 }, spawnRate: 800,  movement: 'random',   maxBubbles: 11 },
+            { min: 16, max: 19, size: { min: 44, max: 64 }, speed: { min: 3.2, max: 4.2 }, spawnRate: 750,  movement: 'chaotic',  maxBubbles: 11 },
+            { min: 18, max: 20, size: { min: 42, max: 62 }, speed: { min: 3.4, max: 4.4 }, spawnRate: 700,  movement: 'chaotic',  maxBubbles: 11 }
             ]
         }
         };
@@ -1337,6 +1410,7 @@
             loadProgress();
             setupEventListeners();
             setupCharacters();
+            window.addEventListener('resize', checkAndApplyTwoColumns);
         }
 
         // Configurar personagens
@@ -1453,6 +1527,7 @@
                 cancelAnimationFrame(gameState.animationId);
                 gameState.animationId = null;
             }
+            resetTimer();
         }
 
         // Alternar som
@@ -1515,6 +1590,7 @@
             gameState.current = 0;
             
             gameState.expected = 1;
+            startTimer();
 
             // Limpar bolhas existentes
             gameState.bubbles.forEach(bubble => bubble.element.remove());
@@ -1529,6 +1605,106 @@
             
             // Anunciar para leitores de tela
             announce(`Rodada ${gameState.currentRound} de ${gameState.roundsPerLevel}. Estoure ${gameState.target} bolhas. Nível ${levelConfig[gameState.level].name}`);
+        }
+
+        // Funções do cronômetro
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            resetTimer();
+            gameState.startTime = Date.now();
+            const timerEl = document.getElementById('timerDisplay');
+            if (timerEl) {
+                gameState.timerInterval = setInterval(() => {
+                    const elapsedSeconds = Math.floor((Date.now() - gameState.startTime) / 1000);
+                    timerEl.innerHTML = `⏱️ ${formatTime(elapsedSeconds)}`;
+                }, 1000);
+            }
+        }
+
+        function stopTimer() {
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+            gameState.timerInterval = null;
+            return Math.floor((Date.now() - gameState.startTime) / 1000);
+        }
+
+        // Função para verificar e aplicar o layout de duas colunas
+        function checkAndApplyTwoColumns() {
+            const cont = document.getElementById('sequenceTracker');
+            if (!cont) return;
+
+            // Condição: tela menor que 1800px E mais de 16 itens
+            if (window.innerWidth < 1800 && gameState.target > 16) {
+                cont.classList.add('two-columns-on-demand');
+            } else {
+                cont.classList.remove('two-columns-on-demand');
+            }
+        }
+
+        // Função para gerar o valor de uma nova bolha com priorização
+        function generateBubbleValue() {
+            const expectedNum = gameState.expected;
+            const maxByLevel = {1: 20, 2: 30, 3: 40};
+            const maxNum = maxByLevel[gameState.level] || 20;
+
+            // Números já em tela
+            const existingNumbers = new Set(gameState.bubbles.map(b => parseInt(b.element.dataset.value)));
+
+            let attempts = 0;
+            while (attempts < 50) {
+                let newValue;
+                const rand = Math.random();
+                
+                // 75% de chance de gerar um número "próximo" e relevante
+                if (rand < 0.75) {
+                    // Dentro dessa chance, 70% para números MUITO próximos, 30% para um pouco mais distantes
+                    const isVeryClose = Math.random() < 0.7;
+                    const range = isVeryClose ? 4 : 8; // Define o alcance: 4 para muito perto, 8 para perto
+                    
+                    const minClose = expectedNum;
+                    const maxClose = Math.min(maxNum, expectedNum + range);
+                    
+                    // Garante que o intervalo seja válido
+                    if (maxClose > minClose) {
+                        newValue = Math.floor(Math.random() * (maxClose - minClose + 1)) + minClose;
+                    } else {
+                        newValue = minClose; // Se o intervalo for inválido, usa o número mínimo
+                    }
+
+                } else {
+                    // 25% de chance de gerar um número mais aleatório, mas ainda com um teto razoável
+                    const randomRangeMax = Math.min(maxNum, expectedNum + 15);
+                    if (randomRangeMax > expectedNum) {
+                        newValue = Math.floor(Math.random() * (randomRangeMax - expectedNum + 1)) + expectedNum;
+                    } else {
+                        newValue = expectedNum;
+                    }
+                }
+
+                // Se o número gerado não existe na tela, retorna
+                if (!existingNumbers.has(newValue)) {
+                    return newValue;
+                }
+                attempts++;
+            }
+
+            // Fallback: se não conseguiu gerar um número único, procura o primeiro disponível
+            for (let i = expectedNum; i <= maxNum; i++) {
+                if (!existingNumbers.has(i)) {
+                    return i;
+                }
+            }
+            
+            // Caso extremo (todos os números possíveis já estão na tela), retorna um aleatório qualquer que não esteja na tela
+            let finalFallback = Math.floor(Math.random() * maxNum) + 1;
+            while(existingNumbers.has(finalFallback)) {
+                finalFallback = Math.floor(Math.random() * maxNum) + 1;
+            }
+            return finalFallback;
         }
 
         // Criar bolha com movimento dinâmico
@@ -1546,9 +1722,7 @@
             bubble.style.boxShadow = `0 0 20px rgba(255, 255, 255, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.3)`;
 
             // Número da bolha conforme dificuldade
-            const maxByLevel = {1:20, 2:30, 3:40};
-            const maxNum = maxByLevel[gameState.level] || 20;
-            const value = forcedNumber || (Math.floor(Math.random() * maxNum) + 1);
+            const value = forcedNumber || generateBubbleValue();
             bubble.dataset.value = String(value);
             const label = document.createElement('span');
             label.className = 'bubbleLabel';
@@ -1797,6 +1971,7 @@
 
         // Vitória
         function victory() {
+            const finalTime = stopTimer();
             if (gameState.soundEnabled && audio.context) {
                 audio.playVictory();
             }
@@ -1825,6 +2000,11 @@
             document.getElementById('victoryTitle').textContent = title;
             document.getElementById('victoryMessage').textContent = message;
             document.getElementById('nextActionBtn').textContent = buttonText;
+
+            const finalTimeEl = document.getElementById('finalTime');
+            if (finalTimeEl) {
+                finalTimeEl.textContent = `Tempo: ${formatTime(finalTime)}`;
+            }
             
             document.getElementById('victoryModal').classList.add('show');
             announce(message);
@@ -1854,26 +2034,21 @@
             const now = Date.now();
             const config = levelConfig[gameState.level].rounds[gameState.currentRound - 1];
             
-            // Lógica de criação de bolhas (mantém a mesma do código anterior)
-            const expectedNum = gameState.expected || 1;
-            const hasExpectedBubble = gameState.bubbles.some(b => 
-                !b.popped && parseInt(b.element.dataset.value || '0', 10) === expectedNum
-            );
-            
-            if (!hasExpectedBubble && expectedNum <= gameState.target) {
-                createBubble(expectedNum);
-                gameState.lastBubbleTime = now;
-            }
-            else if (now - gameState.lastBubbleTime > config.spawnRate && gameState.bubbles.length < config.maxBubbles) {
-                if (Math.random() < 0.7 && !hasExpectedBubble && expectedNum <= gameState.target) {
+            // Só cria bolha se houver espaço e tempo
+            if (now - gameState.lastBubbleTime > config.spawnRate && gameState.bubbles.length < config.maxBubbles) {
+                const expectedNum = gameState.expected;
+                const hasExpectedBubble = gameState.bubbles.some(b => !b.popped && parseInt(b.element.dataset.value) === expectedNum);
+
+                // REGRA CRÍTICA: Se o número esperado não está na tela, ele DEVE ser o próximo.
+                if (!hasExpectedBubble && expectedNum <= gameState.target) {
                     createBubble(expectedNum);
                 } else {
+                    // Se o número esperado já está lá, cria uma bolha com valor priorizado ou aleatório.
                     createBubble();
                 }
                 gameState.lastBubbleTime = now;
             }
-            
-            // ===== FÍSICA DE MOVIMENTO APRIMORADA =====
+
             const cont = document.getElementById('contentArea');
             const containerWidth = cont.clientWidth;
             const containerHeight = cont.clientHeight;
@@ -2027,6 +2202,16 @@
                 el.textContent = i;
                 cont.appendChild(el);
             }
+            checkAndApplyTwoColumns();
+        }
+
+        function resetTimer() {
+            if (gameState.timerInterval) {
+                clearInterval(gameState.timerInterval);
+                gameState.timerInterval = null;
+            }
+            const timerEl = document.getElementById('timerDisplay');
+            if (timerEl) timerEl.innerHTML = '⏱️ 00:00';
         }
 
         // Anunciar para leitores de tela

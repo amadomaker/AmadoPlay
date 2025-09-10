@@ -4,6 +4,27 @@
 
   // Dados das ferramentas educacionais
   window.EducationalToolsData = [
+    {
+      id: 'roleta-ingles',
+      titulo: 'Roleta de Perguntas em Inglês',
+      descricao: 'Gire os anéis (WH + verbo auxiliar + sujeito) para formar perguntas corretas em inglês e praticar estrutura frasal, vocabulário e comunicação.',
+      imagem: 'src/assets/images/fundo_roleta.png',
+      interno: 'pages/roleta.html',
+      materia: 'ingles',
+      series: [6, 7, 8, 9],
+      tipo: ['interativo', 'ludico', 'gramatica'],
+      dificuldade: 'intermediario',
+      bncc: [
+        // Habilidades de Língua Inglesa (BNCC) relacionadas a interação e uso de estruturas para perguntas
+        { codigo: 'EF15LI08', descricao: 'Fazer e responder perguntas simples para solicitar e fornecer informações pessoais, de rotina e preferências em interações guiadas.' },
+        { codigo: 'EF06LI10', descricao: 'Mobilizar conhecimentos linguísticos (léxico e estruturas), como pronomes interrogativos e verbos auxiliares, para compreender e produzir enunciados simples em situações de uso.' },
+        { codigo: 'EF06LI12', descricao: 'Participar de interações orais para pedir, dar e checar informações em contextos significativos, fazendo perguntas e respondendo de forma adequada.' }
+      ],
+      tags: ['ingles', 'wh-questions', 'question words', 'simple present', 'to be', 'auxiliares', 'oralidade', 'escrita', 'EF15LI08', 'EF06LI10', 'EF06LI12'],
+      popular: false,
+      novo: true,
+      acessos: 0
+    },
      {
       id: 'abaco',
       titulo: 'Ábaco Digital',

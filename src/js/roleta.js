@@ -1,37 +1,160 @@
 /* ===================================
-   ROLETA DE FORMAÇÃO DE PERGUNTAS - JAVASCRIPT
-   Três Anéis Concêntricos: Pronomes Interrogativos + Verbos + Pronomes Pessoais
+   ENGLISH QUESTION WHEEL - JAVASCRIPT
+   Three Concentric Rings: WH-Words + Verbs + Subjects
    =================================== */
 
 // === CONFIGURAÇÕES DOS ANÉIS ===
 const RING_CONFIG = {
     outer: {
-        words: ['O quê', 'Quando', 'Onde', 'Quem', 'Por que', 'Como', 'Qual', 'Com que frequência'],
-        colors: ['#f3f4f6', '#e5e7eb', '#f3f4f6', '#e5e7eb', '#f3f4f6', '#e5e7eb', '#f3f4f6', '#e5e7eb'],
-        radius: { outer: 180, inner: 140 },
+        words: ['What', 'When', 'Where', 'Who', 'Why', 'How', 'Which', 'How often'],
+        colors: ['#818cf8', '#a78bfa', '#818cf8', '#a78bfa', '#818cf8', '#a78bfa', '#818cf8', '#a78bfa'],
+        radius: { outer: 200, inner: 130 },
         currentRotation: 0,
         spinning: false
     },
     middle: {
-        words: ['é/são', 'foi/eram', 'está/estavam', 'vai/vão', 'faz/fez', 'pode/podem', 'deve/deveriam', 'quer/querem'],
-        colors: ['#10b981', '#059669', '#047857', '#065f46', '#f97316', '#ea580c', '#c2410c', '#9a3412'],
-        radius: { outer: 135, inner: 100 },
+        words: ['is/are', 'was/were', 'do/does', 'did', 'will', 'can', 'should', 'would'], // 'is/are' e 'do/does' serão corrigidos pela lógica
+        colors: ['#5eead4', '#2dd4bf', '#5eead4', '#2dd4bf', '#5eead4', '#2dd4bf', '#5eead4', '#2dd4bf'],
+        radius: { outer: 130, inner: 70 },
         currentRotation: 0,
         spinning: false
     },
     inner: {
-        words: ['eu', 'tu', 'ele/ela', 'nós', 'vocês', 'eles/elas'],
-        colors: ['#4ade80', '#22c55e', '#16a34a', '#15803d', '#4ade80', '#22c55e', '#16a34a'],
-        radius: { outer: 95, inner: 30 },
+        words: ['I', 'you', 'he/she/it', 'we', 'they'],
+        colors: ['#fde047', '#facc15', '#fde047', '#facc15', '#fde047'],
+        radius: { outer: 70, inner: 30 },
         currentRotation: 0,
         spinning: false
     }
 };
 
+// === NOVO BANCO CURADO DE COMPLEMENTOS (com metadados) ===
+// Campos:
+// - text: string anexada após WH + AUX + SUBJECT
+// - themes: temas aplicáveis (use 'all' para geral)
+// - wh: quais WH combinam (ex.: 'Where', 'When', ... ou 'ANY')
+// - aux: grupo de auxiliar: 'ACTION' (do/did/will/can/should/would) ou 'BE' (am/is/are/was/were) ou 'ANY'
+// - tags: categorias semânticas auxiliares (opcional)
+const COMPLEMENT_BANK = [
+  // ====== DAILY ROUTINE ======
+  { text: 'do in the morning', themes: ['daily_routine'], wh: ['What','How'], aux: ['ACTION'], tags: ['routine','time'] },
+  { text: 'do after school', themes: ['daily_routine'], wh: ['What','When'], aux: ['ACTION'], tags: ['routine'] },
+  { text: 'do before bed', themes: ['daily_routine'], wh: ['What','When'], aux: ['ACTION'], tags: ['routine','night'] },
+  { text: 'usually wake up', themes: ['daily_routine'], wh: ['When','How often'], aux: ['ACTION'], tags: ['sleep'] },
+  { text: 'go to school', themes: ['daily_routine'], wh: ['How','Where'], aux: ['ACTION'], tags: ['transport'] },
+  { text: 'get to school', themes: ['daily_routine'], wh: ['How'], aux: ['ACTION'], tags: ['transport'] },
+  { text: 'wear today', themes: ['daily_routine'], wh: ['What','Which'], aux: ['ACTION'], tags: ['clothes'] },
+  { text: 'help with at home', themes: ['daily_routine'], wh: ['What'], aux: ['ACTION'], tags: ['home'] },
+  { text: 'clean your room', themes: ['daily_routine'], wh: ['How often','When'], aux: ['ACTION'], tags: ['home'] },
+  { text: 'free', themes: ['daily_routine'], wh: ['When'], aux: ['BE'], tags: ['time'] },
+  { text: 'at home', themes: ['daily_routine'], wh: ['Where'], aux: ['BE'], tags: ['place'] },
+  { text: 'at school', themes: ['daily_routine'], wh: ['Where','When'], aux: ['BE'], tags: ['place'] },
+
+  // ====== FOOD ======
+  { text: 'eat for breakfast', themes: ['food'], wh: ['What'], aux: ['ACTION'], tags: ['meal'] },
+  { text: 'eat for lunch', themes: ['food'], wh: ['What'], aux: ['ACTION'], tags: ['meal'] },
+  { text: 'have for a snack', themes: ['food'], wh: ['What'], aux: ['ACTION'], tags: ['meal'] },
+  { text: 'like to drink', themes: ['food'], wh: ['What'], aux: ['ACTION'], tags: ['drink'] },
+  { text: 'prefer to eat at a party', themes: ['food'], wh: ['What','Which'], aux: ['ACTION'], tags: ['party'] },
+  { text: 'buy at the market', themes: ['food'], wh: ['What','Where'], aux: ['ACTION'], tags: ['shopping'] },
+  { text: 'cook with your family', themes: ['food'], wh: ['What'], aux: ['ACTION'], tags: ['home'] },
+  { text: 'cook with in your family', themes: ['food'], wh: ['Who'], aux: ['ACTION'], tags: ['home'] },
+  { text: 'share with a friend', themes: ['food'], wh: ['What','Who'], aux: ['ACTION'], tags: ['social'] },
+  { text: 'hungry for', themes: ['food'], wh: ['Why','What'], aux: ['BE'], tags: ['feeling'] },
+  { text: 'allergic to', themes: ['food'], wh: ['What','Why'], aux: ['BE'], tags: ['health'] },
+  { text: 'prefer: tea or coffee', themes: ['food'], wh: ['Which'], aux: ['DO'], tags: ['choice','drink'] },
+
+  // ====== HOBBIES ======
+  { text: 'play on weekends', themes: ['hobbies'], wh: ['What','When','How often'], aux: ['ACTION'], tags: ['games'] },
+  { text: 'like to watch on TV', themes: ['hobbies'], wh: ['What','Which'], aux: ['ACTION'], tags: ['tv'] },
+  { text: 'read for fun', themes: ['hobbies'], wh: ['What'], aux: ['ACTION'], tags: ['reading'] },
+  { text: 'listen to', themes: ['hobbies'], wh: ['What','Who'], aux: ['ACTION'], tags: ['music'] },
+  { text: 'draw in your notebook', themes: ['hobbies'], wh: ['What'], aux: ['ACTION'], tags: ['art'] },
+  { text: 'build with blocks', themes: ['hobbies'], wh: ['What'], aux: ['ACTION'], tags: ['craft'] },
+  { text: 'collect as a hobby', themes: ['hobbies'], wh: ['What'], aux: ['ACTION'], tags: ['collect'] },
+  { text: 'practice sports', themes: ['hobbies'], wh: ['What','How often'], aux: ['ACTION'], tags: ['sports'] },
+  { text: 'play with after school', themes: ['hobbies'], wh: ['Who'], aux: ['ACTION'], tags: ['friends'] },
+  { text: 'learn from on YouTube', themes: ['hobbies'], wh: ['Who'], aux: ['ACTION'], tags: ['learning'] },
+  { text: 'prefer: painting or dancing', themes: ['hobbies'], wh: ['Which'], aux: ['DO'], tags: ['choice','art'] },
+
+  // ====== PLACES ======
+  { text: 'go on vacation', themes: ['places'], wh: ['Where'], aux: ['ACTION'], tags: ['travel'] },
+  { text: 'visit in your city', themes: ['places'], wh: ['What','Where','Which'], aux: ['ACTION'], tags: ['city'] },
+  { text: 'see at the park', themes: ['places'], wh: ['What'], aux: ['ACTION'], tags: ['nature'] },
+  { text: 'do at the beach', themes: ['places'], wh: ['What','Where'], aux: ['ACTION'], tags: ['beach'] },
+  { text: 'find at school', themes: ['places'], wh: ['What','Where'], aux: ['ACTION'], tags: ['school'] },
+  { text: 'explore in the forest', themes: ['places'], wh: ['What','Where'], aux: ['ACTION'], tags: ['nature'] },
+  { text: 'buy at the mall', themes: ['places'], wh: ['What','Where'], aux: ['ACTION'], tags: ['shopping'] },
+  { text: 'see at the museum', themes: ['places'], wh: ['What','Where'], aux: ['ACTION'], tags: ['museum'] },
+  { text: 'at the park now', themes: ['places'], wh: ['Where','When'], aux: ['BE'], tags: ['place','time'] },
+  { text: 'on the bus', themes: ['places'], wh: ['Where'], aux: ['BE'], tags: ['transport'] },
+  { text: 'prefer to visit: the zoo or the museum', themes: ['places'], wh: ['Which'], aux: ['DO'], tags: ['choice','visit'] },
+
+  // ====== FEELINGS ======
+  { text: 'feel happy about', themes: ['feelings'], wh: ['Why','What'], aux: ['ACTION'], tags: ['emotion'] },
+  { text: 'get angry about', themes: ['feelings'], wh: ['Why','What'], aux: ['ACTION'], tags: ['emotion'] },
+  // Evita WH "Why" sem objeto; usa apenas "What" para perguntas do tipo
+  { text: 'worry about', themes: ['feelings'], wh: ['What'], aux: ['ACTION'], tags: ['emotion'] },
+  // Versão com BE para perguntas como "What are you worried about?"
+  { text: 'worried about', themes: ['feelings'], wh: ['What'], aux: ['BE'], tags: ['emotion'] },
+  { text: 'dream about', themes: ['feelings'], wh: ['What'], aux: ['ACTION'], tags: ['emotion'] },
+  { text: 'excited for', themes: ['feelings'], wh: ['Why','What'], aux: ['BE'], tags: ['emotion'] },
+  { text: 'afraid of', themes: ['feelings'], wh: ['Why','What'], aux: ['BE'], tags: ['emotion'] },
+  { text: 'proud of', themes: ['feelings'], wh: ['Why','What'], aux: ['BE'], tags: ['emotion'] },
+  { text: 'laugh about with friends', themes: ['feelings'], wh: ['What','Why','Who'], aux: ['ACTION'], tags: ['social'] },
+  { text: 'talk about when you are sad', themes: ['feelings'], wh: ['What','Why','Who','When'], aux: ['ACTION'], tags: ['support'] },
+  { text: 'prefer: sunny or rainy days', themes: ['feelings'], wh: ['Which'], aux: ['DO'], tags: ['choice','weather'] },
+
+  // ====== NATURE ======
+  { text: 'see in the sky', themes: ['nature'], wh: ['What','Where'], aux: ['ACTION'], tags: ['sky'] },
+  { text: 'find on the ground', themes: ['nature'], wh: ['What','Where'], aux: ['ACTION'], tags: ['ground'] },
+  { text: 'hear in the forest', themes: ['nature'], wh: ['What','Where'], aux: ['ACTION'], tags: ['forest'] },
+  { text: 'smell after rain', themes: ['nature'], wh: ['What','When'], aux: ['ACTION'], tags: ['weather'] },
+  { text: 'touch in a garden', themes: ['nature'], wh: ['What','Where'], aux: ['ACTION'], tags: ['garden'] },
+  { text: 'see at night', themes: ['nature'], wh: ['What','When'], aux: ['ACTION'], tags: ['night'] },
+  { text: 'see at the river', themes: ['nature'], wh: ['What','Where'], aux: ['ACTION'], tags: ['river'] },
+  { text: 'find on a mountain', themes: ['nature'], wh: ['What','Where'], aux: ['ACTION'], tags: ['mountain'] },
+  { text: 'near your house', themes: ['nature'], wh: ['Where'], aux: ['BE'], tags: ['place'] },
+  { text: 'common in your city', themes: ['nature'], wh: ['What','Where'], aux: ['BE'], tags: ['fact'] },
+
+  // ====== GERAIS (ALL) ======
+  { text: 'do on weekends', themes: ['all'], wh: ['What','When'], aux: ['ACTION'], tags: ['routine'] },
+  { text: 'do with your friends', themes: ['all'], wh: ['What'], aux: ['ACTION'], tags: ['friends'] },
+  { text: 'study at school', themes: ['all'], wh: ['What','Where'], aux: ['ACTION'], tags: ['school'] },
+  { text: 'like the most', themes: ['all'], wh: ['What','Which'], aux: ['ACTION'], tags: ['preference'] },
+  { text: 'need to do today', themes: ['all'], wh: ['What','When'], aux: ['ACTION'], tags: ['task'] },
+  { text: 'want to learn this year', themes: ['all'], wh: ['What','Why'], aux: ['ACTION'], tags: ['goal'] },
+  { text: 'from', themes: ['all'], wh: ['Where'], aux: ['BE'], tags: ['origin'] },
+  { text: 'now', themes: ['all'], wh: ['Where','When'], aux: ['BE'], tags: ['place','time'] },
+  { text: 'interested in', themes: ['all'], wh: ['What','Why'], aux: ['BE'], tags: ['interest'] },
+  { text: 'prefer: cats or dogs', themes: ['all'], wh: ['Which'], aux: ['DO'], tags: ['choice'] },
+  { text: 'prefer: movies or games', themes: ['all'], wh: ['Which'], aux: ['DO'], tags: ['choice'] },
+  { text: 'prefer: summer or winter', themes: ['all'], wh: ['Which'], aux: ['DO'], tags: ['choice','weather'] },
+  { text: 'visit on holidays', themes: ['all'], wh: ['Where','When'], aux: ['ACTION'], tags: ['travel'] },
+  { text: 'practice every day', themes: ['all'], wh: ['How often'], aux: ['ACTION'], tags: ['frequency'] },
+  { text: 'spend time after class', themes: ['all'], wh: ['Where','When'], aux: ['ACTION'], tags: ['after-school'] },
+  { text: 'talk to at school', themes: ['all'], wh: ['Who'], aux: ['ACTION'], tags: ['school','social'] },
+  { text: 'play with at recess', themes: ['all'], wh: ['Who','When'], aux: ['ACTION'], tags: ['friends'] },
+  { text: 'go to the park with', themes: ['all'], wh: ['Who'], aux: ['ACTION'], tags: ['friends'] },
+  { text: 'call when you need help', themes: ['all'], wh: ['Who','When'], aux: ['ACTION'], tags: ['support'] },
+  { text: 'arrive home', themes: ['all'], wh: ['When'], aux: ['ACTION'], tags: ['home'] },
+  { text: 'get ready for school', themes: ['all'], wh: ['When','What'], aux: ['ACTION'], tags: ['routine'] },
+  { text: 'go to sleep', themes: ['all'], wh: ['When'], aux: ['ACTION'], tags: ['night'] },
+  { text: 'feel tired', themes: ['all'], wh: ['Why','When'], aux: ['ACTION','BE'], tags: ['feeling'] },
+  { text: 'late', themes: ['all'], wh: ['Why','When'], aux: ['BE'], tags: ['time'] },
+  { text: 'with right now', themes: ['all'], wh: ['Who'], aux: ['BE'], tags: ['social'] },
+  { text: 'bring to school', themes: ['all'], wh: ['What','Which'], aux: ['ACTION'], tags: ['school'] },
+  { text: 'prefer to do after dinner', themes: ['all'], wh: ['What','Which','When'], aux: ['ACTION'], tags: ['evening'] }
+];
+
+// Assegura pelo menos 80 itens
+// console.log('COMPLEMENT_BANK size', COMPLEMENT_BANK.length);
+
 // === CONFIGURAÇÕES GERAIS ===
 const CONFIG = {
-    spinSpeed: 3,
+    spinSpeed: 4, // Velocidade equilibrada para um giro mais longo
     soundEnabled: true,
+    currentTheme: 'all', // Novo estado para o tema
     questionHistory: [],
     maxHistoryItems: 5,
     sounds: {
@@ -44,7 +167,7 @@ const CONFIG = {
 // === ELEMENTOS DOM ===
 const elements = {
     // Controles gerais
-    speedControl: null,
+    themeSelector: null,
     soundToggle: null,
     
     // Anéis da roleta
@@ -53,16 +176,15 @@ const elements = {
     innerRing: null,
     
     // Botões de controle dos anéis
-    spinOuter: null,
-    spinMiddle: null,
-    spinInner: null,
-    spinAll: null,
+    spinAll: null, // Agora é o único botão de giro
+    spinCenter: null, // Botão no centro do SVG
     
     // Exibição da pergunta
     questionDisplay: null,
     whResult: null,
     auxResult: null,
     subjectResult: null,
+    complementResult: null,
     
     // Histórico e configurações
     questionHistory: null,
@@ -71,13 +193,14 @@ const elements = {
     
     // Modais
     configModal: null,
-    accessibilityModal: null,
+    guideModal: null,
+    historyModal: null,
     closeConfigModal: null,
-    closeModal: null,
+    closeGuideModal: null,
+    closeHistoryModal: null,
     
     // Outros elementos
-    loadingOverlay: null,
-    accessibilityButton: null
+    loadingOverlay: null
 };
 
 // === INICIALIZAÇÃO ===
@@ -86,13 +209,15 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeApp() {
-    console.log('🎯 Iniciando Roleta de Formação de Perguntas em Português...');
+    console.log('🎯 Iniciando Roleta de Perguntas em Inglês...');
     
     // Buscar elementos DOM
     findDOMElements();
     
     // Configurar eventos
     setupEventListeners();
+    // Preparar select de tema customizado em telas pequenas
+    setupCustomThemeSelect();
     
     // Inicializar áudio
     initializeAudio();
@@ -109,13 +234,13 @@ function initializeApp() {
     // Gerar pergunta inicial
     updateQuestion();
     
-    console.log('✅ Roleta de português inicializada com sucesso!');
+    console.log('✅ Roleta de Perguntas em Inglês inicializada com sucesso!');
 }
 
 // === BUSCAR ELEMENTOS DOM ===
 function findDOMElements() {
     // Controles gerais
-    elements.speedControl = document.getElementById('speed-control');
+    elements.themeSelector = document.getElementById('theme-selector');
     elements.soundToggle = document.getElementById('sound-toggle');
     
     // Anéis da roleta
@@ -124,16 +249,16 @@ function findDOMElements() {
     elements.innerRing = document.getElementById('inner-ring');
     
     // Botões de controle
-    elements.spinOuter = document.getElementById('spin-outer');
-    elements.spinMiddle = document.getElementById('spin-middle');
-    elements.spinInner = document.getElementById('spin-inner');
     elements.spinAll = document.getElementById('spin-all');
+    // Botão central no SVG
+    elements.spinCenter = document.getElementById('spin-center-button');
     
     // Exibição da pergunta
     elements.questionDisplay = document.getElementById('question-display');
     elements.whResult = document.getElementById('wh-result');
     elements.auxResult = document.getElementById('aux-result');
     elements.subjectResult = document.getElementById('subject-result');
+    elements.complementResult = document.getElementById('complement-result');
     
     // Histórico e configurações
     elements.questionHistory = document.getElementById('question-history');
@@ -142,13 +267,14 @@ function findDOMElements() {
     
     // Modais
     elements.configModal = document.getElementById('config-modal');
-    elements.accessibilityModal = document.getElementById('accessibility-modal');
+    elements.guideModal = document.getElementById('guide-modal');
+    elements.historyModal = document.getElementById('history-modal');
     elements.closeConfigModal = document.getElementById('close-config-modal');
-    elements.closeModal = document.getElementById('close-modal');
+    elements.closeGuideModal = document.getElementById('close-guide-modal');
+    elements.closeHistoryModal = document.getElementById('close-history-modal');
     
     // Outros elementos
     elements.loadingOverlay = document.getElementById('loading-overlay');
-    elements.accessibilityButton = document.getElementById('accessibility-button');
     
     // Verificar elementos críticos
     const criticalElements = ['outerRing', 'middleRing', 'innerRing'];
@@ -161,21 +287,25 @@ function findDOMElements() {
 
 // === CONFIGURAR EVENTOS ===
 function setupEventListeners() {
-    // Controle de velocidade
-    elements.speedControl?.addEventListener('input', (e) => {
-        CONFIG.spinSpeed = parseInt(e.target.value);
-        saveSettings();
-        announceToScreenReader(`Velocidade alterada para ${CONFIG.spinSpeed}`);
-    });
-    
+    // Seletor de tema
+    elements.themeSelector?.addEventListener('change', handleThemeChange);
+
     // Toggle de som
     elements.soundToggle?.addEventListener('click', toggleSound);
     
     // Botões dos anéis
-    elements.spinOuter?.addEventListener('click', () => spinRing('outer'));
-    elements.spinMiddle?.addEventListener('click', () => spinRing('middle'));
-    elements.spinInner?.addEventListener('click', () => spinRing('inner'));
-    elements.spinAll?.addEventListener('click', spinAllRings);
+    elements.spinAll?.addEventListener('click', spinAllRings); // Apenas o botão principal
+    elements.spinCenter?.addEventListener('click', (e) => {
+        e.preventDefault();
+        spinAllRings();
+    });
+    elements.spinCenter?.addEventListener('keydown', (e) => {
+        const key = e.key.toLowerCase();
+        if (key === 'enter' || key === ' ') {
+            e.preventDefault();
+            spinAllRings();
+        }
+    });
     
     // Histórico
     elements.clearHistoryBtn?.addEventListener('click', clearHistory);
@@ -184,9 +314,11 @@ function setupEventListeners() {
     elements.configWordsBtn?.addEventListener('click', openConfigModal);
     
     // Modais
+    document.getElementById('open-guide-btn')?.addEventListener('click', openGuideModal);
+    document.getElementById('open-history-btn')?.addEventListener('click', openHistoryModal);
     elements.closeConfigModal?.addEventListener('click', closeConfigModal);
-    elements.closeModal?.addEventListener('click', closeAccessibilityModal);
-    elements.accessibilityButton?.addEventListener('click', openAccessibilityModal);
+    elements.closeGuideModal?.addEventListener('click', closeGuideModal);
+    elements.closeHistoryModal?.addEventListener('click', closeHistoryModal);
     
     // Fechar modais ao clicar fora
     elements.configModal?.addEventListener('click', (e) => {
@@ -195,9 +327,15 @@ function setupEventListeners() {
         }
     });
     
-    elements.accessibilityModal?.addEventListener('click', (e) => {
-        if (e.target === elements.accessibilityModal) {
-            closeAccessibilityModal();
+    elements.guideModal?.addEventListener('click', (e) => {
+        if (e.target === elements.guideModal) {
+            closeGuideModal();
+        }
+    });
+
+    elements.historyModal?.addEventListener('click', (e) => {
+        if (e.target === elements.historyModal) {
+            closeHistoryModal();
         }
     });
     
@@ -205,12 +343,20 @@ function setupEventListeners() {
     document.addEventListener('keydown', handleKeyboardShortcuts);
     
     // Redimensionamento
-    window.addEventListener('resize', debounce(handleResize, 250));
+    window.addEventListener('resize', debounce(() => { handleResize(); setupCustomThemeSelect(true); }, 250));
+}
+
+// === MUDANÇA DE TEMA ===
+function handleThemeChange(e) {
+    CONFIG.currentTheme = e.target.value;
+    // Apenas salva a nova preferência de tema.
+    // A mudança será refletida no próximo giro da roleta.
+    saveSettings(); // Salvar a preferência de tema
 }
 
 // === INICIALIZAR ÁUDIO ===
 function initializeAudio() {
-    // Função para criar som sintético
+    // Função para criar som sintético (para o som de 'win')
     const createSyntheticSound = (frequency, duration, type = 'sine') => {
         return () => {
             if (!CONFIG.soundEnabled) return;
@@ -237,9 +383,17 @@ function initializeAudio() {
         };
     };
     
-    // Configurar sons sintéticos
-    CONFIG.sounds.spin = createSyntheticSound(220, 0.1, 'sawtooth');
-    CONFIG.sounds.tick = createSyntheticSound(800, 0.05, 'square');
+    // Carregar o som principal da roleta
+    const spinSound = new Audio('../src/assets/sons/roleta-267662.mp3');
+    spinSound.preload = 'auto';
+
+    CONFIG.sounds.spin = () => {
+        if (!CONFIG.soundEnabled) return;
+        spinSound.currentTime = 0; // Garante que o som toque do início
+        spinSound.play().catch(error => console.warn('⚠️ Erro ao tocar som de giro:', error));
+    };
+    
+    CONFIG.sounds.tick = () => {}; // O som de tick não é mais necessário
     CONFIG.sounds.win = createSyntheticSound(440, 0.3, 'sine');
 }
 
@@ -278,7 +432,8 @@ function generateRing(ringType) {
             config.colors[index % config.colors.length],
             word,
             ringType,
-            index
+            index,
+            anglePerSection
         );
         
         ringElement.appendChild(section.path);
@@ -287,7 +442,7 @@ function generateRing(ringType) {
 }
 
 // === CRIAR SEÇÃO DO ANEL ===
-function createRingSection(centerX, centerY, outerRadius, innerRadius, startAngle, endAngle, color, text, ringType, index) {
+function createRingSection(centerX, centerY, outerRadius, innerRadius, startAngle, endAngle, color, text, ringType, index, anglePerSection) {
     const startRad = (startAngle * Math.PI) / 180;
     const endRad = (endAngle * Math.PI) / 180;
     
@@ -324,13 +479,15 @@ function createRingSection(centerX, centerY, outerRadius, innerRadius, startAngl
     path.setAttribute('data-ring', ringType);
     path.setAttribute('data-index', index);
     
-    // Adicionar evento de clique
-    path.addEventListener('click', () => selectSection(ringType, index));
-    
     // Criar texto
     const textAngle = startAngle + (endAngle - startAngle) / 2;
     const textRad = (textAngle * Math.PI) / 180;
-    const textRadius = (outerRadius + innerRadius) / 2;
+    // Posiciona o texto um pouco mais "em pé" (mais próximo da borda externa)
+    // para cada anel, melhorando a legibilidade
+    const radiusSpan = (outerRadius - innerRadius);
+    // Centraliza melhor dentro do anel (ligeiramente tendendo para fora, sem ultrapassar)
+    const radiusFactor = ringType === 'outer' ? 0.50 : (ringType === 'middle' ? 0.50 : 0.52);
+    const textRadius = innerRadius + radiusSpan * radiusFactor;
     const textX = centerX + textRadius * Math.cos(textRad);
     const textY = centerY + textRadius * Math.sin(textRad);
     
@@ -341,13 +498,9 @@ function createRingSection(centerX, centerY, outerRadius, innerRadius, startAngl
     textElement.setAttribute('dominant-baseline', 'middle');
     textElement.classList.add('ring-section-text');
     textElement.textContent = text;
-    
-    // Rotacionar texto para melhor legibilidade
-    if (textAngle > 90 && textAngle < 270) {
-        textElement.setAttribute('transform', `rotate(${textAngle + 180}, ${textX}, ${textY})`);
-    } else {
-        textElement.setAttribute('transform', `rotate(${textAngle}, ${textX}, ${textY})`);
-    }
+
+    // Mantém o texto em tamanho e proporção naturais (sem textLength forçado)
+    // Não aplicar rotação no atributo SVG; a contra-rotação é feita via CSS usando --rot
     
     return { path, text: textElement };
 }
@@ -356,48 +509,32 @@ function createRingSection(centerX, centerY, outerRadius, innerRadius, startAngl
 function spinRing(ringType) {
     const config = RING_CONFIG[ringType];
     const ringElement = elements[`${ringType}Ring`];
-    const button = elements[`spin${ringType.charAt(0).toUpperCase() + ringType.slice(1)}`];
     
     if (!config || !ringElement || config.spinning) return;
     
     config.spinning = true;
-    if (button) button.disabled = true;
     
     // Calcular nova rotação
     const baseSpins = 3 + CONFIG.spinSpeed * 0.5;
     const randomAngle = Math.random() * 360;
     const totalRotation = config.currentRotation + (baseSpins * 360) + randomAngle;
     
-    // Aplicar rotação
-    ringElement.style.transition = `transform ${2 + CONFIG.spinSpeed * 0.3}s cubic-bezier(0.23, 1, 0.32, 1)`;
-    ringElement.style.transform = `rotate(${totalRotation}deg)`;
-    config.currentRotation = totalRotation % 360;
+    // Aplicar rotação com duração fixa de 3s para sincronizar com o áudio
+    ringElement.style.transition = `transform 3s cubic-bezier(0.23, 1, 0.32, 1)`;
+    ringElement.style.setProperty('--rot', `${totalRotation}deg`);
+    config.currentRotation = totalRotation;
     
-    // Som de giro
+    // Som de giro (o novo MP3)
     if (CONFIG.sounds.spin) {
         CONFIG.sounds.spin();
     }
     
-    // Simular ticks durante o giro
-    const tickInterval = setInterval(() => {
-        if (CONFIG.sounds.tick && config.spinning) {
-            CONFIG.sounds.tick();
-        }
-    }, 150);
-    
-    // Finalizar giro
+    // Finalizar giro após 3 segundos
     setTimeout(() => {
-        clearInterval(tickInterval);
         config.spinning = false;
-        if (button) button.disabled = false;
-        updateQuestion();
-        
-        if (CONFIG.sounds.win) {
-            setTimeout(() => CONFIG.sounds.win(), 200);
-        }
-    }, (2 + CONFIG.spinSpeed * 0.3) * 1000);
+    }, 3000);
     
-    announceToScreenReader(`Girando anel ${ringType === 'outer' ? 'dos pronomes interrogativos' : ringType === 'middle' ? 'dos verbos' : 'dos pronomes pessoais'}`);
+    announceToScreenReader(`Girando anel ${ringType}`);
 }
 
 // === GIRAR TODOS OS ANÉIS ===
@@ -419,71 +556,210 @@ function spinAllRings() {
     // Habilitar botão após todos terminarem
     setTimeout(() => {
         allButton.disabled = false;
-        updateQuestion();
-        addToHistory();
-        
-        if (CONFIG.sounds.win) {
-            CONFIG.sounds.win();
-        }
+        animateAndSelectComplement(true); // true para adicionar ao histórico
     }, 4000);
     
-    announceToScreenReader('Girando todos os anéis para formar nova pergunta');
+    announceToScreenReader('Girando todos os anéis para formar uma nova pergunta');
 }
 
-// === SELECIONAR SEÇÃO DIRETAMENTE ===
-function selectSection(ringType, sectionIndex) {
-    const config = RING_CONFIG[ringType];
-    if (!config || config.spinning) return;
-    
-    // Calcular rotação necessária para alinhar a seção com o ponteiro
-    const anglePerSection = 360 / config.words.length;
-    const targetAngle = sectionIndex * anglePerSection;
-    const currentNormalized = config.currentRotation % 360;
-    
-    // Calcular menor rotação necessária
-    let rotationNeeded = targetAngle - currentNormalized;
-    if (rotationNeeded > 180) rotationNeeded -= 360;
-    if (rotationNeeded < -180) rotationNeeded += 360;
-    
-    const newRotation = config.currentRotation + rotationNeeded;
-    
-    // Aplicar rotação suave
-    const ringElement = elements[`${ringType}Ring`];
-    if (ringElement) {
-        ringElement.style.transition = 'transform 1s cubic-bezier(0.23, 1, 0.32, 1)';
-        ringElement.style.transform = `rotate(${newRotation}deg)`;
-        config.currentRotation = newRotation;
+// === OBTER COMPLEMENTOS PARA O TEMA ATUAL ===
+// === AUXILIARES DE COMPATIBILIDADE ===
+function getAuxGroup(auxWord) {
+    const w = (auxWord || '').toLowerCase();
+    if (['am','is','are','was','were'].includes(w)) return 'BE';
+    if (['do','does','did'].includes(w)) return 'DO';
+    // Modais agrupados
+    if (['can','will','should','would'].includes(w)) return 'MODAL';
+    return 'ACTION';
+}
+
+function themedPool(theme, mode = 'strict') {
+    if (!theme || theme === 'all') return COMPLEMENT_BANK.slice();
+    if (mode === 'strict') {
+        return COMPLEMENT_BANK.filter(it => it.themes?.includes(theme));
     }
-    
-    // Atualizar pergunta após animação
-    setTimeout(() => {
-        updateQuestion();
-        if (CONFIG.sounds.tick) {
-            CONFIG.sounds.tick();
+    if (mode === 'withAll') {
+        return COMPLEMENT_BANK.filter(it => it.themes?.includes(theme) || it.themes?.includes('all'));
+    }
+    return COMPLEMENT_BANK.slice();
+}
+
+function filterByWh(item, wh) {
+    if (!wh) return true;
+    return item.wh?.includes(wh) || item.wh?.includes('ANY');
+}
+
+function filterByAux(item, auxGroup) {
+    if (!auxGroup) return true;
+    const auxes = item.aux || [];
+    if (auxes.includes('ANY')) return true;
+    if (auxes.includes(auxGroup)) return true;
+    // 'ACTION' é guarda-chuva para DO e MODAL
+    if (auxes.includes('ACTION') && (auxGroup === 'DO' || auxGroup === 'MODAL')) return true;
+    // Se a pergunta gerou 'ACTION', aceite DO ou MODAL definidos
+    if (auxGroup === 'ACTION' && (auxes.includes('DO') || auxes.includes('MODAL'))) return true;
+    return false;
+}
+
+// === VALIDADORES DE COMPATIBILIDADE (gramática/semântica) ===
+const ALLOWED_WH = ['What','When','Where','Who','Why','How','Which','How often'];
+const WHERE_ACTION_VERBS = new Set(['go','visit','travel','stay','live','work','study','meet','play','walk','come','eat','shop','swim','camp','hike']);
+const WHO_PREP_TOKENS = [' with ', ' to ', ' from '];
+const PLACE_PREP_TOKENS = [' at ', ' in ', ' on ', ' near ', ' from ', ' to '];
+const FREQ_TOKENS = [' every ', ' once ', ' twice ', ' times ', ' daily ', ' weekly ', ' monthly ', ' always ', ' usually ', ' often ', ' seldom ', ' rarely ', ' sometimes '];
+
+function includesAny(haystack, tokens) {
+  const s = ` ${haystack.toLowerCase()} `;
+  return tokens.some(t => s.includes(t));
+}
+
+function firstWord(text) {
+  const clean = text.replace(/^\s+|\s+$/g,'').toLowerCase();
+  const w = clean.split(/\s+|:/)[0];
+  return w;
+}
+
+function isCompatible(wh, auxGroup, text) {
+  if (!ALLOWED_WH.includes(wh)) return true; // não bloqueia wh desconhecido
+  const t = ` ${text.toLowerCase()} `;
+  const verb = firstWord(text);
+
+  switch (wh) {
+    case 'How often':
+      if (auxGroup === 'BE') return false; // How often + BE raramente forma pergunta do nosso modelo
+      if (includesAny(text, FREQ_TOKENS)) return false; // evita duplicar frequência no complemento
+      return true;
+    case 'Which':
+      // Exige pista de escolha (prefer, or list)
+      return t.includes(' prefer') || text.includes(':');
+    case 'Where':
+      if (auxGroup === 'BE') {
+        // precisa ser sintagma de lugar
+        return includesAny(text, PLACE_PREP_TOKENS);
+      }
+      // Ação: requer verbo de movimento/atividade + referência de lugar
+      if (!WHERE_ACTION_VERBS.has(verb)) return false;
+      return includesAny(text, PLACE_PREP_TOKENS) || verb === 'go' || verb === 'visit' || verb === 'travel';
+    case 'Who':
+      // Nosso modelo usa WHO como objeto; requer prep (talk to, play with, learn from...)
+      return includesAny(text, WHO_PREP_TOKENS) || t.includes(' with right now');
+    case 'How':
+      // Evita BE + adjetivo-prep do tipo feelings (How are you excited for?)
+      if (auxGroup === 'BE') return false;
+      return true;
+    default:
+      return true;
+  }
+}
+
+function selectCandidates(wh, auxGroup, theme) {
+    // Nunca relaxa WH e só relaxa tema (não AUX) para manter estrutura coerente
+    const pools = [
+        themedPool(theme, 'strict'),
+        themedPool(theme, 'withAll'),
+        themedPool(null, 'any')
+    ];
+    for (const pool of pools) {
+        const list = pool.filter(it => filterByWh(it, wh) && filterByAux(it, auxGroup) && isCompatible(wh, auxGroup, it.text));
+        if (list.length) return list.map(it => it.text);
+    }
+    // Fallback final: mantém WH e AUX no banco inteiro
+    const list = COMPLEMENT_BANK.filter(it => filterByWh(it, wh) && filterByAux(it, auxGroup) && isCompatible(wh, auxGroup, it.text));
+    if (list.length) return list.map(it => it.text);
+    return []; // nenhum compatível
+}
+
+// === ANIMAR E SELECIONAR COMPLEMENTO ===
+function animateAndSelectComplement(shouldAddToHistory = false) {
+    const complementSpan = elements.complementResult;
+    if (!complementSpan) return;
+
+    // Determina WH/AUX/tema atuais
+    const wh = getSelectedWord('outer');
+    const subject = getSelectedWord('inner'); // não usado no filtro por enquanto
+    let aux = getSelectedWord('middle');
+    if (aux === 'is/are') {
+        aux = (subject === 'I') ? 'am' : (subject === 'he/she/it' ? 'is' : 'are');
+    } else if (aux === 'do/does') {
+        aux = (subject === 'he/she/it') ? 'does' : 'do';
+    }
+    const auxGroup = getAuxGroup(aux);
+    const theme = CONFIG.currentTheme;
+
+    const candidates = selectCandidates(wh, auxGroup, theme);
+    if (candidates.length === 0) {
+        complementSpan.textContent = '...';
+        updateQuestion('...');
+        return;
+    }
+
+    let animationCounter = 0;
+    complementSpan.classList.add('animating');
+
+    const animationInterval = setInterval(() => {
+        const randomIndex = Math.floor(Math.random() * candidates.length);
+        complementSpan.textContent = candidates[randomIndex];
+        animationCounter++;
+        if (animationCounter > 20) { // Anima por ~2 segundos
+            clearInterval(animationInterval);
+            complementSpan.classList.remove('animating');
+            
+            // Seleciona o complemento final
+            const finalIndex = Math.floor(Math.random() * candidates.length);
+            const finalComplement = candidates[finalIndex];
+            
+            // Atualiza a UI com a pergunta completa
+            updateQuestion(finalComplement);
+
+            if (shouldAddToHistory) {
+                addToHistory(finalComplement);
+            }
+
+            if (CONFIG.sounds.win) {
+                CONFIG.sounds.win();
+            }
         }
-    }, 1000);
-    
-    const word = config.words[sectionIndex];
-    announceToScreenReader(`Selecionado: ${word}`);
+    }, 100);
 }
 
 // === ATUALIZAR PERGUNTA ===
-function updateQuestion() {
+function updateQuestion(finalComplement = null) {
     const selectedWords = {
         wh: getSelectedWord('outer'),
-        subject: getSelectedWord('inner'),
-        aux: getSelectedWord('middle')
+        subject: getSelectedWord('inner')
     };
     
-    // Atualizar elementos visuais na ordem correta: Pronome Interrogativo + Pronome Pessoal + Verbo
+    // Lógica para corrigir a concordância verbal
+    let aux = getSelectedWord('middle');
+    if (aux === 'is/are') {
+        if (selectedWords.subject === 'I') aux = 'am';
+        else if (selectedWords.subject === 'he/she/it') aux = 'is';
+        else aux = 'are';
+    } else if (aux === 'do/does') {
+        if (selectedWords.subject === 'he/she/it') aux = 'does';
+        else aux = 'do';
+    }
+    selectedWords.aux = aux;
+
+    // Update visual elements in the correct English order: WH + AUX + SUBJECT
     if (elements.whResult) {
         elements.whResult.textContent = selectedWords.wh;
+    }
+    if (elements.auxResult) {
+        elements.auxResult.textContent = selectedWords.aux;
     }
     if (elements.subjectResult) {
         elements.subjectResult.textContent = selectedWords.subject;
     }
-    if (elements.auxResult) {
-        elements.auxResult.textContent = selectedWords.aux;
+    if (elements.complementResult) {
+        // Se veio de animação, usa ele; senão, escolhe pela compatibilidade
+        if (finalComplement) {
+            selectedWords.complement = finalComplement;
+        } else {
+            const candidates = selectCandidates(selectedWords.wh, getAuxGroup(selectedWords.aux), CONFIG.currentTheme);
+            selectedWords.complement = candidates[0] || elements.complementResult.textContent || '...';
+        }
+        elements.complementResult.textContent = selectedWords.complement;
     }
     
     // Animação de nova pergunta
@@ -495,7 +771,7 @@ function updateQuestion() {
     }
     
     // Anunciar para leitores de tela
-    const question = `${selectedWords.wh} ${selectedWords.subject} ${selectedWords.aux}?`;
+    const question = `${selectedWords.wh} ${selectedWords.aux} ${selectedWords.subject} ${selectedWords.complement}?`;
     announceToScreenReader(`Nova pergunta: ${question}`);
     
     return { question, selectedWords };
@@ -506,8 +782,9 @@ function getSelectedWord(ringType) {
     const config = RING_CONFIG[ringType];
     if (!config) return '';
     
-    // Normalizar ângulo (0-360)
-    const normalizedAngle = (360 - (config.currentRotation % 360)) % 360;
+    // O ponteiro está na posição de 9 horas (180 graus no espaço de coordenadas SVG).
+    // Precisamos encontrar qual segmento está nessa posição após a rotação.
+    const normalizedAngle = (180 - (config.currentRotation % 360) + 360) % 360;
     const sectionAngle = 360 / config.words.length;
     const selectedIndex = Math.floor(normalizedAngle / sectionAngle) % config.words.length;
     
@@ -515,12 +792,12 @@ function getSelectedWord(ringType) {
 }
 
 // === ADICIONAR AO HISTÓRICO ===
-function addToHistory() {
-    const questionData = updateQuestion();
+function addToHistory(finalComplement) {
+    const questionData = updateQuestion(finalComplement);
     if (!questionData) return;
     
     const historyItem = {
-        question: `${questionData.selectedWords.wh} ${questionData.selectedWords.subject} ${questionData.selectedWords.aux}?`,
+        question: questionData.question,
         timestamp: new Date().toLocaleTimeString('pt-BR', { 
             hour: '2-digit', 
             minute: '2-digit' 
@@ -571,15 +848,12 @@ function toggleSound() {
     CONFIG.soundEnabled = !CONFIG.soundEnabled;
     
     const toggleIcon = elements.soundToggle?.querySelector('.toggle-icon');
-    const toggleText = elements.soundToggle?.querySelector('.toggle-text');
     
     if (CONFIG.soundEnabled) {
         if (toggleIcon) toggleIcon.textContent = '🔊';
-        if (toggleText) toggleText.textContent = 'Som Ativado';
         elements.soundToggle?.setAttribute('aria-pressed', 'true');
     } else {
         if (toggleIcon) toggleIcon.textContent = '🔇';
-        if (toggleText) toggleText.textContent = 'Som Desativado';
         elements.soundToggle?.setAttribute('aria-pressed', 'false');
     }
     
@@ -591,26 +865,12 @@ function toggleSound() {
 function handleKeyboardShortcuts(e) {
     // Evitar ação quando estiver em input ou modal aberto
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || 
-        elements.configModal?.classList.contains('active')) {
+        elements.configModal?.classList.contains('active') ||
+        elements.guideModal?.classList.contains('active')) {
         return;
     }
     
     switch (e.key.toLowerCase()) {
-        case '1':
-            e.preventDefault();
-            spinRing('outer');
-            break;
-            
-        case '2':
-            e.preventDefault();
-            spinRing('middle');
-            break;
-            
-        case '3':
-            e.preventDefault();
-            spinRing('inner');
-            break;
-            
         case ' ':
         case 'enter':
             e.preventDefault();
@@ -629,18 +889,19 @@ function handleKeyboardShortcuts(e) {
             
         case 'h':
             e.preventDefault();
-            clearHistory();
+            openHistoryModal();
             break;
             
         case '?':
             e.preventDefault();
-            openAccessibilityModal();
+            openGuideModal();
             break;
             
         case 'escape':
             e.preventDefault();
             closeConfigModal();
-            closeAccessibilityModal();
+            closeGuideModal();
+            closeHistoryModal();
             break;
     }
 }
@@ -661,17 +922,31 @@ function closeConfigModal() {
     document.body.style.overflow = '';
 }
 
-function openAccessibilityModal() {
-    elements.accessibilityModal?.classList.add('active');
-    elements.accessibilityModal?.setAttribute('aria-hidden', 'false');
-    elements.closeModal?.focus();
+function openGuideModal() {
+    elements.guideModal?.classList.add('active');
+    elements.guideModal?.setAttribute('aria-hidden', 'false');
+    elements.closeGuideModal?.focus();
     document.body.style.overflow = 'hidden';
 }
 
-function closeAccessibilityModal() {
-    elements.accessibilityModal?.classList.remove('active');
-    elements.accessibilityModal?.setAttribute('aria-hidden', 'true');
-    elements.accessibilityButton?.focus();
+function closeGuideModal() {
+    elements.guideModal?.classList.remove('active');
+    elements.guideModal?.setAttribute('aria-hidden', 'true');
+    document.getElementById('open-guide-btn')?.focus();
+    document.body.style.overflow = '';
+}
+
+function openHistoryModal() {
+    elements.historyModal?.classList.add('active');
+    elements.historyModal?.setAttribute('aria-hidden', 'false');
+    elements.closeHistoryModal?.focus();
+    document.body.style.overflow = 'hidden';
+}
+
+function closeHistoryModal() {
+    elements.historyModal?.classList.remove('active');
+    elements.historyModal?.setAttribute('aria-hidden', 'true');
+    document.getElementById('open-history-btn')?.focus();
     document.body.style.overflow = '';
 }
 
@@ -679,9 +954,9 @@ function closeAccessibilityModal() {
 function generateConfigInputs() {
     const rings = ['outer', 'middle', 'inner'];
     const ringTitles = {
-        outer: 'Pronomes Interrogativos',
-        middle: 'Verbos e Tempos Verbais', 
-        inner: 'Pronomes Pessoais'
+        outer: 'Palavras WH (Anel Externo)',
+        middle: 'Verbos (Anel do Meio)', 
+        inner: 'Sujeitos (Anel Interno)'
     };
     
     rings.forEach(ringType => {
@@ -747,15 +1022,15 @@ function saveConfiguration() {
     saveSettings();
     closeConfigModal();
     
-    announceToScreenReader('Configuração de palavras salva com sucesso');
+    announceToScreenReader('Configuração de palavras salva com sucesso!');
 }
 
 // === RESETAR CONFIGURAÇÃO ===
 function resetConfiguration() {
-    // Restaurar palavras padrão em português
-    RING_CONFIG.outer.words = ['O quê', 'Quando', 'Onde', 'Quem', 'Por que', 'Como', 'Qual', 'Com que frequência'];
-    RING_CONFIG.middle.words = ['é/são', 'foi/eram', 'está/estavam', 'vai/vão', 'faz/fez', 'pode/podem', 'deve/deveriam', 'quer/querem'];
-    RING_CONFIG.inner.words = ['eu', 'tu', 'ele/ela', 'nós', 'vocês', 'eles/elas'];
+    // Restaurar palavras padrão em inglês
+    RING_CONFIG.outer.words = ['What', 'When', 'Where', 'Who', 'Why', 'How', 'Which', 'How often'];
+    RING_CONFIG.middle.words = ['is/are', 'was/were', 'do/does', 'did', 'will', 'can', 'should', 'would'];
+    RING_CONFIG.inner.words = ['I', 'you', 'he/she/it', 'we', 'they'];
     
     // Regenerar anéis
     initializeRings();
@@ -763,7 +1038,7 @@ function resetConfiguration() {
     generateConfigInputs(); // Atualizar inputs do modal
     saveSettings();
     
-    announceToScreenReader('Configuração restaurada para o padrão');
+    announceToScreenReader('Configuração restaurada para o padrão.');
 }
 
 // === CONFIGURAR ACESSIBILIDADE ===
@@ -771,7 +1046,7 @@ function setupAccessibility() {
     // Configurar ARIA labels dinâmicos
     const wheelSvg = document.querySelector('.wheel-svg');
     if (wheelSvg) {
-        wheelSvg.setAttribute('aria-label', 'Roleta de três anéis para formação de perguntas em português');
+        wheelSvg.setAttribute('aria-label', 'Uma roleta com três anéis concêntricos para formar perguntas em inglês.');
     }
 }
 
@@ -783,10 +1058,79 @@ function handleResize() {
     }, 500)();
 }
 
+// === SELECT DE TEMA CUSTOM (para mobile) ===
+function setupCustomThemeSelect(forceRebuild = false) {
+    const wrapper = document.querySelector('.theme-selector-wrapper');
+    const native = elements.themeSelector;
+    if (!wrapper || !native) return;
+
+    const isMobile = window.matchMedia('(max-width: 1024px)').matches;
+    const existing = wrapper.querySelector('.theme-custom');
+
+    if (!isMobile) {
+        // Limpa custom caso exista em telas maiores
+        if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+        native.style.display = '';
+        return;
+    }
+
+    if (existing && !forceRebuild) return; // já montado
+    if (existing && forceRebuild) existing.remove();
+
+    // Monta componente custom
+    const custom = document.createElement('div');
+    custom.className = 'theme-custom';
+
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'theme-custom-toggle';
+    toggle.setAttribute('aria-haspopup', 'listbox');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.textContent = native.options[native.selectedIndex]?.text || 'Selecione um tema';
+
+    const list = document.createElement('ul');
+    list.className = 'theme-custom-list';
+    list.setAttribute('role', 'listbox');
+
+    Array.from(native.options).forEach((opt) => {
+        const li = document.createElement('li');
+        li.textContent = opt.textContent;
+        li.setAttribute('role', 'option');
+        li.dataset.value = opt.value;
+        if (opt.selected) li.setAttribute('aria-selected', 'true');
+        li.addEventListener('click', () => {
+            native.value = opt.value;
+            toggle.textContent = opt.textContent;
+            list.classList.remove('open');
+            toggle.setAttribute('aria-expanded', 'false');
+            // Dispara lógica de mudança de tema
+            handleThemeChange({ target: native });
+        });
+        list.appendChild(li);
+    });
+
+    // Ações de abrir/fechar
+    const closeList = () => { list.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); };
+    toggle.addEventListener('click', () => {
+        const isOpen = list.classList.contains('open');
+        if (isOpen) closeList(); else { list.classList.add('open'); toggle.setAttribute('aria-expanded', 'true'); }
+    });
+    document.addEventListener('click', (e) => {
+        if (!custom.contains(e.target)) closeList();
+    });
+    toggle.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeList();
+    });
+
+    custom.appendChild(toggle);
+    custom.appendChild(list);
+    wrapper.appendChild(custom);
+}
+
 // === SALVAR CONFIGURAÇÕES ===
 function saveSettings() {
     const settings = {
-        spinSpeed: CONFIG.spinSpeed,
+        currentTheme: CONFIG.currentTheme,
         soundEnabled: CONFIG.soundEnabled,
         questionHistory: CONFIG.questionHistory,
         ringWords: {
@@ -804,7 +1148,7 @@ function saveSettings() {
     try {
         localStorage.setItem('questionWheelSettings', JSON.stringify(settings));
     } catch (error) {
-        console.warn('⚠️ Não foi possível salvar configurações:', error);
+        console.warn('⚠️ Could not save settings:', error);
     }
 }
 
@@ -817,11 +1161,11 @@ function loadSavedSettings() {
         const settings = JSON.parse(saved);
         
         // Restaurar configurações gerais
-        if (typeof settings.spinSpeed === 'number' && elements.speedControl) {
-            CONFIG.spinSpeed = settings.spinSpeed;
-            elements.speedControl.value = settings.spinSpeed;
+        if (settings.currentTheme && elements.themeSelector) {
+            CONFIG.currentTheme = settings.currentTheme;
+            elements.themeSelector.value = settings.currentTheme;
         }
-        
+
         if (typeof settings.soundEnabled === 'boolean' && !settings.soundEnabled) {
             toggleSound();
         }
@@ -848,14 +1192,14 @@ function loadSavedSettings() {
                     RING_CONFIG[ringType].currentRotation = settings.ringRotations[ringType];
                     const ringElement = elements[`${ringType}Ring`];
                     if (ringElement) {
-                        ringElement.style.transform = `rotate(${settings.ringRotations[ringType]}deg)`;
+                        ringElement.style.setProperty('--rot', `${settings.ringRotations[ringType]}deg`);
                     }
                 }
             });
         }
         
     } catch (error) {
-        console.warn('⚠️ Erro ao carregar configurações salvas:', error);
+        console.warn('⚠️ Error loading saved settings:', error);
     }
 }
 
@@ -896,11 +1240,11 @@ function debounce(func, wait) {
 // === ERROR HANDLING ===
 window.addEventListener('error', function(e) {
     console.error('❌ Erro global capturado:', e.error);
-    announceToScreenReader('Ocorreu um erro. Tente recarregar a página.');
+    announceToScreenReader('Ocorreu um erro. Por favor, tente recarregar a página.');
 });
 
 window.addEventListener('unhandledrejection', function(e) {
-    console.error('❌ Promise rejeitada:', e.reason);
+    console.error('❌ Promise rejeitada sem tratamento:', e.reason);
 });
 
 // === EXPORTAR PARA DEBUG (desenvolvimento) ===
@@ -915,8 +1259,8 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
         generateRing,
         initializeRings
     };
-    console.log('🔧 Modo debug ativado. Use window.QuestionWheelDebug para acessar funções.');
+    console.log('🔧 Modo de depuração ativado. Use window.QuestionWheelDebug para acessar funções.');
 }
 
 // === INICIALIZAÇÃO FINAL ===
-console.log('🎯 JavaScript da Roleta de Formação de Perguntas carregado!');
+console.log('🎯 JavaScript da Roleta de Perguntas carregado!');
