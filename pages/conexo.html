@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Jogo Conexo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            touch-action: manipulation; /* Melhora a resposta ao toque em dispositivos móveis */
+            -webkit-text-size-adjust: 100%; /* Previne o zoom automático de fontes no iOS */
+        }
+        .card {
+            transition: transform 0.1s ease-in-out, background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+            -webkit-tap-highlight-color: transparent; /* Remove o destaque azul ao tocar em links no iOS */
+            /* Garante que o texto não quebre de forma estranha */
+            word-break: break-word;
+            /* Altura e largura responsivas baseadas na largura da viewport */
+            height: auto;
+            aspect-ratio: 1 / 1; /* Mantém o card quadrado, essencial para responsividade */
+            font-size: clamp(0.75rem, 3.5vw, 1rem); /* Fonte responsiva */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem;
+        }
+        .card.selected {
+            transform: scale(0.95);
+            background-color: #374151; /* gray-700 */
+            color: white;
+        }
+        .solved-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: black;
+            font-weight: 500;
+        }
+        .solved-card-words {
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .shake {
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        /* Estilos do Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 1000;
+        }
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            width: 90%;
+            max-width: 400px;
+        }
+        .modal-overlay.visible .modal-content {
+            transform: scale(1);
+        }
+
+        /* === RESPONSIVIDADE MOBILE-FIRST === */
+
+        /* Controles do rodapé */
+        .controls-container {
+            display: flex; 
+            flex-wrap: wrap; /* Permite que os botões quebrem a linha */
+            align-items: center;
+        }
+
+        /* Em telas pequenas (mobile), os controles ficam em coluna */
+        @media (max-width: 480px) {
+            .controls-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .controls-container > div {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+
+        /* Tablet e telas maiores */
+        @media (min-width: 768px) {
+            .card {
+                font-size: clamp(1rem, 2.5vw, 1.25rem);
+            }
+        }
+        .card.hint-highlight {
+            outline: 3px solid #3b82f6; /* blue-500 */
+            outline-offset: 2px;
+        }
+        .game-footer-conexo {
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            padding: 0.75rem 1rem;
+            margin-top: auto;
+            font-size: 0.8rem;
+            color: #4a5568; /* gray-600 */
+            background: rgba(248, 250, 252, 0.7); /* slate-50 com transparência */
+            border-top: 1px solid #e2e8f0; /* slate-200 */
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 flex flex-col items-center min-h-screen p-2 sm:p-4">
+
+    <div class="w-full max-w-lg mx-auto flex-grow">
+        <header class="text-center mb-4">
+            <h1 class="text-3xl font-bold">Conexo</h1>
+            <p id="game-subtitle" class="text-gray-600">Crie quatro grupos de quatro!</p>
+            <div class="text-center text-sm text-gray-500 mb-4 -mt-2">
+                <span>3 jogos diários</span> &bull; <span id="current-date"></span>
+            </div>
+        </header>
+
+        <main id="game-container" class="w-full">
+            <!-- Grupos resolvidos aparecerão aqui -->
+            <div id="solved-groups-container" class="mb-4 space-y-2"></div>
+            
+            <!-- Novos Controles Superiores -->
+            <div class="flex justify-between items-center mb-4 text-sm font-semibold flex-wrap gap-y-2">
+                <div class="flex items-center gap-2">
+                    <button id="give-up-button" class="text-red-600 hover:text-red-800 transition-colors">Desistir</button>
+                    <button id="hint-button" class="px-3 py-1 bg-blue-200 text-blue-800 rounded-full hover:bg-blue-300 transition-colors">💡 Dica</button>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div>Dicas: <span id="hints-used-counter">0</span></div>
+                    <div>Tentativas: <span id="attempts-counter">0</span></div>
+                </div>
+            </div>
+
+            <!-- Grid do Jogo -->
+            <div id="game-board" class="grid grid-cols-4 gap-2 md:gap-3 mb-4">
+                <!-- Palavras são inseridas aqui via JS -->
+            </div>
+
+            <!-- Controles Inferiores -->
+            <div class="controls-container justify-center">
+                <div class="flex space-x-2">
+                    <button id="shuffle-button" class="px-3 py-2 bg-gray-200 rounded-md font-semibold hover:bg-gray-300 transition-colors">Misturar</button>
+                    <button id="deselect-button" class="px-3 py-2 bg-gray-200 rounded-md font-semibold hover:bg-gray-300 transition-colors">Limpar</button>
+                    <button id="submit-button" class="px-4 py-2 bg-gray-800 text-white rounded-md font-semibold transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">Enviar</button>
+                </div>
+            </div>            
+        </main>
+    </div>
+
+    <!-- Modal para mensagens de vitória/derrota -->
+    <div id="modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 id="modal-title" class="text-2xl font-bold mb-2"></h2>
+            <p id="modal-message" class="mb-4"></p>
+            <div id="modal-results" class="space-y-1 mb-6"></div>
+            <button id="modal-close-button" class="w-full px-4 py-2 bg-gray-800 text-white rounded-md font-semibold hover:bg-gray-700 transition-colors">Próximo Jogo</button>
+        </div>
+    </div>
+
+    <footer class="game-footer-conexo">
+        <p>Ferramenta Educacional - Jogo Conexo | Criação e desenvolvimento por João Jr</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const puzzles = [
+                // 90 puzzles for 30 days of content (3 per day)
+                {groups:[{category:"FUNDAMENTOS DO FUTEBOL",words:["PASSE","DRIBLE","CHUTE","CABECEIO"],color:"#fde047"},{category:"PARTES DE UM HOTEL",words:["RECEPÇÃO","QUARTO","SAGUÃO","CORREDOR"],color:"#86efac"},{category:"MEIOS DE TRANSPORTE COLETIVO",words:["ÔNIBUS","METRÔ","TREM","BONDE"],color:"#93c5fd"},{category:"TERMOS DE XADREZ",words:["ROQUE","XEQUE","PEÃO","TORRE"],color:"#d8b4fe"}]},
+                {groups:[{category:"ANIMAIS DE ESTIMAÇÃO",words:["GATO","CACHORRO","PEIXE","HAMSTER"],color:"#fde047"},{category:"FRUTAS CÍTRICAS",words:["LARANJA","LIMÃO","TORANJA","TANGERINA"],color:"#86efac"},{category:"INSTRUMENTOS DE CORDAS",words:["VIOLÃO","GUITARRA","VIOLINO","CONTRABAIXO"],color:"#93c5fd"},{category:"PALAVRAS COM DUPLO SENTIDO",words:["MANGA","BANCO","PONTO","VELA"],color:"#d8b4fe"}]},
+                {groups:[{category:"CORES",words:["VERMELHO","AZUL","AMARELO","VERDE"],color:"#fde047"},{category:"PARTES DO CORPO HUMANO",words:["CABEÇA","BRAÇO","PERNA","PÉ"],color:"#86efac"},{category:"PLANETAS DO SISTEMA SOLAR",words:["MERCÚRIO","VÊNUS","TERRA","MARTE"],color:"#93c5fd"},{category:"PALAVRAS QUE RIMAM COM 'ÃO'",words:["PÃO","MÃO","CÃO","CHÃO"],color:"#d8b4fe"}]},
+                {groups:[{category:"GÊNEROS MUSICAIS",words:["ROCK","SAMBA","JAZZ","POP"],color:"#fde047"},{category:"APARELHOS DOMÉSTICOS",words:["GELADEIRA","FOGÃO","MICRO-ONDAS","LIQUIDIFICADOR"],color:"#86efac"},{category:"CONTINENTES",words:["ÁSIA","ÁFRICA","EUROPA","AMÉRICA"],color:"#93c5fd"},{category:"SENTIMENTOS",words:["ALEGRIA","TRISTEZA","RAIVA","MEDO"],color:"#d8b4fe"}]},
+                {groups:[{category:"FERRAMENTAS",words:["MARTELO","SERROTE","CHAVE DE FENDA","ALICATE"],color:"#fde047"},{category:"LEGUMES",words:["CENOURA","BATATA","ABOBRINHA","BERINJELA"],color:"#86efac"},{category:"CAPITAIS EUROPEIAS",words:["PARIS","ROMA","LONDRES","MADRI"],color:"#93c5fd"},{category:"UNIDADES DE MEDIDA",words:["METRO","LITRO","QUILO","SEGUNDO"],color:"#d8b4fe"}]},
+                {groups:[{category:"BEBIDAS",words:["ÁGUA","SUCO","REFRIGERANTE","CAFÉ"],color:"#fde047"},{category:"ROUPAS",words:["CAMISA","CALÇA","VESTIDO","SAIA"],color:"#86efac"},{category:"FORMAS GEOMÉTRICAS",words:["CÍRCULO","QUADRADO","TRIÂNGULO","RETÂNGULO"],color:"#93c5fd"},{category:"VERBOS DE AÇÃO",words:["CORRER","PULAR","NADAR","ANDAR"],color:"#d8b4fe"}]},
+                {groups:[{category:"ANIMAIS DA FAZENDA",words:["VACA","GALINHA","PORCO","CAVALO"],color:"#fde047"},{category:"MATERIAIS ESCOLARES",words:["LÁPIS","CADERNO","BORRACHA","CANETA"],color:"#86efac"},{category:"ESPORTES OLÍMPICOS",words:["ATLETISMO","NATAÇÃO","GINÁSTICA","VÔLEI"],color:"#93c5fd"},{category:"ELEMENTOS DA NATUREZA",words:["FOGO","ÁGUA","TERRA","AR"],color:"#d8b4fe"}]},
+                {groups:[{category:"PROFISSÕES",words:["MÉDICO","PROFESSOR","ENGENHEIRO","ADVOGADO"],color:"#fde047"},{category:"DOCES",words:["BRIGADEIRO","BEIJINHO","BOLO","SORVETE"],color:"#86efac"},{category:"ASTROS CELESTES",words:["SOL","LUA","ESTRELA","COMETA"],color:"#93c5fd"},{category:"PARTES DE UM CARRO",words:["MOTOR","RODA","VOLANTE","PORTA"],color:"#d8b4fe"}]},
+                {groups:[{category:"INSTRUMENTOS DE PERCUSSÃO",words:["BATERIA","TAMBOR","PANDEIRO","TRIÂNGULO"],color:"#fde047"},{category:"FLORES",words:["ROSA","MARGARIDA","ORQUÍDEA","TULIPA"],color:"#86efac"},{category:"CIDADES BRASILEIRAS",words:["RECIFE","SALVADOR","MANAUS","CURITIBA"],color:"#93c5fd"},{category:"MATERIAIS DE CONSTRUÇÃO",words:["TIJOLO","CIMENTO","AREIA","FERRO"],color:"#d8b4fe"}]},
+                {groups:[{category:"MAMÍFEROS MARINHOS",words:["BALEIA","GOLFINHO","FOCA","LEÃO-MARINHO"],color:"#fde047"},{category:"PERSONAGENS DE CONTOS DE FADAS",words:["PRINCESA","BRUXA","PRÍNCIPE","LOBO"],color:"#86efac"},{category:"SÍMBOLOS QUÍMICOS",words:["H","O","N","C"],color:"#93c5fd"},{category:"COISAS ENCONTRADAS NA PRAIA",words:["CONCHA","AREIA","ONDA","GUARDA-SOL"],color:"#d8b4fe"}]},
+                {groups:[{category:"EQUIPAMENTOS DE ACADEMIA",words:["ESTEIRA","HALTER","BICICLETA","BARRA"],color:"#fde047"},{category:"GÊNEROS DE FILMES",words:["COMÉDIA","DRAMA","AÇÃO","TERROR"],color:"#86efac"},{category:"ANIMAIS QUE VOAM",words:["PÁSSARO","MORCEGO","INSETO","AVIÃO"],color:"#93c5fd"},{category:"PALAVRAS ASSOCIADAS AO TEMPO",words:["RELÓGIO","CALENDÁRIO","AMPULHETA","CRONÔMETRO"],color:"#d8b4fe"}]},
+                {groups:[{category:"UTENSÍLIOS DE COZINHA",words:["GARFO","FACA","COLHER","PRATO"],color:"#fde047"},{category:"ANIMAIS SELVAGENS AFRICANOS",words:["LEÃO","ELEFANTE","GIRAFA","ZEBRA"],color:"#86efac"},{category:"REDES SOCIAIS",words:["FACEBOOK","INSTAGRAM","TWITTER","TIKTOK"],color:"#93c5fd"},{category:"TERMOS DE NAVEGAÇÃO",words:["ÂNCORA","LEME","VELA","BÚSSOLA"],color:"#d8b4fe"}]},
+                {groups:[{category:"SIGNOS DO ZODÍACO",words:["ÁRIES","TOURO","GÊMEOS","CÂNCER"],color:"#fde047"},{category:"MÓVEIS DE CASA",words:["SOFÁ","CAMA","MESA","CADEIRA"],color:"#86efac"},{category:"CORTES DE CARNE",words:["PICANHA","FILÉ MIGNON","CONTRAFILÉ","ALCATRA"],color:"#93c5fd"},{category:"MARCAS DE CARRO",words:["FORD","FIAT","TOYOTA","HONDA"],color:"#d8b4fe"}]},
+                {groups:[{category:"TIPOS DE PÃO",words:["FRANCÊS","DE FORMA","INTEGRAL","BAGUETE"],color:"#fde047"},{category:"ANIMAIS AUSTRALIANOS",words:["CANGURU","COALA","ORNITORRINCO","DIABO-DA-TASMÂNIA"],color:"#86efac"},{category:"LINGUAGENS DE PROGRAMAÇÃO",words:["PYTHON","JAVASCRIPT","JAVA","C++"],color:"#93c5fd"},{category:"COISAS RELACIONADAS A CASAMENTO",words:["VÉU","BUQUÊ","ALIANÇA","BOLO"],color:"#d8b4fe"}]},
+                {groups:[{category:"TIPOS DE QUEIJO",words:["MUSSARELA","PRATO","PROVOLONE","GORGONZOLA"],color:"#fde047"},{category:"INSTRUMENTOS DE SOPRO",words:["FLAUTA","TROMPETE","SAXOFONE","CLARINETE"],color:"#86efac"},{category:"DEUSES GREGOS",words:["ZEUS","ARES","APOLO","POSEIDON"],color:"#93c5fd"},{category:"FIGURAS DE LINGUAGEM",words:["METÁFORA","HIPÉRBOLE","IRONIA","PERSONIFICAÇÃO"],color:"#d8b4fe"}]},
+                {groups:[{category:"EQUIPAMENTOS DE FOTOGRAFIA",words:["CÂMERA","LENTE","TRIPÉ","FLASH"],color:"#fde047"},{category:"JOGOS DE TABULEIRO",words:["XADREZ","DAMA","BANCO IMOBILIÁRIO","WAR"],color:"#86efac"},{category:"PAÍSES DA AMÉRICA DO SUL",words:["BRASIL","ARGENTINA","CHILE","COLÔMBIA"],color:"#93c5fd"},{category:"ERVAS AROMÁTICAS",words:["MANJERICÃO","ORÉGANO","SALSINHA","COENTRO"],color:"#d8b4fe"}]},
+                {groups:[{category:"PEÇAS DE TEATRO DE SHAKESPEARE",words:["HAMLET","ROMEU E JULIETA","MACBETH","OTELO"],color:"#fde047"},{category:"DANÇAS DE SALÃO",words:["SAMBA","TANGO","BOLERO","FORRÓ"],color:"#86efac"},{category:"OSSOS DO CORPO HUMANO",words:["FÊMUR","ÚMERO","TÍBIA","CRÂNIO"],color:"#93c5fd"},{category:"SOBREMESAS GELADAS",words:["SORVETE","PUDIM","GELATINA","MOUSSE"],color:"#d8b4fe"}]},
+                {groups:[{category:"TIPOS DE SAPATO",words:["TÊNIS","SANDÁLIA","BOTA","SAPATILHA"],color:"#fde047"},{category:"ESPECIARIAS",words:["PIMENTA","CRAVO","CANELA","NOZ-MOSCADA"],color:"#86efac"},{category:"PERSONAGENS DA TURMA DA MÔNICA",words:["MÔNICA","CEBOLINHA","CASCÃO","MAGALI"],color:"#93c5fd"},{category:"FERIADOS NACIONAIS",words:["NATAL","PÁSCOA","CARNAVAL","INDEPENDÊNCIA"],color:"#d8b4fe"}]},
+                {groups:[{category:"ÁRVORES",words:["IPE","JACARANDÁ","PAU-BRASIL","MANGUEIRA"],color:"#fde047"},{category:"COMPOSITORES CLÁSSICOS",words:["BACH","MOZART","BEETHOVEN","CHOPIN"],color:"#86efac"},{category:"SISTEMAS OPERACIONAIS",words:["WINDOWS","MACOS","LINUX","ANDROID"],color:"#93c5fd"},{category:"PARTES DE UMA BICICLETA",words:["PEDAL","GUIDÃO","SELIM","CORRENTE"],color:"#d8b4fe"}]},
+                {groups:[{category:"MOLHOS PARA MASSAS",words:["BOLONHESA","PESTO","CARBONARA","BRANCO"],color:"#fde047"},{category:"RÉPTEIS",words:["JACARÉ","COBRA","LAGARTO","TARTARUGA"],color:"#86efac"},{category:"PINTORES FAMOSOS",words:["DA VINCI","PICASSO","VAN GOGH","MONET"],color:"#93c5fd"},{category:"COISAS QUE SE COMPRA EM LITRO",words:["LEITE","GASOLINA","REFRIGERANTE","ÁGUA"],color:"#d8b4fe"}]},
+                {groups:[{category:"TIPOS DE MASSAS",words:["ESPAGUETE","PENNE","PARAFUSO","LASANHA"],color:"#fde047"},{category:"OPERADORAS DE CELULAR",words:["VIVO","CLARO","TIM","OI"],color:"#86efac"},{category:"ESTILOS ARQUITETÔNICOS",words:["GÓTICO","BARROCO","MODERNO","CLÁSSICO"],color:"#93c5fd"},{category:"VERBOS NO INFINITIVO",words:["AMAR","VENDER","PARTIR","PÔR"],color:"#d8b4fe"}]},
+                {groups:[{category:"HERÓIS DA MARVEL",words:["HOMEM DE FERRO","CAPITÃO AMÉRICA","THOR","HULK"],color:"#fde047"},{category:"CEREAIS",words:["ARROZ","MILHO","TRIGO","AVEIA"],color:"#86efac"},{category:"NAVEGADORES DE INTERNET",words:["CHROME","FIREFOX","SAFARI","EDGE"],color:"#93c5fd"},{category:"ADJETIVOS",words:["BONITO","ALTO","INTELIGENTE","RÁPIDO"],color:"#d8b4fe"}]},
+                {groups:[{category:"CAPITAIS ASIÁTICAS",words:["TÓQUIO","PEQUIM","SEUL","BANGCOC"],color:"#fde047"},{category:"BEBIDAS ALCOÓLICAS",words:["CERVEJA","VINHO","VODCA","CACHAÇA"],color:"#86efac"},{category:"ESTAÇÕES DO ANO",words:["VERÃO","OUTONO","INVERNO","PRIMAVERA"],color:"#93c5fd"},{category:"COISAS REDONDAS",words:["BOLA","LARANJA","PIZZA","MOEDA"],color:"#d8b4fe"}]},
+                {groups:[{category:"HERÓIS DA DC",words:["SUPERMAN","BATMAN","MULHER-MARAVILHA","FLASH"],color:"#fde047"},{category:"GRÃOS",words:["FEIJÃO","LENTILHA","GRÃO-DE-BICO","SOJA"],color:"#86efac"},{category:"MONTANHAS FAMOSAS",words:["EVEREST","K2","MONT BLANC","ACONCÁGUA"],color:"#93c5fd"},{category:"COISAS QUE BRILHAM",words:["ESTRELA","DIAMANTE","VAGA-LUME","LANTERNA"],color:"#d8b4fe"}]},
+                {groups:[{category:"ILHAS FAMOSAS",words:["HAWAI","SANTORINI","BALI","MALDIVAS"],color:"#fde047"},{category:"ANIMAIS POLARES",words:["URSO-POLAR","PINGUIM","FOCA","RENA"],color:"#86efac"},{category:"RIOS FAMOSOS",words:["NILO","AMAZONAS","MISSISSIPI","GANGES"],color:"#93c5fd"},{category:"PARTES DE UM LIVRO",words:["CAPA","LOMBADA","PÁGINA","ÍNDICE"],color:"#d8b4fe"}]},
+                {groups:[{category:"OCEANOS",words:["PACÍFICO","ATLÂNTICO","ÍNDICO","ÁRTICO"],color:"#fde047"},{category:"BANDAS DE ROCK BRITÂNICAS",words:["BEATLES","QUEEN","ROLLING STONES","PINK FLOYD"],color:"#86efac"},{category:"MOEDAS",words:["REAL","DÓLAR","EURO","IENE"],color:"#93c5fd"},{category:"COISAS QUE TÊM TECLAS",words:["PIANO","COMPUTADOR","CELULAR","MÁQUINA DE ESCREVER"],color:"#d8b4fe"}]},
+                {groups:[{category:"DESERTOS",words:["SAARA","ATACAMA","GOBI","CALAARI"],color:"#fde047"},{category:"CONSOLES DE VIDEOGAME",words:["PLAYSTATION","XBOX","NINTENDO SWITCH","WII"],color:"#86efac"},{category:"SABORES DE SORVETE",words:["CHOCOLATE","MORANGO","CREME","FLOCOS"],color:"#93c5fd"},{category:"CATEGORIAS DO OSCAR",words:["MELHOR FILME","MELHOR ATOR","MELHOR DIRETOR","MELHOR ROTEIRO"],color:"#d8b4fe"}]},
+                {groups:[{category:"ESCRITORES BRASILEIROS",words:["MACHADO DE ASSIS","CLARICE LISPECTOR","CARLOS DRUMMOND","JORGE AMADO"],color:"#fde047"},{category:"ANIMAIS NOTURNOS",words:["CORUJA","MORCEGO","GAMBÁ","VAGA-LUME"],color:"#86efac"},{category:"TIPOS DE ROCHA",words:["ÍGNEA","SEDIMENTAR","METAMÓRFICA","MAGMÁTICA"],color:"#93c5fd"},{category:"COISAS QUE SE FAZEM NAS FÉRIAS",words:["VIAJAR","DESCANSAR","PASSEAR","LER"],color:"#d8b4fe"}]},
+                {groups:[{category:"TIMES DE FUTEBOL DE SÃO PAULO",words:["CORINTHIANS","PALMEIRAS","SÃO PAULO","SANTOS"],color:"#fde047"},{category:"INSETOS",words:["FORMIGA","ABELHA","MOSCA","BESOURO"],color:"#86efac"},{category:"MARCAS DE ROUPA ESPORTIVA",words:["NIKE","ADIDAS","PUMA","REEBOK"],color:"#93c5fd"},{category:"TERMOS DE TEATRO",words:["PALCO","CORTINA","PLATEIA","ATO"],color:"#d8b4fe"}]},
+                {groups:[{category:"FILÓSOFOS GREGOS",words:["SÓCRATES","PLATÃO","ARISTÓTELES","PITÁGORAS"],color:"#fde047"},{category:"TECIDOS",words:["ALGODÃO","SEDA","LÃ","LINHO"],color:"#86efac"},{category:"SANTOS CATÓLICOS",words:["SÃO JOSÉ","SANTO ANTÔNIO","SÃO FRANCISCO","SÃO PEDRO"],color:"#93c5fd"},{category:"COBERTURAS DE BOLO",words:["CHOCOLATE","CHANTILLY","MORANGO","LEITE CONDENSADO"],color:"#d8b4fe"}]},
+                {groups:[{category:"ELEMENTOS DE UM COMPUTADOR",words:["PROCESSADOR","MEMÓRIA RAM","PLACA MÃE","HD"],color:"#fde047"},{category:"DANÇAS BRASILEIRAS",words:["SAMBA","FREVO","CARIMBÓ","QUADRILHA"],color:"#86efac"},{category:"SENTIDOS",words:["VISÃO","AUDIÇÃO","TATO","PALADAR"],color:"#93c5fd"},{category:"PALAVRAS COM 'Z'",words:["ZEBRA","AZUL","RAIZ","FELIZ"],color:"#d8b4fe"}]},
+                {groups:[{category:"IMPOSTOS BRASILEIROS",words:["ICMS","IPI","IPTU","IPVA"],color:"#fde047"},{category:"TIPOS DE ARROZ",words:["AGULHINHA","ARBÓREO","CATETO","SELVAGEM"],color:"#86efac"},{category:"AUTORES DE NOVELAS",words:["GLÓRIA PEREZ","WALCYR CARRASCO","MANOEL CARLOS","AGUINALDO SILVA"],color:"#93c5fd"},{category:"COISAS DE PAPELARIA",words:["CLIPE","GRAMPEADOR","ELÁSTICO","POST-IT"],color:"#d8b4fe"}]},
+                {groups:[{category:"EMPRESAS DE TECNOLOGIA",words:["APPLE","GOOGLE","MICROSOFT","AMAZON"],color:"#fde047"},{category:"AVES DE RAPINA",words:["ÁGUIA","FALCÃO","CORUJA","GAVIÃO"],color:"#86efac"},{category:"PEIXES DE RIO",words:["PIRANHA","PACU","DOURADO","TUCUNARÉ"],color:"#93c5fd"},{category:"OBJETOS DE OURO",words:["ALIANÇA","BRINCO","CORRENTE","MEDALHA"],color:"#d8b4fe"}]},
+                {groups:[{category:"CARGOS POLÍTICOS",words:["PRESIDENTE","SENADOR","DEPUTADO","PREFEITO"],color:"#fde047"},{category:"ACESSÓRIOS DE MODA",words:["BOLSA","CINTO","CHAPÉU","ÓCULOS"],color:"#86efac"},{category:"DOENÇAS VIRAIS",words:["GRIPE","DENGUE","SARAMPO","COVID-19"],color:"#93c5fd"},{category:"PRONOMES PESSOAIS",words:["EU","TU","ELE","NÓS"],color:"#d8b4fe"}]},
+                {groups:[{category:"PROGRAMAS DE TV ANTIGOS",words:["CHAVES","SÍTIO DO PICAPAU","CAVERNA DO DRAGÃO","CASTELO RÁ-TIM-BUM"],color:"#fde047"},{category:"CARNAVALESCOS FAMOSOS",words:["JOÃOSINHO TRINTA","PAULO BARROS","ROSA MAGALHÃES","FERNANDO PINTO"],color:"#86efac"},{category:"MARCAS DE CHOCOLATE",words:["NESTLÉ","GAROTO","LACTA","CACAU SHOW"],color:"#93c5fd"},{category:"TERMOS DA MATEMÁTICA",words:["SOMA","DIVISÃO","FRAÇÃO","EQUAÇÃO"],color:"#d8b4fe"}]},
+                {groups:[{category:"DIRETORES DE CINEMA",words:["SPIELBERG","TARANTINO","SCORSESE","HITCHCOCK"],color:"#fde047"},{category:"LENDAS DO FOLCLORE BRASILEIRO",words:["SACI","CUCA","IARA","CURUPIRA"],color:"#86efac"},{category:"TIPOS DE CAFÉ",words:["EXPRESSO","COADO","CAPPUCCINO","MACCHIATO"],color:"#93c5fd"},{category:"PALAVRAS DE ORIGEM INDÍGENA",words:["ABACAXI","MANDIOCA","JABUTICABA","CAPIVARA"],color:"#d8b4fe"}]},
+                // Add more puzzles here to reach 90+
+            ];
+
+
+            const board = document.getElementById('game-board');
+            const attemptsCounter = document.getElementById('attempts-counter');
+            const solvedContainer = document.getElementById('solved-groups-container');
+            const submitButton = document.getElementById('submit-button');
+            const shuffleButton = document.getElementById('shuffle-button');
+            const deselectButton = document.getElementById('deselect-button');
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalMessage = document.getElementById('modal-message');
+            const modalResults = document.getElementById('modal-results');
+            const modalCloseButton = document.getElementById('modal-close-button');
+            const gameSubtitle = document.getElementById('game-subtitle');
+            const hintsUsedCounter = document.getElementById('hints-used-counter');
+            const hintButton = document.getElementById('hint-button');
+            const giveUpButton = document.getElementById('give-up-button');
+
+            let selectedWords = [];
+            let attempts = 0;
+            let currentPuzzle;
+            let foundGroups = [];
+            let dailyPuzzles = [];
+            let currentGameIndex = 0;
+            let dailyProgress = { completed: [false, false, false] };
+            let hintState = { groupCategory: null, revealedWords: [] };
+            let hintsUsed = 0;
+
+            function setupDailyGames() {
+                const today = new Date();
+                const dateString = today.toISOString().split('T')[0];
+                const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+                
+                const savedProgress = JSON.parse(localStorage.getItem(`conexo-progress-${dateString}`));
+                if (savedProgress) {
+                    dailyProgress = savedProgress;
+                } else {
+                     dailyProgress = { completed: [false, false, false] };
+                     localStorage.setItem(`conexo-progress-${dateString}`, JSON.stringify(dailyProgress));
+                }
+
+                const puzzleStartIndex = (dayOfYear * 3) % puzzles.length;
+                dailyPuzzles = [
+                    puzzles[puzzleStartIndex],
+                    puzzles[(puzzleStartIndex + 1) % puzzles.length],
+                    puzzles[(puzzleStartIndex + 2) % puzzles.length]
+                ];
+
+                const dateEl = document.getElementById('current-date');
+                if (dateEl) {
+                    const today = new Date();
+                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                    dateEl.textContent = today.toLocaleDateString('pt-BR', options);
+                }
+
+                const firstUnfinishedGame = dailyProgress.completed.indexOf(false);
+                if (firstUnfinishedGame !== -1) {
+                    currentGameIndex = firstUnfinishedGame;
+                    initGame(currentGameIndex);
+                } else {
+                    // All games for today are completed
+                    showAllGamesCompleted();
+                }
+            }
+            
+            function initGame(index) {
+                currentGameIndex = index;
+                gameSubtitle.textContent = `Jogo ${index + 1} de 3`;
+                
+                // Reset state
+                selectedWords = [];
+                attempts = 0;
+                hintsUsed = 0;
+                foundGroups = [];
+                board.innerHTML = '';
+                solvedContainer.innerHTML = '';
+                board.style.pointerEvents = 'auto';
+                hintState = { groupCategory: null, revealedWords: [] };
+                
+                currentPuzzle = dailyPuzzles[index]; 
+                let allWords = currentPuzzle.groups.flatMap(group => group.words);
+
+                shuffleArray(allWords);
+                allWords.forEach(word => {
+                    const card = document.createElement('div');
+                    card.textContent = word;                    
+                    card.className = 'card text-center font-semibold uppercase bg-gray-200 rounded-lg cursor-pointer';
+                    card.addEventListener('click', () => handleCardClick(card));
+                    board.appendChild(card);
+                });
+
+                attemptsCounter.textContent = attempts;
+                hintsUsedCounter.textContent = hintsUsed;
+                updateSubmitButton();
+            }
+
+            function handleCardClick(card) {
+                const word = card.textContent;
+                if (selectedWords.includes(word)) {
+                    selectedWords = selectedWords.filter(w => w !== word);
+                    card.classList.remove('selected');
+                } else {
+                    if (selectedWords.length < 4) {
+                        selectedWords.push(word);
+                        card.classList.add('selected');
+                    }
+                }
+                updateSubmitButton();
+            }
+
+            function updateSubmitButton() {
+                submitButton.disabled = selectedWords.length !== 4;
+            }
+
+            function handleSubmit() {
+                if (selectedWords.length !== 4) return;
+
+                const correctGroup = currentPuzzle.groups.find(group => 
+                    arraysAreEqual(selectedWords, group.words)
+                );
+
+                if (correctGroup) {
+                    foundGroups.push(correctGroup);
+
+                    // Reset hint if the found group was solved
+                    if (hintState.groupCategory === correctGroup.category) {
+                        hintState = { groupCategory: null, revealedWords: [] };
+                    }
+                    
+                    const solvedCard = document.createElement('div');
+                    solvedCard.className = 'solved-card';
+                    solvedCard.style.backgroundColor = correctGroup.color;
+                    solvedCard.innerHTML = `<div class="font-bold">${correctGroup.category}</div><div class="solved-card-words">${correctGroup.words.join(', ')}</div>`;
+                    solvedContainer.appendChild(solvedCard);
+
+                    const remainingWords = Array.from(board.children)
+                        .map(c => c.textContent)
+                        .filter(w => !selectedWords.includes(w));
+                    
+                    board.innerHTML = '';
+                    
+                    remainingWords.forEach(word => {
+                         const card = document.createElement('div');
+                        card.textContent = word;                        
+                        card.className = 'card text-center font-semibold uppercase bg-gray-200 rounded-lg cursor-pointer';
+                        card.addEventListener('click', () => handleCardClick(card));
+                        board.appendChild(card);
+                    });
+
+                    selectedWords = [];
+                    updateSubmitButton();
+                    
+                    if (foundGroups.length === 4) {
+                        handleGameEnd(true);
+                    }
+                } else {
+                    attempts++;
+                    attemptsCounter.textContent = attempts;
+                    
+                    const selectedCards = Array.from(board.children).filter(c => selectedWords.includes(c.textContent));
+                    selectedCards.forEach(c => c.classList.add('shake'));
+                    setTimeout(() => selectedCards.forEach(c => c.classList.remove('shake')), 500);
+                }
+            }
+
+            function handleGameEnd(isWin) {
+                dailyProgress.completed[currentGameIndex] = true;
+                const today = new Date();
+                const dateString = today.toISOString().split('T')[0];
+                localStorage.setItem(`conexo-progress-${dateString}`, JSON.stringify(dailyProgress));
+
+                if (isWin) {
+                    showModal('Parabéns!', 'Você resolveu o quebra-cabeça!');
+                } else {
+                    showModal('Desistiu?', 'Aqui estão as respostas corretas.', true);
+                }
+            }
+
+            function shuffleBoardWords() {
+                const remainingWords = Array.from(board.children).map(c => c.textContent);
+                shuffleArray(remainingWords);
+                board.innerHTML = '';
+                remainingWords.forEach(word => {
+                    const card = document.createElement('div');
+                    card.textContent = word;                    
+                    const isSelected = selectedWords.includes(word);                    
+                    card.className = `card text-center font-semibold uppercase rounded-lg cursor-pointer ${isSelected ? 'selected' : 'bg-gray-200'}`;
+                    card.addEventListener('click', () => handleCardClick(card));
+                    board.appendChild(card);
+                });
+            }
+            
+            function deselectAll() {
+                 selectedWords = [];
+                 Array.from(board.children).forEach(card => card.classList.remove('selected'));
+                 updateSubmitButton();
+            }
+
+            function getHint() {
+                const unsolvedGroups = currentPuzzle.groups.filter(g => !foundGroups.some(fg => fg.category === g.category));
+                if (unsolvedGroups.length === 0) return;
+
+                // If no group is being hinted, or the hinted group was solved, pick a new one
+                if (!hintState.groupCategory || !unsolvedGroups.some(g => g.category === hintState.groupCategory)) {
+                    hintState.groupCategory = unsolvedGroups[Math.floor(Math.random() * unsolvedGroups.length)].category;
+                    hintState.revealedWords = [];
+                }
+
+                const groupToHint = unsolvedGroups.find(g => g.category === hintState.groupCategory);
+                const wordToReveal = groupToHint.words.find(w => !hintState.revealedWords.includes(w));
+
+                if (wordToReveal) {
+                    hintsUsed++;
+                    hintsUsedCounter.textContent = hintsUsed;
+
+                    hintState.revealedWords.push(wordToReveal);
+                    const cardToHighlight = Array.from(board.children).find(c => c.textContent === wordToReveal);
+                    if (cardToHighlight) {
+                        cardToHighlight.classList.add('hint-highlight');
+                    }
+                }
+            }
+
+            function giveUp() {
+                handleGameEnd(false);
+            }
+
+            function showModal(title, message, showResults = false) {
+                 modalTitle.textContent = title;
+                 modalMessage.textContent = message;
+                 modalResults.innerHTML = '';
+
+                 if (showResults) {
+                     currentPuzzle.groups.forEach(group => {
+                         if (!foundGroups.some(fg => fg.category === group.category)) {
+                            const groupDiv = document.createElement('div');
+                            groupDiv.className = 'p-2 rounded-md text-sm';
+                            groupDiv.style.backgroundColor = group.color;
+                            groupDiv.innerHTML = `<span class="font-bold">${group.category}:</span> ${group.words.join(', ')}`;
+                            modalResults.appendChild(groupDiv);
+                         }
+                     });
+                 }
+
+                 const nextGameIndex = dailyProgress.completed.indexOf(false);
+                 if (nextGameIndex !== -1) {
+                     modalCloseButton.textContent = "Próximo Jogo";
+                 } else {
+                     modalCloseButton.textContent = "Fim por hoje!";
+                 }
+                
+                 modal.classList.add('visible');
+            }
+
+            function showAllGamesCompleted() {
+                gameSubtitle.textContent = "Você completou todos os jogos de hoje!";
+                board.innerHTML = `<div class="col-span-4 h-40 flex items-center justify-center text-lg font-semibold text-gray-500">Volte amanhã para mais desafios.</div>`;                
+                document.querySelector('.controls-container').style.display = 'none';
+            }
+            
+            modalCloseButton.addEventListener('click', () => {
+                modal.classList.remove('visible');
+                const nextGameIndex = dailyProgress.completed.indexOf(false);
+                if (nextGameIndex !== -1) {
+                    initGame(nextGameIndex);
+                } else {
+                    showAllGamesCompleted();
+                }
+            });
+
+            // --- Event Listeners ---
+            submitButton.addEventListener('click', handleSubmit);
+            shuffleButton.addEventListener('click', shuffleBoardWords);
+            deselectButton.addEventListener('click', deselectAll);
+            hintButton.addEventListener('click', getHint);
+            giveUpButton.addEventListener('click', giveUp);
+
+            // --- Helper Functions ---
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+
+            function arraysAreEqual(arr1, arr2) {
+                if (arr1.length !== arr2.length) return false;
+                const sorted1 = [...arr1].sort();
+                const sorted2 = [...arr2].sort();
+                return sorted1.every((value, index) => value === sorted2[index]);
+            }
+            
+            // --- Start Game ---
+            setupDailyGames();
+        });
+    </script>
+
+</body>
+</html>
