@@ -177,6 +177,7 @@ const elements = {
     
     // Botões de controle dos anéis
     spinAll: null, // Agora é o único botão de giro
+    spinCenter: null, // Botão no centro do SVG
     
     // Exibição da pergunta
     questionDisplay: null,
@@ -215,6 +216,8 @@ function initializeApp() {
     
     // Configurar eventos
     setupEventListeners();
+    // Preparar select de tema customizado em telas pequenas
+    setupCustomThemeSelect();
     
     // Inicializar áudio
     initializeAudio();
@@ -247,6 +250,8 @@ function findDOMElements() {
     
     // Botões de controle
     elements.spinAll = document.getElementById('spin-all');
+    // Botão central no SVG
+    elements.spinCenter = document.getElementById('spin-center-button');
     
     // Exibição da pergunta
     elements.questionDisplay = document.getElementById('question-display');
@@ -290,6 +295,17 @@ function setupEventListeners() {
     
     // Botões dos anéis
     elements.spinAll?.addEventListener('click', spinAllRings); // Apenas o botão principal
+    elements.spinCenter?.addEventListener('click', (e) => {
+        e.preventDefault();
+        spinAllRings();
+    });
+    elements.spinCenter?.addEventListener('keydown', (e) => {
+        const key = e.key.toLowerCase();
+        if (key === 'enter' || key === ' ') {
+            e.preventDefault();
+            spinAllRings();
+        }
+    });
     
     // Histórico
     elements.clearHistoryBtn?.addEventListener('click', clearHistory);
@@ -327,7 +343,7 @@ function setupEventListeners() {
     document.addEventListener('keydown', handleKeyboardShortcuts);
     
     // Redimensionamento
-    window.addEventListener('resize', debounce(handleResize, 250));
+    window.addEventListener('resize', debounce(() => { handleResize(); setupCustomThemeSelect(true); }, 250));
 }
 
 // === MUDANÇA DE TEMA ===
@@ -483,18 +499,7 @@ function createRingSection(centerX, centerY, outerRadius, innerRadius, startAngl
     textElement.classList.add('ring-section-text');
     textElement.textContent = text;
 
-    // Adiciona textLength para garantir que o texto caiba na fatia
-    const midRadius = (outerRadius + innerRadius) / 2;
-    const arcLength = midRadius * (anglePerSection * Math.PI / 180);
-    textElement.setAttribute('textLength', arcLength * 0.6); // Usa 60% do espaço para ter mais margem
-    textElement.setAttribute('lengthAdjust', 'spacingAndGlyphs');
-    
-    // Texto em pé (horizontal) para leitura normal
-    const midRadius2 = innerRadius + radiusSpan * radiusFactor;
-    const arcLength2 = midRadius2 * (anglePerSection * Math.PI / 180);
-    const lengthFactor = ringType === 'outer' ? 0.42 : (ringType === 'middle' ? 0.48 : 0.48);
-    textElement.setAttribute('textLength', Math.max(0, arcLength2 * lengthFactor));
-    textElement.setAttribute('lengthAdjust', 'spacingAndGlyphs');
+    // Mantém o texto em tamanho e proporção naturais (sem textLength forçado)
     // Não aplicar rotação no atributo SVG; a contra-rotação é feita via CSS usando --rot
     
     return { path, text: textElement };
@@ -1051,6 +1056,75 @@ function handleResize() {
     debounce(() => {
         initializeRings();
     }, 500)();
+}
+
+// === SELECT DE TEMA CUSTOM (para mobile) ===
+function setupCustomThemeSelect(forceRebuild = false) {
+    const wrapper = document.querySelector('.theme-selector-wrapper');
+    const native = elements.themeSelector;
+    if (!wrapper || !native) return;
+
+    const isMobile = window.matchMedia('(max-width: 1024px)').matches;
+    const existing = wrapper.querySelector('.theme-custom');
+
+    if (!isMobile) {
+        // Limpa custom caso exista em telas maiores
+        if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+        native.style.display = '';
+        return;
+    }
+
+    if (existing && !forceRebuild) return; // já montado
+    if (existing && forceRebuild) existing.remove();
+
+    // Monta componente custom
+    const custom = document.createElement('div');
+    custom.className = 'theme-custom';
+
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'theme-custom-toggle';
+    toggle.setAttribute('aria-haspopup', 'listbox');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.textContent = native.options[native.selectedIndex]?.text || 'Selecione um tema';
+
+    const list = document.createElement('ul');
+    list.className = 'theme-custom-list';
+    list.setAttribute('role', 'listbox');
+
+    Array.from(native.options).forEach((opt) => {
+        const li = document.createElement('li');
+        li.textContent = opt.textContent;
+        li.setAttribute('role', 'option');
+        li.dataset.value = opt.value;
+        if (opt.selected) li.setAttribute('aria-selected', 'true');
+        li.addEventListener('click', () => {
+            native.value = opt.value;
+            toggle.textContent = opt.textContent;
+            list.classList.remove('open');
+            toggle.setAttribute('aria-expanded', 'false');
+            // Dispara lógica de mudança de tema
+            handleThemeChange({ target: native });
+        });
+        list.appendChild(li);
+    });
+
+    // Ações de abrir/fechar
+    const closeList = () => { list.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); };
+    toggle.addEventListener('click', () => {
+        const isOpen = list.classList.contains('open');
+        if (isOpen) closeList(); else { list.classList.add('open'); toggle.setAttribute('aria-expanded', 'true'); }
+    });
+    document.addEventListener('click', (e) => {
+        if (!custom.contains(e.target)) closeList();
+    });
+    toggle.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeList();
+    });
+
+    custom.appendChild(toggle);
+    custom.appendChild(list);
+    wrapper.appendChild(custom);
 }
 
 // === SALVAR CONFIGURAÇÕES ===

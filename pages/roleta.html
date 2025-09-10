@@ -121,28 +121,29 @@
                                 <!-- Seções serão geradas dinamicamente pelo JavaScript -->
                             </g>
                             
-                            <!-- Centro da roleta -->
-                            <circle 
-                                cx="200" 
-                                cy="200" 
-                                r="25" 
-                                class="wheel-center"
-                                fill="#a78bfa"
-                                stroke="#5b21b6"
-                                stroke-width="3"
-                            />
-                            
-                            <text 
-                                x="200" 
-                                y="205" 
-                                text-anchor="middle" 
-                                class="wheel-center-text"
-                                fill="#1f2937"
-                                font-weight="bold"
-                                font-size="12"
-                            >
-                                SPIN
-                            </text>
+                            <!-- Centro da roleta como botão -->
+                            <g id="spin-center-button" class="wheel-center-button" role="button" tabindex="0" aria-label="Girar roleta">
+                                <circle 
+                                    cx="200" 
+                                    cy="200" 
+                                    r="25" 
+                                    class="wheel-center"
+                                    fill="#a78bfa"
+                                    stroke="#5b21b6"
+                                    stroke-width="3"
+                                />
+                                <text 
+                                    x="200" 
+                                    y="205" 
+                                    text-anchor="middle" 
+                                    class="wheel-center-text"
+                                    fill="#1f2937"
+                                    font-weight="bold"
+                                    font-size="12"
+                                >
+                                    SPIN
+                                </text>
+                            </g>
                         </svg>
                     </div>
                     
@@ -177,9 +178,9 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer" role="contentinfo">
-        <p>&copy; 2024 AmadoPlay. All rights reserved.</p>
+    <!-- Footer padrão das ferramentas educacionais -->
+    <footer class="game-footer" role="contentinfo">
+        <p>Ferramenta Educacional - Roleta de Perguntas em Inglês | Criação e desenvolvimento por João Jr</p>
     </footer>
 
     <!-- Loading overlay -->
@@ -276,17 +277,18 @@
             
             <div class="modal-body">
                 <h3>Como Jogar:</h3>
-                <p>Gire os anéis para formar perguntas válidas em inglês. Combine uma <strong>Palavra WH</strong> (anel externo), um <strong>Verbo</strong> (anel do meio) e um <strong>Sujeito</strong> (anel interno). Você pode girar cada anel individualmente ou todos de uma vez!</p>
+                <p>
+                    Clique em <strong>Girar Roleta</strong> ou no centro <strong>SPIN</strong> para girar os três anéis ao mesmo tempo e formar uma pergunta em inglês. 
+                    Combine uma <strong>Palavra WH</strong> (anel externo), um <strong>Verbo</strong> (anel do meio) e um <strong>Sujeito</strong> (anel interno). 
+                    Atualmente, o giro é <strong>apenas conjunto</strong> (não há giro individual por anel).
+                </p>
 
                 <h3>Atalhos de Teclado:</h3>
                 <ul>
-                    <li><kbd>1</kbd>: Girar o anel externo (Palavras WH)</li>
-                    <li><kbd>2</kbd>: Girar o anel do meio (Verbos)</li>
-                    <li><kbd>3</kbd>: Girar o anel interno (Sujeitos)</li>
-                    <li><kbd>Espaço</kbd> ou <kbd>Enter</kbd>: Girar todos os anéis</li>
+                    <li><kbd>Espaço</kbd> ou <kbd>Enter</kbd>: Girar a roleta</li>
                     <li><kbd>S</kbd>: Alternar som</li>
                     <li><kbd>C</kbd>: Configurar palavras</li>
-                    <li><kbd>H</kbd>: Limpar histórico</li>
+                    <li><kbd>H</kbd>: Abrir histórico</li>
                     <li><kbd>?</kbd>: Abrir este guia</li>
                     <li><kbd>Esc</kbd>: Fechar qualquer modal aberto</li>
                 </ul>

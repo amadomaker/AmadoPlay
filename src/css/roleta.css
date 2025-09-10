@@ -229,6 +229,53 @@ body {
     border-color: var(--primary-purple);
 }
 
+/* Custom select (usado em telas pequenas para evitar dropdown extravasar) */
+.theme-custom { display: none; position: relative; max-width: 400px; margin: 0 auto; }
+.theme-custom-toggle {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--dark-purple);
+    background-color: var(--white);
+    border: 2px solid var(--light-purple);
+    border-radius: var(--border-radius-lg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.theme-custom-toggle::after {
+    content: '\25BE'; /* setinha */
+    color: #6b7280;
+    font-size: 1em;
+}
+.theme-custom-list {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    max-height: 50vh;
+    overflow-y: auto;
+    background: var(--white);
+    border: 2px solid var(--light-purple);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    z-index: 30;
+    display: none;
+}
+.theme-custom-list.open { display: block; }
+.theme-custom-list li {
+    list-style: none;
+    padding: 10px 12px;
+    color: var(--gray-800);
+    cursor: pointer;
+}
+.theme-custom-list li:hover,
+.theme-custom-list li[aria-selected="true"] {
+    background: #eef2ff;
+}
+
 .toggle-button {
     background: var(--primary-purple);
     border: none;
@@ -273,6 +320,13 @@ body {
     width: 100%;
     height: auto;
     display: block;
+}
+
+/* Centro clicável (SPIN) */
+.wheel-center-button { cursor: pointer; }
+.wheel-center-button:hover .wheel-center,
+.wheel-center-button:focus-visible .wheel-center {
+    filter: brightness(1.08);
 }
 
 /* Botão de som (ícone) */
@@ -356,8 +410,8 @@ body {
     transform-origin: center;  /* gira em torno do próprio centro */
 }
 
-.outer-ring .ring-section-text { font-size: 8px; }
-.middle-ring .ring-section-text { font-size: 10px; }
+.outer-ring .ring-section-text { font-size: 13.8px; }
+.middle-ring .ring-section-text { font-size: 13px; }
 .inner-ring .ring-section-text { font-size: 9px; }
 
 /* === CONTROLES DOS ANÉIS === */
@@ -397,7 +451,7 @@ body {
 }
 
 .button-text {
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-base);
 }
 /* === EXIBIÇÃO DA PERGUNTA FORMADA === */
 .question-display {
@@ -567,6 +621,18 @@ body {
     min-width: 220px;
 }
 
+/* Responsividade dos botões extras (Como usar, Configurar, Histórico) */
+@media (max-width: 900px) {
+  .extra-controls { flex-wrap: wrap; justify-content: center; }
+  /* usa largura flexível sem forçar altura */
+  .extra-controls .toggle-button { flex: 0 1 240px; min-width: 0; }
+}
+@media (max-width: 640px) {
+  .extra-controls { flex-direction: column; align-items: stretch; gap: var(--space-3); }
+  /* impede que o flex-basis de 240px gere botões muito altos */
+  .extra-controls .toggle-button { width: 100%; flex: 0 0 auto; padding: var(--space-3) var(--space-4); }
+}
+
 /* === MODAL === */
 .modal {
     position: fixed;
@@ -594,11 +660,14 @@ body {
     background: var(--white);
     padding: var(--space-6);
     border-radius: var(--border-radius-lg);    
-    max-width: 600px;
-    max-height: 80vh;
+    width: min(95vw, 600px);
+    max-height: calc(90vh - 2rem);
     overflow-y: auto;
     box-shadow: var(--shadow-lg);
     position: relative;
+}
+@supports (height: 100dvh) {
+  .modal-content { max-height: calc(92dvh - 2rem); }
 }
 /* Ajuste para o container de histórico dentro do modal */
 .modal .history-container {
@@ -725,9 +794,8 @@ body {
         grid-template-columns: 1fr;
     }
 
-    .ring-controls {
-        grid-template-columns: 1fr 1fr;
-    }
+    .ring-controls { max-width: 100%; padding: 0 var(--space-2); }
+    .ring-button { min-width: 0; width: 100%; }
 
     .question-parts {
         font-size: var(--font-size-xl);
@@ -747,6 +815,62 @@ body {
     .wheel-container {
         padding: var(--space-2);
     }
+    /* Modais mais confortáveis no mobile */
+    .modal { padding: var(--space-3); }
+    .modal-content { padding: var(--space-4); width: 92vw; max-height: 80vh; }
+
+    /* Select nativo some; usa versão custom (mobile) */
+    .theme-selector { display: none; }
+    .theme-custom { display: block; }
+
+    /* Botões extras mais compactos */
+    .extra-controls .toggle-button { padding: var(--space-2) var(--space-3); font-size: var(--font-size-base); border-radius: 10px; min-height: 40px; }
+}
+
+/* Tablets e telas médias: usar seletor custom também */
+@media (max-width: 1024px) and (min-width: 641px) {
+  .theme-selector { display: none; }
+  .theme-custom { display: block; }
+}
+
+/* Tablet: deixa o modal mais estreito e baixo que a tela */
+@media (max-width: 900px) {
+  .modal-content { width: min(92vw, 520px); max-height: 86vh; padding: var(--space-5); }
+}
+
+/* Tablet amplo (ex.: iPad 768–1024px e afins) */
+@media (min-width: 641px) and (max-width: 1200px) {
+  .modal { padding: var(--space-5); }
+  .modal-content {
+    width: min(88vw, 560px);
+    max-height: 82vh; /* evita passar da tela em retrato/tablet */
+    padding: var(--space-5);
+  }
+}
+
+/* Altura baixa (landscape em tablets/phones) */
+@media (max-height: 700px) and (min-width: 641px) {
+  .modal-content { max-height: 78vh; }
+}
+
+/* Faixa de tablets clássicos (768–1024): modal ainda menor */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .modal { padding: var(--space-5); }
+  .modal-content { width: min(80vw, 520px); max-height: 76vh; }
+}
+
+/* ===== Footer (override para fundo claro desta página) ===== */
+body .game-footer {
+  background: rgba(139, 92, 246, 0.30); /* roxo translúcido (#8b5cf6) um pouco mais forte */
+  color: rgba(255,255,255,0.98); /* texto branco para manter o padrão */
+  border-top: 1px solid rgba(255,255,255,0.25);
+  font-weight: 500;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.25); /* melhora legibilidade do branco */
+  position: relative;
+  z-index: 10;
+}
+@media (max-width: 640px) {
+  body .game-footer { font-size: 0.7em; padding: 6px 10px; }
 }
 
 /* === ALTO CONTRASTE === */
