@@ -176,11 +176,12 @@
                 </div>
             </div>
 
-            <button id="credits-button" class="absolute bottom-2 right-2 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors" aria-label="Créditos">
+            <button id="credits-button" class="absolute bottom-3 right-3 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors" aria-label="Créditos">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
                 </svg>
             </button>
+            <button id="ranking-button" class="absolute bottom-3 right-12 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors" aria-label="Ranking">🏆</button>
         </main>
     </div>
 
@@ -201,6 +202,29 @@
             <p class="text-gray-600 mb-4">Ferramenta Educacional - Jogo Conexo</p>
             <p class="text-gray-800 font-semibold">Criação e desenvolvimento por João Jr</p>
             <button id="credits-modal-close-button" class="mt-6 w-full px-4 py-2 bg-gray-800 text-white rounded-md font-semibold hover:bg-gray-700 transition-colors">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Modal para Ranking -->
+    <div id="ranking-modal" class="modal-overlay">
+        <div class="modal-content text-gray-800">
+            <h2 class="text-xl font-bold mb-4">🏆 Ranking do Dia 🏆</h2>
+            <ul id="ranking-list" class="text-left space-y-2">
+                <!-- O ranking será preenchido aqui -->
+            </ul>
+            <button id="ranking-modal-close-button" class="mt-6 w-full px-4 py-2 bg-gray-800 text-white rounded-md font-semibold hover:bg-gray-700 transition-colors">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Modal para Submeter Score -->
+    <div id="submit-score-modal" class="modal-overlay">
+        <div class="modal-content text-gray-800">
+            <h2 class="text-xl font-bold mb-2">🎉 Fim de Jogo! 🎉</h2>
+            <p class="text-gray-600 mb-4">Você completou os 3 jogos de hoje. Veja seu desempenho e entre para o ranking!</p>
+            <div id="score-summary" class="text-left bg-gray-100 p-3 rounded-lg mb-4 space-y-1"></div>
+            <input type="text" id="player-name-input" placeholder="Digite seu nome (máx. 15 caracteres)" maxlength="15" class="w-full p-2 border rounded-md mb-2 text-gray-800">
+            <button id="submit-score-button" class="w-full px-4 py-2 bg-violet-600 text-white rounded-md font-semibold hover:bg-violet-700 transition-colors">Enviar para o Ranking</button>
+            <button id="submit-score-close-button" class="mt-2 w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-md font-semibold hover:bg-gray-300 transition-colors">Fechar</button>
         </div>
     </div>
 
@@ -328,8 +352,7 @@
                 {groups:[{category:"ESCRITORES BRASILEIROS",words:["MACHADO DE ASSIS","CLARICE LISPECTOR","CARLOS DRUMMOND","JORGE AMADO"],color:"#fde047"},{category:"ANIMAIS NOTURNOS",words:["CORUJA","MORCEGO","GAMBÁ","VAGA-LUME"],color:"#86efac"},{category:"TIPOS DE ROCHA",words:["ÍGNEA","SEDIMENTAR","METAMÓRFICA","MAGMÁTICA"],color:"#93c5fd"},{category:"COISAS QUE SE FAZEM NAS FÉRIAS",words:["VIAJAR","DESCANSAR","PASSEAR","LER"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"EMPRESAS DE TECNOLOGIA",words:["APPLE","GOOGLE","MICROSOFT","AMAZON"],color:"#fde047"},{category:"AVES DE RAPINA",words:["ÁGUIA","FALCÃO","CORUJA","GAVIÃO"],color:"#86efac"},{category:"PEIXES DE RIO",words:["PIRANHA","PACU","DOURADO","TUCUNARÉ"],color:"#93c5fd"},{category:"OBJETOS DE OURO",words:["ALIANÇA","BRINCO","CORRENTE","MEDALHA"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"PROGRAMAS DE TV ANTIGOS",words:["CHAVES","SÍTIO DO PICAPAU","CAVERNA DO DRAGÃO","CASTELO RÁ-TIM-BUM"],color:"#fde047"},{category:"CARNAVALESCOS FAMOSOS",words:["JOÃOSINHO TRINTA","PAULO BARROS","ROSA MAGALHÃES","FERNANDO PINTO"],color:"#86efac"},{category:"MARCAS DE CHOCOLATE",words:["NESTLÉ","GAROTO","LACTA","CACAU SHOW"],color:"#93c5fd"},{category:"TERMOS DA MATEMÁTICA",words:["SOMA","DIVISÃO","FRAÇÃO","EQUAÇÃO"],color:"#d8b4fe"}], difficulty: 2},
-                {groups:[{category:"ENCONTRADO EM UMA BIBLIOTECA",words:["LIVRO","ESTANTE","SILÊNCIO","BIBLIOTECÁRIO"],color:"#fde047"},{category:"PROFISSÕES COM UNIFORME",words:["POLICIAL","BOMBEIRO","MÉDICO","PILOTO"],color:"#86efac"},{category:"PALAVRAS COM 'QU'",words:["QUEIJO","QUARTO","QUILO","AQUARELA"],color:"#93c5fd"},{category:"AÇÕES EM UMA VIAGEM",words:["VIAJAR","FOTOGRAFAR","PASSEAR","CONHECER"],color:"#d8b4fe"}], difficulty: 2},
-                {groups:[{category:"PARTES DE UM JORNAL",words:["MANCHETE","NOTÍCIA","CADERNO","CLASSIFICADOS"],color:"#fde047"},{category:"ANIMAIS QUE MUDAM DE COR",words:["CAMALEÃO","POLVO","SAPO","ARANHA"],color:"#86efac"},{category:"COISAS QUE SE PODE MEDIR",words:["TEMPO","DISTÂNCIA","PESO","TEMPERATURA"],color:"#93c5fd"},{category:"RELACIONADO A DINHEIRO",words:["MOEDA","NOTA","BANCO","COFRE"],color:"#d8b4fe"}], difficulty: 2},
+                
                 // --- NÍVEL DIFÍCIL ---
                 {groups:[{category:"TIPOS DE QUEIJO",words:["MUSSARELA","PRATO","PROVOLONE","GORGONZOLA"],color:"#fde047"},{category:"INSTRUMENTOS DE SOPRO",words:["FLAUTA","TROMPETE","SAXOFONE","CLARINETE"],color:"#86efac"},{category:"DEUSES GREGOS",words:["ZEUS","ARES","APOLO","POSEIDON"],color:"#93c5fd"},{category:"FIGURAS DE LINGUAGEM",words:["METÁFORA","HIPÉRBOLE","IRONIA","PERSONIFICAÇÃO"],color:"#d8b4fe"}], difficulty: 3},
                 {groups:[{category:"TIPOS DE MASSAS",words:["ESPAGUETE","PENNE","PARAFUSO","LASANHA"],color:"#fde047"},{category:"OPERADORAS DE CELULAR",words:["VIVO","CLARO","TIM","OI"],color:"#86efac"},{category:"ESTILOS ARQUITETÔNICOS",words:["GÓTICO","BARROCO","MODERNO","CLÁSSICO"],color:"#93c5fd"},{category:"VERBOS NO INFINITIVO",words:["AMAR","VENDER","PARTIR","PÔR"],color:"#d8b4fe"}], difficulty: 3},
@@ -413,6 +436,15 @@
             const creditsButton = document.getElementById('credits-button');
             const creditsModal = document.getElementById('credits-modal');
             const creditsModalCloseButton = document.getElementById('credits-modal-close-button');
+            const rankingButton = document.getElementById('ranking-button');
+            const rankingModal = document.getElementById('ranking-modal');
+            const rankingList = document.getElementById('ranking-list');
+            const rankingModalCloseButton = document.getElementById('ranking-modal-close-button');
+            const submitScoreModal = document.getElementById('submit-score-modal');
+            const scoreSummaryEl = document.getElementById('score-summary');
+            const playerNameInput = document.getElementById('player-name-input');
+            const submitScoreButton = document.getElementById('submit-score-button');
+            const submitScoreCloseButton = document.getElementById('submit-score-close-button');
 
             let selectedWords = [];
             let attempts = 0;
@@ -420,9 +452,37 @@
             let foundGroups = [];
             let dailyPuzzles = [];
             let currentGameIndex = 0;
-            let dailyProgress = { completed: [false, false, false] };
+            let dailyProgress = { completed: [false, false, false], stats: [{a:0, h:0, t:0}, {a:0, h:0, t:0}, {a:0, h:0, t:0}] };
             let hintState = { groupCategory: null, revealedWords: [] };
             let hintsUsed = 0;
+            let gameStartTime = 0;
+
+            // !!! URL do seu script do Google Sheets !!!
+            const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZCYw3e1bU3bA0L3zW36e-M6-5G390cWIyA-CFuKWzrvUTsTL34EySzvaqdJdE_R6t6Q/exec";
+
+            const forbiddenWords = [
+                // Palavrões comuns
+                "caralho", "porra", "puta", "pqp", "vsf", "tnc", "merda", "bosta", "foder", "fuder",
+                "cacete", "buceta", "krl", "pnc", "fdp", "viado", "baitola", "bixa", "arrombado",
+                "corno", "chifrudo", "desgraça", "desgraca", "inferno", "demonio", "capeta",
+                // Ofensas e xingamentos
+                "otario", "otário", "babaca", "idiota", "imbecil", "retardado", "mongol", "trouxa",
+                "vagabundo", "vagabunda", "piranha", "prostituta", "canalha", "safado", "safada",
+                "cretino", "escroto", "escrota", "cuzão", "cuzao", "filho da puta",
+                // Termos racistas e discriminatórios
+                "preto", "nego", "negro", "macaco", "crioulo",
+                "gordo", "gorda", "baleia",
+                // Termos relacionados a atos sexuais de forma vulgar
+                "boquete", "punheta", "siririca", "broxa", "gozar",
+                // Outros termos de baixo calão
+                "cu", "pau", "pinto", "rola", "xoxota", "xota", "grelho", "rabao", "rabo",
+                // Variações e abreviações
+                "kct", "fudendo", "fodendo", "putaria", "viadinho", "bichona", "merdinha",
+                // Termos que podem ser usados para bullying
+                "feio", "feia", "horrivel", "nojento", "nojenta", "esquisito", "esquisita",
+                // Apologia a coisas ilegais/ruins
+                "hitler", "nazista", "nazi", "matar", "morrer", "suicidio", "drogas", "maconha", "cocaina"
+            ];
 
             function setupDailyGames() {
                 const today = new Date();
@@ -433,7 +493,7 @@
                 if (savedProgress) {
                     dailyProgress = savedProgress;
                 } else {
-                     dailyProgress = { completed: [false, false, false] };
+                     dailyProgress = { completed: [false, false, false], stats: [{a:0, h:0, t:0}, {a:0, h:0, t:0}, {a:0, h:0, t:0}] };
                      localStorage.setItem(`conexo-progress-${dateString}`, JSON.stringify(dailyProgress));
                 }
 
@@ -480,6 +540,7 @@
                 board.innerHTML = '';
                 solvedContainer.innerHTML = '';
                 board.style.pointerEvents = 'auto';
+                gameStartTime = Date.now();
                 hintState = { groupCategory: null, revealedWords: [] };
                 
                 currentPuzzle = dailyPuzzles[index]; 
@@ -569,12 +630,22 @@
             }
 
             function handleGameEnd(isWin) {
+                const elapsedTime = (Date.now() - gameStartTime) / 1000; // em segundos
+                
+                // Salva estatísticas do jogo atual
+                dailyProgress.completed[currentGameIndex] = true;
+                dailyProgress.stats[currentGameIndex] = { a: attempts, h: hintsUsed, t: elapsedTime };
+
                 dailyProgress.completed[currentGameIndex] = true;
                 const today = new Date();
                 const dateString = today.toISOString().split('T')[0];
                 localStorage.setItem(`conexo-progress-${dateString}`, JSON.stringify(dailyProgress));
 
-                if (isWin) {
+                const isAllGamesFinished = dailyProgress.completed.every(c => c === true);
+
+                if (isAllGamesFinished) {
+                    showSubmitScoreModal();
+                } else if (isWin) {
                     showModal('Parabéns!', 'Você resolveu o quebra-cabeça!');
                 } else {
                     showModal('Desistiu?', 'Aqui estão as respostas corretas.', true);
@@ -679,6 +750,10 @@
             deselectButton.addEventListener('click', deselectAll);
             hintButton.addEventListener('click', getHint);
             giveUpButton.addEventListener('click', giveUp);
+            rankingButton.addEventListener('click', showRankingModal);
+            rankingModalCloseButton.addEventListener('click', () => rankingModal.classList.remove('visible'));
+            submitScoreButton.addEventListener('click', submitScore);
+            submitScoreCloseButton.addEventListener('click', () => submitScoreModal.classList.remove('visible'));
 
             // --- Helper Functions ---
             function shuffleArray(array) {
@@ -697,6 +772,97 @@
             
             // --- Start Game ---
             setupDailyGames();
+
+            // --- Ranking & Score Logic ---
+            function calculateFinalScore() {
+                const totalStats = dailyProgress.stats.reduce((acc, s) => {
+                    acc.a += s.a;
+                    acc.h += s.h;
+                    acc.t += s.t;
+                    return acc;
+                }, { a: 0, h: 0, t: 0 });
+
+                const baseScore = 30000;
+                const attemptPenalty = totalStats.a * 150;
+                const hintPenalty = totalStats.h * 500;
+                const timePenalty = Math.floor(totalStats.t * 2);
+
+                const finalScore = Math.max(0, baseScore - attemptPenalty - hintPenalty - timePenalty);
+                return { score: finalScore, stats: totalStats };
+            }
+
+            function showSubmitScoreModal() {
+                const { score, stats } = calculateFinalScore();
+                scoreSummaryEl.innerHTML = `
+                    <div><strong>Pontuação Final:</strong> <span class="text-green-600 font-bold">${score.toLocaleString('pt-BR')}</span></div>
+                    <div><strong>Tentativas Totais:</strong> ${stats.a}</div>
+                    <div><strong>Dicas Usadas:</strong> ${stats.h}</div>
+                    <div><strong>Tempo Total:</strong> ${Math.floor(stats.t / 60)}m ${Math.floor(stats.t % 60)}s</div>
+                `;
+                submitScoreModal.classList.add('visible');
+            }
+
+            async function submitScore() {
+                const name = playerNameInput.value.trim();
+                if (!name) {
+                    alert('Por favor, digite seu nome para entrar no ranking.');
+                    return;
+                }
+
+                // Verificação de palavras proibidas
+                const lowerCaseName = name.toLowerCase();
+                const isNameForbidden = forbiddenWords.some(word => lowerCaseName.includes(word));
+
+                if (isNameForbidden) {
+                    alert('Este nome não é permitido. Por favor, escolha outro.');
+                    playerNameInput.value = ''; // Limpa o campo
+                    return;
+                }
+
+                const { score } = calculateFinalScore();
+                submitScoreButton.disabled = true;
+                submitScoreButton.textContent = 'Enviando...';
+
+                try {
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors', // Importante para evitar erros de CORS com Google Scripts
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, score })
+                    });
+                    alert('Pontuação enviada com sucesso!');
+                    submitScoreModal.classList.remove('visible');
+                } catch (error) {
+                    console.error('Erro ao enviar pontuação:', error);
+                    alert('Ocorreu um erro ao enviar sua pontuação. Tente novamente.');
+                } finally {
+                    submitScoreButton.disabled = false;
+                    submitScoreButton.textContent = 'Enviar para o Ranking';
+                }
+            }
+
+            async function showRankingModal() {
+                rankingModal.classList.add('visible');
+                rankingList.innerHTML = '<li>Carregando ranking...</li>';
+                try {
+                    const response = await fetch(SCRIPT_URL);
+                    const data = await response.json();
+
+                    // --- DIAGNÓSTICO ---
+                    console.log("Resposta completa do servidor:", data);
+                    console.log("Data que o servidor do Google está usando:", data.serverDate);
+                    // --- FIM DIAGNÓSTICO ---
+
+                    const rankingData = data.ranking || []; // Pega a lista de ranking de dentro do objeto
+
+                    rankingList.innerHTML = rankingData.map((entry, index) => 
+                        `<li><span class="font-bold">${index + 1}.</span> ${entry.name} - <span class="text-green-600">${entry.score.toLocaleString('pt-BR')} pts</span></li>`
+                    ).join('') || `<li class="text-center text-gray-500">Ninguém no ranking de hoje (${data.serverDate}). Seja o primeiro!</li>`;
+                } catch (error) {
+                    console.error('Erro ao buscar ranking:', error);
+                    rankingList.innerHTML = '<li>Erro ao carregar o ranking. Verifique o console para mais detalhes.</li>';
+                }
+            }
 
             // --- Credits Modal Logic ---
             creditsButton.addEventListener('click', () => {
