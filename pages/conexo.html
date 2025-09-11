@@ -826,8 +826,9 @@
                 try {
                     await fetch(SCRIPT_URL, {
                         method: 'POST',
-                        mode: 'no-cors', // Importante para evitar erros de CORS com Google Scripts
-                        headers: { 'Content-Type': 'application/json' },
+                        mode: 'no-cors', // Essencial para evitar erros de CORS com Google Scripts
+                        // Removido o 'headers' para que o navegador use 'text/plain',
+                        // que é compatível com o modo 'no-cors'.
                         body: JSON.stringify({ name, score })
                     });
                     alert('Pontuação enviada com sucesso!');
