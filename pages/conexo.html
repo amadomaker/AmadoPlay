@@ -146,7 +146,7 @@
             </div>
         </header>
 
-        <main id="game-container" class="w-full game-wrapper relative">
+        <main id="game-container" class="w-full game-wrapper relative pb-16">
             <!-- Grupos resolvidos aparecerão aqui -->
             <div id="solved-groups-container" class="mb-4 space-y-2"></div>
             
@@ -509,7 +509,6 @@
 
                 // 3. Monta a lista de jogos do dia e embaralha a ordem
                 dailyPuzzles = [dailyEasy, dailyMedium, dailyHard];
-                shuffleArray(dailyPuzzles); // Embaralha a ordem para o jogador
 
                 const dateEl = document.getElementById('current-date');
                 if (dateEl) {
@@ -826,8 +825,9 @@
                 try {
                     await fetch(SCRIPT_URL, {
                         method: 'POST',
-                        mode: 'no-cors', // Importante para evitar erros de CORS com Google Scripts
-                        headers: { 'Content-Type': 'application/json' },
+                        mode: 'no-cors', // Essencial para evitar erros de CORS com Google Scripts
+                        // Removido o 'headers' para que o navegador use 'text/plain',
+                        // que é compatível com o modo 'no-cors'.
                         body: JSON.stringify({ name, score })
                     });
                     alert('Pontuação enviada com sucesso!');
