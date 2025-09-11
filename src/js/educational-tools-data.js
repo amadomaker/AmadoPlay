@@ -204,6 +204,26 @@
       novo: true,
       acessos: 0,
       interno: 'pages/separar_silabas.html'
+    },
+    {
+      id: 'conexo',
+      titulo: 'Conexo',
+      descricao: 'Encontre grupos de quatro palavras que compartilham uma conexão secreta. Teste seu raciocínio, vocabulário e capacidade de associação!',
+      imagem: 'src/assets/images/fundo_conexo.png',
+      interno: 'pages/conexo.html',
+      materia: 'lingua-portuguesa',
+      series: [5, 6, 7, 8, 9],
+      tipo: ['interativo', 'ludico', 'raciocinio-logico'],
+      dificuldade: 'intermediario',
+      bncc: [
+        { codigo: 'EF05LP02', descricao: 'Identificar o caráter polissêmico das palavras (uma mesma palavra com diferentes significados, de acordo com o contexto de uso).' },
+        { codigo: 'EF06LP03', descricao: 'Analisar diferenças de sentido entre palavras de uma série sinonímica.' },
+        { codigo: 'EF35LP05', descricao: 'Inferir o sentido de palavras ou expressões desconhecidas em textos, com base no contexto da frase ou do texto.' },
+      ],
+      tags: ['conexo', 'conexão', 'grupos', 'palavras', 'vocabulário', 'raciocínio', 'semântica', 'lógica', 'EF05LP02', 'EF06LP03', 'EF35LP05', 'EF69LP47'],
+      popular: false,
+      novo: true,
+      acessos: 0
     }
 
 
