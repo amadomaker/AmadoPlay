@@ -732,7 +732,7 @@ body {
   font-size: 11px; /* Reduzido para não sobrepor botões */
 }
 #wordFormation {
-  top: 50%; /* Movido para baixo para aproximar */
+  top: 47%; /* Movido mais para cima em telas menores */
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap; /* Mantém os slots em uma única linha, como o original */
@@ -745,7 +745,7 @@ body {
 }
 
 #syllablesContainer {
-    bottom: 65px; /* Movido para cima para aproximar */
+    bottom: 10px; /* Movido mais para baixo para garantir espaço */
     display: grid;                        
     grid-template-columns: repeat(2, 1fr); 
     gap: 12px 16px;                        
@@ -840,7 +840,7 @@ body {
 
 /* Afastar um pouco os slots das sílabas */
 #wordFormation {
-    top: 48%; /* Movido para baixo para aproximar */
+    top: 47%; /* Movido para cima para dar mais espaço */
 }
 .syllableSlot {
   width: 71px;
@@ -849,7 +849,7 @@ body {
 }
 
 #syllablesContainer {
-    bottom: 45px; /* Movido para cima para aproximar */
+    bottom: 5px; /* Movido bem para baixo em telas muito pequenas */
     display: grid;                        
     grid-template-columns: repeat(2, 1fr); 
     gap: 12px 16px;                        
@@ -943,10 +943,10 @@ body {
 
 /* Afastar um pouco os slots das sílabas */
 #wordFormation {
-    top: 48%; /* Movido para baixo para aproximar */
+    top: 47%; /* Movido para cima para dar mais espaço */
 }
 #syllablesContainer {
-    bottom: 30px; /* Movido para cima para aproximar */
+    bottom: 5px; /* Movido bem para baixo para garantir espaço */
 }
 .syllableSlot {
   width: 61px;
@@ -956,7 +956,7 @@ body {
 
 #syllablesContainer {
     /* Regra consolidada para corrigir duplicidade. O valor 10px é o intencional. */
-    bottom: 30px;
+    bottom: 5px;
     display: grid;                        
     grid-template-columns: repeat(2, 1fr); 
     gap: 12px 16px;                        
@@ -994,25 +994,33 @@ body {
 
 }
 
-/* ================= AJUSTE PARA 5+ SÍLABAS EM TELAS PEQUENAS ================= */
+/* ================= AJUSTE DE TAMANHO PARA 4+ SÍLABAS EM CELULARES ================= */
 /*
-  Quando a palavra tem 5 ou mais sílabas, o espaço vertical fica apertado
-  em celulares. As regras abaixo usam :has() para detectar essa condição
-  e ajustar o layout dinamicamente, sem precisar de JavaScript.
+  Para palavras com 4 ou mais sílabas, os slots podem não caber na tela de celulares.
+  As regras abaixo diminuem o tamanho dos slots e das sílabas para garantir que o layout não quebre,
+  substituindo a antiga lógica de apenas mover os elementos para baixo.
 */
 @media (max-width: 480px) {
-    /* SOMENTE no caso de 5 sílabas, move o container de sílabas para baixo */
-    #wordFormation:has(.syllableSlot:nth-child(5)) ~ #syllablesContainer {
-        bottom: 30px; /* Aproximado dos slots */
+    /* Aplica um gap menor quando há 4 ou mais sílabas para economizar espaço */
+    #wordFormation:has(.syllableSlot:nth-child(4)) {
+        gap: 8px;
+    }
+
+    /* Diminui o tamanho dos slots para 4 ou mais sílabas */
+    #wordFormation:has(.syllableSlot:nth-child(4)) .syllableSlot {
+        width: 65px;
+        height: 55px;
+        font-size: 18px;
+    }
+
+    /* Diminui também os cards arrastáveis para manter a consistência */
+    #wordFormation:has(.syllableSlot:nth-child(4)) ~ #syllablesContainer .syllableCard {
+        width: 65px;
+        height: 55px;
+        font-size: 18px;
     }
 }
 
-@media (max-width: 375px) {
-    /* Ajuste mais agressivo para telas muito pequenas com 5 sílabas */
-    #wordFormation:has(.syllableSlot:nth-child(5)) ~ #syllablesContainer {
-        bottom: 25px; /* Aproximado dos slots */
-    }
-}
 
 /* ================= AJUSTE PARA 5 SÍLABAS EM DESKTOP ================= */
 @media (min-width: 1025px) {
