@@ -99,6 +99,20 @@
             transform: scale(1);
         }
 
+        /* Estilos para o modal de "Próximo Jogo" */
+        .modal-overlay.next-game-style {
+            align-items: flex-start;
+            padding-top: 10vh;
+            background: transparent; /* Remove o fundo escuro para melhor visualização */
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.next-game-style .modal-content {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+        }
+        .modal-overlay.next-game-style .modal-content button { background-color: #1f2937; color: white; }
+        .modal-overlay.next-game-style .modal-content button:hover { background-color: #374151; }
+
         /* === RESPONSIVIDADE MOBILE-FIRST === */
 
         /* Controles do rodapé */
@@ -181,7 +195,12 @@
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
                 </svg>
             </button>
-            <button id="ranking-button" class="absolute bottom-3 right-12 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors" aria-label="Ranking">🏆</button>
+            <button id="how-to-play-open-button" class="absolute bottom-3 right-12 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors" aria-label="Como Jogar">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                </svg>
+            </button>
+            <button id="ranking-button" class="absolute bottom-3 right-21 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors" aria-label="Ranking">🏆</button>
         </main>
     </div>
 
@@ -192,6 +211,22 @@
             <p id="modal-message" class="mb-4 text-gray-600"></p>
             <div id="modal-results" class="space-y-1 mb-6"></div>
             <button id="modal-close-button" class="w-full px-4 py-2 bg-gray-800 text-white rounded-md font-semibold hover:bg-gray-700 transition-colors">Próximo Jogo</button>
+        </div>
+    </div>
+
+    <!-- Modal para Como Jogar -->
+    <div id="how-to-play-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="text-xl font-bold mb-2">Como Jogar</h2>
+            <p class="text-gray-600 mb-4">
+                Encontre grupos de quatro palavras que tenham algo em comum.
+            </p>
+            <div class="text-left space-y-3 text-gray-700">
+                <p>1. Selecione quatro palavras que você acha que pertencem ao mesmo grupo.</p>
+                <p>2. Clique em 'Enviar' para verificar sua resposta.</p>
+                <p>3. Se estiver certo, o grupo será revelado. Se errar, você perde uma tentativa.</p>
+            </div>
+            <button id="how-to-play-close-button" class="mt-6 w-full px-4 py-2 bg-gray-800 text-white rounded-md font-semibold hover:bg-gray-700 transition-colors">Entendi, vamos jogar!</button>
         </div>
     </div>
 
@@ -255,9 +290,9 @@
                 {groups:[{category:"PALAVRAS COM 'CH'",words:["CHUVA","CHAVE","CHAPÉU","CHOCOLATE"],color:"#fde047"},{category:"PALAVRAS COM 'LH'",words:["OLHO","FILHO","PALHA","MILHO"],color:"#86efac"},{category:"PALAVRAS COM 'NH'",words:["DINHEIRO","GALINHA","SONHO","NINHO"],color:"#93c5fd"},{category:"PALAVRAS COM 'SS'",words:["PÁSSARO","OSSO","MASSA","PROFESSOR"],color:"#d8b4fe"}], difficulty: 1},
                 {groups:[{category:"COISAS QUE TÊM NÚMEROS",words:["RELÓGIO","CALENDÁRIO","TELEFONE","RÉGUA"],color:"#fde047"},{category:"COISAS QUE SE USAM NA CABEÇA",words:["CHAPÉU","BONÉ","TIARA","FONE"],color:"#86efac"},{category:"COISAS QUE SE ENCONTRAM NO CÉU",words:["SOL","LUA","NUVEM","ESTRELA"],color:"#93c5fd"},{category:"COISAS QUE SE COMPRAM NO SUPERMERCADO",words:["ARROZ","FEIJÃO","ÓLEO","AÇÚCAR"],color:"#d8b4fe"}], difficulty: 1},
                 {groups:[{category:"PROFISSÕES DA SAÚDE",words:["MÉDICO","ENFERMEIRO","DENTISTA","FARMACÊUTICO"],color:"#fde047"},{category:"PROFISSÕES DA EDUCAÇÃO",words:["PROFESSOR","DIRETOR","COORDENADOR","PEDAGOGO"],color:"#86efac"},{category:"PROFISSÕES DA CONSTRUÇÃO",words:["PEDREIRO","ENGENHEIRO","ARQUITETO","ELETRICISTA"],color:"#93c5fd"},{category:"PROFISSÕES ARTÍSTICAS",words:["ATOR","MÚSICO","PINTOR","ESCRITOR"],color:"#d8b4fe"}], difficulty: 1},
-                {groups:[{category:"SABORES DE PIZZA",words:["CALABRESA","MARGUERITA","PORTUGUESA","FRANGO"],color:"#fde047"},{category:"SABORES DE SUCO",words:["LARANJA","ABACAXI","UVA","MARACUJÁ"],color:"#86efac"},{category:"SABORES DE BOLO",words:["CHOCOLATE","FUBÁ","CENOURA","LARANJA"],color:"#93c5fd"},{category:"SABORES DE SORVETE",words:["MORANGO","CREME","BAUNILHA","FLOCOS"],color:"#d8b4fe"}], difficulty: 1},
+                {groups:[{category:"SABORES DE PIZZA",words:["CALABRESA","MARGUERITA","PORTUGUESA","FRANGO"],color:"#fde047"},{category:"SABORES DE SUCO",words:["LARANJA","ABACAXI","UVA","MARACUJÁ"],color:"#86efac"},{category:"SABORES DE BOLO",words:["CHOCOLATE","FUBÁ","CENOURA","FORMIGUEIRO"],color:"#93c5fd"},{category:"SABORES DE SORVETE",words:["MORANGO","CREME","BAUNILHA","FLOCOS"],color:"#d8b4fe"}], difficulty: 1},
                 {groups:[{category:"ANIMAIS COM PELOS",words:["CACHORRO","GATO","URSO","LEÃO"],color:"#fde047"},{category:"ANIMAIS COM PENAS",words:["GALINHA","PATO","POMBO","ÁGUIA"],color:"#86efac"},{category:"ANIMAIS COM ESCAMAS",words:["PEIXE","COBRA","LAGARTO","JACARÉ"],color:"#93c5fd"},{category:"ANIMAIS COM CARAPAÇA",words:["TARTARUGA","TATU","CARACOL","CRACA"],color:"#d8b4fe"}], difficulty: 1},
-                {groups:[{category:"OBJETOS DE METAL",words:["PANELA","MOEDA","CHAVE","LATA"],color:"#fde047"},{category:"OBJETOS DE MADEIRA",words:["MESA","CADEIRA","PORTA","LÁPIS"],color:"#86efac"},{category:"OBJETOS DE PLÁSTICO",words:["GARRAFA","COPO","SACOLA","POTE"],color:"#93c5fd"},{category:"OBJETOS DE VIDRO",words:["COPO","JANELA","GARRAFA","PRATO"],color:"#d8b4f4"}], difficulty: 1},
+                {groups:[{category:"OBJETOS DE METAL",words:["PANELA","MOEDA","CHAVE","LATA"],color:"#fde047"},{category:"OBJETOS DE MADEIRA",words:["MESA","CADEIRA","PORTA","LÁPIS"],color:"#86efac"},{category:"OBJETOS DE PLÁSTICO",words:["BALDE","BACIA","SACOLA","POTE"],color:"#93c5fd"},{category:"OBJETOS DE VIDRO",words:["COPO","JANELA","GARRAFA","PRATO"],color:"#d8b4f4"}], difficulty: 1},
                 {groups:[{category:"VERBOS TERMINADOS EM 'AR'",words:["ANDAR","FALAR","CANTAR","AMAR"],color:"#fde047"},{category:"VERBOS TERMINADOS EM 'ER'",words:["CORRER","COMER","BEBER","VENDER"],color:"#86efac"},{category:"VERBOS TERMINADOS EM 'IR'",words:["SORRIR","DORMIR","PARTIR","ABRIR"],color:"#93c5fd"},{category:"VERBOS IRREGULARES",words:["SER","IR","TER","VIR"],color:"#d8b4fe"}], difficulty: 1},
                 {groups:[{category:"ADJETIVOS POSITIVOS",words:["FELIZ","BONITO","LEGAL","AMIGO"],color:"#fde047"},{category:"ADJETIVOS NEGATIVOS",words:["TRISTE","FEIO","CHATO","RUIM"],color:"#86efac"},{category:"SINÔNIMOS DE 'GRANDE'",words:["ENORME","GIGANTE","IMENSO","VASTO"],color:"#93c5fd"},{category:"SINÔNIMOS DE 'PEQUENO'",words:["MÍNIMO","MINÚSCULO","REDUZIDO","ÍNFIMO"],color:"#d8b4fe"}], difficulty: 1},
                 {groups:[{category:"COISAS QUE SE ENCONTRAM NA ESCOLA",words:["ALUNO","PROFESSOR","QUADRO","CARTEIRA"],color:"#fde047"},{category:"COISAS QUE SE ENCONTRAM NA PRAIA",words:["AREIA","MAR","CONCHA","SOL"],color:"#86efac"},{category:"COISAS QUE SE ENCONTRAM NA FLORESTA",words:["ÁRVORE","ANIMAL","RIO","PLANTA"],color:"#93c5fd"},{category:"COISAS QUE SE ENCONTRAM NA CIDADE",words:["PRÉDIO","CARRO","RUA","PESSOAS"],color:"#d8b4fe"}], difficulty: 1},
@@ -295,37 +330,37 @@
                 
                 // --- NÍVEL MÉDIO ---
                 {groups:[{category:"COISAS QUE TÊM BOTÕES",words:["CAMISA","CONTROLE REMOTO","ELEVADOR","CALÇA"],color:"#fde047"},{category:"MARCAS QUE VIRARAM VERBO",words:["XEROX","GOOGLE","PHOTOSHOP","UBER"],color:"#86efac"},{category:"PARTES DE UM COMPUTADOR",words:["MONITOR","TECLADO","MOUSE","GABINETE"],color:"#93c5fd"},{category:"TERMOS DE INTERNET",words:["WI-FI","DOWNLOAD","LINK","HASHTAG"],color:"#d8b4fe"}], difficulty: 2},
-                {groups:[{category:"INSTRUMENTOS DE MEDIDA",words:["RÉGUA","BALANÇA","TERMÔMETRO","CRONÔMETRO"],color:"#fde047"},{category:"COISAS EM UM ESTOJO",words:["LÁPIS","BORRACHA","APONTADOR","CANETA"],color:"#86efac"},{category:"ANIMAIS AQUÁTICOS",words:["PEIXE","BALEIA","POLVO","TARTARUGA"],color:"#93c5fd"},{category:"OBJETOS PARA ESCREVER",words:["CANETA","LÁPIS","GIZ","PINCEL"],color:"#d8b4fe"}], difficulty: 2},
+                {groups:[{category:"INSTRUMENTOS DE MEDIDA",words:["RÉGUA","BALANÇA","TERMÔMETRO","CRONÔMETRO"],color:"#fde047"},{category:"COISAS EM UM ESTOJO",words:["COLA","BORRACHA","APONTADOR","TESOURA"],color:"#86efac"},{category:"ANIMAIS AQUÁTICOS",words:["PEIXE","BALEIA","POLVO","TARTARUGA"],color:"#93c5fd"},{category:"OBJETOS PARA ESCREVER",words:["CANETA","LÁPIS","GIZ","PINCEL"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"FERRAMENTAS DE JARDINAGEM",words:["PÁ","RASTELO","TESOURA","REGADOR"],color:"#fde047"},{category:"SABORES DE PIZZA",words:["CALABRESA","MUSSARELA","MARGHERITA","PORTUGUESA"],color:"#86efac"},{category:"VILÕES DA DISNEY",words:["MALÉVOLA","ÚRSULA","SCAR","JAFAR"],color:"#93c5fd"},{category:"ACOMPANHAMENTOS PARA PÃO",words:["MANTEIGA","QUEIJO","PRESUNTO","REQUEIJÃO"],color:"#d8b4fe"}], difficulty: 2},
-                {groups:[{category:"JOGOS DE CARTAS",words:["TRUCO","BURACO","PACIÊNCIA","UNO"],color:"#fde047"},{category:"AÇÕES FEITAS COM AS MÃOS",words:["ESCREVER","DESENHAR","APLAUDIR","ACENAR"],color:"#86efac"},{category:"OBJETOS DE UM BANHEIRO",words:["VASO","PIA","CHUVEIRO","ESPELHO"],color:"#93c5fd"},{category:"COISAS EM UMA COZINHA",words:["FOGÃO","GELADEIRA","PIA","ARMÁRIO"],color:"#d8b4fe"}], difficulty: 2},
+                {groups:[{category:"JOGOS DE CARTAS",words:["TRUCO","BURACO","PACIÊNCIA","UNO"],color:"#fde047"},{category:"AÇÕES FEITAS COM AS MÃOS",words:["ESCREVER","DESENHAR","APLAUDIR","ACENAR"],color:"#86efac"},{category:"OBJETOS DE UM BANHEIRO",words:["VASO","BOXE","CHUVEIRO","ESPELHO"],color:"#93c5fd"},{category:"COISAS EM UMA COZINHA",words:["FOGÃO","GELADEIRA","PIA","ARMÁRIO"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"COISAS QUE SE USA NOS PÉS",words:["MEIA","TÊNIS","CHINELO","SANDÁLIA"],color:"#fde047"},{category:"COISAS QUE SE USA NA CABEÇA",words:["CHAPÉU","BONÉ","TIARA","CAPACETE"],color:"#86efac"},{category:"COISAS EM UM PARQUE",words:["BANCO","BALANÇO","ESCORREGADOR","ÁRVORE"],color:"#93c5fd"},{category:"COISAS EM UMA FESTA",words:["BOLO","BALÃO","PRESENTE","CONVIDADO"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"COISAS DE SUPERMERCADO",words:["CARRINHO","CAIXA","PRATELEIRA","PRODUTO"],color:"#fde047"},{category:"COISAS DE HOSPITAL",words:["MÉDICO","ENFERMEIRA","MACA","REMÉDIO"],color:"#86efac"},{category:"COISAS DE CINEMA",words:["TELA","CADEIRA","PIPOCA","FILME"],color:"#93c5fd"},{category:"COISAS DE AVIÃO",words:["ASA","TURBINA","ASSENTO","PILOTO"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"PALAVRAS COM 'X' (SOM DE 'CH')",words:["XÍCARA","LIXO","CAIXA","PEIXE"],color:"#fde047"},{category:"PALAVRAS COM 'S' (SOM DE 'Z')",words:["CASA","CASAMENTO","BLUSA","PESADO"],color:"#86efac"},{category:"COISAS 'LEVES'",words:["PENA","AR","ALGODÃO","BRISA"],color:"#93c5fd"},{category:"COISAS 'PESADAS'",words:["ELEFANTE","ROCHA","CHUMBO","BIGORNA"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"MARCAS DE REFRIGERANTE",words:["COCA-COLA","PEPSI","GUARANÁ","FANTA"],color:"#fde047"},{category:"MARCAS DE CHOCOLATE",words:["NESTLÉ","LACTA","GAROTO","HERSHEY'S"],color:"#86efac"},{category:"PAÍSES COM 'A'",words:["ARGENTINA","AUSTRÁLIA","ALEMANHA","ANGOLA"],color:"#93c5fd"},{category:"CIDADES COM NOMES DE SANTOS",words:["SÃO PAULO","SÃO FRANCISCO","SÃO LUÍS","SÃO SEBASTIÃO"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"COISAS MEDIDAS EM GRAUS",words:["TEMPERATURA","ÂNGULO","FEBRE","LATITUDE"],color:"#fde047"},{category:"TERMOS DE FOTOGRAFIA",words:["FLASH","LENTE","FOCO","ZOOM"],color:"#86efac"},{category:"COISAS QUE TÊM 'OLHO'",words:["FURACÃO","AGULHA","BATATA","ROSTO"],color:"#93c5fd"},{category:"COISAS QUE TÊM 'PÉ'",words:["CADEIRA","MONTANHA","ALFACE","HUMANO"],color:"#d8b4fe"}], difficulty: 2},
-                {groups:[{category:"COISAS QUE TÊM 'BOCA'",words:["FOGÃO","FORNO","RIO","GARRAFA"],color:"#fde047"},{category:"COISAS QUE TÊM 'BRAÇO'",words:["RIO","CADEIRA","ROBÔ","POLVO"],color:"#86efac"},{category:"COISAS QUE TÊM 'CABEÇA'",words:["ALFINETE","PREGO","ALHO","REPOLHO"],color:"#93c5fd"},{category:"COISAS QUE TÊM 'DENTE'",words:["ALHO","PENTE","SERROTE","ENGRENAGEM"],color:"#d8b4fe"}], difficulty: 2},
+                {groups:[{category:"COISAS QUE TÊM 'BOCA'",words:["FOGÃO","FORNO","CALÇA","GARRAFA"],color:"#fde047"},{category:"COISAS QUE TÊM 'BRAÇO'",words:["RIO","CADEIRA","ROBÔ","POLVO"],color:"#86efac"},{category:"COISAS QUE TÊM 'CABEÇA'",words:["ALFINETE","PREGO","FÓSFORO","REPOLHO"],color:"#93c5fd"},{category:"COISAS QUE TÊM 'DENTE'",words:["ALHO","PENTE","SERROTE","ENGRENAGEM"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"COISAS QUE TÊM 'LÍNGUA'",words:["FOGO","SAPATO","TÊNIS","POVO"],color:"#fde047"},{category:"COISAS QUE TÊM 'CORAÇÃO'",words:["ALCACHOFRA","CIDADE","PALMITO","LUTA"],color:"#86efac"},{category:"COISAS QUE TÊM 'ASA'",words:["AVIÃO","XÍCARA","ANJO","PRÉDIO"],color:"#93c5fd"},{category:"ANIMAIS COM 'G'",words:["GATO","GIRAFA","GALINHA","GOLFINHO"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"VERBOS DE MOVIMENTO",words:["CORRER","ANDAR","PULAR","NADAR"],color:"#fde047"},{category:"VERBOS DE COMUNICAÇÃO",words:["FALAR","DIZER","CONTAR","PERGUNTAR"],color:"#86efac"},{category:"VERBOS DE SENTIMENTO",words:["AMAR","GOSTAR","ODIA","SENTIR"],color:"#93c5fd"},{category:"VERBOS DE PERCEPÇÃO",words:["VER","OUVIR","CHEIRAR","TOCAR"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"CAPITAIS DO BRASIL",words:["BRASÍLIA","SÃO PAULO","RIO DE JANEIRO","SALVADOR"],color:"#fde047"},{category:"ESTADOS DO NORDESTE",words:["BAHIA","PERNAMBUCO","CEARÁ","MARANHÃO"],color:"#86efac"},{category:"RIOS BRASILEIROS",words:["AMAZONAS","SÃO FRANCISCO","PARANÁ","TIETÊ"],color:"#93c5fd"},{category:"BIOMAS BRASILEIROS",words:["AMAZÔNIA","CERRADO","MATA ATLÂNTICA","PANTANAL"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"PERSONAGENS DE SÉRIES",words:["WANDINHA","ELEVEN","HOMELANDER","LOKI"],color:"#fde047"},{category:"APRESENTADORES DE TV",words:["SILVIO SANTOS","FAUSTÃO","LUCIANO HUCK","ELIANA"],color:"#86efac"},{category:"JOGADORES DE FUTEBOL",words:["PELÉ","MARADONA","MESSI","CRISTIANO RONALDO"],color:"#93c5fd"},{category:"CANTORES BRASILEIROS",words:["ROBERTO CARLOS","CAETANO VELOSO","GILBERTO GIL","ANITTA"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"TERMOS DE ESCOLA",words:["PROVA","AULA","RECREIO","DIRETOR"],color:"#fde047"},{category:"TERMOS DE HOSPITAL",words:["CIRURGIA","EXAME","CONSULTA","INTERNAÇÃO"],color:"#86efac"},{category:"TERMOS DE RESTAURANTE",words:["CARDÁPIO","GARÇOM","CONTA","PEDIDO"],color:"#93c5fd"},{category:"TERMOS DE AEROPORTO",words:["EMBARQUE","CHECK-IN","PASSAPORTE","BAGAGEM"],color:"#d8b4fe"}], difficulty: 2},
-                {groups:[{category:"COISAS QUE SE ABRE",words:["PORTA","JANELA","LIVRO","GARRAFA"],color:"#fde047"},{category:"COISAS QUE SE FECHA",words:["PORTA","JANELA","LIVRO","BOCA"],color:"#86efac"},{category:"COISAS QUE SE CORTA",words:["PÃO","CABELO","PAPEL","UNHA"],color:"#93c5fd"},{category:"COISAS QUE SE QUEBRA",words:["COPO","PRATO","OVO","PROMESSA"],color:"#d8b4fe"}], difficulty: 2},
+                {groups:[{category:"COISAS QUE SE ABRE",words:["MENTE","CONTA","JOGO","GARRAFA"],color:"#fde047"},{category:"COISAS QUE SE FECHA",words:["PORTA","JANELA","LIVRO","BOCA"],color:"#86efac"},{category:"COISAS QUE SE CORTA",words:["PÃO","CABELO","PAPEL","UNHA"],color:"#93c5fd"},{category:"COISAS QUE SE QUEBRA",words:["COPO","PRATO","OVO","PROMESSA"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"SÍMBOLOS MATEMÁTICOS",words:["MAIS","MENOS","VEZES","DIVIDIR"],color:"#fde047"},{category:"FORMAS GEOMÉTRICAS PLANAS",words:["CÍRCULO","QUADRADO","TRIÂNGULO","RETÂNGULO"],color:"#86efac"},{category:"FORMAS GEOMÉTRICAS ESPACIAIS",words:["CUBO","ESFERA","CILINDRO","PIRÂMIDE"],color:"#93c5fd"},{category:"NÚMEROS PARES",words:["DOIS","QUATRO","SEIS","OITO"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"CORES QUENTES",words:["VERMELHO","LARANJA","AMARELO","ROSA"],color:"#fde047"},{category:"CORES FRIAS",words:["AZUL","VERDE","ROXO","VIOLETA"],color:"#86efac"},{category:"CORES NEUTRAS",words:["BRANCO","PRETO","CINZA","BEGE"],color:"#93c5fd"},{category:"TONS DE AZUL",words:["CELESTE","MARINHO","TURQUESA","CIANO"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"PARTES DE UMA CARTA",words:["REMETENTE","DESTINATÁRIO","DATA","ASSINATURA"],color:"#fde047"},{category:"GÊNEROS DE FILMES DE TERROR",words:["SLASHER","FOUND FOOTAGE","PSICOLÓGICO","SOBRENATURAL"],color:"#86efac"},{category:"TIPOS DE ROCHA",words:["ÍGNEA","SEDIMENTAR","METAMÓRFICA","VULCÂNICA"],color:"#93c5fd"},{category:"ELEMENTOS DE UMA NOTÍCIA",words:["TÍTULO","LEAD","CORPO","FOTO"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"COISAS QUE SE ENCONTRAM EM UM LABORATÓRIO",words:["MICROSCÓPIO","BÉQUER","TUBO DE ENSAIO","BANCADA"],color:"#fde047"},{category:"EQUIPAMENTOS DE PROTEÇÃO INDIVIDUAL (EPI)",words:["CAPACETE","LUVA","BOTA","ÓCULOS"],color:"#86efac"},{category:"TERMOS DE MÚSICA",words:["MELODIA","RITMO","HARMONIA","ACORDE"],color:"#93c5fd"},{category:"TERMOS DE TEATRO",words:["CENA","ATO","PALCO","PLATEIA"],color:"#d8b4fe"}], difficulty: 2},
-                {groups:[{category:"COISAS QUE SE FAZ COM ÁGUA",words:["BEBER","NADAR","LAVAR","COZINHAR"],color:"#fde047"},{category:"COISAS QUE SE FAZ COM FOGO",words:["COZINHAR","AQUECER","ILUMINAR","QUEIMAR"],color:"#86efac"},{category:"COISAS QUE SE FAZ COM VENTO",words:["SOLTAR PIPA","VELEJAR","SECAR ROUPA","GERAR ENERGIA"],color:"#93c5fd"},{category:"COISAS QUE SE FAZ COM TERRA",words:["PLANTAR","CONSTRUIR","ESCAVAR","BRINCAR"],color:"#d8b4fe"}], difficulty: 2},
+                {groups:[{category:"COISAS QUE SE FAZ COM ÁGUA",words:["BEBER","NADAR","LAVAR","REGAR"],color:"#fde047"},{category:"COISAS QUE SE FAZ COM FOGO",words:["COZINHAR","AQUECER","ILUMINAR","QUEIMAR"],color:"#86efac"},{category:"COISAS QUE SE FAZ COM VENTO",words:["SOLTAR PIPA","VELEJAR","SECAR ROUPA","GERAR ENERGIA"],color:"#93c5fd"},{category:"COISAS QUE SE FAZ COM TERRA",words:["PLANTAR","CONSTRUIR","ESCAVAR","BRINCAR"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"ANIMAIS QUE RASTEJAM",words:["COBRA","MINHOCA","LESMA","LAGARTA"],color:"#fde047"},{category:"ANIMAIS QUE PULAM",words:["SAPO","CANGURU","COELHO","GAFANHOTO"],color:"#86efac"},{category:"ANIMAIS QUE NADAM",words:["PEIXE","GOLFINHO","BALEIA","TUBARÃO"],color:"#93c5fd"},{category:"ANIMAIS QUE VOAM",words:["PÁSSARO","MORCEGO","BORBOLETA","ABELHA"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"PALAVRAS COM 'BR'",words:["BRASIL","BRINCO","BRAÇO","BRILHO"],color:"#fde047"},{category:"PALAVRAS COM 'CR'",words:["CRIANÇA","CRAVO","CRIME","CREME"],color:"#86efac"},{category:"PALAVRAS COM 'FR'",words:["FRANÇA","FRUTA","FRIO","FRASE"],color:"#93c5fd"},{category:"PALAVRAS COM 'TR'",words:["TRABALHO","TREM","TRISTE","TRATOR"],color:"#d8b4fe"}], difficulty: 2},
-                {groups:[{category:"OBJETOS DE ESCRITÓRIO",words:["COMPUTADOR","TELEFONE","IMPRESSORA","CADEIRA"],color:"#fde047"},{category:"OBJETOS DE QUARTO",words:["CAMA","GUARDA-ROUPA","CÔMODA","ABAJUR"],color:"#86efac"},{category:"OBJETOS DE SALA",words:["SOFÁ","TELEVISÃO","RACK","TAPETE"],color:"#93c5fd"},{category:"OBJETOS DE JARDIM",words:["MANGUEIRA","CADEIRA","MESA","GUARDA-SOL"],color:"#d8b4fe"}], difficulty: 2},
+                {groups:[{category:"OBJETOS DE ESCRITÓRIO",words:["COMPUTADOR","TELEFONE","IMPRESSORA","CADEIRA"],color:"#fde047"},{category:"OBJETOS DE QUARTO",words:["CAMA","GUARDA-ROUPA","CÔMODA","ABAJUR"],color:"#86efac"},{category:"OBJETOS DE SALA",words:["SOFÁ","TELEVISÃO","RACK","TAPETE"],color:"#93c5fd"},{category:"OBJETOS DE JARDIM",words:["MANGUEIRA","PLANTA","MESA","GUARDA-SOL"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"COISAS QUE SE USA PARA LIMPAR",words:["SABÃO","DETERGENTE","ÁGUA SANITÁRIA","ESPONJA"],color:"#fde047"},{category:"COISAS QUE SE USA PARA COZINHAR",words:["PANELA","FOGÃO","FORNO","COLHER"],color:"#86efac"},{category:"COISAS QUE SE USA PARA DORMIR",words:["CAMA","TRAVESSEIRO","COBERTOR","PIJAMA"],color:"#93c5fd"},{category:"COISAS QUE SE USA PARA ESTUDAR",words:["LIVRO","CADERNO","LÁPIS","COMPUTADOR"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"TIPOS DE FILME",words:["AÇÃO","COMÉDIA","DRAMA","TERROR"],color:"#fde047"},{category:"TIPOS DE LIVRO",words:["ROMANCE","FICÇÃO","BIOGRAFIA","POESIA"],color:"#86efac"},{category:"TIPOS DE MÚSICA",words:["ROCK","POP","SAMBA","SERTANEJO"],color:"#93c5fd"},{category:"TIPOS DE JOGO",words:["TABULEIRO","CARTA","VIDEOGAME","ESPORTIVO"],color:"#d8b4fe"}], difficulty: 2},
-                {groups:[{category:"COISAS QUE SE ENCONTRAM EM UM CARRO",words:["VOLANTE","BANCO","MOTOR","RODA"],color:"#fde047"},{category:"COISAS QUE SE ENCONTRAM EM UMA MOTO",words:["GUIDÃO","ASSENTO","MOTOR","RODA"],color:"#86efac"},{category:"COISAS QUE SE ENCONTRAM EM UM BARCO",words:["LEME","ÂNCORA","MOTOR","CASCO"],color:"#93c5fd"},{category:"COISAS QUE SE ENCONTRAM EM UM TREM",words:["VAGÃO","TRILHO","MOTOR","JANELA"],color:"#d8b4fe"}], difficulty: 2},
+                {groups:[{category:"COISAS QUE SE ENCONTRAM EM UM CARRO",words:["VOLANTE","BANCO","FREIO","PNEU"],color:"#fde047"},{category:"COISAS QUE SE ENCONTRAM EM UMA MOTO",words:["GUIDÃO","ASSENTO","ESCAPAMENTO","CORRENTE"],color:"#86efac"},{category:"COISAS QUE SE ENCONTRAM EM UM BARCO",words:["LEME","ÂNCORA","MASTRO","CASCO"],color:"#93c5fd"},{category:"COISAS QUE SE ENCONTRAM EM UM TREM",words:["VAGÃO","TRILHO","APITO","JANELA"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"PALAVRAS RELACIONADAS AO NATAL",words:["PAPAI NOEL","PRESENTE","ÁRVORE","SINO"],color:"#fde047"},{category:"PALAVRAS RELACIONADAS À PÁSCOA",words:["OVO","COELHO","CHOCOLATE","CEIA"],color:"#86efac"},{category:"PALAVRAS RELACIONADAS AO CARNAVAL",words:["FANTASIA","SAMBA","BLOCO","DESFILE"],color:"#93c5fd"},{category:"PALAVRAS RELACIONADAS AO SÃO JOÃO",words:["FOGUEIRA","QUADRILHA","MILHO","BANDEIRINHA"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"COISAS QUE SE FAZ COM A BOCA",words:["FALAR","COMER","BEIJAR","CANTAR"],color:"#fde047"},{category:"COISAS QUE SE FAZ COM OS OLHOS",words:["VER","LER","PISCAR","OLHAR"],color:"#86efac"},{category:"COISAS QUE SE FAZ COM OS PÉS",words:["ANDAR","CORRER","CHUTAR","PULAR"],color:"#93c5fd"},{category:"COISAS QUE SE FAZ COM O NARIZ",words:["CHEIRAR","RESPIRAR","FUNGAR","ASSOPRAR"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"ANIMAIS QUE VIVEM NA FLORESTA",words:["MACACO","ONÇA","TATU","JACARÉ"],color:"#fde047"},{category:"ANIMAIS QUE VIVEM NO DESERTO",words:["CAMELO","ESCORPIÃO","SURICATO","FENECO"],color:"#86efac"},{category:"ANIMAIS QUE VIVEM NO POLO",words:["URSO POLAR","PINGUIM","FOCA","LEÃO-MARINHO"],color:"#93c5fd"},{category:"ANIMAIS QUE VIVEM NO OCEANO",words:["BALEIA","TUBARÃO","POLVO","LULA"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"COISAS QUE SE USA PARA VIAJAR",words:["MALA","PASSAPORTE","PASSAGEM","DINHEIRO"],color:"#fde047"},{category:"COISAS QUE SE USA PARA ACAMPAR",words:["BARRACA","SACO DE DORMIR","LANTERNA","FOGUEIRA"],color:"#86efac"},{category:"COISAS QUE SE USA PARA PESCAR",words:["VARA","ANZOL","ISCA","LINHA"],color:"#93c5fd"},{category:"COISAS QUE SE USA PARA PINTAR",words:["TINTA","PINCEL","TELA","PALETA"],color:"#d8b4fe"}], difficulty: 2},
-                {groups:[{category:"TERMOS DE FUTEBOL",words:["GOL","BOLA","TRAVE","JUIZ"],color:"#fde047"},{category:"TERMOS DE BASQUETE",words:["CESTA","BOLA","QUADRA","ARREMESSO"],color:"#86efac"},{category:"TERMOS DE VÔLEI",words:["REDE","BOLA","SAQUE","BLOQUEIO"],color:"#93c5fd"},{category:"TERMOS DE TÊNIS",words:["RAQUETE","BOLA","REDE","SAQUE"],color:"#d8b4fe"}], difficulty: 2},
+                {groups:[{category:"TERMOS DE FUTEBOL",words:["GOL","PÊNALTI","TRAVE","JUIZ"],color:"#fde047"},{category:"TERMOS DE BASQUETE",words:["CESTA","DUNK","QUADRA","ARREMESSO"],color:"#86efac"},{category:"TERMOS DE VÔLEI",words:["MANCHETE","RODÍZIO","SAQUE","BLOQUEIO"],color:"#93c5fd"},{category:"TERMOS DE TÊNIS",words:["RAQUETE","ACE","MATCH POINT","SET"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"COISAS QUE SE ENCONTRAM EM UM CASTELO",words:["REI","RAINHA","TRONO","MURALHA"],color:"#fde047"},{category:"COISAS QUE SE ENCONTRAM EM UMA IGREJA",words:["PADRE","ALTAR","BANCO","CRUZ"],color:"#86efac"},{category:"COISAS QUE SE ENCONTRAM EM UM CIRCO",words:["PALHAÇO","MÁGICO","TRAPEZISTA","LONA"],color:"#93c5fd"},{category:"COISAS QUE SE ENCONTRAM EM UM ZOOLÓGICO",words:["JAULA","ANIMAL","VETERINÁRIO","BILHETERIA"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"PALAVRAS COM 'P'",words:["PATO","PÃO","PÉ","PIPOCA"],color:"#fde047"},{category:"PALAVRAS COM 'B'",words:["BOLA","BOLO","BONECA","BANANA"],color:"#86efac"},{category:"PALAVRAS COM 'M'",words:["MACACO","MALA","MESA","MÃO"],color:"#93c5fd"},{category:"PALAVRAS COM 'L'",words:["LIVRO","LUA","LÁPIS","LEÃO"],color:"#d8b4fe"}], difficulty: 2},
                 {groups:[{category:"COISAS QUE SE COMPRA EM UMA PADARIA",words:["PÃO","BOLO","SONHO","LEITE"],color:"#fde047"},{category:"COISAS QUE SE COMPRA EM UMA FARMÁCIA",words:["REMÉDIO","CURATIVO","ALGODÃO","SERINGA"],color:"#86efac"},{category:"COISAS QUE SE COMPRA EM UMA LIVRARIA",words:["LIVRO","CADERNO","CANETA","AGENDA"],color:"#93c5fd"},{category:"COISAS QUE SE COMPRA EM UMA LOJA DE ROUPAS",words:["CAMISA","CALÇA","VESTIDO","SAIA"],color:"#d8b4fe"}], difficulty: 2},
@@ -396,7 +431,7 @@
                 {groups:[{category:"TERMOS DE CONTABILIDADE",words:["ATIVO","PASSIVO","DÉBITO","CRÉDITO"],color:"#fde047"},{category:"TERMOS DE INVESTIMENTO",words:["AÇÃO","DIVIDENDO","FUNDO","TESOURO DIRETO"],color:"#86efac"},{category:"TERMOS DE ADMINISTRAÇÃO",words:["SWOT","FLUXOGRAMA","ORGANOGRAMA","BRAINSTORM"],color:"#93c5fd"},{category:"TERMOS DE RECURSOS HUMANOS",words:["FEEDBACK","TURNOVER","HEADHUNTER","ONBOARDING"],color:"#d8b4fe"}], difficulty: 3},
                 {groups:[{category:"TIPOS DE PRÊMIO NOBEL",words:["PAZ","LITERATURA","QUÍMICA","FÍSICA"],color:"#fde047"},{category:"TIPOS DE PRÊMIO GRAMMY",words:["ÁLBUM DO ANO","CANÇÃO DO ANO","GRAVAÇÃO DO ANO","ARTISTA REVELAÇÃO"],color:"#86efac"},{category:"TIPOS DE MEDALHA OLÍMPICA",words:["OURO","PRATA","BRONZE","PARTICIPAÇÃO"],color:"#93c5fd"},{category:"TIPOS DE FAIXA (ARTES MARCIAIS)",words:["BRANCA","AZUL","ROXA","PRETA"],color:"#d8b4fe"}], difficulty: 3},
                 {groups:[{category:"TERMOS USADOS EM VINÍCOLAS",words:["SAFRA","TERROIR","TANINO","BARREL"],color:"#fde047"},{category:"TERMOS USADOS EM CERVEJARIA",words:["LÚPULO","MALTE","FERMENTAÇÃO","LEVEDURA"],color:"#86efac"},{category:"TERMOS USADOS EM CAFETERIA",words:["TORRA","MOAGEM","BARISTA","LATTE ART"],color:"#93c5fd"},{category:"TERMOS USADOS EM CHARCUTARIA",words:["CURA","DEFUMAÇÃO","SALAME","PRESUNTO"],color:"#d8b4fe"}], difficulty: 3},
-                {groups:[{category:"COISAS QUE PODEM SER 'FINAS'",words:["IRONIA","SINTONIA","EDUCAÇÃO","PORCELANA"],color:"#fde047"},{category:"COISAS QUE PODEM SER 'GROSSAS'",words:["PIADA","VOZ","PAREDE","LIXA"],color:"#86efac"},{category:"COISAS QUE PODEM SER 'DOCES'",words:["VINGANÇA","LEMBRANÇA","VOZ","VENENO"],color:"#93c5fd"},{category:"COISAS QUE PODEM SER 'AMARGAS'",words:["VERDADE","DERROTA","REMÉDIO","SAUDADE"],color:"#d8b4fe"}], difficulty: 3},
+                {groups:[{category:"COISAS QUE PODEM SER 'FINAS'",words:["IRONIA","SINTONIA","EDUCAÇÃO","PORCELANA"],color:"#fde047"},{category:"COISAS QUE PODEM SER 'GROSSAS'",words:["PIADA","CALIBRE","PAREDE","LIXA"],color:"#86efac"},{category:"COISAS QUE PODEM SER 'DOCES'",words:["VINGANÇA","LEMBRANÇA","VOZ","VENENO"],color:"#93c5fd"},{category:"COISAS QUE PODEM SER 'AMARGAS'",words:["VERDADE","DERROTA","REMÉDIO","SAUDADE"],color:"#d8b4fe"}], difficulty: 3},
                 {groups:[{category:"TERMOS DE METEOROLOGIA",words:["FRENTE FRIA","MASSA DE AR","UMIDADE RELATIVA","PRESSÃO ATMOSFÉRICA"],color:"#fde047"},{category:"TERMOS DE OCEANOGRAFIA",words:["CORRENTE MARÍTIMA","MARÉ","RESSACA","PLÂNCTON"],color:"#86efac"},{category:"TERMOS DE VULCANOLOGIA",words:["LAVA","CALDEIRA","ERUPÇÃO","MAGMA"],color:"#93c5fd"},{category:"TERMOS DE SISMOLOGIA",words:["EPICENTRO","FALHA","ESCALA RICHTER","ABALO"],color:"#d8b4fe"}], difficulty: 3},
                 {groups:[{category:"TIPOS DE CHAPÉU",words:["FEDORA","CARTOLA","COCO","SOMBRERO"],color:"#fde047"},{category:"TIPOS DE ÓCULOS",words:["GRAU","SOL","AVIADOR","GATINHO"],color:"#86efac"},{category:"TIPOS DE BOLSA",words:["MOCHILA","CARTEIRA","TOTE","CLUTCH"],color:"#93c5fd"},{category:"TIPOS DE SALTO (SAPATO)",words:["AGULHA","ANABELA","PLATAFORMA","BLOCO"],color:"#d8b4fe"}], difficulty: 3},
                 {groups:[{category:"PERSONIFICAÇÕES DA MORTE",words:["CEIFADOR","DONA MORTE","ANJO DA MORTE","CAVALEIRO"],color:"#fde047"},{category:"ARCANJOS",words:["MIGUEL","GABRIEL","RAFAEL","URIEL"],color:"#86efac"},{category:"SETE PECADOS CAPITAIS",words:["GULA","AVAREZA","LUXÚRIA","IRA"],color:"#93c5fd"},{category:"QUATRO CAVALEIROS DO APOCALIPSE",words:["PESTE","GUERRA","FOME","MORTE"],color:"#d8b4fe"}], difficulty: 3},
@@ -411,7 +446,7 @@
                 {groups:[{category:"TIPOS DE NUVENS (ALTAS)",words:["CIRRUS","CIRROCUMULUS","CIRROSTRATUS","VÉU"],color:"#fde047"},{category:"ELEMENTOS DA TABELA PERIÓDICA (METAIS ALCALINOS)",words:["LÍTIO","SÓDIO","POTÁSSIO","FRÂNCIO"],color:"#86efac"},{category:"FIGURAS MITOLÓGICAS (NÓRDICAS)",words:["ODIN","THOR","LOKI","FREYA"],color:"#93c5fd"},{category:"TERMOS DE NAVEGAÇÃO À VELA",words:["BOOM","MESTRE","LEME","QUILHA"],color:"#d8b4fe"}], difficulty: 3},
                 {groups:[{category:"TIPOS DE TECIDO (PADRONAGEM)",words:["XADREZ","LISTRADO","POÁ","PIED-DE-POULE"],color:"#fde047"},{category:"CONCEITOS DE ECONOMIA",words:["INFLAÇÃO","JUROS","CÂMBIO","DÉFICIT"],color:"#86efac"},{category:"FERRAMENTAS DE CARPINTARIA",words:["FORMÃO","SERROTE","PLaina","TORNO"],color:"#93c5fd"},{category:"TERMOS DE ARQUITETURA",words:["PÉ-DIREITO","PLATIBANDA","PILOTIS","MARQUISE"],color:"#d8b4fe"}], difficulty: 3},
                 {groups:[{category:"INSTRUMENTOS CIRÚRGICOS",words:["BISTURI","PINÇA","TESOURA","AFASTADOR"],color:"#fde047"},{category:"TIPOS DE SOCIEDADE (EMPRESARIAL)",words:["LIMITADA","ANÔNIMA","SIMPLES","COOPERATIVA"],color:"#86efac"},{category:"TERMOS DE VINHO",words:["SOMMELIER","TERROIR","TANINO","DECANTAR"],color:"#93c5fd"},{category:"PALAVRAS COM PREFIXO 'CONTRA'",words:["CONTRABANDO","CONTRADIZER","CONTRAMÃO","CONTRASTE"],color:"#d8b4fe"}], difficulty: 3},
-                {groups:[{category:"COISAS QUE PODEM SER 'QUEIMADAS'",words:["LARGADA","FILME","CALORIAS","ROSCA"],color:"#fde047"},{category:"COISAS QUE PODEM SER 'BATIDAS'",words:["BOLA","ROUPA","CARTEIRA","META"],color:"#86efac"},{category:"COISAS QUE PODEM SER 'TOCADAS'",words:["BOLA","BARCO","FICHA","FRENTE"],color:"#93c5fd"},{category:"COISAS QUE PODEM SER 'LEVANTADAS'",words:["PAREDE","QUESTÃO","MORAL","POEIRA"],color:"#d8b4fe"}], difficulty: 3},
+                {groups:[{category:"COISAS QUE PODEM SER 'QUEIMADAS'",words:["LARGADA","FILME","CALORIAS","ROSCA"],color:"#fde047"},{category:"COISAS QUE PODEM SER 'BATIDAS'",words:["CLARA","ROUPA","CARTEIRA","META"],color:"#86efac"},{category:"COISAS QUE PODEM SER 'TOCADAS'",words:["BOLA","BARCO","FICHA","FRENTE"],color:"#93c5fd"},{category:"COISAS QUE PODEM SER 'LEVANTADAS'",words:["PAREDE","QUESTÃO","MORAL","POEIRA"],color:"#d8b4fe"}], difficulty: 3},
                 {groups:[{category:"TERMOS DE BIOTECNOLOGIA",words:["TRANSGÊNICO","CLONAGEM","CÉLULA-TRONCO","PCR"],color:"#fde047"},{category:"TERMOS DE ASTROFÍSICA",words:["BURACO NEGRO","PULSAR","QUASAR","MATÉRIA ESCURA"],color:"#86efac"},{category:"TERMOS DE LINGUÍSTICA",words:["FONEMA","MORFEMA","SINTAXE","SEMÂNTICA"],color:"#93c5fd"},{category:"TERMOS DE GEOPOLÍTICA",words:["HEGEMONIA","GLOBALIZAÇÃO","TERCEIRO MUNDO","ESTADO-NAÇÃO"],color:"#d8b4fe"}], difficulty: 3},
                 {groups:[{category:"TIPOS DE CÂMERA",words:["DSLR","MIRRORLESS","COMPACTA","ANALÓGICA"],color:"#fde047"},{category:"TIPOS DE MICROFONE",words:["DINÂMICO","CONDENSADOR","LAPELA","SHOTGUN"],color:"#86efac"},{category:"TIPOS DE ILUMINAÇÃO (FOTOGRAFIA)",words:["PRINCIPAL","PREENCHIMENTO","CONTRA","FUNDO"],color:"#93c5fd"},{category:"TIPOS DE PLANO (CINEMA)",words:["GERAL","MÉDIO","AMERICANO","CLOSE-UP"],color:"#d8b4fe"}], difficulty: 3},
                 // Add more puzzles here to reach 90+
@@ -443,6 +478,10 @@
             const submitScoreModal = document.getElementById('submit-score-modal');
             const scoreSummaryEl = document.getElementById('score-summary');
             const playerNameInput = document.getElementById('player-name-input');
+            const howToPlayModal = document.getElementById('how-to-play-modal');
+            const howToPlayCloseButton = document.getElementById('how-to-play-close-button');
+            const howToPlayOpenButton = document.getElementById('how-to-play-open-button');
+
             const submitScoreButton = document.getElementById('submit-score-button');
             const submitScoreCloseButton = document.getElementById('submit-score-close-button');
 
@@ -487,6 +526,7 @@
             function setupDailyGames() {
                 const today = new Date();
                 const dateString = today.toISOString().split('T')[0];
+                const hasSeenInstructions = localStorage.getItem(`conexo-instructions-seen-${dateString}`);
                 const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
                 
                 const savedProgress = JSON.parse(localStorage.getItem(`conexo-progress-${dateString}`));
@@ -520,6 +560,10 @@
                 const firstUnfinishedGame = dailyProgress.completed.indexOf(false);
                 if (firstUnfinishedGame !== -1) {
                     currentGameIndex = firstUnfinishedGame;
+                    if (!hasSeenInstructions && currentGameIndex === 0) {
+                        showHowToPlayModal();
+                        localStorage.setItem(`conexo-instructions-seen-${dateString}`, 'true');
+                    }
                     initGame(currentGameIndex);
                 } else {
                     // All games for today are completed
@@ -706,6 +750,12 @@
                  modalResults.innerHTML = '';
 
                  if (showResults) {
+                    modal.classList.remove('next-game-style');
+                 } else {
+                    modal.classList.add('next-game-style');
+                 }
+
+                 if (showResults) {
                      currentPuzzle.groups.forEach(group => {
                          if (!foundGroups.some(fg => fg.category === group.category)) {
                             const groupDiv = document.createElement('div');
@@ -734,7 +784,7 @@
             }
             
             modalCloseButton.addEventListener('click', () => {
-                modal.classList.remove('visible');
+                modal.classList.remove('visible', 'next-game-style');
                 const nextGameIndex = dailyProgress.completed.indexOf(false);
                 if (nextGameIndex !== -1) {
                     initGame(nextGameIndex);
@@ -749,6 +799,11 @@
             deselectButton.addEventListener('click', deselectAll);
             hintButton.addEventListener('click', getHint);
             giveUpButton.addEventListener('click', giveUp);
+            howToPlayOpenButton.addEventListener('click', showHowToPlayModal);
+            if (howToPlayCloseButton) {
+                howToPlayCloseButton.addEventListener('click', closeHowToPlayModal);
+                howToPlayModal.addEventListener('click', (e) => { if (e.target === howToPlayModal) closeHowToPlayModal(); });
+            }
             rankingButton.addEventListener('click', showRankingModal);
             rankingModalCloseButton.addEventListener('click', () => rankingModal.classList.remove('visible'));
             submitScoreButton.addEventListener('click', submitScore);
@@ -767,6 +822,18 @@
                 const sorted1 = [...arr1].sort();
                 const sorted2 = [...arr2].sort();
                 return sorted1.every((value, index) => value === sorted2[index]);
+            }
+
+            function showHowToPlayModal() {
+                if (howToPlayModal) {
+                    howToPlayModal.classList.add('visible');
+                }
+            }
+
+            function closeHowToPlayModal() {
+                if (howToPlayModal) {
+                    howToPlayModal.classList.remove('visible');
+                }
             }
             
             // --- Start Game ---
