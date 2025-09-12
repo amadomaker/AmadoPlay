@@ -364,7 +364,23 @@
             meaningEl.textContent = `${word} - ${meaning}`;
             tryAgainBtn.style.display = 'none';
             nextBtn.style.display = 'inline-block';
-            nextBtn.textContent = gameState.currentRound >= gameState.wordsPerLevel ? 'Finalizar Nível' : 'Próxima Palavra';
+
+            if (gameState.currentRound >= gameState.wordsPerLevel) {
+                const isLastLevel = gameState.level >= 3;
+                if (isLastLevel) {
+                    title.textContent = '🏆 Incrível!';
+                    meaningEl.textContent = 'Parabéns! Você completou todos os níveis!';
+                    nextBtn.textContent = 'Jogar Novamente';
+                } else {
+                    title.textContent = '⭐ Excelente!';
+                    meaningEl.textContent = `Nível ${getLevelName(gameState.level)} completo! Próximo: ${getLevelName(gameState.level + 1)}`;
+                    nextBtn.textContent = 'Próximo Nível';
+                }
+                formedWordEl.textContent = ''; // Clear the word for level complete message
+            } else {
+                nextBtn.textContent = 'Próxima Palavra';
+            }
+
             announce(`Parabéns! Você formou a palavra ${word}. ${meaning}`);
         } else {
             if (gameState.soundEnabled) audio.playError();
@@ -465,7 +481,12 @@
     function createSyllableCards() {
       const container = document.getElementById('syllablesContainer');
       container.innerHTML = '';
-      const shuffledSyllables = [...gameState.currentWord.syllables].sort(() => Math.random() - 0.5);
+      let shuffledSyllables = shuffleArray([...gameState.currentWord.syllables]);
+
+      // Garante que a palavra não fique na ordem correta, especialmente para poucas sílabas
+      if (shuffledSyllables.join('') === gameState.currentWord.word) {
+        shuffledSyllables.reverse();
+      }
       shuffledSyllables.forEach(syllable => {
           const card = document.createElement('div');
           card.className = 'syllableCard';
@@ -504,66 +525,29 @@
 
     function nextWord() {
         document.getElementById('feedbackModal').classList.remove('show');
-        
-        if (gameState.currentRound >= gameState.wordsPerLevel) {
-            completeLevel();
-        } else {
+
+        if (gameState.currentRound >= gameState.wordsPerLevel) { // Level finished
+            if (gameState.level >= 3) { // Last level finished
+                // Reset to level 1 and go to menu
+                gameState.level = 1;
+                gameState.currentRound = 1;
+                saveProgress();
+                backToMenu();
+            } else { // Not the last level, advance
+                gameState.level++;
+                gameState.currentRound = 1;
+                
+                const wordsForLevel = wordDatabase[gameState.level];
+                gameState.shuffledWords = shuffleArray([...wordsForLevel]);
+                
+                saveProgress();
+                loadNextWord();
+            }
+        } else { // Just advance to next word
             gameState.currentRound++;
             saveProgress();
             loadNextWord();
         }
-    }
-
-    function completeLevel() {
-        const isLastLevel = gameState.level >= 3;
-        
-        if (isLastLevel) {
-            showLevelComplete('Parabéns! Você completou todos os níveis!', true);
-        } else {
-            showLevelComplete(`Nível ${getLevelName(gameState.level)} completo! Próximo: ${getLevelName(gameState.level + 1)}`, false);
-        }
-    }
-
-    function showLevelComplete(message, isGameComplete) {
-        const modal = document.getElementById('feedbackModal');
-        const content = modal.querySelector('.feedbackContent');
-        const title = document.getElementById('feedbackTitle');
-        const formedWordEl = document.getElementById('formedWord');
-        const meaningEl = document.getElementById('wordMeaning');
-        const nextBtn = document.getElementById('nextBtn');
-        
-        content.classList.remove('error');
-        title.textContent = isGameComplete ? '🏆 Incrível!' : '⭐ Excelente!';
-        formedWordEl.textContent = '';
-        meaningEl.textContent = message;
-        
-        document.getElementById('tryAgainBtn').style.display = 'none';
-        nextBtn.style.display = 'inline-block';
-        
-        if (isGameComplete) {
-            nextBtn.textContent = 'Jogar Novamente';
-            nextBtn.onclick = () => {
-                gameState.level = 1;
-                gameState.currentRound = 1;
-                backToMenu();
-            };
-        } else {
-            nextBtn.textContent = 'Próximo Nível';
-            nextBtn.onclick = startNextLevel;
-        }
-        
-        saveProgress();
-        modal.classList.add('show');
-        announce(message);
-    }
-
-    function startNextLevel() {
-      document.getElementById('feedbackModal').classList.remove('show');
-      gameState.level++;
-      gameState.currentRound = 1;
-      const wordsForLevel = wordDatabase[gameState.level];
-      gameState.shuffledWords = shuffleArray([...wordsForLevel]);
-      loadNextWord();
     }
 
     function backToMenu() {
@@ -599,8 +583,16 @@
         const container = document.getElementById('syllablesContainer');
         container.innerHTML = '';
 
-        const source = [...gameState.currentWord.syllables];
-        const order = reshuffle ? source.sort(() => Math.random() - 0.5) : source;
+        let order;
+        if (reshuffle) {
+            order = shuffleArray([...gameState.currentWord.syllables]);
+            // Garante que a palavra não fique na ordem correta
+            if (order.join('') === gameState.currentWord.word) {
+                order.reverse();
+            }
+        } else {
+            order = [...gameState.currentWord.syllables];
+        }
 
         order.forEach((syllable) => {
             const card = document.createElement('div');
@@ -650,7 +642,7 @@
             const saved = localStorage.getItem('syllableGameState');
             if (saved) {
                 const data = JSON.parse(saved);
-                gameState.level = data.level || 1;
+                gameState.level = parseInt(data.level) || 1;
                 gameState.currentRound = data.currentRound || 1;
                 gameState.soundEnabled = data.soundEnabled !== false;
                 audio.enabled = gameState.soundEnabled;
