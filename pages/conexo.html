@@ -104,7 +104,6 @@
             align-items: flex-start;
             padding-top: 10vh;
             background: transparent; /* Remove o fundo escuro para melhor visualização */
-            backdrop-filter: blur(4px);
         }
         .modal-overlay.next-game-style .modal-content {
             background: rgba(255, 255, 255, 0.85);
@@ -190,23 +189,23 @@
                 </div>
             </div>
 
-            <button id="credits-button" class="absolute bottom-3 right-3 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors" aria-label="Créditos">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <button id="credits-button" class="absolute bottom-3 right-4 w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors" aria-label="Créditos">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
                 </svg>
             </button>
-            <button id="how-to-play-open-button" class="absolute bottom-3 right-12 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors" aria-label="Como Jogar">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <button id="how-to-play-open-button" class="absolute bottom-3 right-20 w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors" aria-label="Como Jogar">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
                 </svg>
             </button>
-            <button id="ranking-button" class="absolute bottom-3 right-21 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors" aria-label="Ranking">🏆</button>
+            <button id="ranking-button" class="absolute bottom-3 left-4 w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors text-2xl" aria-label="Ranking">🏆</button>
         </main>
     </div>
 
     <!-- Modal para mensagens de vitória/derrota -->
     <div id="modal" class="modal-overlay">
-        <div class="modal-content">
+        <div class="modal-content text-gray-800">
             <h2 id="modal-title" class="text-2xl font-bold mb-2"></h2>
             <p id="modal-message" class="mb-4 text-gray-600"></p>
             <div id="modal-results" class="space-y-1 mb-6"></div>
@@ -242,9 +241,13 @@
 
     <!-- Modal para Ranking -->
     <div id="ranking-modal" class="modal-overlay">
-        <div class="modal-content text-gray-800">
-            <h2 class="text-xl font-bold mb-4">🏆 Ranking do Dia 🏆</h2>
-            <ul id="ranking-list" class="text-left space-y-2">
+        <div class="modal-content text-gray-800 w-full max-w-md">
+            <h2 class="text-xl font-bold mb-4">🏆 Ranking 🏆</h2>
+            <div class="flex border-b border-gray-200 mb-4">
+                <button id="daily-ranking-tab" class="py-2 px-6 font-semibold text-gray-500 border-b-2 border-transparent hover:text-violet-600 hover:border-violet-600 focus:outline-none transition-colors">Diário</button>
+                <button id="weekly-ranking-tab" class="py-2 px-6 font-semibold text-gray-500 border-b-2 border-transparent hover:text-violet-600 hover:border-violet-600 focus:outline-none transition-colors">Semanal</button>
+            </div>
+            <ul id="ranking-list" class="text-left space-y-2 min-h-[100px]">
                 <!-- O ranking será preenchido aqui -->
             </ul>
             <button id="ranking-modal-close-button" class="mt-6 w-full px-4 py-2 bg-gray-800 text-white rounded-md font-semibold hover:bg-gray-700 transition-colors">Fechar</button>
@@ -475,6 +478,8 @@
             const rankingModal = document.getElementById('ranking-modal');
             const rankingList = document.getElementById('ranking-list');
             const rankingModalCloseButton = document.getElementById('ranking-modal-close-button');
+            const dailyRankingTab = document.getElementById('daily-ranking-tab');
+            const weeklyRankingTab = document.getElementById('weekly-ranking-tab');
             const submitScoreModal = document.getElementById('submit-score-modal');
             const scoreSummaryEl = document.getElementById('score-summary');
             const playerNameInput = document.getElementById('player-name-input');
@@ -806,6 +811,8 @@
             }
             rankingButton.addEventListener('click', showRankingModal);
             rankingModalCloseButton.addEventListener('click', () => rankingModal.classList.remove('visible'));
+            dailyRankingTab.addEventListener('click', () => fetchAndDisplayRanking('daily'));
+            weeklyRankingTab.addEventListener('click', () => fetchAndDisplayRanking('weekly'));
             submitScoreButton.addEventListener('click', submitScore);
             submitScoreCloseButton.addEventListener('click', () => submitScoreModal.classList.remove('visible'));
 
@@ -928,6 +935,54 @@
                 } catch (error) {
                     console.error('Erro ao buscar ranking:', error);
                     rankingList.innerHTML = '<li>Erro ao carregar o ranking. Verifique o console para mais detalhes.</li>';
+                }
+            }
+
+            function showRankingModal() {
+                rankingModal.classList.add('visible');
+                fetchAndDisplayRanking('daily'); // Carrega o ranking diário por padrão
+            }
+
+            async function fetchAndDisplayRanking(period) {
+                // Atualiza o estilo da aba ativa
+                const tabs = [dailyRankingTab, weeklyRankingTab];
+                tabs.forEach(tab => {
+                    tab.classList.remove('text-violet-600', 'border-violet-600');
+                    tab.classList.add('text-gray-500', 'border-transparent');
+                });
+                const activeTab = (period === 'daily') ? dailyRankingTab : weeklyRankingTab;
+                activeTab.classList.add('text-violet-600', 'border-violet-600');
+                activeTab.classList.remove('text-gray-500', 'border-transparent');
+
+                rankingList.innerHTML = '<li>Carregando ranking...</li>';
+                try {
+                    const url = new URL(SCRIPT_URL);
+                    url.searchParams.append('period', period); // Adiciona o parâmetro 'period'
+
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const data = await response.json();
+
+                    const rankingData = data.ranking || [];
+                    const dateInfo = data.serverDate || (period === 'daily' ? 'hoje' : 'esta semana');
+                    const message = period === 'daily' ? `Ninguém no ranking de hoje (${dateInfo}). Seja o primeiro!` : `Ninguém no ranking desta semana. Seja o primeiro!`;
+
+                    rankingList.innerHTML = rankingData.map((entry, index) => {
+                        let positionHtml;
+                        if (index === 0) {
+                            positionHtml = '<span class="w-8 inline-block text-center text-2xl" title="1º Lugar">👑</span>';
+                        } else if (index === 1) {
+                            positionHtml = '<span class="w-8 inline-block text-center text-xl" title="2º Lugar">🥈</span>';
+                        } else if (index === 2) {
+                            positionHtml = '<span class="w-8 inline-block text-center text-xl" title="3º Lugar">🥉</span>';
+                        } else {
+                            positionHtml = `<span class="w-8 inline-block text-center font-bold text-gray-500">${index + 1}.</span>`;
+                        }
+                        return `<li class="flex items-center py-1">${positionHtml}<span class="ml-2">${entry.name} - <span class="text-green-600">${entry.score.toLocaleString('pt-BR')} pts</span></span></li>`;
+                    }).join('') || `<li class="text-center text-gray-500">${message}</li>`;
+                } catch (error) {
+                    console.error(`Erro ao buscar ranking ${period}:`, error);
+                    rankingList.innerHTML = '<li>Erro ao carregar o ranking. Tente novamente mais tarde.</li>';
                 }
             }
 
