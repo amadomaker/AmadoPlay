@@ -226,6 +226,23 @@
       acessos: 0
     }
 
+    ,{
+      id: 'jogo-memoria',
+      titulo: 'Jogo da Memória - Animais',
+      descricao: 'Vire as cartas e encontre os pares de animais. Treine memória, atenção e raciocínio de forma divertida!',
+      imagem: 'src/assets/images/fundo_jogo_memoria.png',
+      interno: 'pages/jogo_memoria.html',
+      materia: 'ciencias',
+      series: [1, 2, 3],
+      tipo: ['interativo', 'ludico', 'memoria'],
+      dificuldade: 'basico',
+      bncc: [],
+      tags: ['memória', 'animais', 'atenção', 'jogo'],
+      popular: false,
+      novo: true,
+      acessos: 0
+    }
+
 
 
 

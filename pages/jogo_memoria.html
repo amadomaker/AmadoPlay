@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Jogo da Memória - Animais</title>
+    <link rel="stylesheet" href="../src/css/global.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #6c63ff 0%, #7c4dff 35%, #9c27b0 70%, #673ab7 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        .page-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .game-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+        }
+
+        .top-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Header do Jogo --- */
+        .game-header { 
+            text-align: center; 
+            margin-bottom: 20px; 
+        }
+        .game-title { 
+            font-size: 2rem; 
+            margin-bottom: 10px; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3); 
+            line-height: 1.1;
+        }
+        .game-title-sub {
+            display: block;
+            font-size: 1.6rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+        .game-subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+
+        .difficulty-selector {
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .difficulty-selector label {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .difficulty-select {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            border: 2px solid #ccc;
+            background: #f0f0f0;
+            color: #333;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+            padding-right: 3rem;
+            box-sizing: border-box;
+            min-width: 180px;
+            max-width: 260px; /* evita abrir enorme em tablets */
+        }
+        /* Custom dropdown para tablets */
+        .custom-select-container { display: none; }
+        @media (min-width: 600px) and (max-width: 1024px) {
+            /* Esconde o select nativo e mostra o custom no tablet */
+            .difficulty-select { display: none; }
+            .custom-select-container { display: inline-block; position: relative; width: 260px; }
+        }
+        .custom-select-trigger {
+            width: 100%;
+            padding: 12px 40px 12px 20px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 30px;
+            border: 2px solid #ccc;
+            background: #f0f0f0; /* mesma cor do campo no mobile */
+            color: #333;
+            cursor: pointer;
+            text-align: left;
+        }
+        .custom-select-trigger:after {
+            content: "";
+            position: absolute;
+            right: 16px; top: 50%; transform: translateY(-50%);
+            width: 0; height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid #333;
+            pointer-events: none;
+        }
+        .custom-options {
+            position: absolute; left: 0; right: 0; top: calc(100% + 6px);
+            background: #fff; /* cor do dropdown igual ao mobile (padrão) */
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.15);
+            z-index: 50;
+            display: none;
+            max-height: 260px;
+            overflow: auto;
+        }
+        .custom-options.open { display: block; }
+        .custom-option {
+            padding: 10px 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+        }
+        .custom-option:hover,
+        .custom-option[aria-selected="true"] {
+            background: #f3f4f6;
+        }
+        /* Em tablets, fixa a largura do select para o menu acompanhar */
+        @media (min-width: 600px) and (max-width: 1024px) {
+            .difficulty-select { width: 260px; }
+        }
+
+        .game-stats { 
+            display: flex; 
+            gap: 20px; 
+            justify-content: center; 
+            align-items: center; 
+            margin-top: 0;
+            margin-bottom: 1rem;
+            flex-wrap: wrap; 
+        }
+        .stat-item { 
+            background: #e9ecef; 
+            color: #495057;
+            border: 1px solid #dee2e6;
+            padding: 8px 18px; border-radius: 25px; backdrop-filter: blur(10px); font-size: 1rem; font-weight: 700; 
+        }
+
+        #feedback-message {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.1);
+            transition: opacity 0.3s;
+        }
+
+        .game-board {
+            display: grid;
+            gap: 12px;
+            max-width: 700px;
+            width: 100%;
+            margin: 0 auto 30px auto;
+            perspective: 1000px;
+        }
+
+        .card {
+            aspect-ratio: 1;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+        .card.flipped, .card.matched {
+            transform: rotateY(180deg);
+            cursor: default;
+        }
+        .card.matched {
+            opacity: 0.7;
+            transform: rotateY(180deg) scale(0.95);
+            pointer-events: none; /* evita clique em cartas já combinadas */
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden; /* melhora compatibilidade mobile */
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .card-front {
+            background: linear-gradient(145deg, #4CAF50, #45a049);
+            color: white;
+            transform: rotateY(180deg);
+        }
+        .card-back {
+            background: linear-gradient(145deg, #fff, #f0f0f0);
+            color: #764ba2;
+            font-size: 2.5rem;
+        }
+
+        /* Quando a carta estiver virada definitivamente (matched), use o mesmo verde da frente */
+        .card.matched .card-front,
+        .card.matched .card-back {
+            background: linear-gradient(145deg, #4CAF50, #45a049);
+            color: #fff;
+        }
+
+        .bottom-controls {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        .left-buttons, .right-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            background: #e9ecef;
+            color: #495057;
+            border: 1px solid #dee2e6;
+            padding: 8px 14px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn:hover { 
+            transform: translateY(-2px); 
+            background-color: #dee2e6;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+        }
+        .btn:active { transform: translateY(0); }
+        .btn.success { background: #8b5cf6; color: white; border: none; }
+        .btn.success:hover { background: #7c3aed; }
+
+        /* --- Modal de Vitória --- */
+        .victory-modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+        .victory-modal.show { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .victory-content {
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: zoomIn 0.4s ease;
+        }
+        @keyframes zoomIn { from { transform: scale(0.8); } to { transform: scale(1); } }
+
+        .victory-title { font-size: 2.5rem; margin-bottom: 20px; color: #4CAF50; }
+        .victory-stats { margin-bottom: 30px; font-size: 1.2rem; line-height: 1.6; }
+        .victory-stats p { margin-bottom: 5px; }
+
+        .info-btn {
+            width: 40px;
+            height: 40px;
+            background-color: #e9ecef;
+            color: #495057;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #dee2e6;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .info-btn:hover {
+            transform: scale(1.1);
+            background-color: #dee2e6;
+        }
+        .info-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #495057;
+        }
+
+        /* --- Botões dos modais (Fechar / Entendi) --- */
+        #credits-close-button,
+        #how-to-play-close-button {
+            color: #fff;           /* texto branco */
+            font-size: 1rem;       /* um pouco maior */
+            padding: 12px 22px;    /* um pouco mais de área clicável */
+            border: none;
+        }
+        #credits-close-button:hover,
+        #how-to-play-close-button:hover {
+            color: #fff;
+            filter: brightness(0.95);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <header class="page-header">
+            <h1 class="game-title">
+                Jogo da Memória
+                <span class="game-title-sub">Animais</span>
+            </h1>
+            <p class="game-subtitle">Descubra os pares e aprenda sobre eles!</p>
+        </header>
+
+        <main class="game-wrapper">
+            <div class="top-controls">
+                <div class="difficulty-selector">
+                    <label for="difficulty-select"><h3>Nível:</h3></label>
+                    <select id="difficulty-select" class="difficulty-select">
+                        <option value="easy">Fácil (4 pares)</option>
+                        <option value="medium">Médio (6 pares)</option>
+                        <option value="hard">Difícil (8 pares)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="game-stats">
+                <div class="stat-item">Jogadas: <span id="moves">0</span></div>
+                <div class="stat-item">Pares: <span id="matches">0/8</span></div>
+            </div>
+
+            <div id="feedback-message">Encontre os pares!</div>
+
+            <div class="game-board" id="gameBoard"></div>
+
+            <div class="bottom-controls">
+                <div class="left-buttons">
+                    <button class="btn" onclick="game.reset()">Reiniciar</button>
+                    <button class="btn success" onclick="game.showHint()"><span>💡</span><span>Dica</span></button>
+                </div>
+                <div class="right-buttons">
+                    <button id="how-to-play-button" class="info-btn" aria-label="Como Jogar">?</button>
+                    <button id="credits-button" class="info-btn" aria-label="Créditos">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+        <div class="victory-modal" id="victoryModal">
+            <div class="victory-content">
+                <h2 class="victory-title">🎉 Parabéns!</h2>
+                <div class="victory-stats">
+                    <p>Você encontrou todos os pares!</p>
+                    <p>🎯 <strong>Jogadas:</strong> <span id="finalMoves"></span></p>
+                </div>
+                <button class="btn success" onclick="game.reset()">🔄 Jogar Novamente</button>
+            </div>
+        </div>
+        <!-- Modal de Créditos -->
+        <div id="credits-modal" class="victory-modal">
+            <div class="victory-content">
+                <h2 class="victory-title" style="color: #764ba2;">Créditos</h2>
+                <div class="victory-stats" style="text-align: left; line-height: 1.8;">
+                    <p><strong>Ferramenta:</strong> Jogo da Memória - Animais</p>
+                    <p><strong>Criação e Desenvolvimento:</strong> Ana Paula Camara e João Jr</p>
+                </div>
+                <button class="btn" id="credits-close-button" style="background: #764ba2;">Fechar</button>
+            </div>
+        </div>
+
+        <!-- Modal de Como Jogar -->
+        <div id="how-to-play-modal" class="victory-modal">
+            <div class="victory-content">
+                <h2 class="victory-title" style="color: #764ba2;">Como Jogar</h2>
+                <div class="victory-stats" style="text-align: left; line-height: 1.8;">
+                    <p><strong>1. Objetivo:</strong> Encontre todos os pares de animais no tabuleiro.</p>
+                    <p><strong>2. Como jogar:</strong> Clique em uma carta para virá-la. Em seguida, clique em outra para tentar encontrar o par.</p>
+                    <p><strong>3. Níveis:</strong> Escolha entre Fácil, Médio e Difícil para mudar a quantidade de cartas no jogo.</p>
+                    <p><strong>4. Dica:</strong> Se precisar de ajuda, use o botão "Dica" para revelar as cartas por um instante.</p>
+                </div>
+                <button class="btn" id="how-to-play-close-button" style="background: #764ba2;">Entendi!</button>
+            </div>
+        </div>
+
+        <!-- ===========================
+          Widget de Acessibilidade
+          =========================== -->
+
+      <!-- Botão Flutuante de Acessibilidade -->
+      <button
+        class="accessibility-float-btn"
+        id="accessibilityFloatBtn"
+        aria-label="Abrir menu de acessibilidade"
+        aria-controls="accessibilityPanel"
+        aria-expanded="false"
+        onclick="toggleAccessibilityPanel()"
+      >
+      <span class="accessibility-icon" aria-hidden="true">
+        <img src="../src/assets/images/icon-acessibilidade.png" alt="">
+      </span>
+
+      </button>
+
+      <!-- Overlay -->
+      <div
+        class="accessibility-panel-overlay"
+        id="accessibilityOverlay"
+        onclick="closeAccessibilityPanel()"
+        aria-hidden="true"
+      ></div>
+
+      <!-- Painel de Acessibilidade (drawer à direita) -->
+      <div
+        class="accessibility-panel-modern right-drawer"
+        id="accessibilityPanel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="accessibilityPanelTitle"
+      >
+        <div class="panel-header-modern">
+          <h2 id="accessibilityPanelTitle">Menu de Acessibilidade</h2>
+          <button
+            class="close-btn"
+            type="button"
+            aria-label="Fechar menu de acessibilidade"
+            onclick="closeAccessibilityPanel()"
+          >
+            ×
+          </button>
+        </div>
+
+        <!-- Área rolável do painel -->
+        <div class="panel-content" id="accessibilityPanelContent" tabindex="-1">
+          <!-- Perfis de Acessibilidade -->
+          <div class="accessibility-profiles">
+            <h3>Selecione seu perfil de acessibilidade</h3>
+            <div class="profiles-grid">
+              <button class="profile-btn" onclick="applyProfile('motor')" data-profile="motor" type="button">
+                <span class="profile-icon" aria-hidden="true">🦽</span>
+                <span class="profile-text">Deficiência Motora</span>
+              </button>
+              <button class="profile-btn" onclick="applyProfile('visual')" data-profile="visual" type="button">
+                <span class="profile-icon" aria-hidden="true">👁️</span>
+                <span class="profile-text">Deficiência Visual</span>
+              </button>
+              <button class="profile-btn" onclick="applyProfile('cognitive')" data-profile="cognitive" type="button">
+                <span class="profile-icon" aria-hidden="true">🧠</span>
+                <span class="profile-text">Deficiência Cognitiva</span>
+              </button>
+              <button class="profile-btn" onclick="applyProfile('hearing')" data-profile="hearing" type="button">
+                <span class="profile-icon" aria-hidden="true">🦻</span>
+                <span class="profile-text">Deficiência Auditiva</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Ferramentas Individuais -->
+          <div class="tools-grid" role="group" aria-label="Ferramentas de acessibilidade">
+            <!-- Linha 1 -->
+            <button class="tool-btn" onclick="toggleTextToSpeech()" id="ttsBtn" type="button">
+              <span class="tool-icon" aria-hidden="true">🔊</span>
+              <span class="tool-text">Clique para Ouvir</span>
+            </button>
+
+            <button class="tool-btn" onclick="toggleHighContrast()" id="contrastBtn" type="button">
+              <span class="tool-icon" aria-hidden="true">🌓</span>
+              <span class="tool-text">Alto Contraste</span>
+            </button>
+
+            <button class="tool-btn" onclick="toggleDarkMode()" id="darkModeBtn" type="button">
+              <span class="tool-icon" aria-hidden="true">🌙</span>
+              <span class="tool-text">Modo Escuro</span>
+            </button>
+
+            <!-- Linha 2 -->
+            <button class="tool-btn" onclick="decreaseFontSize()" id="decreaseFontBtn" type="button">
+              <span class="tool-icon" aria-hidden="true">🔤</span>
+              <span class="tool-text">Diminuir Fonte</span>
+            </button>
+
+            <button class="tool-btn" onclick="increaseFontSize()" id="increaseFontBtn" type="button">
+              <span class="tool-icon" aria-hidden="true">🔠</span>
+              <span class="tool-text">Aumentar Fonte</span>
+            </button>
+
+            <button class="tool-btn" onclick="toggleDyslexiaFont()" id="dyslexiaBtn" type="button">
+              <span class="tool-icon" aria-hidden="true">📝</span>
+              <span class="tool-text">Fonte Dislexia</span>
+            </button>
+
+            <!-- Linha 3 -->
+            <button class="tool-btn" onclick="toggleGrayscale()" id="grayscaleBtn" type="button">
+              <span class="tool-icon" aria-hidden="true">⚫</span>
+              <span class="tool-text">Monocromático</span>
+            </button>
+
+            <button class="tool-btn" onclick="toggleLowSaturation()" id="lowSatBtn" type="button">
+              <span class="tool-icon" aria-hidden="true">🔘</span>
+              <span class="tool-text">Baixa Saturação</span>
+            </button>
+
+            <button class="tool-btn" onclick="toggleHighSaturation()" id="highSatBtn" type="button">
+              <span class="tool-icon" aria-hidden="true">🟡</span>
+              <span class="tool-text">Alta Saturação</span>
+            </button>
+
+            <!-- Linha 4 -->
+            <button class="tool-btn" onclick="toggleReadingRuler()" id="rulerBtn" type="button">
+              <span class="tool-icon" aria-hidden="true">📏</span>
+              <span class="tool-text">Régua de Leitura</span>
+            </button>
+
+            <button class="tool-btn" onclick="toggleMagnifier()" id="magnifierBtn" type="button">
+              <span class="tool-icon" aria-hidden="true">📖</span>
+              <span class="tool-text">Mascara de Leitura</span>
+            </button>
+
+            <button class="tool-btn" onclick="toggleFocusHighlight()" id="focusBtn" type="button">
+              <span class="tool-icon" aria-hidden="true">🎯</span>
+              <span class="tool-text">Destacar Links</span>
+            </button>
+
+            <!-- Linha 5 -->
+            <button class="tool-btn" onclick="pauseAnimations()" id="animationBtn" type="button">
+              <span class="tool-icon" aria-hidden="true">⏸️</span>
+              <span class="tool-text">Pausar Animações</span>
+            </button>
+
+            <button class="tool-btn" onclick="showKeyboardShortcuts()" type="button">
+              <span class="tool-icon" aria-hidden="true">⌨️</span>
+              <span class="tool-text">Atalhos Teclado</span>
+            </button>
+
+            <button class="tool-btn" onclick="resetAll()" id="resetBtn" type="button">
+              <span class="tool-icon" aria-hidden="true">🔄</span>
+              <span class="tool-text">Resetar Tudo</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Elementos auxiliares fora do painel -->
+      <div class="reading-ruler" id="readingRuler" aria-hidden="true"></div>
+      <div class="magnifier-circle" id="magnifier" aria-hidden="true"></div>
+
+    <script>
+        const animalData = [
+            { name: 'Cachorro', icon: '🐶', fact: 'Cachorros têm um olfato 10.000 vezes melhor que o nosso!' },
+            { name: 'Gato', icon: '🐱', fact: 'Gatos podem fazer mais de 100 sons diferentes.' },
+            { name: 'Rato', icon: '🐭', fact: 'Os dentes de um rato nunca param de crescer.' },
+            { name: 'Hamster', icon: '🐹', fact: 'Hamsters guardam comida em suas bochechas.' },
+            { name: 'Coelho', icon: '🐰', fact: 'Coelhos podem pular muito alto, quase 1 metro!' },
+            { name: 'Raposa', icon: '🦊', fact: 'Raposas são muito espertas e vivem em quase todo o mundo.' },
+            { name: 'Urso', icon: '🐻', fact: 'Ursos hibernam no inverno para economizar energia.' },
+            { name: 'Panda', icon: '🐼', fact: 'Pandas comem bambu o dia todo!' },
+            { name: 'Leão', icon: '🦁', fact: 'O rugido de um leão pode ser ouvido a 8 km de distância.' },
+            { name: 'Vaca', icon: '🐮', fact: 'Vacas têm quatro estômagos para ajudar a digerir a grama.' },
+            { name: 'Sapo', icon: '🐸', fact: 'Sapos bebem água através da pele.' },
+            { name: 'Macaco', icon: '🐵', fact: 'Macacos usam a cauda para se equilibrar nas árvores.' }
+        ];
+
+        class MemoryGame {
+            constructor(difficulty = 'easy') {
+                this.levels = { easy: 4, medium: 6, hard: 8 };
+                this.numPairs = this.levels[difficulty];
+                this.animals = this.selectAnimals(this.numPairs);
+                this.cards = [];
+                this.flippedCards = [];
+                this.matchedPairs = 0;
+                this.moves = 0;
+                this.isChecking = false;
+                this.isHinting = false;
+                this.columns = 4;
+                this.gameBoard = document.getElementById('gameBoard');
+                this.feedbackMessage = document.getElementById('feedback-message');
+                this.sounds = {
+                    flip: new Audio('https://cdn.jsdelivr.net/gh/BMSVieira/sounds-for-memory-game/card-flip.mp3'),
+                    match: new Audio('https://cdn.jsdelivr.net/gh/BMSVieira/sounds-for-memory-game/correct-choice.mp3'),
+                    win: new Audio('https://cdn.jsdelivr.net/gh/BMSVieira/sounds-for-memory-game/win-sound.mp3')
+                };
+            }
+
+            selectAnimals(numPairs) {
+                const shuffled = [...animalData].sort(() => 0.5 - Math.random());
+                return shuffled.slice(0, numPairs);
+            }
+
+            init() {
+                // Define colunas de forma adaptativa conforme a altura da viewport
+                const h = window.innerHeight || 800;
+                let cols;
+                if (this.numPairs === 6) {
+                    // 6 pares: padrão 3 colunas; se tela baixa, aumenta colunas para reduzir altura
+                    cols = (h <= 800 ? 4 : 3);
+                    if (h <= 620) cols = 5;
+                } else {
+                    // 4 ou 8 pares: padrão 4 colunas; em telas muito baixas, aumenta colunas
+                    cols = 4;
+                    if (this.numPairs === 8 && h <= 680) cols = 5;
+                }
+                this.columns = cols;
+                this.gameBoard.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+                this.createCards();
+                this.shuffleCards();
+                this.renderCards();
+                this.updateMatches();
+                this.updateMoves();
+                this.adjustBoardSize();
+                // Reajusta ao redimensionar a janela (útil em notebooks/telas interativas)
+                window.addEventListener('resize', () => {
+                    const prevCols = this.columns;
+                    const h2 = window.innerHeight || 800;
+                    let newCols = prevCols;
+                    if (this.numPairs === 6) {
+                        newCols = (h2 <= 800 ? 4 : 3);
+                        if (h2 <= 620) newCols = 5;
+                    } else {
+                        newCols = 4;
+                        if (this.numPairs === 8 && h2 <= 680) newCols = 5;
+                    }
+                    if (newCols !== this.columns) {
+                        this.columns = newCols;
+                        this.gameBoard.style.gridTemplateColumns = `repeat(${newCols}, 1fr)`;
+                    }
+                    this.adjustBoardSize();
+                }, { passive: true });
+            }
+
+            createCards() {
+                this.cards = [];
+                for (let i = 0; i < this.animals.length; i++) {
+                    // Atribui um par fixo (pairKey) para facilitar a comparação de pares
+                    this.cards.push({ id: i * 2, pairKey: i, animal: this.animals[i], flipped: false, matched: false });
+                    this.cards.push({ id: i * 2 + 1, pairKey: i, animal: this.animals[i], flipped: false, matched: false });
+                }
+            }
+
+            shuffleCards() {
+                for (let i = this.cards.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
+                }
+            }
+
+            renderCards() {
+                this.gameBoard.innerHTML = '';
+                this.cards.forEach((card, index) => {
+                    const cardElement = document.createElement('div');
+                    // Mantém o estado visual ao re-renderizar (evita esconder indevidamente)
+                    cardElement.className = 'card' +
+                        (card.flipped ? ' flipped' : '') +
+                        (card.matched ? ' matched' : '');
+                    cardElement.dataset.index = index;
+                    cardElement.innerHTML = `
+                        <div class="card-face card-back">❓</div>
+                        <div class="card-face card-front">${card.animal.icon}</div>
+                    `;
+                    cardElement.addEventListener('click', () => this.flipCard(index));
+                    this.gameBoard.appendChild(cardElement);
+                });
+            }
+
+            // Ajusta o tamanho máximo do tabuleiro com base na altura disponível
+            adjustBoardSize() {
+                const container = this.gameBoard;
+                const gap = 12; // mesmo gap do CSS
+                const cols = this.columns || 4;
+                const total = this.cards.length || this.numPairs * 2;
+                const rows = Math.ceil(total / cols);
+                // Estima altura disponível para o tabuleiro (desconta header/controles)
+                const viewportH = window.innerHeight || 800;
+                const reserved = 300; // cabeçalho/controles/margens aprox.
+                const available = Math.max(260, viewportH - reserved);
+                const sizeByHeight = Math.floor((available - gap * (rows - 1)) / rows);
+                // Limites para conforto visual
+                const cardSize = Math.max(90, Math.min(sizeByHeight, 170));
+                const boardWidth = cardSize * cols + gap * (cols - 1);
+                // Limita para não superar largura do container e do máximo global
+                const maxGlobal = 700; // limite já usado no CSS
+                const parentWidth = container.parentElement ? container.parentElement.clientWidth : maxGlobal;
+                const finalWidth = Math.min(boardWidth, parentWidth, maxGlobal);
+                container.style.maxWidth = finalWidth + 'px';
+            }
+
+            playSound(sound) {
+                if (this.sounds[sound]) {
+                    this.sounds[sound].currentTime = 0;
+                    this.sounds[sound].play().catch(e => console.log("Erro ao tocar som:", e));
+                }
+            }
+
+            flipCard(index) {
+                const card = this.cards[index];
+                const cardElement = this.gameBoard.children[index];
+
+                if (this.isChecking || card.flipped || card.matched) {
+                    return;
+                }
+
+                this.playSound('flip');
+                card.flipped = true;
+                cardElement.classList.add('flipped');
+                this.flippedCards.push(index);
+
+                if (this.flippedCards.length === 2) {
+                    this.isChecking = true;
+                    this.moves++;
+                    this.updateMoves();
+                    setTimeout(() => this.checkMatch(), 1000);
+                }
+            }
+
+            async checkMatch() {
+                const [firstIndex, secondIndex] = this.flippedCards;
+                const firstCard = this.cards[firstIndex];
+                const secondCard = this.cards[secondIndex];
+
+                // Compara por par fixo para evitar qualquer inconsistência de string/emoji
+                if (firstCard.pairKey === secondCard.pairKey && firstIndex !== secondIndex) {
+                    this.playSound('match');
+                    firstCard.matched = true;
+                    secondCard.matched = true;
+                    // Deixa explícito que continuam virados
+                    firstCard.flipped = true;
+                    secondCard.flipped = true;
+                    // Garante que cartas corretas permaneçam viradas e marcadas como combinadas
+                    const firstEl = this.gameBoard.children[firstIndex];
+                    const secondEl = this.gameBoard.children[secondIndex];
+                    firstEl.classList.add('flipped', 'matched');
+                    secondEl.classList.add('flipped', 'matched');
+                    // Redundância visual: também coloca o ícone na face de trás para nunca “sumir”
+                    const back1 = firstEl.querySelector('.card-back');
+                    const back2 = secondEl.querySelector('.card-back');
+                    if (back1) back1.textContent = firstCard.animal.icon;
+                    if (back2) back2.textContent = secondCard.animal.icon;
+                    this.matchedPairs++;
+                    this.updateMatches();
+                    this.showFact(firstCard.animal);
+
+                    if (this.matchedPairs === this.numPairs) {
+                        this.gameWon();
+                    }
+                } else {
+                    // Não é par: desvira as cartas e dá um feedback rápido
+                    firstCard.flipped = false;
+                    secondCard.flipped = false;
+                    this.gameBoard.children[firstIndex]?.classList.remove('flipped');
+                    this.gameBoard.children[secondIndex]?.classList.remove('flipped');
+                    this.feedbackMessage.textContent = '❌ Não foi dessa vez. Tente novamente!';
+                }
+
+                this.flippedCards = [];
+                this.isChecking = false;
+            }
+
+            updateMoves() {
+                document.getElementById('moves').textContent = this.moves;
+            }
+
+            updateMatches() {
+                document.getElementById('matches').textContent = `${this.matchedPairs}/${this.numPairs}`;
+            }
+
+            showFact(animal) {
+                this.feedbackMessage.textContent = `💡 ${animal.name}: ${animal.fact}`;
+                this.feedbackMessage.style.opacity = 1;
+                setTimeout(() => {
+                    if (this.matchedPairs < this.numPairs) {
+                        this.feedbackMessage.textContent = 'Encontre os pares!';
+                    }
+                }, 4000);
+            }
+
+            gameWon() {
+                this.playSound('win');
+                this.feedbackMessage.textContent = '🎉 Você conseguiu! 🎉';
+                document.getElementById('finalMoves').textContent = this.moves;
+                document.getElementById('victoryModal').classList.add('show');
+            }
+
+            showHint() {
+                if (this.isChecking || this.isHinting) return;
+                this.isHinting = true;
+                // Seleciona até 4 cartas aleatórias, sem repetir par, que estejam ocultas (não viradas e não combinadas)
+                const candidates = this.cards
+                    .map((card, idx) => ({ idx, card }))
+                    .filter(({ card }) => !card.matched && !card.flipped);
+
+                if (candidates.length === 0) { this.isHinting = false; return; }
+
+                // Embaralha candidatos
+                for (let i = candidates.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+                }
+
+                const usedPairs = new Set();
+                const selection = [];
+                for (const item of candidates) {
+                    if (!usedPairs.has(item.card.pairKey)) {
+                        selection.push(item);
+                        usedPairs.add(item.card.pairKey);
+                        if (selection.length >= 4) break;
+                    }
+                }
+
+                const toUnflip = [];
+                selection.forEach(({ idx }) => {
+                    const el = this.gameBoard.children[idx];
+                    if (el) {
+                        el.classList.add('flipped');
+                        toUnflip.push(idx);
+                    }
+                });
+
+                setTimeout(() => {
+                    toUnflip.forEach(idx => {
+                        const c = this.cards[idx];
+                        const el = this.gameBoard.children[idx];
+                        if (el && c && !c.matched && !c.flipped) {
+                            el.classList.remove('flipped');
+                        }
+                    });
+                    this.isHinting = false;
+                }, 1500);
+            }
+
+            reset() {
+                // A dificuldade atual é mantida, apenas reinicia o jogo.
+                const currentDifficulty = this.levels.easy === this.numPairs ? 'easy' : this.levels.medium === this.numPairs ? 'medium' : 'hard';
+                newGame(currentDifficulty);
+            }
+        }
+
+        let game;
+
+        function newGame(difficulty = 'easy') {
+            // Atualiza o dropdown selecionado
+            const difficultySelect = document.getElementById('difficulty-select');
+            if (difficultySelect) difficultySelect.value = difficulty;
+            // Mantém o rótulo do custom select em sincronia (tablets)
+            try { updateCustomSelectLabel(); } catch(e) {}
+
+            // Cria e inicia um novo jogo
+            game = new MemoryGame(difficulty);
+            game.init();
+
+            // Esconde o modal de vitória se estiver visível
+            document.getElementById('victoryModal').classList.remove('show');
+            document.getElementById('feedback-message').textContent = 'Encontre os pares!';
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            const difficultySelect = document.getElementById('difficulty-select');
+            difficultySelect.addEventListener('change', (e) => newGame(e.target.value));
+
+            // Inicia o jogo com a dificuldade padrão
+            newGame('easy');
+
+            // Melhora do dropdown em tablets: cria um custom select só nesse breakpoint
+            setupTabletCustomSelect();
+
+            // --- Créditos Modal ---
+            const creditsButton = document.getElementById('credits-button');
+            const creditsModal = document.getElementById('credits-modal');
+            const creditsCloseButton = document.getElementById('credits-close-button');
+
+            if (creditsButton && creditsModal && creditsCloseButton) {
+                creditsButton.addEventListener('click', () => {
+                    creditsModal.classList.add('show');
+                });
+
+                creditsCloseButton.addEventListener('click', () => {
+                    creditsModal.classList.remove('show');
+                });
+
+                // Fecha se clicar fora do conteúdo
+                creditsModal.addEventListener('click', (e) => {
+                    if (e.target === creditsModal) {
+                        creditsModal.classList.remove('show');
+                    }
+                });
+            }
+
+            // --- How to Play Modal ---
+            const howToPlayButton = document.getElementById('how-to-play-button');
+            const howToPlayModal = document.getElementById('how-to-play-modal');
+            const howToPlayCloseButton = document.getElementById('how-to-play-close-button');
+
+            if (howToPlayButton && howToPlayModal && howToPlayCloseButton) {
+                howToPlayButton.addEventListener('click', () => {
+                    howToPlayModal.classList.add('show');
+                });
+
+                howToPlayCloseButton.addEventListener('click', () => {
+                    howToPlayModal.classList.remove('show');
+                });
+
+                // Fecha se clicar fora do conteúdo
+                howToPlayModal.addEventListener('click', (e) => {
+                    if (e.target === howToPlayModal) {
+                        howToPlayModal.classList.remove('show');
+                    }
+                });
+            }
+        });
+
+        // --- Custom Select (apenas para tablets) ---
+        function setupTabletCustomSelect() {
+            const select = document.getElementById('difficulty-select');
+            if (!select) return;
+            const parent = select.parentElement;
+            if (!parent) return;
+            // Evita duplicar
+            if (document.getElementById('custom-difficulty')) { updateCustomSelectLabel(); return; }
+
+            const container = document.createElement('div');
+            container.id = 'custom-difficulty';
+            container.className = 'custom-select-container';
+
+            const trigger = document.createElement('button');
+            trigger.type = 'button';
+            trigger.className = 'custom-select-trigger';
+            trigger.setAttribute('aria-haspopup', 'listbox');
+            trigger.setAttribute('aria-expanded', 'false');
+            trigger.textContent = select.options[select.selectedIndex]?.text || 'Selecionar';
+
+            const list = document.createElement('ul');
+            list.className = 'custom-options';
+            list.setAttribute('role', 'listbox');
+
+            Array.from(select.options).forEach(opt => {
+                const li = document.createElement('li');
+                li.className = 'custom-option';
+                li.setAttribute('role', 'option');
+                li.dataset.value = opt.value;
+                li.textContent = opt.text;
+                if (opt.selected) li.setAttribute('aria-selected', 'true');
+                li.addEventListener('click', () => {
+                    select.value = opt.value;
+                    updateCustomSelectLabel();
+                    list.classList.remove('open');
+                    trigger.setAttribute('aria-expanded', 'false');
+                    newGame(opt.value);
+                });
+                list.appendChild(li);
+            });
+
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const open = list.classList.toggle('open');
+                trigger.setAttribute('aria-expanded', String(open));
+            });
+
+            document.addEventListener('click', () => {
+                list.classList.remove('open');
+                trigger.setAttribute('aria-expanded', 'false');
+            });
+
+            container.appendChild(trigger);
+            container.appendChild(list);
+            parent.appendChild(container);
+        }
+
+        function updateCustomSelectLabel() {
+            const select = document.getElementById('difficulty-select');
+            const container = document.getElementById('custom-difficulty');
+            if (!select || !container) return;
+            const trigger = container.querySelector('.custom-select-trigger');
+            const list = container.querySelector('.custom-options');
+            if (trigger) trigger.textContent = select.options[select.selectedIndex]?.text || '';
+            if (list) {
+                list.querySelectorAll('.custom-option').forEach(li => {
+                    li.setAttribute('aria-selected', String(li.dataset.value === select.value));
+                });
+            }
+        }
+    </script>
+    <script src="../src/js/acessibilidade.js"></script>
+</body>
+</html>
