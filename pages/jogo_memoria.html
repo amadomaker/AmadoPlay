@@ -52,6 +52,7 @@
             justify-content: center;
             align-items: center;
             flex-wrap: wrap;
+            gap: 15px; /* Espaçamento entre os botões */
             margin-bottom: 1.5rem;
         }
 
@@ -265,6 +266,25 @@
                 font-size: 1.1rem;
             }
         }
+
+        /* Estilos para o modo de texto em caixa alta */
+        .game-board.uppercase-text .card-name {
+            text-transform: uppercase;
+        }
+
+        #toggle-case-btn.active {
+            background-color: #8b5cf6; /* Mesma cor do botão de Dica */
+            color: white;
+            border-color: #7c3aed;
+        }
+
+        .toggle-case-btn {
+            width: 44px;
+            height: 44px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            flex-shrink: 0; /* Impede que o botão encolha */
+        }
         .card-back {
             background: linear-gradient(145deg, #fff, #f0f0f0);
             color: #764ba2;
@@ -446,6 +466,43 @@
             color: #fff;
             filter: brightness(0.95);
         }
+
+        /* Ajuste para telas de celular */
+        @media (max-width: 768px) {
+            .top-controls {
+                justify-content: space-between;
+                flex-wrap: nowrap;
+                gap: 10px;
+            }
+        }
+
+        /* Ajuste para telas MUITO pequenas */
+        @media (max-width: 400px) {
+            .difficulty-selector label {
+                font-size: 1rem; /* Reduz o tamanho do texto "Nível:" */
+                white-space: nowrap; /* Evita que a label quebre linha */
+            }
+            .difficulty-select {
+                min-width: 110px; /* Reduz o tamanho mínimo para caber */
+                padding: 10px 20px 10px 10px;
+                font-size: 1rem; /* Reduz um pouco a fonte para ajudar */
+                padding-right: 2rem; /* Mantém espaço para a seta */
+            }
+            .difficulty-selector {
+                gap: 5px; /* Reduz o espaçamento entre o label e o select */
+            }
+        }
+
+        /* Ajuste de fonte nas cartas para celulares */
+        @media (max-width: 480px) {
+            .card-icon {
+                font-size: 2.2rem; /* Um pouco menor para dar mais espaço */
+            }
+            .card-name {
+                font-size: 0.8rem; /* Reduz a fonte do nome do animal */
+                margin-top: 3px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -468,6 +525,7 @@
                         <option value="hard">Difícil (8 pares)</option>
                     </select>
                 </div>
+                <button id="toggle-case-btn" class="info-btn toggle-case-btn" aria-label="Alternar para maiúsculas">aA</button>
             </div>
 
             <div class="game-stats">
@@ -737,16 +795,14 @@
 
             init() {
                 // Define colunas de forma adaptativa conforme a altura da viewport
-                const h = window.innerHeight || 800;
+                const w = window.innerWidth;
                 let cols;
                 if (this.numPairs === 6) {
-                    // 6 pares: padrão 3 colunas; se tela baixa, aumenta colunas para reduzir altura
-                    cols = (h <= 800 ? 4 : 3);
-                    if (h <= 620) cols = 5;
+                    // Médio (12 cartas): 3 colunas em telas estreitas (mobile), 4 em telas largas.
+                    cols = (w <= 600 ? 3 : 4);
                 } else {
-                    // 4 ou 8 pares: padrão 4 colunas; em telas muito baixas, aumenta colunas
+                    // Fácil (8 cartas) ou Difícil (16 cartas): sempre 4 colunas.
                     cols = 4;
-                    if (this.numPairs === 8 && h <= 680) cols = 5;
                 }
                 this.columns = cols;
                 this.gameBoard.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
@@ -758,15 +814,12 @@
                 this.adjustBoardSize();
                 // Reajusta ao redimensionar a janela (útil em notebooks/telas interativas)
                 window.addEventListener('resize', () => {
-                    const prevCols = this.columns;
-                    const h2 = window.innerHeight || 800;
-                    let newCols = prevCols;
+                    const w2 = window.innerWidth;
+                    let newCols;
                     if (this.numPairs === 6) {
-                        newCols = (h2 <= 800 ? 4 : 3);
-                        if (h2 <= 620) newCols = 5;
+                        newCols = (w2 <= 600 ? 3 : 4);
                     } else {
                         newCols = 4;
-                        if (this.numPairs === 8 && h2 <= 680) newCols = 5;
                     }
                     if (newCols !== this.columns) {
                         this.columns = newCols;
@@ -1056,6 +1109,15 @@
                     if (e.target === howToPlayModal) {
                         howToPlayModal.classList.remove('show');
                     }
+                });
+            }
+
+            // --- Botão de Caixa Alta ---
+            const toggleCaseBtn = document.getElementById('toggle-case-btn');
+            if (toggleCaseBtn) {
+                toggleCaseBtn.addEventListener('click', () => {
+                    gameBoard.classList.toggle('uppercase-text');
+                    toggleCaseBtn.classList.toggle('active');
                 });
             }
 
