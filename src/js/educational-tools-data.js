@@ -238,7 +238,8 @@
       dificuldade: 'basico',
       bncc: [
         { codigo: 'EI03ET05', descricao: 'Classificar objetos e figuras de acordo com suas semelhanças e diferenças.' },
-        { codigo: 'EF15AR02', descricao: 'Explorar e reconhecer elementos constitutivos das artes visuais (forma, cor).' }
+        { codigo: 'EF15AR02', descricao: 'Explorar e reconhecer elementos constitutivos das artes visuais (forma, cor).' },
+        { codigo: 'DF02CI04', descricao: 'Descrever características de plantas e animais (tamanho, forma, cor, fase da vida, local onde se desenvolvem etc.) que fazem parte de seu cotidiano e relacioná-las ao ambiente em que eles vivem.' }
       ],
       tags: ['memória', 'animais', 'atenção', 'jogo'],
       popular: false,
