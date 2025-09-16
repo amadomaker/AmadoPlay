@@ -219,7 +219,6 @@
             cursor: default;
         }
         .card.matched {
-            opacity: 0.7;
             transform: rotateY(180deg) scale(0.95);
             pointer-events: none; /* evita clique em cartas já combinadas */
         }
@@ -241,6 +240,30 @@
             background: linear-gradient(145deg, #4CAF50, #45a049);
             color: white;
             transform: rotateY(180deg);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+            line-height: 1.1;
+        }
+
+        .card-icon {
+            font-size: 2.5rem; /* Reduz um pouco para dar espaço ao texto */
+        }
+
+        .card-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        @media (min-width: 1024px) {
+            .card-icon {
+                font-size: 3rem;
+            }
+            .card-name {
+                font-size: 1.1rem;
+            }
         }
         .card-back {
             background: linear-gradient(145deg, #fff, #f0f0f0);
@@ -248,11 +271,71 @@
             font-size: 2.5rem;
         }
 
-        /* Quando a carta estiver virada definitivamente (matched), use o mesmo verde da frente */
+        /* Quando a carta estiver virada definitivamente (matched), usa a cor do tipo de animal */
         .card.matched .card-front,
         .card.matched .card-back {
-            background: linear-gradient(145deg, #4CAF50, #45a049);
             color: #fff;
+        }
+
+        .card[data-animal-type="domestico"].matched .card-front,
+        .card[data-animal-type="domestico"].matched .card-back {
+            background: #81d4fa; /* Azul */
+        }
+        .card[data-animal-type="roedor"].matched .card-front,
+        .card[data-animal-type="roedor"].matched .card-back {
+            background: #e0e0e0; /* Cinza */
+        }
+        .card[data-animal-type="fazenda"].matched .card-front,
+        .card[data-animal-type="fazenda"].matched .card-back {
+            background: #ffd54f; /* Amarelo */
+        }
+        .card[data-animal-type="floresta"].matched .card-front,
+        .card[data-animal-type="floresta"].matched .card-back {
+            background: #a5d6a7; /* Verde */
+        }
+        .card[data-animal-type="exotico"].matched .card-front,
+        .card[data-animal-type="exotico"].matched .card-back {
+            background: #ffab91; /* Coral */
+        }
+        .card[data-animal-type="anfibio"].matched .card-front,
+        .card[data-animal-type="anfibio"].matched .card-back {
+            background: #c5e1a5; /* Verde claro */
+        }
+
+        /* =================================================================== */
+        /* SOLUÇÃO DEFINITIVA: ANIMAÇÃO 2D PARA MODOS DE FILTRO */
+        /* =================================================================== */
+
+        /* Remove a animação 3D quando o modo de virada segura está ativo */
+        .game-board-safe-flip .card,
+        .game-board-safe-flip .card.flipped,
+        .game-board-safe-flip .card.matched {
+            transform-style: flat; /* Desativa o 3D */
+            transform: none; /* Remove qualquer rotação */
+        }
+
+        /* No modo seguro, a frente começa invisível e sem rotação */
+        .game-board-safe-flip .card-front {
+            opacity: 0;
+            transform: none;
+            transition: opacity 0.3s ease;
+        }
+
+        /* O verso fica visível por padrão */
+        .game-board-safe-flip .card-back {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Quando a carta é "virada" no modo seguro, inverte a opacidade */
+        .game-board-safe-flip .card.flipped .card-front,
+        .game-board-safe-flip .card.matched .card-front {
+            opacity: 1;
+        }
+
+        .game-board-safe-flip .card.flipped .card-back,
+        .game-board-safe-flip .card.matched .card-back {
+            opacity: 0;
         }
 
         .bottom-controls {
@@ -612,18 +695,18 @@
 
     <script>
         const animalData = [
-            { name: 'Cachorro', icon: '🐶', fact: 'Cachorros têm um olfato 10.000 vezes melhor que o nosso!' },
-            { name: 'Gato', icon: '🐱', fact: 'Gatos podem fazer mais de 100 sons diferentes.' },
-            { name: 'Rato', icon: '🐭', fact: 'Os dentes de um rato nunca param de crescer.' },
-            { name: 'Hamster', icon: '🐹', fact: 'Hamsters guardam comida em suas bochechas.' },
-            { name: 'Coelho', icon: '🐰', fact: 'Coelhos podem pular muito alto, quase 1 metro!' },
-            { name: 'Raposa', icon: '🦊', fact: 'Raposas são muito espertas e vivem em quase todo o mundo.' },
-            { name: 'Urso', icon: '🐻', fact: 'Ursos hibernam no inverno para economizar energia.' },
-            { name: 'Panda', icon: '🐼', fact: 'Pandas comem bambu o dia todo!' },
-            { name: 'Leão', icon: '🦁', fact: 'O rugido de um leão pode ser ouvido a 8 km de distância.' },
-            { name: 'Vaca', icon: '🐮', fact: 'Vacas têm quatro estômagos para ajudar a digerir a grama.' },
-            { name: 'Sapo', icon: '🐸', fact: 'Sapos bebem água através da pele.' },
-            { name: 'Macaco', icon: '🐵', fact: 'Macacos usam a cauda para se equilibrar nas árvores.' }
+            { name: 'Cachorro', icon: '🐶', fact: 'Cachorros têm um olfato 10.000 vezes melhor que o nosso!', type: 'domestico', color: '#81d4fa' },
+            { name: 'Gato', icon: '🐱', fact: 'Gatos podem fazer mais de 100 sons diferentes.', type: 'domestico', color: '#81d4fa' },
+            { name: 'Rato', icon: '🐭', fact: 'Os dentes de um rato nunca param de crescer.', type: 'roedor',    color: '#e0e0e0' },
+            { name: 'Hamster', icon: '🐹', fact: 'Hamsters guardam comida em suas bochechas.', type: 'domestico', color: '#81d4fa' },
+            { name: 'Coelho', icon: '🐰', fact: 'Coelhos podem pular muito alto, quase 1 metro!', type: 'fazenda',   color: '#ffd54f' },
+            { name: 'Raposa', icon: '🦊', fact: 'Raposas são muito espertas e vivem em quase todo o mundo.', type: 'floresta',  color: '#a5d6a7' },
+            { name: 'Urso', icon: '🐻', fact: 'Ursos hibernam no inverno para economizar energia.', type: 'floresta',  color: '#a5d6a7' },
+            { name: 'Panda', icon: '🐼', fact: 'Pandas comem bambu o dia todo!', type: 'exotico',   color: '#ffab91' },
+            { name: 'Leão', icon: '🦁', fact: 'O rugido de um leão pode ser ouvido a 8 km de distância.', type: 'exotico',   color: '#ffab91' },
+            { name: 'Vaca', icon: '🐮', fact: 'Vacas têm quatro estômagos para ajudar a digerir a grama.', type: 'fazenda',   color: '#ffd54f' },
+            { name: 'Sapo', icon: '🐸', fact: 'Sapos bebem água através da pele.', type: 'anfibio',   color: '#c5e1a5' },
+            { name: 'Macaco', icon: '🐵', fact: 'Macacos usam a cauda para se equilibrar nas árvores.', type: 'floresta',  color: '#a5d6a7' }
         ];
 
         class MemoryGame {
@@ -718,9 +801,13 @@
                         (card.flipped ? ' flipped' : '') +
                         (card.matched ? ' matched' : '');
                     cardElement.dataset.index = index;
+                    cardElement.dataset.animalType = card.animal.type;
                     cardElement.innerHTML = `
                         <div class="card-face card-back">❓</div>
-                        <div class="card-face card-front">${card.animal.icon}</div>
+                        <div class="card-face card-front">
+                            <div class="card-icon">${card.animal.icon}</div>
+                            <div class="card-name">${card.animal.name}</div>
+                        </div>
                     `;
                     cardElement.addEventListener('click', () => this.flipCard(index));
                     this.gameBoard.appendChild(cardElement);
@@ -971,6 +1058,34 @@
                     }
                 });
             }
+
+            // ===================================================================
+            // SOLUÇÃO DEFINITIVA PARA O BUG DE FILTRO DE COR
+            // ===================================================================
+            // Observa mudanças nas classes do <body> para ativar/desativar o modo de virada segura (2D)
+            const gameBoard = document.getElementById('gameBoard');
+            const problematicClasses = ['high-contrast', 'grayscale', 'low-saturation', 'high-saturation'];
+
+            const observer = new MutationObserver((mutations) => {
+                for (const mutation of mutations) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        const bodyClasses = document.body.classList;
+                        const isProblematic = problematicClasses.some(cls => bodyClasses.contains(cls));
+                        gameBoard.classList.toggle('game-board-safe-flip', isProblematic);
+                    }
+                }
+            });
+
+            observer.observe(document.body, { attributes: true });
+
+            // Verifica o estado inicial ao carregar a página, caso um modo já esteja ativo
+            const initialBodyClasses = document.body.classList;
+            const isInitiallyProblematic = problematicClasses.some(cls => initialBodyClasses.contains(cls));
+            if (isInitiallyProblematic) {
+                gameBoard.classList.add('game-board-safe-flip');
+            }
+            // ===================================================================
+
         });
 
         // --- Custom Select (apenas para tablets) ---

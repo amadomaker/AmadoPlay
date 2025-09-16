@@ -236,7 +236,10 @@
       series: [1, 2, 3],
       tipo: ['interativo', 'ludico', 'memoria'],
       dificuldade: 'basico',
-      bncc: [],
+      bncc: [
+        { codigo: 'EI03ET05', descricao: 'Classificar objetos e figuras de acordo com suas semelhanças e diferenças.' },
+        { codigo: 'EF15AR02', descricao: 'Explorar e reconhecer elementos constitutivos das artes visuais (forma, cor).' }
+      ],
       tags: ['memória', 'animais', 'atenção', 'jogo'],
       popular: false,
       novo: true,
