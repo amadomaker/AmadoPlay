@@ -96,6 +96,7 @@ html, body {
   z-index: 9999;
   font-family: Arial, sans-serif;
   outline: none;
+  overflow: hidden; /* Garante que a imagem grande não vaze para fora */
 }
 
 .accessibility-float-btn:hover,
@@ -168,6 +169,8 @@ html, body {
   /* evita selecionar/arrastar */
   user-select: none;
   -webkit-user-drag: none;
+  /* A imagem não recebe cliques, apenas o botão pai */
+  pointer-events: none;
 }
 
 
