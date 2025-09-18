@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Contexto AmadoPlay</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin:30px; background:#181b22; color: #fff;}
+        h1 { text-align: center; font-size: 2em;}
+        #jogo { max-width: 400px; margin: auto;}
+        input, button { padding: 8px; margin-top:10px; width:100%; border-radius:6px;}
+        .tentativa { margin:8px 0; padding:8px; border-radius:8px; font-size:1.1em;}
+        .rank1 { background:#27ae60; color:#fff;}    /* Verde próximo */
+        .rank2 { background:#e67e22; color:#fff;}    /* Laranja (meio) */
+        .rank3 { background:#e74c3c; color:#fff;}    /* Vermelho (longe) */
+        .acerto { background:#f1c40f; color:#000;}
+        #avisoform {margin-top:4px; color:#faf66e; font-size:1em;}
+    </style>
+</head>
+<body>
+    <h1>CONTEXTO AmadoPlay</h1>
+    <div id="jogo">
+        <input type="text" id="palavra" placeholder="Digite uma palavra..." autofocus>
+        <div id="avisoform"></div>
+        <button onclick="tentar()">Enviar</button>
+        <button onclick="dica()" style="background:#34495e;color:#fff">Dica</button>
+        <div id="tentativas"></div>
+    </div>
+    <script>
+        let tentativas = [];
+        let tentadasCanon = new Set();
+
+        function barraClasse(rank) {
+            if(rank === 0) return "acerto";
+            if(rank >= 1 && rank <= 50) return "rank1";
+            if(rank <= 300) return "rank2";
+            return "rank3";
+        }
+
+        function renderAviso(repetida) {
+            const aviso = document.getElementById('avisoform');
+            if(repetida)
+                aviso.textContent = `Você já tentou "${repetida}".`;
+            else
+                aviso.textContent = "";
+        }
+
+        function renderTentativas() {
+            // Ordenar pelo menor rank (melhor tentativa primeiro)
+            tentativas.sort((a, b) => a.rank - b.rank);
+            const div = document.getElementById('tentativas');
+            div.innerHTML = tentativas.map(t => {
+                const label = t.isHint ? ' (dica)' : '';
+                const body = t.rank == 0 ? "🎉 Acertou!" : `Rank: ${t.rank}`;
+                return `
+                <div class='tentativa ${barraClasse(t.rank)}'>
+                    <b>${t.palavra}</b>${label} ${body}
+                </div>`;
+            }).join('');
+        }
+
+        async function tentar() {
+            const input = document.getElementById("palavra");
+            const palavra = input.value.trim().toLowerCase();
+            if(!palavra) return;
+            input.value = "";
+
+            // Checagem visual de repetição (com forma singularizada)
+            let repetida = null;
+            function singulariza_js(w) {
+                if (w.endsWith("res") && w.length > 5) return w.slice(0, -2);
+                if (w.endsWith("ns")) return w.slice(0, -2) + 'm';
+                if (w.endsWith("ões")) return w.slice(0, -3) + 'ão';
+                if (w.endsWith("ais")||w.endsWith("éis")||w.endsWith("ois")||w.endsWith("uis")) return w;
+                if (w.endsWith("es") && w.length > 4) return w.slice(0, -2);
+                if (w.endsWith("s") && w.length > 4) return w.slice(0, -1);
+                return w;
+            }
+            let singular = singulariza_js(palavra);
+            // Verifica por canonical já tentado também
+            const keyVis = singular;
+            if (tentadasCanon.has(keyVis)) repetida = singular;
+            renderAviso(repetida);
+
+            // Envio normal para backend
+            const resp = await fetch('http://localhost:5000/tentativa', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({palavra})
+            });
+            const dados = await resp.json();
+
+            if(dados.erro) {
+                renderAviso(null);
+                alert(dados.erro);
+                return;
+            }
+            // Só adiciona se canonical ainda não constar
+            const canon = dados.canonical || dados.palavra;
+            if (!tentadasCanon.has(canon)) {
+                tentadasCanon.add(canon);
+                tentativas.push({ palavra: dados.palavra, rank: dados.rank, isHint: false, canonical: canon });
+            }
+            renderTentativas();
+
+            if(dados.rank === 0) {
+                renderAviso(null);
+                alert(`Parabéns! Você acertou a palavra secreta: ${dados.palavra}!`);
+            }
+        }
+
+        async function dica() {
+            // Melhor rank atual (ou grande número se nenhum)
+            const melhorRank = tentativas.length ? tentativas[0].rank : 999999;
+            const ja = Array.from(tentadasCanon);
+
+            const resp = await fetch('http://localhost:5000/dica', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ melhor_rank: melhorRank, ja_tentadas: ja })
+            });
+            const dados = await resp.json();
+            if(dados.erro) {
+                alert(dados.erro);
+                return;
+            }
+            const canon = dados.canonical || dados.palavra;
+            if (!tentadasCanon.has(canon)) {
+                tentadasCanon.add(canon);
+                tentativas.push({ palavra: dados.palavra, rank: dados.rank, isHint: true, canonical: canon });
+            }
+            renderTentativas();
+        }
+
+        document.getElementById("palavra").addEventListener('keydown', function(e){
+            if(e.key === 'Enter') tentar();
+        });
+    </script>
+</body>
+</html>
