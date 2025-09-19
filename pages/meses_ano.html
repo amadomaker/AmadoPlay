@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Meses do Ano</title>
+    <link rel="stylesheet" href="../src/css/global.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #8b5cf6;
+            --secondary-color: #f59e0b;
+            --success-color: #22c55e;
+            --error-color: #ef4444;
+            --bg-light: rgba(255, 255, 255, 0.95);
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6c63ff 0%, #7c4dff 35%, #9c27b0 70%, #673ab7 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+            overflow-x: hidden;
+        }
+
+        #game-container {
+            width: 100%;
+            max-width: 1200px; /* Define um limite máximo para telas grandes */
+            margin: 0 auto;
+        }
+        .page-header {
+            text-align: center;
+            margin-bottom: 0; /* Garante que não haja espaço abaixo do título */
+        }
+
+        .game-board {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            border-radius: var(--radius-lg);
+            padding: 1rem; /* Padding geral do tabuleiro */
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); }
+        h2 { font-size: clamp(1.2rem, 4vw, 1.5rem); color: var(--primary-color); margin-bottom: 0.5rem; }
+        p { line-height: 1.6; max-width: 600px; margin: 0 auto; }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 99px;
+            cursor: pointer;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.2s;
+            margin: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .top-controls-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem; /* Aumentado para separar mais os botões */
+            align-items: center;
+            margin-bottom: 0.25rem;
+        }
+        /* Botão de Som Flutuante */
+        .sound-toggle-btn {
+            background: transparent; /* Fundo transparente por padrão */
+            border: none; /* Sem borda */
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0; /* Impede que o botão encolha */
+            border-radius: 50%; /* Deixa o botão redondo */
+            width: 48px; /* Tamanho consistente */
+            height: 48px; /* Tamanho consistente */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sound-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.15); /* Destaque redondo e discreto no hover */
+            transform: scale(1.1);
+        }
+        /* Botão de Caixa Alta */
+        #toggle-case-btn {
+            font-weight: 700;
+            font-size: 1.2rem; /* Ajustado para o novo tamanho */
+        }
+        #sound-btn {
+            font-size: 1.5rem; /* Ajustado para o novo tamanho */
+        }
+        #toggle-case-btn.active {
+            color: var(--secondary-color);
+            transform: scale(1.1);
+        }
+        .game-board.uppercase-text .month-card {
+            text-transform: uppercase;
+        }
+        .sound-toggle-btn.muted { opacity: 0.6; }
+        .btn:hover {
+            background-color: #7c3aed;
+            transform: translateY(-2px);
+        }
+        .btn.btn-alt {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            border: 2px solid #d1d5db;
+            text-shadow: none;
+        }
+        .btn.btn-alt:hover:not(:disabled) {
+            background-color: #f3f4f6;
+            border-color: #9ca3af;
+        }
+        .btn.btn-alt:disabled {
+            background-color: #e5e7eb; /* Cinza mais sólido */
+            color: #4b5563; /* Texto mais escuro para melhor contraste */
+            border-color: #e5e7eb;
+            cursor: not-allowed;
+            transform: none;
+            opacity: 1; /* Remove opacidade para mais destaque */
+        }
+        .info-btn {
+            width: 40px;
+            height: 40px;
+            background-color: #e9ecef;
+            color: #495057;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #dee2e6;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        .info-btn:hover { transform: scale(1.1); background-color: #dee2e6; }
+        .info-btn svg { width: 20px; height: 20px; }
+        #check-btn:not(:disabled) {
+            background-color: var(--success-color); /* Verde quando ativo */
+            color: white;
+            border-color: transparent;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+        }
+        #check-btn:not(:disabled):hover {
+            background-color: #16a34a; /* Verde mais escuro no hover */
+        }
+        .btn:disabled {
+            background-color: #a7a7a7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Slots para os meses */
+        #slots-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.75rem;
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+        .month-slot {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 60px;
+            background-color: #f9fafb;
+            border: 2px dashed #d1d5db;
+            border-radius: var(--radius-md);
+            transition: background-color 0.3s, border-color 0.3s;
+            position: relative;
+            padding: 0.25rem;
+        }
+        .month-slot.over { background-color: #e0e7ff; border-color: var(--primary-color); }
+        .slot-number {
+            position: absolute;
+            top: 5px;
+            left: 8px;
+            font-weight: 800;
+            color: #d1d5db;
+            font-size: 1rem;
+            z-index: 1;
+        }
+        .season-icon {
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+
+        /* Cartões dos meses */
+        #months-pool {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background-color: #e9ecef;
+            border-radius: var(--radius-lg);
+            min-height: 80px;
+            margin-bottom: 1.5rem;
+        }
+        .month-card {
+            padding: 0.5rem 1rem;
+            color: white;
+            border-radius: 99px;
+            cursor: grab;
+            user-select: none;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 0.9rem;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+        }
+        /* Em dispositivos de toque, desabilita gestos/arrasto nativo para não interferir */
+        @media (pointer: coarse) {
+            .month-card {
+                -webkit-user-drag: none;
+                touch-action: none;
+            }
+        }
+        /* Cores por estação para os cards */
+        .month-card.verao {
+            background: linear-gradient(145deg, #f59e0b, #d97706);
+        }
+        .month-card.outono {
+            background: linear-gradient(145deg, #f97316, #ea580c);
+        }
+        .month-card.inverno {
+            background: linear-gradient(145deg, #60a5fa, #3b82f6);
+        }
+        .month-card.primavera {
+            background: linear-gradient(145deg, #22c55e, #16a34a);
+        }
+        .month-card.dragging, .month-card.touch-clone {
+            opacity: 0.8;
+            cursor: grabbing;
+            transform: scale(1.08) rotate(3deg);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        .month-slot .month-card {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: default;
+            box-shadow: none;
+            /* mantém a cor por estação do card */
+            z-index: 2;
+        }
+
+        /* Feedback de verificação */
+        .month-slot.correct .month-card { background: var(--success-color); }
+        .month-slot.incorrect .month-card { background: var(--error-color); }
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* Controles do jogo */
+        #game-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* Tela Final (Modal) */
+        dialog {
+            border: none;
+            background: transparent;
+            padding: 0;
+            margin: 0; /* evita alinhamento à esquerda em alguns mobiles */
+        }
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s ease;
+        }
+        .victory-content {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: zoomIn 0.4s ease;
+        }
+        @keyframes zoomIn { from { transform: scale(0.8); } to { transform: scale(1); } }
+        #victory-modal h1 {
+            font-size: clamp(2rem, 6vw, 3rem);
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        /* Modal de Aprendizagem */
+        #learning-modal {
+            max-width: 95vw;
+            max-height: 90vh;
+            border-radius: var(--radius-lg);
+            border: none;
+            box-shadow: var(--shadow);
+        }
+        
+        /* --- TELA DE APRENDIZAGEM --- */
+        .learning-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .season-card {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            text-align: left;
+            box-shadow: var(--shadow);
+            border-top: 5px solid;
+        }
+        .season-card.verao { border-color: #f59e0b; }
+        .season-card.outono { border-color: #d97706; }
+        .season-card.inverno { border-color: #3b82f6; }
+        .season-card.primavera { border-color: #ec4899; }
+
+        .season-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .season-card .months {
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+        .season-card .description {
+            margin-bottom: 1rem;
+        }
+        .season-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .season-card li {
+            padding-left: 1.5rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+        .season-card li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* Botões de navegação */
+        .navigation-controls {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Créditos: botão flutuante no canto inferior direito do tabuleiro */
+        #credits-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.95);
+            border: 1px solid #dee2e6;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            cursor: pointer;
+            z-index: 5;
+        }
+        #credits-btn svg { width: 20px; height: 20px; fill: #495057; }
+        #credits-btn:hover { transform: translateY(-1px); }
+        /* Botão de Como Jogar (ao lado do de créditos) */
+        #howto-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 56px; /* espaço para ficar ao lado do créditos */
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.95);
+            border: 1px solid #dee2e6;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            cursor: pointer;
+            z-index: 5;
+            font-weight: 800;
+            color: #495057;
+        }
+        #howto-btn:hover { transform: translateY(-1px); }
+        /* Mobile: deixa o botão um pouco mais para baixo para não cobrir "Reiniciar" */
+        @media (max-width: 600px) {
+            #credits-btn {
+                width: 36px;
+                height: 36px;
+                bottom: -6px; /* empurra um pouco para fora para não cobrir o "Reiniciar" */
+                right: 8px;
+            }
+        }
+        
+        /* Estilo do modal de créditos - centralizado (via container interno) */
+        #credits-modal[open] {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100dvh;
+            margin: 0;               /* zera margens padrão do dialog */
+        }
+        #credits-modal .modal-container {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px; /* evita corte em telas menores */
+        }
+        #credits-modal .modal-box {
+            background: #fff;
+            color: var(--text-dark);
+            padding: 1.25rem 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            width: min(420px, 90vw);
+            text-align: center;
+            animation: zoomIn 0.3s ease;
+            /* Mantém estático; o próprio dialog centraliza via grid para evitar "pulo" visual */
+        }
+        #credits-modal h2 { color: var(--primary-color); margin-bottom: 0.75rem; }
+        #credits-modal .btn { margin-top: 1rem; }
+
+        /* Modal Como Jogar (boas-vindas) */
+        #howto-modal[open] {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100dvh;
+            margin: 0;
+        }
+        #howto-modal .modal-container {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        #howto-modal .modal-box {
+            background: #fff;
+            color: var(--text-dark);
+            padding: 1.25rem 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            width: min(520px, 94vw);
+            text-align: center;
+            animation: zoomIn 0.3s ease;
+        }
+        #howto-modal h2 { color: var(--primary-color); margin-bottom: 0.5rem; }
+        .howto-illustration { width: 160px; height: auto; display: block; margin: 0.25rem auto 0.75rem; }
+        .howto-list { text-align: left; margin: 0.75rem auto; max-width: 420px; line-height: 1.6; }
+        .howto-actions { display: flex; gap: .5rem; justify-content: center; margin-top: 1rem; }
+
+        /* Modal de vitória centralizado (via container interno) */
+        #victory-modal[open] {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100dvh;
+            margin: 0;
+        }
+        #victory-modal .modal-container {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        /* Conteúdo permanece estático; o dialog faz a centralização */
+
+        /* --- Responsividade --- */
+
+        /* Telas pequenas (Mobile) */
+        @media (max-width: 600px) {
+            body {
+                padding: 0.5rem;
+            }
+            .game-board {
+                padding: 0.7rem; /* Padding base para celular */
+                padding-bottom: 3.25rem; /* Reserva espaço interno p/ o botão de créditos */
+                position: relative; /* garante contexto para o botão absoluto */
+            }
+            .page-header { margin-bottom: 0; }
+            .top-controls-wrapper {
+                margin-bottom: 0.15rem; /* Ainda menos espaço abaixo no celular */
+            }
+            .sound-toggle-btn {
+                width: 40px; /* Botão um pouco menor para celular */
+                height: 40px;
+                border-radius: 50%; /* Mantém redondo no celular */
+            }
+            #toggle-case-btn {
+                font-size: 1rem; /* Ícone proporcionalmente menor */
+            }
+            #sound-btn {
+                font-size: 1.3rem; /* Ícone proporcionalmente menor */
+            }
+            #slots-container {
+                /* Força 3 colunas em telas pequenas para melhor organização */
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.5rem;
+            }
+            .month-slot { height: 55px; }
+            
+            /* Pool dos meses mais organizado em grade e cards um pouco maiores */
+            #months-pool {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(90px, 1fr));
+                gap: 0.5rem;
+                padding: 0.75rem;
+            }
+            #months-pool .month-card {
+                font-size: 0.85rem;
+                padding: 0.5rem 0.9rem;
+                text-align: center;
+                width: 100%; /* ocupa a célula inteira apenas no pool */
+            }
+            /* Evita que o clone de toque fique gigante fora do grid */
+            .month-card.touch-clone {
+                width: auto !important;
+                display: inline-flex;
+            }
+            
+            /* Botões menores e mais próximos */
+            #game-controls {
+                gap: 0.4rem;
+                margin-top: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .btn {
+                padding: 0.5rem 0.9rem;
+                font-size: 0.85rem;
+                margin: 0.15rem 0.2rem;
+            }
+            #learning-modal .learning-content {
+                grid-template-columns: 1fr; /* Uma coluna no modal de aprender */
+            }
+            /* Botão de créditos fica dentro do container, sem sobrepor os botões inferiores */
+            #credits-btn {
+                width: 36px;
+                height: 36px;
+                bottom: 8px;  /* volta a ficar dentro do padding-bottom */
+                right: 8px;
+            }
+        }
+
+        /* Telas de Tablet */
+        @media (min-width: 601px) and (max-width: 1024px) {
+            .page-header {
+                margin-bottom: 0; /* Remove o espaço acima do botão de som */
+            }
+            .top-controls-wrapper {
+                margin-bottom: 0.75rem; /* Espaço ajustado para tablet */
+            }
+            .game-board {
+                padding: 1.5rem; /* Padding menor para tablet */
+            }
+            #slots-container {
+                /* 4 colunas para tablets, aproveitando a largura */
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1rem; /* Espaçamento maior */
+            }
+            .month-slot { 
+                height: 85px; /* REDUZIDO: Evita que o card cresça demais ao ser colocado no slot */
+                border-radius: 16px; /* Mais arredondado */
+            }
+            .slot-number, .season-icon {
+                font-size: 1.2rem; /* Ajustado para o novo tamanho do slot */
+            }
+            #months-pool {
+                display: grid; /* ADICIONADO: Mantém o tamanho dos cards no pool consistente */
+                grid-template-columns: repeat(auto-fit, 170px); /* Define uma largura fixa para os cards */
+                padding: 1.5rem;
+                justify-content: center; /* Centraliza os cards quando há espaço sobrando */
+            align-items: start; /* Impede que os cards estiquem verticalmente */
+                min-height: 200px; /* Ajustado para o novo layout */
+                gap: 1rem;
+            }
+            .month-card {
+                font-size: 1.1rem; /* Ajustado para um tamanho mais consistente */
+                padding: 0.8rem 1.6rem;
+            }
+            /* ADICIONADO: Garante que os cards no pool preencham a célula do grid */
+            #months-pool .month-card {
+                /* Define uma largura fixa para impedir que o card cresça para preencher a célula do grid */
+                width: 170px;
+                text-align: center;
+            }
+            .btn {
+                padding: 0.9rem 2rem;
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Telas de Notebook/Desktop e maiores */
+        @media (min-width: 1025px) {
+            #slots-container {
+                /* 6 colunas para um layout 6x2 ideal */
+                grid-template-columns: repeat(6, 1fr);
+                gap: 1rem;
+            }
+            .month-slot { height: 70px; }
+            .month-card { font-size: 1rem; }
+            #months-pool {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, 180px);
+                justify-content: center;
+                align-items: start; /* Impede que os cards estiquem verticalmente */
+            }
+            #months-pool .month-card {
+                /* Garante que os cards no desktop também tenham um tamanho fixo e não cresçam */
+                width: 180px;
+                text-align: center;
+            }
+            #learning-modal .learning-content {
+                grid-template-columns: repeat(2, 1fr); /* Duas colunas no modal */
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <header class="page-header">
+            <h1>Meses do Ano</h1>
+            <p>Arraste os meses para os lugares corretos e depois clique em "Verificar".</p>
+        </header>
+        <div class="top-controls-wrapper">
+            <button id="toggle-case-btn" class="sound-toggle-btn" title="Alternar Maiúsculas/Minúsculas">aA</button>
+            <button id="sound-btn" class="sound-toggle-btn" title="Ativar/Desativar som">🔈</button>
+        </div>
+        <main class="game-board">
+            <div id="slots-container"></div>
+            <div id="months-pool"></div>
+            <div id="game-controls">
+                <div class="left-controls">
+                    <button id="learn-btn" class="btn">Curiosidades</button>
+                    <button id="check-btn" class="btn btn-alt" disabled>Verificar</button>
+                    <button id="reset-btn" class="btn btn-alt">Reiniciar</button>
+                </div>
+                <div class="right-controls"></div>
+            </div>
+            <!-- Botões flutuantes (direita, embaixo) -->
+            <button id="howto-btn" class="info-btn" title="Como Jogar" aria-label="Como Jogar">?</button>
+            <!-- Botão de créditos flutuante no canto inferior direito -->
+            <button id="credits-btn" class="info-btn" title="Créditos" aria-label="Créditos">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+            </button>
+        </main>
+    </div>
+
+    <!-- Modal de Vitória -->
+    <dialog id="victory-modal">
+        <div class="modal-container">
+        <div class="victory-content">
+            <h1>🎉 Parabéns! 🎉</h1>
+            <p>Você organizou todos os meses do ano na ordem correta!</p>
+            <button id="play-again-btn" class="btn">Jogar Novamente</button>
+        </div>
+        </div>
+    </dialog>
+
+    <!-- Modal de Créditos -->
+    <dialog id="credits-modal">
+        <div class="modal-container">
+        <div class="modal-box">
+            <h2>Créditos</h2>
+            <div>
+                <p><strong>Ferramenta:</strong> Meses do Ano</p>
+                <p><strong>Criação e Desenvolvimento:</strong> Ana Paula Camara e João Jr</p>
+            </div>
+            <button id="credits-close-btn" class="btn">Fechar</button>
+        </div>
+        </div>
+    </dialog>
+
+    <!-- Modal Como Jogar / Boas-vindas -->
+    <dialog id="howto-modal">
+        <div class="modal-container">
+        <div class="modal-box">
+            <h2>Bem-vindo(a)!</h2>
+            <img class="howto-illustration" src="../src/assets/images/Ursula_Idle.gif" alt="Personagem animada dando boas-vindas" />
+            <p>Organize os meses do ano na ordem correta.</p>
+            <div class="howto-list">
+                <ul>
+                    <li>Arraste os cartões para os slots numerados de 1 a 12.</li>
+                    <li>Use “Verificar” para conferir e “Reiniciar” para tentar de novo.</li>
+                    <li>Toque no botão “Curiosidades” para aprender mais sobre as estações.</li>
+                    <li>Você pode abrir estas instruções pelo botão “?” no canto inferior.</li>
+                </ul>
+            </div>
+            <div class="howto-actions">
+                <button id="howto-start-btn" class="btn">Vamos lá!</button>
+            </div>
+        </div>
+        </div>
+    </dialog>
+
+    <!-- Modal de Aprendizagem -->
+    <dialog id="learning-modal">
+        <header class="page-header" style="color: var(--text-dark); padding: 1rem 1rem 0;">
+            <h1>As Estações do Ano no Brasil</h1>
+            <p>Descubra as características de cada estação e os meses correspondentes.</p>
+        </header>
+        <div id="learning-content" class="learning-content" style="padding: 1.5rem;"></div>
+        <div class="navigation-controls">
+            <button id="close-learn-modal-btn" class="btn">Fechar</button>
+        </div>
+    </dialog>
+
+    <!-- Efeitos Sonoros -->
+    <audio id="sound-drop" src="https://cdn.jsdelivr.net/gh/BMSVieira/sounds-for-memory-game/card-flip.mp3" preload="auto"></audio>
+    <audio id="sound-victory" src="https://cdn.jsdelivr.net/gh/BMSVieira/sounds-for-memory-game/win-sound.mp3" preload="auto"></audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Elementos do jogo
+            const learnBtn = document.getElementById('learn-btn');
+            const learningModal = document.getElementById('learning-modal');
+            const closeLearnModalBtn = document.getElementById('close-learn-modal-btn');
+            const learningContent = document.getElementById('learning-content');
+            const creditsBtn = document.getElementById('credits-btn');
+            const creditsModal = document.getElementById('credits-modal');
+            const creditsCloseBtn = document.getElementById('credits-close-btn');
+            const creditsOverlay = () => creditsModal.querySelector('.modal-container');
+            const howtoBtn = document.getElementById('howto-btn');
+            const howtoModal = document.getElementById('howto-modal');
+            const howtoStartBtn = document.getElementById('howto-start-btn');
+            const toggleCaseBtn = document.getElementById('toggle-case-btn');
+            const gameBoard = document.querySelector('.game-board');
+            const soundBtn = document.getElementById('sound-btn');
+            const soundDrop = document.getElementById('sound-drop');
+            const soundVictory = document.getElementById('sound-victory');
+
+            const slotsContainer = document.getElementById('slots-container');
+            const monthsPool = document.getElementById('months-pool');
+            const checkBtn = document.getElementById('check-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const victoryModal = document.getElementById('victory-modal');
+            const playAgainBtn = document.getElementById('play-again-btn');
+
+            const MONTHS = [
+                { name: "Janeiro", season: "☀️" }, { name: "Fevereiro", season: "☀️" },
+                { name: "Março", season: "🍂" }, { name: "Abril", season: "🍂" }, { name: "Maio", season: "🍂" },
+                { name: "Junho", season: "❄️" }, { name: "Julho", season: "❄️" }, { name: "Agosto", season: "❄️" },
+                { name: "Setembro", season: "🌸" }, { name: "Outubro", season: "🌸" }, { name: "Novembro", season: "🌸" },
+                { name: "Dezembro", season: "☀️" }
+            ];
+
+            const SEASONS_DATA = {
+                "☀️": { name: "Verão", class: "verao", months: "Dezembro, Janeiro, Fevereiro", description: "A estação mais quente, com dias longos e ensolarados. É tempo de férias e diversão ao ar livre!", characteristics: ["Temperaturas altas", "Chuvas de verão", "Férias escolares", "Carnaval"] },
+                "🍂": { name: "Outono", class: "outono", months: "Março, Abril, Maio", description: "As temperaturas ficam mais amenas e as folhas de algumas árvores mudam de cor. É uma estação de transição.", characteristics: ["Clima ameno", "Menos chuvas", "Colheita de frutas", "Noites mais frescas"] },
+                "❄️": { name: "Inverno", class: "inverno", months: "Junho, Julho, Agosto", description: "A estação mais fria do ano. Em algumas regiões do sul do Brasil, pode até nevar! Época de bebidas quentes.", characteristics: ["Temperaturas baixas", "Noites longas", "Festas Juninas", "Menos umidade no ar"] },
+                "🌸": { name: "Primavera", class: "primavera", months: "Setembro, Outubro, Novembro", description: "Conhecida como a 'estação das flores', a natureza fica mais colorida e os animais, mais ativos.", characteristics: ["Florescimento das plantas", "Temperaturas agradáveis", "Aumento da atividade dos animais", "Clima instável"] }
+            };
+
+            let draggedCard = null;
+            let touchClone = null;
+            let soundEnabled = true;
+
+            function shuffleArray(array) {
+                let currentIndex = array.length, randomIndex;
+                const newArray = array.slice(); // Cria uma cópia para não modificar o original
+                while (currentIndex !== 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [newArray[currentIndex], newArray[randomIndex]] = [newArray[randomIndex], newArray[currentIndex]];
+                }
+                return newArray;
+            }
+
+            function startGame() {
+                slotsContainer.innerHTML = '';
+                monthsPool.innerHTML = '';
+                if (victoryModal.open) victoryModal.close();
+                checkBtn.disabled = true;
+
+                MONTHS.forEach((month, index) => {
+                    const slot = document.createElement('div');
+                    slot.className = 'month-slot';
+                    slot.dataset.month = month.name;
+                    slot.innerHTML = `
+                        <span class="slot-number">${index + 1}</span>
+                        <span class="season-icon">${month.season}</span>
+                    `;
+                    slotsContainer.appendChild(slot);
+                });
+
+                const shuffledMonths = shuffleArray(MONTHS);
+                shuffledMonths.forEach(monthData => {
+                    const card = document.createElement('div');
+                    const seasonInfo = SEASONS_DATA[monthData.season];
+                    const seasonClass = seasonInfo ? seasonInfo.class : '';
+                    card.className = `month-card ${seasonClass}`;
+                    card.textContent = monthData.name;
+                    card.draggable = true;
+                    card.dataset.month = monthData.name;
+                    monthsPool.appendChild(card);
+                });
+
+                addDragAndDropListeners();
+            }
+
+            function handleDragStart(e) {
+                const cardEl = e.target.closest('.month-card');
+                if (!cardEl) return;
+                draggedCard = cardEl;
+                cardEl.classList.add('dragging');
+                // Define uma imagem de arrasto consistente (evita zoom inesperado)
+                if (e.dataTransfer) {
+                    // Alguns navegadores (ex.: Firefox) exigem setData para habilitar drop
+                    try { e.dataTransfer.setData('text/plain', cardEl.dataset.month || 'card'); } catch (_) {}
+                    try { e.dataTransfer.effectAllowed = 'move'; } catch (_) {}
+                    const clone = cardEl.cloneNode(true);
+                    const rect = cardEl.getBoundingClientRect();
+                    clone.style.position = 'absolute';
+                    clone.style.top = '-9999px';
+                    clone.style.left = '-9999px';
+                    clone.style.width = rect.width + 'px';
+                    clone.style.height = rect.height + 'px';
+                    document.body.appendChild(clone);
+                    try {
+                        e.dataTransfer.setDragImage(clone, rect.width / 2, rect.height / 2);
+                    } catch (_) {}
+                    // remove no próximo tick para não piscar
+                    setTimeout(() => document.body.removeChild(clone), 0);
+                }
+            }
+
+            function handleDragEnd(e) {
+                if (draggedCard) draggedCard.classList.remove('dragging');
+                draggedCard = null;
+            }
+
+            function handleDragOver(e) {
+                e.preventDefault();
+            }
+
+            function handleDragLeave(e) {
+                if (e.currentTarget.classList.contains('over')) {
+                    e.currentTarget.classList.remove('over');
+                }
+            }
+
+            function handleDrop(targetContainer) {
+                // Permite soltar no pool ou em um slot vazio
+                const isSlot = targetContainer.classList.contains('month-slot');
+                const canDropInSlot = isSlot && targetContainer.children.length < 3;
+                const canDropInPool = targetContainer.id === 'months-pool';
+
+                if (draggedCard && (canDropInPool || canDropInSlot)) {
+                    targetContainer.appendChild(draggedCard);
+                    playSound(soundDrop);
+                    updateCheckButtonState();
+                }
+            }
+
+            // --- Touch Handlers ---
+            function handleTouchStart(e) {
+                const targetCard = e.target.closest('.month-card');
+                if (targetCard) {
+                    e.preventDefault(); // impede seleção/arrasto nativo
+                    draggedCard = targetCard;
+                    touchClone = draggedCard.cloneNode(true);
+                    touchClone.classList.add('touch-clone');
+                    document.body.appendChild(touchClone);
+                    
+                    const touch = e.touches[0];
+                    // Ajusta tamanho do clone para o mesmo do card original
+                    const rect = draggedCard.getBoundingClientRect();
+                    touchClone.style.width = rect.width + 'px';
+                    touchClone.style.height = rect.height + 'px';
+                    positionClone(touch);
+                    
+                    draggedCard.style.opacity = '0.5';
+                }
+            }
+
+            function handleTouchMove(e) {
+                if (draggedCard && touchClone) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    positionClone(touch);
+                }
+            }
+
+            function handleTouchEnd(e) {
+                if (draggedCard && touchClone) {
+                    const touch = e.changedTouches[0];
+                    const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+                    const slot = dropTarget ? dropTarget.closest('.month-slot') : null;
+                    const pool = dropTarget ? dropTarget.closest('#months-pool') : null;
+
+                    if (slot && slot.children.length < 3) {
+                        handleDrop(slot);
+                    } else if (pool) {
+                        handleDrop(pool);
+                    }
+
+                    draggedCard.style.opacity = '1';
+                    document.body.removeChild(touchClone);
+                    draggedCard = null;
+                    touchClone = null;
+                }
+            }
+
+            function positionClone(touch) {
+                touchClone.style.position = 'fixed';
+                touchClone.style.left = (touch.clientX - touchClone.offsetWidth / 2) + 'px';
+                touchClone.style.top = (touch.clientY - touchClone.offsetHeight / 2) + 'px';
+                touchClone.style.pointerEvents = 'none';
+            }
+
+            // --- Controle de Som ---
+            function playSound(soundElement) {
+                if (soundEnabled && soundElement) {
+                    soundElement.currentTime = 0;
+                    soundElement.play().catch(e => console.error("Erro ao tocar som:", e));
+                }
+            }
+
+            function playErrorSound() {
+                if (!soundEnabled) return;
+                try {
+                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioCtx.createOscillator();
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(120, audioCtx.currentTime);
+                    oscillator.connect(audioCtx.destination);
+                    oscillator.start();
+                    setTimeout(() => oscillator.stop(), 150);
+                } catch (e) { console.error("Erro ao tocar som de erro:", e); }
+            }
+
+            function addDragAndDropListeners() {
+                const cards = document.querySelectorAll('.month-card');
+                cards.forEach(card => {
+                    card.addEventListener('dragstart', handleDragStart);
+                    card.addEventListener('dragend', handleDragEnd);
+                });
+
+                document.addEventListener('touchstart', handleTouchStart, { passive: false });
+                document.addEventListener('touchmove', handleTouchMove, { passive: false });
+                document.addEventListener('touchend', handleTouchEnd);
+
+                const containers = [monthsPool, ...document.querySelectorAll('.month-slot')];
+                containers.forEach(container => {
+                    container.addEventListener('dragover', handleDragOver);
+                    container.addEventListener('dragleave', handleDragLeave);
+                    container.addEventListener('dragenter', e => {
+                        e.preventDefault();
+                        if (e.currentTarget.children.length < 3) e.currentTarget.classList.add('over');
+                    });
+                    container.addEventListener('drop', e => {
+                        e.preventDefault();
+                        e.currentTarget.classList.remove('over');
+                        handleDrop(e.currentTarget);
+                    });
+                });
+            }
+
+            function updateCheckButtonState() {
+                const filledSlots = document.querySelectorAll('.month-slot .month-card').length;
+                checkBtn.disabled = filledSlots !== 12;
+            }
+
+            function checkAnswers() {
+                let correctCount = 0;
+                const slots = document.querySelectorAll('.month-slot');
+
+                slots.forEach(slot => {
+                    const card = slot.querySelector('.month-card');
+                    slot.classList.remove('correct', 'incorrect');
+                    if (card) {
+                        if (card.dataset.month === slot.dataset.month) {
+                            slot.classList.add('correct');
+                            card.draggable = false; // Trava o card correto
+                            correctCount++;
+                        } else {
+                            slot.classList.add('incorrect');
+                            card.classList.add('shake');
+                        }
+                    }
+                });
+
+                if (correctCount === 12) {
+                    playSound(soundVictory);
+                    setTimeout(() => {
+                        victoryModal.showModal();
+                    }, 1000);
+                } else {
+                    playErrorSound();
+                    setTimeout(() => {
+                        const incorrectSlots = document.querySelectorAll('.month-slot.incorrect');
+                        // Remove a classe 'shake' e move os cards incorretos de volta para o pool
+                        incorrectSlots.forEach(slot => {
+                            const card = slot.querySelector('.month-card');
+                            if (card) {
+                                card.classList.remove('shake');
+                                monthsPool.appendChild(card);
+                            }
+                            slot.classList.remove('incorrect');
+                        });
+                        updateCheckButtonState();
+                    }, 800);
+                }
+            }
+
+            function showLearningContent() {
+                learningContent.innerHTML = '';
+                Object.values(SEASONS_DATA).forEach(season => {
+                    const card = document.createElement('div');
+                    card.className = `season-card ${season.class}`;
+                    card.innerHTML = `
+                        <h3>${season.icon} ${season.name}</h3>
+                        <p class="months"><strong>Meses:</strong> ${season.months}</p>
+                        <p class="description">${season.description}</p>
+                        <ul>
+                            ${season.characteristics.map(char => `<li>${char}</li>`).join('')}
+                        </ul>
+                    `;
+                    learningContent.appendChild(card);
+                });
+                learningModal.showModal();
+            }
+
+            // --- Event Listeners ---
+            learnBtn.addEventListener('click', showLearningContent);
+            closeLearnModalBtn.addEventListener('click', () => learningModal.close());
+
+            creditsBtn.addEventListener('click', () => {
+                creditsModal.showModal();
+            });
+            creditsCloseBtn.addEventListener('click', () => {
+                creditsModal.close();
+            });
+            // Fecha ao clicar no overlay interno (fora da caixa)
+            creditsModal.addEventListener('click', (e) => {
+                const overlay = creditsOverlay();
+                if (overlay && e.target === overlay) {
+                    creditsModal.close();
+                }
+            });
+
+            // Como Jogar: abre no load e pelo botão "?"
+            function openHowto() { howtoModal.showModal(); }
+            function closeHowto() { howtoModal.close(); }
+            howtoBtn.addEventListener('click', openHowto);
+            howtoStartBtn.addEventListener('click', closeHowto);
+            // Fecha tocando no overlay
+            howtoModal.addEventListener('click', (e) => {
+                const overlay = howtoModal.querySelector('.modal-container');
+                if (overlay && e.target === overlay) closeHowto();
+            });
+
+            // Mostra instruções ao abrir a atividade
+            openHowto();
+
+            toggleCaseBtn.addEventListener('click', () => {
+                gameBoard.classList.toggle('uppercase-text');
+                toggleCaseBtn.classList.toggle('active');
+            });
+            soundBtn.addEventListener('click', () => {
+                soundEnabled = !soundEnabled;
+                soundBtn.textContent = soundEnabled ? '🔈' : '🔇';
+                soundBtn.classList.toggle('muted', !soundEnabled);
+            });
+
+            checkBtn.addEventListener('click', checkAnswers);
+            resetBtn.addEventListener('click', () => {
+                // Reinicia apenas o tabuleiro, não volta para o menu
+                const gameBoard = document.querySelector('.game-board');
+                gameBoard.classList.add('shake');
+                setTimeout(() => {
+                    gameBoard.classList.remove('shake');
+                    startGame();
+                }, 500);
+            });
+            playAgainBtn.addEventListener('click', () => {
+                victoryModal.close();
+                startGame();
+            });
+
+            startGame(); // Inicia o jogo diretamente
+        });
+    </script>
+</body>
+</html>

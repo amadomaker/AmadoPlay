@@ -245,6 +245,25 @@
       popular: false,
       novo: true,
       acessos: 0
+    },
+    {
+      id: 'meses-ano',
+      titulo: 'Meses do Ano - Arraste para Ordenar',
+      descricao: 'Organize os meses do ano na ordem correta e aprenda a relação com as estações. Uma atividade divertida para desenvolver o senso temporal.',
+      imagem: 'src/assets/images/fundo_meses_ano.png',
+      interno: 'pages/meses_ano.html',
+      materia: 'multidisciplinar',
+      series: [1, 2],
+      tipo: ['interativo', 'ludico', 'organizacao'],
+      dificuldade: 'basico',
+      bncc: [
+        { codigo: 'EF01CI05', descricao: 'Identificar e nomear diferentes escalas de tempo: os períodos diários (manhã, tarde, noite) e a sucessão de dias, semanas, meses e anos.' },
+        { codigo: 'EF02CI02', descricao: 'Representar e organizar informações em sequência temporal.' }
+      ],
+      tags: ['meses', 'ano', 'calendário', 'estações', 'sequência', 'tempo', 'EF01CI05', 'EF02CI02'],
+      popular: false,
+      novo: true,
+      acessos: 0
     }
 
 
@@ -253,7 +272,7 @@
 
   ];
 
-  // Autocomplete inclui BNCC (títulos + tags + códigos)
+  // Autocomplete inclui BNCC (títulos + tags + códigos) e ordena por popularidade
   window.AutocompleteData = (window.EducationalToolsData || [])
     .sort((a, b) => b.acessos - a.acessos)
     .reduce((acc, tool) => {
