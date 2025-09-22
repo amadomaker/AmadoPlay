@@ -45,16 +45,18 @@
             </div>
 
             <!-- Área do Jogo -->
-            <div id="gameContainer">
-                <!-- HUD do Jogo -->
-                <div id="gameHUD">
-                    <div id="roundInfo">
-                        <span id="levelName">Nível Fácil</span> - Palavra <span id="currentRound">1</span> de <span id="totalRounds">7</span>
+                <div id="gameContainer">
+                    <!-- HUD do Jogo -->
+                    <div id="gameHUD">
+                        <div id="roundInfo">
+                            <span id="levelName">Nível Fácil</span> - Palavra <span id="currentRound">1</span> de <span id="totalRounds">7</span>
+                        </div>
+                        <div id="wordHint">
+                            Arraste as sílabas para formar a palavra
+                        </div>
+                        <!-- Dica específica da palavra atual (preenchida via JS). Escopo somente desta atividade. -->
+                        <div id="wordTip" class="word-tip" aria-live="polite"></div>
                     </div>
-                    <div id="wordHint">
-                        Arraste as sílabas para formar a palavra
-                    </div>
-                </div>
 
                 <!-- Controles do Jogo -->
                 <div id="gameControls">

@@ -276,6 +276,18 @@ body {
     font-weight: 600;
 }
 
+/* Dica da palavra atual (abaixo do HUD)
+   - Desktop/Tablet: preto mais forte e um pouco maior
+   - Mobile: quebra de linha e tamanho menor que o texto de instrução */
+#wordTip {
+    margin-top: 4px;
+    color: #111;            /* preto mais forte */
+    font-weight: 800;       /* mais encorpado */
+    font-size: 20px;        /* um pouco maior em telas grandes */
+    line-height: 1.35;
+    max-width: 56ch;        /* evita linhas muito compridas */
+}
+
 /* Controles do jogo */
 #gameControls {
     position: absolute;
@@ -609,6 +621,20 @@ body {
 }
 #roundInfo { font-size: 26px; }
 #wordHint  { font-size: 18px; }
+/* Em tablets/phones menores, manter a dica menor e quebrando linha */
+#wordTip {
+    font-size: 16px;              /* menor que o #wordHint (18px) */
+    color: #222;
+    white-space: normal;          /* permite quebra */
+    word-break: break-word;       /* quebra longas sem espaços */
+    hyphens: auto;                /* hifenização quando suportado */
+    max-width: 100%;              /* não passa do HUD */
+}
+
+/* Telefones muito pequenos: reduz mais um pouco a dica */
+@media (max-width: 420px) {
+  #wordTip { font-size: 15px; }
+}
 
 /* Controles em coluna (como no mobile), sobrepondo o estilo do 1024px */
 #gameControls {
@@ -722,6 +748,8 @@ body {
   top: 10px;             
   left: 5px;
   padding: 8px 12px; 
+  /* Limita a largura do HUD para não invadir os botões à direita */
+  max-width: calc(100vw - 110px); /* ~largura dos botões + margem */
 }
 
 #roundInfo {
@@ -730,6 +758,18 @@ body {
 
 #wordHint {
   font-size: 11px; /* Reduzido para não sobrepor botões */
+}
+
+/* Dica: menor que o hint, quebra forçada e não ultrapassa o HUD */
+#wordTip {
+  font-size: 12px;
+  line-height: 1.3;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+  max-width: 100%;
+  display: block; /* garante quebra de linha ao final da dica */
 }
 #wordFormation {
   top: 47%; /* Movido mais para cima em telas menores */
@@ -891,6 +931,7 @@ body {
   top: 7px;             
   left: 7px;
   padding: 8px 12px; 
+  max-width: calc(100vw - 96px); /* ainda mais restrito em telas muito pequenas */
 }
 
 #roundInfo {
@@ -899,6 +940,16 @@ body {
 
 #wordHint {
   font-size: 10px;       
+}
+
+#wordTip {
+  font-size: 11px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+  max-width: 100%;
+  display: block;
 }
 #difficultySelector {
     flex-direction: column;
