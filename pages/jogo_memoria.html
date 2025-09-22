@@ -739,6 +739,11 @@
               <span class="tool-text">Atalhos Teclado</span>
             </button>
 
+            <button class="tool-btn" onclick="enableVLibras()" id="vlibrasBtn" type="button">
+              <span class="tool-icon" aria-hidden="true">🤟</span>
+              <span class="tool-text">Ativar VLibras</span>
+            </button>
+
             <button class="tool-btn" onclick="resetAll()" id="resetBtn" type="button">
               <span class="tool-icon" aria-hidden="true">🔄</span>
               <span class="tool-text">Resetar Tudo</span>
@@ -1221,6 +1226,18 @@
             }
         }
     </script>
+    <!-- VLibras -->
+    <div vw class="enabled">
+      <div vw-access-button class="active"></div>
+      <div vw-plugin-wrapper>
+        <div class="vw-plugin-top-wrapper"></div>
+      </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+      new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
     <script src="../src/js/acessibilidade.js"></script>
 </body>
 </html>
