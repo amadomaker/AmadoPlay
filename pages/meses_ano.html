@@ -309,6 +309,8 @@
             backdrop-filter: blur(4px);
             animation: fadeIn 0.3s ease;
         }
+        /* Fallback geral: exibir dialog quando atributo [open] estiver presente */
+        dialog[open] { display: grid; place-items: center; }
         .victory-content {
             background: white;
             padding: 2rem;
@@ -332,8 +334,18 @@
             border-radius: var(--radius-lg);
             border: none;
             box-shadow: var(--shadow);
+            overflow: auto; /* Garante que o conteúdo interno role, se necessário */
+            margin: auto; /* Força a centralização horizontal e vertical do modal */
         }
         
+        /* Estilo para o cabeçalho do modal de curiosidades */
+        #learning-modal > .page-header {
+            background: linear-gradient(135deg, #6c63ff, #7c4dff);
+            color: white;
+            padding: 1.5rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+
         /* --- TELA DE APRENDIZAGEM --- */
         .learning-content {
             display: grid;
@@ -393,6 +405,8 @@
             justify-content: center;
             gap: 1rem;
             flex-wrap: wrap;
+            /* Adiciona um respiro na parte inferior para evitar que o botão seja cortado em iPhones */
+            padding-bottom: 1.5rem;
         }
 
         /* Créditos: botão flutuante no canto inferior direito do tabuleiro */
@@ -436,13 +450,20 @@
             color: #495057;
         }
         #howto-btn:hover { transform: translateY(-1px); }
-        /* Mobile: deixa o botão um pouco mais para baixo para não cobrir "Reiniciar" */
+        /* Mobile: ajustes só para o botão de créditos; o "?" mantém a posição original */
         @media (max-width: 600px) {
             #credits-btn {
                 width: 36px;
                 height: 36px;
-                bottom: -6px; /* empurra um pouco para fora para não cobrir o "Reiniciar" */
+                bottom: 8px; /* dentro do container, sem cobrir os controles */
                 right: 8px;
+            }
+            /* Alinha o botão "?" na mesma altura do de créditos */
+            #howto-btn {
+                width: 36px;
+                height: 36px;
+                bottom: 8px; /* mesma altura */
+                right: 50px; /* 8 (margem) + 36 (largura créditos) + 6 (gap) */
             }
         }
         
@@ -756,7 +777,7 @@
 
     <!-- Modal de Aprendizagem -->
     <dialog id="learning-modal">
-        <header class="page-header" style="color: var(--text-dark); padding: 1rem 1rem 0;">
+        <header class="page-header">
             <h1>As Estações do Ano no Brasil</h1>
             <p>Descubra as características de cada estação e os meses correspondentes.</p>
         </header>
@@ -767,9 +788,6 @@
     </dialog>
 
     <!-- Efeitos Sonoros -->
-    <audio id="sound-drop" src="https://cdn.jsdelivr.net/gh/BMSVieira/sounds-for-memory-game/card-flip.mp3" preload="auto"></audio>
-    <audio id="sound-victory" src="https://cdn.jsdelivr.net/gh/BMSVieira/sounds-for-memory-game/win-sound.mp3" preload="auto"></audio>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Elementos do jogo
@@ -787,8 +805,6 @@
             const toggleCaseBtn = document.getElementById('toggle-case-btn');
             const gameBoard = document.querySelector('.game-board');
             const soundBtn = document.getElementById('sound-btn');
-            const soundDrop = document.getElementById('sound-drop');
-            const soundVictory = document.getElementById('sound-victory');
 
             const slotsContainer = document.getElementById('slots-container');
             const monthsPool = document.getElementById('months-pool');
@@ -806,15 +822,133 @@
             ];
 
             const SEASONS_DATA = {
-                "☀️": { name: "Verão", class: "verao", months: "Dezembro, Janeiro, Fevereiro", description: "A estação mais quente, com dias longos e ensolarados. É tempo de férias e diversão ao ar livre!", characteristics: ["Temperaturas altas", "Chuvas de verão", "Férias escolares", "Carnaval"] },
-                "🍂": { name: "Outono", class: "outono", months: "Março, Abril, Maio", description: "As temperaturas ficam mais amenas e as folhas de algumas árvores mudam de cor. É uma estação de transição.", characteristics: ["Clima ameno", "Menos chuvas", "Colheita de frutas", "Noites mais frescas"] },
-                "❄️": { name: "Inverno", class: "inverno", months: "Junho, Julho, Agosto", description: "A estação mais fria do ano. Em algumas regiões do sul do Brasil, pode até nevar! Época de bebidas quentes.", characteristics: ["Temperaturas baixas", "Noites longas", "Festas Juninas", "Menos umidade no ar"] },
-                "🌸": { name: "Primavera", class: "primavera", months: "Setembro, Outubro, Novembro", description: "Conhecida como a 'estação das flores', a natureza fica mais colorida e os animais, mais ativos.", characteristics: ["Florescimento das plantas", "Temperaturas agradáveis", "Aumento da atividade dos animais", "Clima instável"] }
+                "☀️": {
+                    name: "Verão Quentinho",
+                    class: "verao",
+                    months: "Dezembro, Janeiro, Fevereiro",
+                    description: "É a estação mais quente do ano! Os dias são mais longos e ensolarados. Em muitas regiões, é também a época das chuvas de verão, que são rápidas e fortes.",
+                    characteristics: [
+                        "☀️ Sol bem forte e muito calor",
+                        "🌧️ Chuvas de verão em muitas regiões",
+                        "🏖️ Férias escolares",
+                        "🎭 Época do Carnaval"
+                    ]
+                },
+                "🍂": {
+                    name: "Outono das Cores",
+                    class: "outono",
+                    months: "Março, Abril, Maio",
+                    description: "É uma estação de transição. Em muitas partes do Brasil, as temperaturas começam a ficar mais amenas e é tempo de colheita de várias frutas deliciosas.",
+                    characteristics: [
+                        "🌡️ Temperatura mais fresquinha",
+                        " Época de colheita de muitas frutas",
+                        "💨 Os ventos podem ficar mais fortes",
+                        "🌙 As noites começam a ficar mais longas"
+                    ]
+                },
+                "❄️": {
+                    name: "Inverno Gelado",
+                    class: "inverno",
+                    months: "Junho, Julho, Agosto",
+                    description: "É a estação com as temperaturas mais amenas do ano. No Sul do Brasil, pode fazer muito frio, com geada e até neve! Em outras regiões, é um período mais seco.",
+                    characteristics: [
+                        "🧥 Temperaturas mais baixas (principalmente no Sul)",
+                        "🌃 Noites bem compridas",
+                        "🎪 Tempo das Festas Juninas",
+                        "💨 Ar mais seco em algumas regiões"
+                    ]
+                },
+                "🌸": {
+                    name: "Primavera Colorida",
+                    class: "primavera",
+                    months: "Setembro, Outubro, Novembro",
+                    description: "Conhecida como a 'estação das flores'! A natureza fica mais colorida, o clima volta a esquentar e os animais ficam mais ativos em todo o país.",
+                    characteristics: [
+                        "🌺 Plantas fazem flores",
+                        "🌡️ O clima volta a esquentar",
+                        "🐝 Animais mais ativos",
+                        "🌦️ O tempo pode mudar bastante durante o dia"
+                    ]
+                }
             };
 
             let draggedCard = null;
             let touchClone = null;
             let soundEnabled = true;
+            let sharedAudioCtx = null; // AudioContext compartilhado para mobile/iOS
+
+            // ==========================
+            // TTS (Clique para Ouvir) – Regras específicas desta atividade
+            // --------------------------
+            // Objetivo: ler itens de forma granular (cada card e cada slot),
+            // evitando leitura do conteúdo inteiro quando clica no tabuleiro.
+            // Estratégia:
+            // - Definir aria-label nos contêineres grandes (#slots-container, #months-pool, .game-board)
+            //   para que um clique neles leia apenas um rótulo curto.
+            // - Definir aria-label em cada .month-card (apenas o nome do mês).
+            // - Manter aria-label dinâmico em cada .month-slot, diferenciando vazio vs preenchido.
+            // - Atualizar estes rótulos sempre que houver drop/movimentos.
+            // Observação: o mecanismo global (acessibilidade.js) prioriza aria-label, então
+            // estes rótulos garantem a leitura granular desejada nesta página.
+            // ==========================
+
+            function labelForSlot(index, cardEl) {
+                const pos = index + 1;
+                if (!cardEl) return `Mês ${pos} (vazio)`;
+                const monthName = cardEl?.dataset?.month || cardEl?.textContent?.trim() || '';
+                return `Mês ${pos}: ${monthName}`;
+            }
+
+            function updateAriaForSlots() {
+                const slots = Array.from(document.querySelectorAll('.month-slot'));
+                slots.forEach((slot, idx) => {
+                    const card = slot.querySelector('.month-card');
+                    slot.setAttribute('aria-label', labelForSlot(idx, card));
+                });
+            }
+
+            // Helpers para compatibilidade de <dialog>
+            function openDialog(el) {
+                if (!el) return;
+                if (typeof el.showModal === 'function') {
+                    try { el.showModal(); } catch (_) { el.setAttribute('open', ''); }
+                } else {
+                    el.setAttribute('open', '');
+                }
+            }
+            function closeDialog(el) {
+                if (!el) return;
+                if (typeof el.close === 'function') {
+                    try { el.close(); } catch (_) { el.removeAttribute('open'); }
+                } else {
+                    el.removeAttribute('open');
+                }
+            }
+
+            // Desbloqueia áudio no primeiro gesto do usuário
+            function getAudioCtx() {
+                if (!sharedAudioCtx) {
+                    sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (sharedAudioCtx.state === 'suspended' && sharedAudioCtx.resume) {
+                    sharedAudioCtx.resume().catch(() => {});
+                }
+                return sharedAudioCtx;
+            }
+            function unlockAudio() {
+                try {
+                    const ctx = getAudioCtx();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    gain.gain.value = 0; // inaudível
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.01);
+                } catch (_) {}
+            }
+            window.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
+            window.addEventListener('click', unlockAudio, { once: true });
 
             function shuffleArray(array) {
                 let currentIndex = array.length, randomIndex;
@@ -830,17 +964,28 @@
             function startGame() {
                 slotsContainer.innerHTML = '';
                 monthsPool.innerHTML = '';
-                if (victoryModal.open) victoryModal.close();
+                if (victoryModal.open) closeDialog(victoryModal);
                 checkBtn.disabled = true;
+
+                // TTS: rótulos curtos nos contêineres principais (evita ler tudo)
+                const board = document.querySelector('.game-board');
+                if (board) board.setAttribute('aria-label', 'Tabuleiro dos meses. Arraste e solte os cartões.');
+                slotsContainer.setAttribute('aria-label', 'Área dos slots dos meses');
+                monthsPool.setAttribute('aria-label', 'Banco de cartões dos meses');
 
                 MONTHS.forEach((month, index) => {
                     const slot = document.createElement('div');
                     slot.className = 'month-slot';
                     slot.dataset.month = month.name;
+                    // Slot label clicável: lê só "Mês X" no TTS
                     slot.innerHTML = `
-                        <span class="slot-number">${index + 1}</span>
-                        <span class="season-icon">${month.season}</span>
+                        <span class="slot-number card-title" role="button" tabindex="0" aria-label="Mês ${index + 1}">Mês ${index + 1}</span>
+                        <span class="season-icon" aria-hidden="true">${month.season}</span>
                     `;
+                    // TTS: cada slot começa como vazio; torna focável
+                    slot.setAttribute('role', 'group');
+                    slot.setAttribute('tabindex', '0');
+                    slot.setAttribute('aria-label', `Mês ${index + 1} (vazio)`);
                     slotsContainer.appendChild(slot);
                 });
 
@@ -850,13 +995,19 @@
                     const seasonInfo = SEASONS_DATA[monthData.season];
                     const seasonClass = seasonInfo ? seasonInfo.class : '';
                     card.className = `month-card ${seasonClass}`;
-                    card.textContent = monthData.name;
                     card.draggable = true;
                     card.dataset.month = monthData.name;
+                    // TTS: estrutura o texto em um span.card-title para ser preferido pelo leitor
+                    card.innerHTML = `<span class="card-title">${monthData.name}</span>`;
+                    // TTS: acessibilidade – leitura individual por card e foco via teclado
+                    card.setAttribute('role', 'button');
+                    card.setAttribute('tabindex', '0');
+                    card.setAttribute('aria-label', monthData.name);
                     monthsPool.appendChild(card);
                 });
 
                 addDragAndDropListeners();
+                updateAriaForSlots();
             }
 
             function handleDragStart(e) {
@@ -908,8 +1059,9 @@
 
                 if (draggedCard && (canDropInPool || canDropInSlot)) {
                     targetContainer.appendChild(draggedCard);
-                    playSound(soundDrop);
                     updateCheckButtonState();
+                    // TTS: após cada drop, atualiza rótulos dos slots
+                    updateAriaForSlots();
                 }
             }
 
@@ -969,18 +1121,34 @@
                 touchClone.style.pointerEvents = 'none';
             }
 
-            // --- Controle de Som ---
-            function playSound(soundElement) {
-                if (soundEnabled && soundElement) {
-                    soundElement.currentTime = 0;
-                    soundElement.play().catch(e => console.error("Erro ao tocar som:", e));
+            function playVictorySound() {
+                if (!soundEnabled) return;
+                try {
+                    const audioCtx = getAudioCtx();
+                    const notes = [523.25, 659.26, 783.99, 1046.50]; // C5, E5, G5, C6 arpeggio
+                    notes.forEach((freq, i) => {
+                        const oscillator = audioCtx.createOscillator();
+                        const gainNode = audioCtx.createGain();
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioCtx.destination);
+                        
+                        oscillator.type = 'triangle'; // Som mais suave
+                        oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.1);
+                        gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime + i * 0.1);
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i * 0.1 + 0.2);
+                        
+                        oscillator.start(audioCtx.currentTime + i * 0.1);
+                        oscillator.stop(audioCtx.currentTime + i * 0.1 + 0.25);
+                    });
+                } catch (e) {
+                    console.error("Erro ao tocar som de vitória:", e);
                 }
             }
 
             function playErrorSound() {
                 if (!soundEnabled) return;
                 try {
-                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const audioCtx = getAudioCtx();
                     const oscillator = audioCtx.createOscillator();
                     oscillator.type = 'square';
                     oscillator.frequency.setValueAtTime(120, audioCtx.currentTime);
@@ -1042,9 +1210,10 @@
                 });
 
                 if (correctCount === 12) {
-                    playSound(soundVictory);
+                    // Toca o som de vitória e abre o modal após um curto delay
+                    playVictorySound();
                     setTimeout(() => {
-                        victoryModal.showModal();
+                        openDialog(victoryModal);
                     }, 1000);
                 } else {
                     playErrorSound();
@@ -1060,49 +1229,55 @@
                             slot.classList.remove('incorrect');
                         });
                         updateCheckButtonState();
+                        // TTS: atualiza rótulos após devolver cards ao pool
+                        updateAriaForSlots();
                     }, 800);
                 }
             }
 
             function showLearningContent() {
                 learningContent.innerHTML = '';
-                Object.values(SEASONS_DATA).forEach(season => {
+                Object.entries(SEASONS_DATA).forEach(([icon, season]) => {
                     const card = document.createElement('div');
                     card.className = `season-card ${season.class}`;
                     card.innerHTML = `
-                        <h3>${season.icon} ${season.name}</h3>
-                        <p class="months"><strong>Meses:</strong> ${season.months}</p>
-                        <p class="description">${season.description}</p>
-                        <ul>
-                            ${season.characteristics.map(char => `<li>${char}</li>`).join('')}
-                        </ul>
+                        <div class="card-header">
+                            <h3>${icon} ${season.name}</h3>
+                            <p class="months">${season.months}</p>
+                        </div>
+                        <div class="card-body">
+                            <p class="description">${season.description}</p>
+                            <ul>
+                                ${season.characteristics.map(char => `<li>${char}</li>`).join('')}
+                            </ul>
+                        </div>
                     `;
                     learningContent.appendChild(card);
                 });
-                learningModal.showModal();
+                openDialog(learningModal);
             }
 
             // --- Event Listeners ---
             learnBtn.addEventListener('click', showLearningContent);
-            closeLearnModalBtn.addEventListener('click', () => learningModal.close());
+            closeLearnModalBtn.addEventListener('click', () => closeDialog(learningModal));
 
             creditsBtn.addEventListener('click', () => {
-                creditsModal.showModal();
+                openDialog(creditsModal);
             });
             creditsCloseBtn.addEventListener('click', () => {
-                creditsModal.close();
+                closeDialog(creditsModal);
             });
             // Fecha ao clicar no overlay interno (fora da caixa)
             creditsModal.addEventListener('click', (e) => {
                 const overlay = creditsOverlay();
                 if (overlay && e.target === overlay) {
-                    creditsModal.close();
+                    closeDialog(creditsModal);
                 }
             });
 
             // Como Jogar: abre no load e pelo botão "?"
-            function openHowto() { howtoModal.showModal(); }
-            function closeHowto() { howtoModal.close(); }
+            function openHowto() { openDialog(howtoModal); }
+            function closeHowto() { closeDialog(howtoModal); }
             howtoBtn.addEventListener('click', openHowto);
             howtoStartBtn.addEventListener('click', closeHowto);
             // Fecha tocando no overlay
@@ -1135,12 +1310,192 @@
                 }, 500);
             });
             playAgainBtn.addEventListener('click', () => {
-                victoryModal.close();
+                closeDialog(victoryModal);
                 startGame();
             });
 
             startGame(); // Inicia o jogo diretamente
         });
     </script>
+
+    <!-- ===========================
+         Widget de Acessibilidade
+         =========================== -->
+    <!-- Botão Flutuante de Acessibilidade -->
+    <button
+      class="accessibility-float-btn"
+      id="accessibilityFloatBtn"
+      aria-label="Abrir menu de acessibilidade"
+      aria-controls="accessibilityPanel"
+      aria-expanded="false"
+      onclick="toggleAccessibilityPanel()"
+    >
+      <span class="accessibility-icon" aria-hidden="true">
+        <img src="../src/assets/images/icon-acessibilidade.png" alt="">
+      </span>
+    </button>
+
+    <!-- Overlay -->
+    <div
+      class="accessibility-panel-overlay"
+      id="accessibilityOverlay"
+      onclick="closeAccessibilityPanel()"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Painel de Acessibilidade (drawer à direita) -->
+    <div
+      class="accessibility-panel-modern right-drawer"
+      id="accessibilityPanel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="accessibilityPanelTitle"
+    >
+      <div class="panel-header-modern">
+        <h2 id="accessibilityPanelTitle">Menu de Acessibilidade</h2>
+        <button
+          class="close-btn"
+          type="button"
+          aria-label="Fechar menu de acessibilidade"
+          onclick="closeAccessibilityPanel()"
+        >
+          ×
+        </button>
+      </div>
+
+      <!-- Área rolável do painel -->
+      <div class="panel-content" id="accessibilityPanelContent" tabindex="-1">
+        <!-- Perfis de Acessibilidade -->
+        <div class="accessibility-profiles">
+          <h3>Selecione seu perfil de acessibilidade</h3>
+          <div class="profiles-grid">
+            <button class="profile-btn" onclick="applyProfile('motor')" data-profile="motor" type="button">
+              <span class="profile-icon" aria-hidden="true">🦽</span>
+              <span class="profile-text">Deficiência Motora</span>
+            </button>
+            <button class="profile-btn" onclick="applyProfile('visual')" data-profile="visual" type="button">
+              <span class="profile-icon" aria-hidden="true">👁️</span>
+              <span class="profile-text">Deficiência Visual</span>
+            </button>
+            <button class="profile-btn" onclick="applyProfile('cognitive')" data-profile="cognitive" type="button">
+              <span class="profile-icon" aria-hidden="true">🧠</span>
+              <span class="profile-text">Deficiência Cognitiva</span>
+            </button>
+            <button class="profile-btn" onclick="applyProfile('hearing')" data-profile="hearing" type="button">
+              <span class="profile-icon" aria-hidden="true">🦻</span>
+              <span class="profile-text">Deficiência Auditiva</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Ferramentas Individuais -->
+        <div class="tools-grid" role="group" aria-label="Ferramentas de acessibilidade">
+          <!-- Linha 1 -->
+          <button class="tool-btn" onclick="toggleTextToSpeech()" id="ttsBtn" type="button">
+            <span class="tool-icon" aria-hidden="true">🔊</span>
+            <span class="tool-text">Clique para Ouvir</span>
+          </button>
+
+          <button class="tool-btn" onclick="toggleHighContrast()" id="contrastBtn" type="button">
+            <span class="tool-icon" aria-hidden="true">🌓</span>
+            <span class="tool-text">Alto Contraste</span>
+          </button>
+
+          <button class="tool-btn" onclick="toggleDarkMode()" id="darkModeBtn" type="button">
+            <span class="tool-icon" aria-hidden="true">🌙</span>
+            <span class="tool-text">Modo Escuro</span>
+          </button>
+
+          <!-- Linha 2 -->
+          <button class="tool-btn" onclick="decreaseFontSize()" id="decreaseFontBtn" type="button">
+            <span class="tool-icon" aria-hidden="true">🔤</span>
+            <span class="tool-text">Diminuir Fonte</span>
+          </button>
+
+          <button class="tool-btn" onclick="increaseFontSize()" id="increaseFontBtn" type="button">
+            <span class="tool-icon" aria-hidden="true">🔠</span>
+            <span class="tool-text">Aumentar Fonte</span>
+          </button>
+
+          <button class="tool-btn" onclick="toggleDyslexiaFont()" id="dyslexiaBtn" type="button">
+            <span class="tool-icon" aria-hidden="true">📝</span>
+            <span class="tool-text">Fonte Dislexia</span>
+          </button>
+
+          <!-- Linha 3 -->
+          <button class="tool-btn" onclick="toggleGrayscale()" id="grayscaleBtn" type="button">
+            <span class="tool-icon" aria-hidden="true">⚫</span>
+            <span class="tool-text">Monocromático</span>
+          </button>
+
+          <button class="tool-btn" onclick="toggleLowSaturation()" id="lowSatBtn" type="button">
+            <span class="tool-icon" aria-hidden="true">🔘</span>
+            <span class="tool-text">Baixa Saturação</span>
+          </button>
+
+          <button class="tool-btn" onclick="toggleHighSaturation()" id="highSatBtn" type="button">
+            <span class="tool-icon" aria-hidden="true">🟡</span>
+            <span class="tool-text">Alta Saturação</span>
+          </button>
+
+          <!-- Linha 4 -->
+          <button class="tool-btn" onclick="toggleReadingRuler()" id="rulerBtn" type="button">
+            <span class="tool-icon" aria-hidden="true">📏</span>
+            <span class="tool-text">Régua de Leitura</span>
+          </button>
+
+          <button class="tool-btn" onclick="toggleMagnifier()" id="magnifierBtn" type="button">
+            <span class="tool-icon" aria-hidden="true">📖</span>
+            <span class="tool-text">Mascara de Leitura</span>
+          </button>
+
+          <button class="tool-btn" onclick="toggleFocusHighlight()" id="focusBtn" type="button">
+            <span class="tool-icon" aria-hidden="true">🎯</span>
+            <span class="tool-text">Destacar Links</span>
+          </button>
+
+          <!-- Linha 5 -->
+          <button class="tool-btn" onclick="pauseAnimations()" id="animationBtn" type="button">
+            <span class="tool-icon" aria-hidden="true">⏸️</span>
+            <span class="tool-text">Pausar Animações</span>
+          </button>
+
+          <button class="tool-btn" onclick="showKeyboardShortcuts()" type="button">
+            <span class="tool-icon" aria-hidden="true">⌨️</span>
+            <span class="tool-text">Atalhos Teclado</span>
+          </button>
+
+          <!-- NOVO: Botão para ativar VLibras -->
+          <button class="tool-btn" onclick="enableVLibras()" id="vlibrasBtn" type="button">
+            <span class="tool-icon" aria-hidden="true">🤟</span>
+            <span class="tool-text">Ativar VLibras</span>
+          </button>
+
+          <button class="tool-btn" onclick="resetAll()" id="resetBtn" type="button">
+            <span class="tool-icon" aria-hidden="true">🔄</span>
+            <span class="tool-text">Resetar Tudo</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Elementos auxiliares fora do painel -->
+    <div class="reading-ruler" id="readingRuler" aria-hidden="true"></div>
+    <div class="magnifier-circle" id="magnifier" aria-hidden="true"></div>
+
+    <!-- VLibras -->
+    <div vw class="enabled">
+      <div vw-access-button class="active"></div>
+      <div vw-plugin-wrapper>
+        <div class="vw-plugin-top-wrapper"></div>
+      </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+      new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+    <!-- JavaScript de Acessibilidade -->
+    <script src="../src/js/acessibilidade.js"></script>
 </body>
 </html>
