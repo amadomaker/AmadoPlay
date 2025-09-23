@@ -80,6 +80,13 @@
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
             z-index: 1000;
+            /* Garante respiro nas bordas e respeita áreas seguras (iOS) */
+            padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+            padding-left: max(8px, env(safe-area-inset-left));
+            padding-right: max(8px, env(safe-area-inset-right));
+            padding-top: max(8px, env(safe-area-inset-top));
+            padding-bottom: max(8px, env(safe-area-inset-bottom));
+            overflow: auto; /* Permite ver o modal completo em notebooks sem rolagem interna */
         }
         .modal-overlay.visible {
             opacity: 1;
@@ -93,7 +100,13 @@
             transform: scale(0.9);
             transition: transform 0.3s ease;
             width: 90%;
-            max-width: 400px;
+            max-width: 700px; /* Ligeiramente menor para notebooks */
+            /* Sem rolagem interna por padrão em desktops/tablets */
+            max-height: none;
+            overflow: visible;
+            /* Destaque sutil das bordas em iPhone */
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.2);
         }
         .modal-overlay.visible .modal-content {
             transform: scale(1);
@@ -131,6 +144,34 @@
                 justify-content: center;
                 width: 100%;
             }
+            /* Nudge fino: alinha verticalmente ações com os contadores */
+            #top-actions { margin-top: 20px; }
+            /* Modal mais compacto em celulares */
+            .modal-content {
+                width: 94vw;
+                max-width: none;
+                padding: 1rem;
+                border-radius: 0.75rem;
+                max-height: 90vh;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            /* Reduz imagem e títulos do modal Como Jogar em telas pequenas */
+            #how-to-play-modal .modal-content img {
+                width: 72px;
+                height: auto;
+            }
+            #how-to-play-modal .modal-content h2 {
+                font-size: 1.25rem; /* ~text-xl */
+            }
+            #how-to-play-modal .modal-content p,
+            #how-to-play-modal .modal-content li {
+                font-size: 0.95rem;
+            }
+            /* Timer acima de Tentativas no mobile (no canto direito) */
+            #top-stats { flex-direction: column; align-items: flex-end; gap: 0.25rem; }
+            #timer-display { font-size: 0.95rem; }
+            #counters-row { display: flex; align-items: center; gap: 1rem; }
         }
 
         /* Tablet e telas maiores */
@@ -142,9 +183,88 @@
                 padding: 2rem;
             }
         }
+        /* Notebooks/desktops: deixar modal mais largo e reduzir espaço vertical */
+        @media (min-width: 1024px) {
+            .modal-content { max-width: 780px; }
+            #how-to-play-modal .modal-content img { width: 96px; margin-bottom: 0.25rem; }
+        }
+        @media (min-width: 768px) and (max-height: 900px) {
+            .modal-content { padding-top: 1rem; padding-bottom: 1rem; }
+            #how-to-play-modal .modal-content img { width: 96px; margin-bottom: 0.25rem; }
+        }
+
+        /* (removidos) Ajustes de posição dos botões para manter alinhamento original */
         .card.hint-highlight {
             outline: 3px solid #3b82f6; /* blue-500 */
             outline-offset: 2px;
+        }
+
+        /* Estilo dourado do botão de ranking (somente visual, sem mover) */
+        #ranking-button {
+            background: linear-gradient(135deg, #fde68a 0%, #fbbf24 45%, #f59e0b 100%) !important;
+            color: #7c4d00 !important;
+            box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.55);
+            transition: filter 150ms ease-in-out, box-shadow 150ms ease-in-out;
+        }
+        #ranking-button:hover {
+            filter: brightness(1.05) saturate(1.02);
+            box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.7);
+        }
+
+        /* (revertido) estilos extras do botão de ranking removidos */
+
+        /* Telas interativas: muito largas e com pouca altura (ex.: Nest Hub) */
+        @media (max-height: 600px) and (min-width: 800px) {
+            .modal-content {
+                padding: 1rem;
+                max-height: 92vh; /* aproveita melhor a altura disponível */
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            #how-to-play-modal .modal-content img {
+                width: 80px;
+            }
+        }
+        
+        /* Balão de fala para o resumo do placar no submit */
+        .speech-bubble {
+            position: relative;
+            background: #f3f4f6; /* gray-100 */
+            border: 1px solid #e5e7eb; /* gray-200 */
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+        }
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            left: -8px; /* aponta para o Jean à esquerda em telas grandes */
+            top: 14px;
+            width: 0; height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid #e5e7eb; /* borda */
+        }
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 15px;
+            width: 0; height: 0;
+            border-top: 7px solid transparent;
+            border-bottom: 7px solid transparent;
+            border-right: 7px solid #f3f4f6; /* fundo */
+        }
+        /* Em mobile também mostramos o rabicho para apontar para o Jean à esquerda */
+        /* (revertido) sem overrides de alinhamento mobile para os controles superiores */
+        
+        /* Espaçamento extra dos botões flutuantes em tablets e celulares */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            #floating-actions-right { bottom: 0.5rem; }
+            #ranking-button { bottom: 0.5rem; }
+        }
+        @media (max-width: 767px) {
+            #floating-actions-right { bottom: calc(max(0.25rem, env(safe-area-inset-bottom))); }
+            #ranking-button { bottom: calc(max(0.25rem, env(safe-area-inset-bottom))); }
         }
     </style>
 </head>
@@ -165,13 +285,17 @@
             
             <!-- Novos Controles Superiores -->
             <div class="flex justify-between items-center mb-4 text-sm font-semibold flex-wrap gap-y-2">
-                <div class="flex items-center gap-2">
+                <div id="top-actions" class="flex items-center gap-2">
                     <button id="give-up-button" class="text-red-500 hover:text-red-400 font-bold transition-colors">Desistir</button>
                     <button id="hint-button" class="px-3 py-1 bg-violet-500 text-white rounded-full hover:bg-violet-600 transition-colors">💡 Dica</button>
                 </div>
-                <div class="flex items-center gap-4 text-gray-700">
-                    <div>Dicas: <span id="hints-used-counter">0</span></div>
-                    <div>Tentativas: <span id="attempts-counter">0</span></div>
+                <div id="top-stats" class="flex items-center gap-4 text-gray-700">
+                    <button id="timer-visibility-toggle" class="text-gray-400 hover:text-violet-600 focus:outline-none text-xs sm:text-sm" title="Mostrar tempo" aria-pressed="false">⏱️ Mostrar</button>
+                    <div id="timer-display" class="hidden">Tempo: <span id="timer-text">00:00</span></div>
+                    <div id="counters-row" class="flex items-center gap-4">
+                        <div>Dicas: <span id="hints-used-counter">0</span></div>
+                        <div>Tentativas: <span id="attempts-counter">0</span></div>
+                    </div>
                 </div>
             </div>
 
@@ -189,16 +313,14 @@
                 </div>
             </div>
 
-            <button id="credits-button" class="absolute bottom-3 right-4 w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors" aria-label="Créditos">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                </svg>
-            </button>
-            <button id="how-to-play-open-button" class="absolute bottom-3 right-20 w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors" aria-label="Como Jogar">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-                </svg>
-            </button>
+            <div id="floating-actions-right" class="absolute bottom-3 right-4 flex items-center gap-2">
+                <button id="how-to-play-open-button" class="px-4 py-2 bg-violet-600 text-white rounded-md font-semibold hover:bg-violet-700 transition-colors" aria-label="Como Jogar">Como Jogar</button>
+                <button id="credits-button" class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors shrink-0" aria-label="Créditos">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
             <button id="ranking-button" class="absolute bottom-3 left-4 w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors text-2xl" aria-label="Ranking">🏆</button>
         </main>
     </div>
@@ -215,17 +337,30 @@
 
     <!-- Modal para Como Jogar -->
     <div id="how-to-play-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h2 class="text-xl font-bold mb-2">Como Jogar</h2>
+        <div class="modal-content text-gray-800">
+            <img src="../src/assets/images/Jean_abre-bracos.gif" alt="Personagem Jean explicando o jogo" class="w-32 h-auto mx-auto mb-2">
+            <h2 class="text-2xl font-bold mb-2">Como Jogar Conexo</h2>
             <p class="text-gray-600 mb-4">
-                Encontre grupos de quatro palavras que tenham algo em comum.
+                Seu objetivo é encontrar <strong>4 grupos de 4 palavras</strong> que tenham algo em comum.
             </p>
-            <div class="text-left space-y-3 text-gray-700">
-                <p>1. Selecione quatro palavras que você acha que pertencem ao mesmo grupo.</p>
-                <p>2. Clique em 'Enviar' para verificar sua resposta.</p>
-                <p>3. Se estiver certo, o grupo será revelado. Se errar, você perde uma tentativa.</p>
+            
+            <div class="text-left space-y-2 text-gray-700 mb-6">
+                <p><strong>1. Selecione</strong> quatro palavras que você acha que formam um grupo.</p>
+                <p><strong>2. Envie</strong> para verificar. Se acertar, o grupo é revelado!</p>
+                <p><strong>3. Use Dicas</strong> se precisar de uma ajudinha para encontrar um grupo.</p>
             </div>
-            <button id="how-to-play-close-button" class="mt-6 w-full px-4 py-2 bg-gray-800 text-white rounded-md font-semibold hover:bg-gray-700 transition-colors">Entendi, vamos jogar!</button>
+
+            <!-- Dicas de Pontuação -->
+            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-r-lg" role="alert">
+                <p class="font-bold text-lg">⚠️ Atenção na Pontuação! ⚠️</p>
+                <p class="mt-2">Para fazer mais pontos, seja rápido e preciso!</p>
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                    <li>Cada <strong>tentativa errada</strong> custa <strong class="text-red-600">-150 pontos</strong>.</li>
+                    <li>Usar uma <strong>dica</strong> custa <strong class="text-red-600">-500 pontos</strong>.</li>
+                </ul>
+            </div>
+
+            <button id="how-to-play-close-button" class="mt-6 w-full px-4 py-2 bg-violet-600 text-white rounded-md font-semibold hover:bg-violet-700 transition-colors">Entendi, vamos jogar!</button>
         </div>
     </div>
 
@@ -257,11 +392,19 @@
     <!-- Modal para Submeter Score -->
     <div id="submit-score-modal" class="modal-overlay">
         <div class="modal-content text-gray-800">
-            <h2 class="text-xl font-bold mb-2">🎉 Fim de Jogo! 🎉</h2>
-            <p class="text-gray-600 mb-4">Você completou os 3 jogos de hoje. Veja seu desempenho e entre para o ranking!</p>
-            <div id="score-summary" class="text-left bg-gray-100 p-3 rounded-lg mb-4 space-y-1"></div>
+            <h2 class="text-xl font-bold mb-1">🎉 Fim de Jogo! 🎉</h2>
+            <p class="text-gray-600 mb-3">Você completou os 3 jogos de hoje. Veja seu desempenho e entre para o ranking!</p>
+
+            <div class="flex items-start gap-3 mb-3">
+                <img src="../src/assets/images/Jean_abre-bracos.gif" alt="Jean comemorando seu resultado" class="w-16 h-auto md:w-24 select-none" draggable="false">
+                <div class="speech-bubble flex-1">
+                    <div id="score-summary" class="text-left space-y-1"></div>
+                </div>
+            </div>
+
             <input type="text" id="player-name-input" placeholder="Digite seu nome (máx. 15 caracteres)" maxlength="15" class="w-full p-2 border rounded-md mb-2 text-gray-800">
             <button id="submit-score-button" class="w-full px-4 py-2 bg-violet-600 text-white rounded-md font-semibold hover:bg-violet-700 transition-colors">Enviar para o Ranking</button>
+            <button id="open-ranking-from-submit" class="mt-2 w-full px-4 py-2 bg-gray-800 text-white rounded-md font-semibold hover:bg-gray-700 transition-colors">Ver Ranking</button>
             <button id="submit-score-close-button" class="mt-2 w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-md font-semibold hover:bg-gray-300 transition-colors">Fechar</button>
         </div>
     </div>
@@ -489,6 +632,12 @@
 
             const submitScoreButton = document.getElementById('submit-score-button');
             const submitScoreCloseButton = document.getElementById('submit-score-close-button');
+            const openRankingFromSubmit = document.getElementById('open-ranking-from-submit');
+
+            // Timer elements
+            const timerDisplay = document.getElementById('timer-display');
+            const timerText = document.getElementById('timer-text');
+            const timerToggleBtn = document.getElementById('timer-visibility-toggle');
 
             let selectedWords = [];
             let attempts = 0;
@@ -500,6 +649,7 @@
             let hintState = { groupCategory: null, revealedWords: [] };
             let hintsUsed = 0;
             let gameStartTime = 0;
+            let timerInterval = null;
 
             // !!! URL do seu script do Google Sheets !!!
             const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZCYw3e1bU3bA0L3zW36e-M6-5G390cWIyA-CFuKWzrvUTsTL34EySzvaqdJdE_R6t6Q/exec";
@@ -531,7 +681,6 @@
             function setupDailyGames() {
                 const today = new Date();
                 const dateString = today.toISOString().split('T')[0];
-                const hasSeenInstructions = localStorage.getItem(`conexo-instructions-seen-${dateString}`);
                 const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
                 
                 const savedProgress = JSON.parse(localStorage.getItem(`conexo-progress-${dateString}`));
@@ -565,10 +714,8 @@
                 const firstUnfinishedGame = dailyProgress.completed.indexOf(false);
                 if (firstUnfinishedGame !== -1) {
                     currentGameIndex = firstUnfinishedGame;
-                    if (!hasSeenInstructions && currentGameIndex === 0) {
-                        showHowToPlayModal();
-                        localStorage.setItem(`conexo-instructions-seen-${dateString}`, 'true');
-                    }
+                    // Mostra o modal "Como Jogar" toda vez que a página é carregada e há um jogo para jogar.
+                    showHowToPlayModal();
                     initGame(currentGameIndex);
                 } else {
                     // All games for today are completed
@@ -589,7 +736,15 @@
                 solvedContainer.innerHTML = '';
                 board.style.pointerEvents = 'auto';
                 gameStartTime = Date.now();
+                window.gameStartTime = gameStartTime;
                 hintState = { groupCategory: null, revealedWords: [] };
+
+                // Reinicia o cronômetro conforme preferência
+                stopTimer();
+                if (getTimerPreference()) {
+                    timerText.textContent = '00:00';
+                    startTimer();
+                }
                 
                 currentPuzzle = dailyPuzzles[index]; 
                 let allWords = currentPuzzle.groups.flatMap(group => group.words);
@@ -815,6 +970,21 @@
             weeklyRankingTab.addEventListener('click', () => fetchAndDisplayRanking('weekly'));
             submitScoreButton.addEventListener('click', submitScore);
             submitScoreCloseButton.addEventListener('click', () => submitScoreModal.classList.remove('visible'));
+            if (openRankingFromSubmit) {
+                openRankingFromSubmit.addEventListener('click', () => {
+                    submitScoreModal.classList.remove('visible');
+                    showRankingModal();
+                });
+            }
+
+            // (revertido) sem badge/nudge no botão de ranking
+
+            // --- Timer visibility toggle ---
+            timerToggleBtn.addEventListener('click', () => {
+                const newValue = !getTimerPreference();
+                setTimerPreference(newValue);
+                applyTimerVisibility();
+            });
 
             // --- Helper Functions ---
             function shuffleArray(array) {
@@ -845,6 +1015,20 @@
             
             // --- Start Game ---
             setupDailyGames();
+            applyTimerVisibility();
+            // Atalho de teste: abrir o modal de envio sem completar 3 jogos
+            // Use ?testSubmit=1 ou #testSubmit na URL
+            const url = new URL(window.location.href);
+            if (url.searchParams.get('testSubmit') === '1' || window.location.hash === '#testSubmit') {
+                // Inclui alguns números fictícios para visualização
+                dailyProgress = { completed: [true, true, true], stats: [{a:0,h:0,t:60},{a:1,h:2,t:120},{a:0,h:1,t:90}] };
+                window.setTimeout(() => {
+                    try { showSubmitScoreModal(); } catch (e) { console.warn('Teste submit modal:', e); }
+                }, 300);
+            }
+
+            // Expoe atalho no console para testes manuais
+            window.debugOpenSubmitScoreModal = () => { try { showSubmitScoreModal(); } catch (e) { console.error(e); } };
 
             // --- Ranking & Score Logic ---
             function calculateFinalScore() {
@@ -998,6 +1182,65 @@
             });
 
         });
+    </script>
+    <script>
+        // Cronômetro utilitários (isolados para clareza)
+        (function(){
+            const timerDisplay = document.getElementById('timer-display');
+            const timerText = document.getElementById('timer-text');
+            const timerToggleBtn = document.getElementById('timer-visibility-toggle');
+            // Se elementos não existem, não prossegue (defesa)
+            if (!timerDisplay || !timerText || !timerToggleBtn) return;
+
+            // Integra com variáveis globais definidas acima
+            let timerIntervalRef = null;
+
+            window.getTimerPreference = function() {
+                try { return JSON.parse(localStorage.getItem('conexo-timer-visible') || 'false'); } catch { return false; }
+            };
+
+            window.setTimerPreference = function(value) {
+                localStorage.setItem('conexo-timer-visible', JSON.stringify(!!value));
+            };
+
+            window.startTimer = function() {
+                if (timerIntervalRef) return;
+                updateTimerText();
+                timerIntervalRef = setInterval(updateTimerText, 1000);
+            };
+
+            window.stopTimer = function() {
+                if (timerIntervalRef) {
+                    clearInterval(timerIntervalRef);
+                    timerIntervalRef = null;
+                }
+            };
+
+            window.applyTimerVisibility = function() {
+                const visible = getTimerPreference();
+                timerToggleBtn.setAttribute('aria-pressed', String(visible));
+                if (visible) {
+                    timerDisplay.classList.remove('hidden');
+                    timerToggleBtn.textContent = '⏱️ Ocultar';
+                    timerToggleBtn.title = 'Ocultar tempo';
+                    startTimer();
+                } else {
+                    timerDisplay.classList.add('hidden');
+                    timerToggleBtn.textContent = '⏱️ Mostrar';
+                    timerToggleBtn.title = 'Mostrar tempo';
+                    stopTimer();
+                }
+            };
+
+            function updateTimerText() {
+                // Usa gameStartTime global do script principal
+                const start = window.gameStartTime || Date.now();
+                const elapsedSec = Math.max(0, Math.floor((Date.now() - start) / 1000));
+                const mm = String(Math.floor(elapsedSec / 60)).padStart(2, '0');
+                const ss = String(elapsedSec % 60).padStart(2, '0');
+                timerText.textContent = `${mm}:${ss}`;
+            }
+        })();
     </script>
 
 </body>
