@@ -170,6 +170,11 @@
             #how-to-play-modal .modal-content li {
                 font-size: 0.95rem;
             }
+            /* Compactar a caixa de pontuação em celulares para caber o novo item */
+            #how-to-play-modal [role="alert"] { padding: 0.5rem; }
+            #how-to-play-modal [role="alert"] .text-lg { font-size: 1.1rem; }
+            #how-to-play-modal [role="alert"] ul { margin-top: 0.25rem; }
+            #how-to-play-modal [role="alert"] li { margin: 0; }
             /* Timer acima de Tentativas no mobile (no canto direito) */
             #top-stats { flex-direction: column; align-items: flex-end; gap: 0.25rem; }
             #timer-display { font-size: 0.95rem; }
@@ -272,6 +277,23 @@
         .race-runner { position: absolute; left: 0; bottom: 2px; transition: left 1.2s ease-out; z-index: 2; display: flex; flex-direction: column-reverse; align-items: center; gap: 2px; }
         .runner-gif { width: 50px; height: 50px; object-fit: contain; }
         .runner-visual { display:inline-block; animation: bob 0.6s ease-in-out infinite alternate; }
+        /* Tablets: todos os nomes (labels) brancos com borda preta mais visível; GIFs inalterados
+           Ampliado para incluir iPads em 1024px (paisagem) */
+        @media (min-width: 768px) and (max-width: 1200px) {
+            #ranking-modal .race-runners .runner-label {
+                color: white !important;
+                background: transparent !important;
+                border: none !important;
+                text-shadow: 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black !important;
+                font-size: 10.5px !important; /* Aumenta um pouco o texto */
+                max-width: none !important; /* Remove o limite de largura para evitar corte */
+            }
+            /* Tablets: zumbi menor com maior especificidade para sobrepor ajustes gerais */
+            #ranking-modal .race-runners .runner-gif[src$="zumbi.gif"] {
+                width: 32px !important;
+                height: 32px !important;
+            }
+        }
         @keyframes bob { from { transform: translateY(-2px); } to { transform: translateY(2px); } }
         .runner-label { position: static; transform: none; z-index: 3; pointer-events: none; font-size: 9.5px; white-space: nowrap; background: rgba(255,255,255,0.95); padding: 1px 4px; border-radius: 9999px; border:1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.08); max-width: 90px; overflow: hidden; text-overflow: ellipsis; }
         .runner-label.z2 { margin-bottom: 6px; }
@@ -327,6 +349,27 @@
         @media (prefers-reduced-motion: reduce) {
             .race-runner { transition: none; }
         }
+
+        /* Lista: permitir Top 50 com rolagem suave dentro do modal */
+        #ranking-modal #ranking-list.list-mode {
+            max-height: 60vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-right: 6px; /* espaço para a barra de rolagem */
+        }
+        @media (max-width: 480px) {
+            #ranking-modal #ranking-list.list-mode { max-height: 66vh; }
+        }
+        @media (min-width: 768px) and (max-width: 1023px) {
+            #ranking-modal #ranking-list.list-mode { max-height: 58vh; }
+        }
+
+        /* Scroll para a lista do ranking quando for Top 50 */
+        #ranking-list {
+            max-height: 400px; /* Altura máxima antes de mostrar a barra de rolagem */
+            overflow-y: auto;
+            padding-right: 8px; /* Espaço para a barra de rolagem */
+        }
         
         /* Balão de fala para o resumo do placar no submit */
         .speech-bubble {
@@ -363,11 +406,21 @@
         @media (min-width: 768px) and (max-width: 1023px) {
             #floating-actions-right { bottom: 0.5rem; }
             #ranking-button { bottom: 0.5rem; }
+            #streak-button { bottom: 0.5rem; }
         }
         @media (max-width: 767px) {
             #floating-actions-right { bottom: calc(max(0.25rem, env(safe-area-inset-bottom))); }
             #ranking-button { bottom: calc(max(0.25rem, env(safe-area-inset-bottom))); }
+            #streak-button { bottom: calc(max(0.25rem, env(safe-area-inset-bottom))); }
         }
+
+        /* Streak button states */
+        #streak-button.streak-on {
+            background: linear-gradient(135deg, #fde68a 0%, #fbbf24 45%, #f59e0b 100%);
+            color: #7c4d00;
+            box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.55);
+        }
+        #streak-button .streak-icon.off { filter: grayscale(1) brightness(0.9); opacity: 0.7; }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center md:justify-start min-h-screen p-2 sm:p-4">
@@ -424,6 +477,10 @@
                 </button>
             </div>
             <button id="ranking-button" class="absolute bottom-3 left-4 w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors text-2xl" aria-label="Ranking">🏆</button>
+            <button id="streak-button" class="absolute bottom-3 left-20 h-12 px-3 bg-gray-200 rounded-full flex items-center gap-2 text-gray-700 hover:bg-gray-300 transition-colors" aria-label="Sequência">
+                <span class="streak-icon text-2xl">🔥</span>
+                <span id="streak-count" class="text-base font-semibold">0</span>
+            </button>
         </main>
     </div>
 
@@ -459,6 +516,7 @@
                 <ul class="list-disc list-inside mt-2 space-y-1">
                     <li>Cada <strong>tentativa errada</strong> custa <strong class="text-red-600">-150 pontos</strong>.</li>
                     <li>Usar uma <strong>dica</strong> custa <strong class="text-red-600">-500 pontos</strong>.</li>
+                    <li><strong>Tempo</strong>: a cada segundo são <strong class="text-red-600">-5 pontos</strong>.</li>
                 </ul>
             </div>
 
@@ -484,6 +542,7 @@
                 <button id="daily-ranking-tab" class="py-2 px-6 font-semibold text-gray-500 border-b-2 border-transparent hover:text-violet-600 hover:border-violet-600 focus:outline-none transition-colors">Diário</button>
                 <button id="weekly-ranking-tab" class="py-2 px-6 font-semibold text-gray-500 border-b-2 border-transparent hover:text-violet-600 hover:border-violet-600 focus:outline-none transition-colors">Semanal</button>
             </div>
+            <p id="ranking-info" class="text-sm text-gray-600 mb-2 hidden">Ranking semanal: média das pontuações diárias, de domingo a sábado.</p>
             <ul id="ranking-list" class="text-left space-y-2 min-h-[100px]">
                 <!-- O ranking será preenchido aqui -->
             </ul>
@@ -492,6 +551,28 @@
                 <button id="ranking-view-race" class="py-1 px-3 text-sm font-semibold text-gray-600 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none">Corrida</button>
             </div>
             <button id="ranking-modal-close-button" class="mt-6 w-full px-4 py-2 bg-gray-800 text-white rounded-md font-semibold hover:bg-gray-700 transition-colors">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Modal para Streak / Ofensivas -->
+    <div id="streak-modal" class="modal-overlay">
+        <div class="modal-content text-gray-800">
+            <h2 class="text-xl font-bold mb-2">🔥 Sequência</h2>
+            <p class="text-gray-600 mb-4">Complete jogos diariamente para manter sua sequência.</p>
+            <div id="streak-week" class="mb-4">
+                <!-- Semaninha gerada por JS -->
+            </div>
+            <div class="grid grid-cols-2 gap-4 text-center">
+                <div>
+                    <div id="streak-current" class="text-2xl font-extrabold">0 dias</div>
+                    <div class="text-gray-600">Sequência atual</div>
+                </div>
+                <div>
+                    <div id="streak-best" class="text-2xl font-extrabold">0 dias</div>
+                    <div class="text-gray-600">Melhor sequência</div>
+                </div>
+            </div>
+            <button id="streak-modal-close-button" class="mt-6 w-full px-4 py-2 bg-gray-800 text-white rounded-md font-semibold hover:bg-gray-700 transition-colors">Fechar</button>
         </div>
     </div>
 
@@ -732,11 +813,18 @@
             const creditsModal = document.getElementById('credits-modal');
             const creditsModalCloseButton = document.getElementById('credits-modal-close-button');
             const rankingButton = document.getElementById('ranking-button');
+            const streakButton = document.getElementById('streak-button');
             const rankingModal = document.getElementById('ranking-modal');
             const rankingList = document.getElementById('ranking-list');
             const rankingModalCloseButton = document.getElementById('ranking-modal-close-button');
             const dailyRankingTab = document.getElementById('daily-ranking-tab');
             const weeklyRankingTab = document.getElementById('weekly-ranking-tab');
+            const streakModal = document.getElementById('streak-modal');
+            const streakModalCloseButton = document.getElementById('streak-modal-close-button');
+            const streakWeekEl = document.getElementById('streak-week');
+            const streakCurrentEl = document.getElementById('streak-current');
+            const streakBestEl = document.getElementById('streak-best');
+            const rankingInfoEl = document.getElementById('ranking-info');
             const submitScoreModal = document.getElementById('submit-score-modal');
             const scoreSummaryEl = document.getElementById('score-summary');
             const playerNameInput = document.getElementById('player-name-input');
@@ -1125,6 +1213,7 @@
                 howToPlayModal.addEventListener('click', (e) => { if (e.target === howToPlayModal) closeHowToPlayModal(); });
             }
             rankingButton.addEventListener('click', showRankingModal);
+            if (streakButton) streakButton.addEventListener('click', showStreakModal);
             rankingModalCloseButton.addEventListener('click', () => rankingModal.classList.remove('visible'));
             dailyRankingTab.addEventListener('click', () => fetchAndDisplayRanking('daily'));
             weeklyRankingTab.addEventListener('click', () => fetchAndDisplayRanking('weekly'));
@@ -1233,6 +1322,8 @@
             // --- Start Game ---
             setupDailyGames();
             applyTimerVisibility();
+            // Atualiza o botão de sequência após montar a tela
+            try { if (streakButton) renderStreakButton(); } catch {}
             // Atalho de teste: abrir o modal de envio sem completar 3 jogos
             // Use ?testSubmit=1 ou #testSubmit na URL
             const url = new URL(window.location.href);
@@ -1259,7 +1350,7 @@
                 const baseScore = 30000;
                 const attemptPenalty = totalStats.a * 150;
                 const hintPenalty = totalStats.h * 500;
-                const timePenalty = Math.floor(totalStats.t * 2);
+                const timePenalty = Math.floor(totalStats.t * 5); // 5 pontos por segundo
 
                 const finalScore = Math.max(0, baseScore - attemptPenalty - hintPenalty - timePenalty);
                 return { score: finalScore, stats: totalStats };
@@ -1345,6 +1436,18 @@
             }
 
             function showRankingModal() {
+                // Garanta que abrimos na visualização Lista (Top 50)
+                rankingViewMode = 'list';
+                try { localStorage.setItem('conexo-ranking-view','list'); } catch {}
+                // Sincroniza botões se existirem
+                if (rankingViewListBtn && rankingViewRaceBtn) {
+                    const on = ['bg-violet-600','text-white'];
+                    const off = ['bg-gray-100','text-gray-600'];
+                    rankingViewListBtn.classList.remove(...off);
+                    rankingViewListBtn.classList.add(...on);
+                    rankingViewRaceBtn.classList.remove(...on);
+                    rankingViewRaceBtn.classList.add(...off);
+                }
                 rankingModal.classList.add('visible');
                 fetchAndDisplayRanking('daily'); // Carrega o ranking diário por padrão
             }
@@ -1360,10 +1463,21 @@
                 activeTab.classList.add('text-violet-600', 'border-violet-600');
                 activeTab.classList.remove('text-gray-500', 'border-transparent');
 
+                // Mostra explicação curta quando estiver no semanal
+                if (rankingInfoEl) {
+                    if (period === 'weekly') {
+                        rankingInfoEl.textContent = 'Ranking semanal: média das pontuações diárias, de domingo a sábado.';
+                        rankingInfoEl.classList.remove('hidden');
+                    } else {
+                        rankingInfoEl.classList.add('hidden');
+                    }
+                }
+
                 rankingList.innerHTML = '<li>Carregando ranking...</li>';
                 try {
                     const url = new URL(SCRIPT_URL);
-                    url.searchParams.append('period', period); // Adiciona o parâmetro 'period'
+                    url.searchParams.append('period', period);
+                    url.searchParams.append('limit', '50'); // Pede ao servidor o Top 50
 
                     const response = await fetch(url);
                     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -1406,8 +1520,12 @@
                     return map;
                 })();
                 if (rankingViewMode === 'list') {
-                    const visuals = rankingData.map(e => visualsMap.get(e.name) || getVisualForName(e.name));
-                    rankingList.innerHTML = rankingData.map((entry, index) => {
+                    // Ativa estilo de lista com rolagem (Top 50)
+                    rankingList.classList.add('list-mode');
+                    // Para a lista, usamos Top 50 (ou menos, se o servidor retornar menos)
+                    const list = rankingData.slice(0, 50);
+                    const visuals = list.map(e => visualsMap.get(e.name) || getVisualForName(e.name)); 
+                    rankingList.innerHTML = list.map((entry, index) => {
                         let positionHtml;
                         if (index === 0) {
                             positionHtml = '<span class="w-8 inline-block text-center text-2xl" title="1º Lugar">👑</span>';
@@ -1430,17 +1548,23 @@
                     return;
                 }
                 // Race view (pista única, todos juntos)
+                rankingList.classList.remove('list-mode');
                 if (!rankingData.length) { rankingList.innerHTML = `<li class="text-center text-gray-500">${emptyMessage}</li>`; return; }
-                const top = rankingData.slice(0, 10);
-                const maxScore = Math.max(...top.map(r=>r.score));
                 const screenW = window.innerWidth || document.documentElement.clientWidth;
+                const isTablet = screenW >= 768 && screenW <= 1023;
+                const isTabletColor = screenW >= 768 && screenW <= 1200;
+                const topCount = isTablet ? 8 : 10;
+                // Para a corrida, limitamos aos 10 primeiros
+                const top = rankingData.slice(0, topCount); 
+                const maxScore = Math.max(...top.map(r=>r.score));
                 const amp = 0; // manter todos na mesma linha
                 const runnersHtml = top.map((entry, index) => {
                     const visual = visualsMap.get(entry.name) || getVisualForName(entry.name);
                     const posIcon = index===0?'👑': index===1?'🥈': index===2?'🥉': (index+1)+'.';
                     const isNarrowTablet = screenW >= 768 && screenW <= 820;
                     // Alterna faixas: para tablets estreitos, aumenta um pouco a separação vertical
-                    const laneBottom = isNarrowTablet ? ((index % 2 === 0) ? 4 : 44) : ((index % 2 === 0) ? 6 : 30);
+                    const isLowLane = (index % 2 === 0);
+                    const laneBottom = isNarrowTablet ? (isLowLane ? 4 : 44) : (isLowLane ? 6 : 30);
                     let content;
                     if (visual.mode==='gif') {
                         content = `<img class=\"runner-gif runner-visual\" src=\"${visual.url}\" alt=\"avatar\" onerror=\"this.outerHTML='${EMOJI_AVATARS[0]}'\">`;
@@ -1450,8 +1574,12 @@
                     const showLabel = screenW >= 768 || index < 3; // em mobile só Top 3
                     const zebraClass = (screenW >= 768 && index % 2 === 1) ? ' z2' : '';
                     const safeName = entry.name.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-                    const labelHtml = showLabel ? `<div class=\\"runner-label${zebraClass}\\" title=\\"${safeName}\\">${posIcon} ${safeName}</div>` : '';
-                    return `<div class=\"race-runner\" data-score=\"${entry.score}\" data-max=\"${maxScore}\" style=\"bottom:${laneBottom}px\">${content}${labelHtml}</div>`;
+                    // Em tablets, força nomes brancos com borda preta (todos os lanes)
+                    const labelHtml = showLabel
+                        ? `<div class="runner-label${zebraClass}" title="${safeName}"><span class="runner-label-text">${posIcon} ${safeName}</span></div>`
+                        : '';
+                    const laneClass = isLowLane ? ' low-lane' : '';
+                    return `<div class=\"race-runner${laneClass}\" data-score=\"${entry.score}\" data-max=\"${maxScore}\" data-rank=\"${index}\" style=\"bottom:${laneBottom}px\">${content}${labelHtml}</div>`;
                 }).join('');
                 rankingList.innerHTML = `<li class=\"py-2\"><div class=\"race-stage\"><div class=\"race-layer race-city\"></div><div class=\"race-layer race-hills\"></div><div class=\"race-runners\">${runnersHtml}</div><div class=\"race-road\"></div></div></li>`;
 
@@ -1462,9 +1590,12 @@
                     const trackRect = track.getBoundingClientRect();
                     const screenW = window.innerWidth || document.documentElement.clientWidth;
                     const isNarrowTablet = screenW >= 768 && screenW <= 820;
-                    const baseMinGap = isNarrowTablet ? 54 : (screenW >= 1024 ? 90 : (screenW >= 768 ? 68 : 42));
-                    const padding = 8; // reduzido para permitir o 1º avançar mais à direita
+                    // Em tablets estreitos, reduza o gap e aumente o padding direito
+                    // para evitar acumular muito à direita e garantir que todos caibam.
+                    const baseMinGap = isNarrowTablet ? 52 : (screenW >= 1024 ? 90 : (screenW >= 768 ? 68 : 42));
+                    const padding = isNarrowTablet ? 18 : 8; // mais margem à direita em tablets
                     const leftPadding = screenW >= 1024 ? 16 : (screenW >= 768 ? 12 : 8); // margem esquerda
+                    const count = runners.length;
                     const data = runners.map((r, idx) => {
                         const holder = r.querySelector('.runner-gif');
                         const totalWidth = r.getBoundingClientRect().width || 56; // inclui label
@@ -1472,33 +1603,65 @@
                         const width = Math.max(totalWidth, gifWidth);
                         const score = Number(r.dataset.score)||0;
                         const max = Number(r.dataset.max)||1;
-                        // curva levemente não-linear para espalhar mais quando scores são próximos
-                        const basePct = max>0 ? Math.max(0.05, Math.min(1, score/max)) : 0;
-                        const exponent = isNarrowTablet ? 1.0 : (screenW >= 1024 ? 0.88 : (screenW >= 768 ? 0.9 : 1.0));
-                        const pct = Math.pow(basePct, exponent);
+                        const rank = Number(r.dataset.rank ?? idx);
+                        // Distribuição: em tablets estreitos, priorize espaçamento uniforme por rank.
+                        // Em outras telas, mantenha a curva por score.
+                        let pct;
+                        if (isNarrowTablet) {
+                            // Fracção por rank com margens (evita encostar nas bordas)
+                            const frac = count > 1 ? (rank + 1) / (count + 1) : 0.5;
+                            pct = Math.max(0.06, Math.min(0.94, frac));
+                        } else {
+                            // curva levemente não-linear para espalhar quando scores são próximos
+                            const basePct = max>0 ? Math.max(0.05, Math.min(1, score/max)) : 0;
+                            const exponent = (screenW >= 1024 ? 0.88 : (screenW >= 768 ? 0.9 : 1.0));
+                            pct = Math.pow(basePct, exponent);
+                        }
                         const maxRight = trackRect.width - width - padding;
                         const desired = Math.max(0, Math.min(maxRight, maxRight * pct));
-                        return { el: r, width, desired, maxRight, score, idx };
+                        return { el: r, width, desired, maxRight, score, idx, rank };
                     });
                     // Posiciona em ordem de ranking por score (do pior para o melhor),
                     // garantindo que o 1º fique sempre mais à direita.
-                    const order = [...data].sort((a,b)=>a.score-b.score);
                     const posArr = new Array(data.length).fill(0);
-                    for (let i=0;i<order.length;i++) {
-                        const prevLeft = i>0 ? posArr[order[i-1].idx] : null;
-                        const rankFromBest = order.length - 1 - i; // 0 = melhor colocado
-                        let minGap = Math.max(baseMinGap, order[i].width * 0.9);
-                        if (isNarrowTablet) {
-                            const boost = Math.max(0, 4 - rankFromBest) * 8; // top4 recebem mais espaço
-                            minGap += boost;
+                    if (isNarrowTablet) {
+                        // Posicionamento específico para tablets estreitos:
+                        // 1) ancora o 1º colocado na posição alvo à direita
+                        // 2) cada próximo acompanha à esquerda com espaçamento mínimo
+                        const orderBest = [...data].sort((a,b)=>b.score-a.score); // melhor -> pior
+                        const usableWidth = trackRect.width - leftPadding - padding;
+                        const stepPix = usableWidth / (count + 1);
+                        let prevLeft = null;
+                        for (let i=0; i<orderBest.length; i++) {
+                            const d = orderBest[i];
+                            const rankFromWorst = count - d.rank; // best => count, worst => 1
+                            let target = leftPadding + rankFromWorst * stepPix;
+                            const maxRight = d.maxRight; // já considera largura e padding
+                            if (target > maxRight) target = maxRight;
+                            let minGap = Math.max(40, d.width * 0.75);
+                            let left = target;
+                            if (prevLeft != null) {
+                                left = Math.min(target, prevLeft - minGap);
+                            }
+                            left = Math.max(leftPadding, Math.min(left, maxRight));
+                            posArr[d.idx] = left;
+                            prevLeft = left;
                         }
-                        const remaining = order.length - i - 1;
-                        const spaceForRest = remaining * baseMinGap; // reserva mínima para os próximos
-                        const maxAllowedHere = order[i].maxRight - spaceForRest;
-                        const candidate = Math.min(order[i].desired, maxAllowedHere);
-                        const minLeftThis = prevLeft==null ? leftPadding : (prevLeft + minGap);
-                        const left = Math.max(candidate, minLeftThis);
-                        posArr[order[i].idx] = Math.min(left, order[i].maxRight);
+                    } else {
+                        // Demais telas: mantém lógica de pior->melhor garantindo monotonia à direita
+                        const order = [...data].sort((a,b)=>a.score-b.score);
+                        for (let i=0;i<order.length;i++) {
+                            const prevLeft = i>0 ? posArr[order[i-1].idx] : null;
+                            // Em telas largas use gap base proporcional
+                            let minGap = Math.max(baseMinGap, order[i].width * 0.9);
+                            const remaining = order.length - i - 1;
+                            const spaceForRest = remaining * baseMinGap; // reserva mínima para os próximos
+                            const maxAllowedHere = order[i].maxRight - spaceForRest;
+                            const candidate = Math.min(order[i].desired, maxAllowedHere);
+                            const minLeftThis = prevLeft==null ? leftPadding : (prevLeft + minGap);
+                            const left = Math.max(candidate, minLeftThis);
+                            posArr[order[i].idx] = Math.min(left, order[i].maxRight);
+                        }
                     }
                     // Aplica posições
                     data.forEach(d => {
@@ -1509,6 +1672,8 @@
                 };
                 requestAnimationFrame(positionRunners);
                 setTimeout(positionRunners, 400);
+                // Recalcula ao redimensionar (especialmente útil em tablets rotacionando)
+                window.addEventListener('resize', positionRunners, { passive: true });
             }
 
             // --- Credits Modal Logic ---
@@ -1521,6 +1686,92 @@
             creditsModal.addEventListener('click', (e) => {
                 if (e.target === creditsModal) creditsModal.classList.remove('visible');
             });
+
+            // === Streak logic ===
+            function ymd(d){ return d.toISOString().slice(0,10); }
+            function addDays(d, n){ const x = new Date(d); x.setDate(x.getDate()+n); return x; }
+            function getCompletedDatesSet(){
+                const set = new Set();
+                try {
+                    for (let i=0;i<localStorage.length;i++){
+                        const k = localStorage.key(i);
+                        if (!k || !k.startsWith('conexo-progress-')) continue;
+                        const dateStr = k.substring('conexo-progress-'.length);
+                        try {
+                            const obj = JSON.parse(localStorage.getItem(k));
+                            if (obj && Array.isArray(obj.completed) && obj.completed.length===3 && obj.completed.every(Boolean)) {
+                                set.add(dateStr);
+                            }
+                        } catch {}
+                    }
+                } catch {}
+                return set;
+            }
+            function getCurrentStreak(completed){
+                let streak = 0; let d = new Date();
+                for(;;){
+                    const s = ymd(d);
+                    if (completed.has(s)) { streak++; d = addDays(d,-1); } else { break; }
+                }
+                return streak;
+            }
+            function getBestStreak(completed){
+                // varre últimos 180 dias para estimar melhor sequência
+                let best = 0; let cur = 0; let d = addDays(new Date(), -180);
+                for (let i=0;i<=180;i++){
+                    const s = ymd(d);
+                    if (completed.has(s)) { cur++; best = Math.max(best, cur); } else { cur = 0; }
+                    d = addDays(d,1);
+                }
+                return best;
+            }
+            function renderStreakButton(){
+                const completed = getCompletedDatesSet();
+                const todayDone = completed.has(ymd(new Date()));
+                const current = getCurrentStreak(completed);
+                const iconEl = streakButton.querySelector('.streak-icon');
+                const countEl = document.getElementById('streak-count');
+                if (todayDone) {
+                    streakButton.classList.add('streak-on');
+                    iconEl.classList.remove('off');
+                } else {
+                    streakButton.classList.remove('streak-on');
+                    iconEl.classList.add('off');
+                }
+                countEl.textContent = String(current);
+            }
+            function renderStreakModal(){
+                const completed = getCompletedDatesSet();
+                const now = new Date();
+                const dow = now.getDay(); // 0=Dom
+                const start = addDays(new Date(now.getFullYear(), now.getMonth(), now.getDate()), -dow);
+                const daysLabels = ['Do','2ª','3ª','4ª','5ª','6ª','Sa'];
+                let html = '<div class="flex items-center justify-between mb-1">';
+                for (let i=0;i<7;i++){
+                    const d = addDays(start, i);
+                    const done = completed.has(ymd(d));
+                    const isToday = ymd(d)===ymd(now);
+                    const fire = done ? '🔥' : '•';
+                    const color = done ? 'text-orange-500' : 'text-gray-300';
+                    html += `<div class=\"flex flex-col items-center w-10\"><div class=\"text-xl ${color}\">${fire}</div><div class=\"text-[11px] ${isToday?'font-bold text-gray-800':'text-gray-500'}\">${daysLabels[i]}</div></div>`;
+                }
+                html += '</div>';
+                streakWeekEl.innerHTML = html;
+                const cur = getCurrentStreak(completed);
+                const best = getBestStreak(completed);
+                streakCurrentEl.textContent = `${cur} ${cur===1?'dia':'dias'}`;
+                streakBestEl.textContent = `${best} ${best===1?'dia':'dias'}`;
+            }
+            function showStreakModal(){
+                if (!streakModal) return;
+                renderStreakModal();
+                streakModal.classList.add('visible');
+            }
+            if (streakModalCloseButton) {
+                streakModalCloseButton.addEventListener('click', ()=> streakModal.classList.remove('visible'));
+                streakModal.addEventListener('click', (e)=>{ if (e.target===streakModal) streakModal.classList.remove('visible'); });
+            }
+
 
         });
     </script>
