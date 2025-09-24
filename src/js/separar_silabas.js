@@ -361,7 +361,10 @@
             feedbackImage.src = '../src/assets/images/Kaue_Acerto.gif';
             feedbackImage.alt = 'Animação de acerto';
             formedWordEl.textContent = word;
-            meaningEl.textContent = `${word} - ${meaning}`;
+            // Ajuste específico desta atividade:
+            // Não exibimos mais a explicação da palavra no modal.
+            // Ela agora aparece como dica abaixo do HUD (ver #wordTip).
+            meaningEl.textContent = '';
             tryAgainBtn.style.display = 'none';
             nextBtn.style.display = 'inline-block';
 
@@ -369,6 +372,7 @@
                 const isLastLevel = gameState.level >= 3;
                 if (isLastLevel) {
                     title.textContent = '🏆 Incrível!';
+                    // Mensagens de conclusão de nível/curso continuam no modal.
                     meaningEl.textContent = 'Parabéns! Você completou todos os níveis!';
                     nextBtn.textContent = 'Jogar Novamente';
                 } else {
@@ -444,6 +448,11 @@
       gameState.currentWord = words[wordIndex];
       
       updateDisplay();
+      // Dica da palavra atual (abaixo do HUD)
+      (function updateWordTip(){
+        const tipEl = document.getElementById('wordTip');
+        if (tipEl) tipEl.textContent = gameState.currentWord?.meaning ? `Dica: ${gameState.currentWord.meaning}` : '';
+      })();
       createWordSlots();
       createSyllableCards();
       
@@ -557,6 +566,9 @@
         document.getElementById('feedbackModal').classList.remove('show');
         document.getElementById('gameContainer').classList.remove('active');
         document.getElementById('startMenu').classList.remove('hidden');
+        // Limpa a dica quando voltar ao menu (escopo desta atividade)
+        const tipEl = document.getElementById('wordTip');
+        if (tipEl) tipEl.textContent = '';
     }
 
     function toggleSound() {
@@ -580,6 +592,9 @@
       });
 
       if (gameState.currentWord) {
+        // Reexibe a dica da palavra corrente ao resetar
+        const tipEl = document.getElementById('wordTip');
+        if (tipEl) tipEl.textContent = gameState.currentWord?.meaning ? `Dica: ${gameState.currentWord.meaning}` : '';
         const container = document.getElementById('syllablesContainer');
         container.innerHTML = '';
 

@@ -22,7 +22,7 @@
             min-height: 100vh;
             color: white;
             overflow-x: hidden;
-            padding: 20px;
+            padding: 20px 20px 5rem; /* Adiciona espaço extra no final da página */
         }
 
         .page-container {
@@ -470,7 +470,7 @@
         /* Ajuste para telas de celular */
         @media (max-width: 768px) {
             .top-controls {
-                justify-content: space-between;
+                justify-content: center; /* Centraliza os controles para evitar overflow */
                 flex-wrap: nowrap;
                 gap: 10px;
             }
@@ -523,6 +523,7 @@
                         <option value="easy">Fácil (4 pares)</option>
                         <option value="medium">Médio (6 pares)</option>
                         <option value="hard">Difícil (8 pares)</option>
+                        <option value="super-dificil">Super Difícil (12 pares)</option>
                     </select>
                 </div>
                 <button id="toggle-case-btn" class="info-btn toggle-case-btn" aria-label="Alternar para maiúsculas">aA</button>
@@ -769,13 +770,18 @@
             { name: 'Leão', icon: '🦁', fact: 'O rugido de um leão pode ser ouvido a 8 km de distância.', type: 'exotico',   color: '#ffab91' },
             { name: 'Vaca', icon: '🐮', fact: 'Vacas têm quatro estômagos para ajudar a digerir a grama.', type: 'fazenda',   color: '#ffd54f' },
             { name: 'Sapo', icon: '🐸', fact: 'Sapos bebem água através da pele.', type: 'anfibio',   color: '#c5e1a5' },
-            { name: 'Macaco', icon: '🐵', fact: 'Macacos usam a cauda para se equilibrar nas árvores.', type: 'floresta',  color: '#a5d6a7' }
+            { name: 'Macaco', icon: '🐵', fact: 'Macacos usam a cauda para se equilibrar nas árvores.', type: 'floresta',  color: '#a5d6a7' },
+            { name: 'Tigre', icon: '🐯', fact: 'Tigres são os maiores felinos do mundo.', type: 'exotico', color: '#ffab91' },
+            { name: 'Girafa', icon: '🦒', fact: 'Girafas têm a mesma quantidade de vértebras no pescoço que os humanos.', type: 'exotico', color: '#ffab91' },
+            { name: 'Pinguim', icon: '🐧', fact: 'Pinguins não podem voar, mas são excelentes nadadores.', type: 'exotico', color: '#ffab91' },
+            { name: 'Coruja', icon: '🦉', fact: 'Corujas podem girar a cabeça em até 270 graus.', type: 'floresta', color: '#a5d6a7' }
         ];
 
         class MemoryGame {
             constructor(difficulty = 'easy') {
-                this.levels = { easy: 4, medium: 6, hard: 8 };
-                this.numPairs = this.levels[difficulty];
+                this.difficulty = difficulty;
+                this.levels = { easy: 4, medium: 6, hard: 8, 'super-dificil': 12 };
+                this.numPairs = this.levels[this.difficulty] || 4; // Fallback para fácil
                 this.animals = this.selectAnimals(this.numPairs);
                 this.cards = [];
                 this.flippedCards = [];
@@ -802,11 +808,12 @@
                 // Define colunas de forma adaptativa conforme a altura da viewport
                 const w = window.innerWidth;
                 let cols;
-                if (this.numPairs === 6) {
-                    // Médio (12 cartas): 3 colunas em telas estreitas (mobile), 4 em telas largas.
+                if (this.difficulty === 'medium') { // 6 pares = 12 cartas
                     cols = (w <= 600 ? 3 : 4);
+                } else if (this.difficulty === 'super-dificil') { // 12 pares = 24 cartas
+                    cols = (w <= 768 ? 4 : 6); // 4x6 para mobile/tablet, 6x4 para desktop
                 } else {
-                    // Fácil (8 cartas) ou Difícil (16 cartas): sempre 4 colunas.
+                    // Fácil (8) e Difícil (16) usam 4 colunas.
                     cols = 4;
                 }
                 this.columns = cols;
@@ -821,8 +828,10 @@
                 window.addEventListener('resize', () => {
                     const w2 = window.innerWidth;
                     let newCols;
-                    if (this.numPairs === 6) {
+                    if (this.difficulty === 'medium') {
                         newCols = (w2 <= 600 ? 3 : 4);
+                    } else if (this.difficulty === 'super-dificil') {
+                        newCols = (w2 <= 768 ? 4 : 6);
                     } else {
                         newCols = 4;
                     }
@@ -1039,8 +1048,7 @@
 
             reset() {
                 // A dificuldade atual é mantida, apenas reinicia o jogo.
-                const currentDifficulty = this.levels.easy === this.numPairs ? 'easy' : this.levels.medium === this.numPairs ? 'medium' : 'hard';
-                newGame(currentDifficulty);
+                newGame(this.difficulty);
             }
         }
 

@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <!-- Lottie: usar jsDelivr confiável -->
+    <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js" defer></script>
     <style>
         body {
             font-family: 'Montserrat', sans-serif;
@@ -80,6 +82,13 @@
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
             z-index: 1000;
+            /* Garante respiro nas bordas e respeita áreas seguras (iOS) */
+            padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+            padding-left: max(8px, env(safe-area-inset-left));
+            padding-right: max(8px, env(safe-area-inset-right));
+            padding-top: max(8px, env(safe-area-inset-top));
+            padding-bottom: max(8px, env(safe-area-inset-bottom));
+            overflow: auto; /* Permite ver o modal completo em notebooks sem rolagem interna */
         }
         .modal-overlay.visible {
             opacity: 1;
@@ -93,7 +102,13 @@
             transform: scale(0.9);
             transition: transform 0.3s ease;
             width: 90%;
-            max-width: 400px;
+            max-width: 700px; /* Ligeiramente menor para notebooks */
+            /* Sem rolagem interna por padrão em desktops/tablets */
+            max-height: none;
+            overflow: visible;
+            /* Destaque sutil das bordas em iPhone */
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.2);
         }
         .modal-overlay.visible .modal-content {
             transform: scale(1);
@@ -131,6 +146,39 @@
                 justify-content: center;
                 width: 100%;
             }
+            /* Nudge fino: alinha verticalmente ações com os contadores */
+            #top-actions { margin-top: 20px; }
+            /* Modal mais compacto em celulares */
+            .modal-content {
+                width: 94vw;
+                max-width: none;
+                padding: 1rem;
+                border-radius: 0.75rem;
+                max-height: 90vh;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            /* Reduz imagem e títulos do modal Como Jogar em telas pequenas */
+            #how-to-play-modal .modal-content img {
+                width: 72px;
+                height: auto;
+            }
+            #how-to-play-modal .modal-content h2 {
+                font-size: 1.25rem; /* ~text-xl */
+            }
+            #how-to-play-modal .modal-content p,
+            #how-to-play-modal .modal-content li {
+                font-size: 0.95rem;
+            }
+            /* Compactar a caixa de pontuação em celulares para caber o novo item */
+            #how-to-play-modal [role="alert"] { padding: 0.5rem; }
+            #how-to-play-modal [role="alert"] .text-lg { font-size: 1.1rem; }
+            #how-to-play-modal [role="alert"] ul { margin-top: 0.25rem; }
+            #how-to-play-modal [role="alert"] li { margin: 0; }
+            /* Timer acima de Tentativas no mobile (no canto direito) */
+            #top-stats { flex-direction: column; align-items: flex-end; gap: 0.25rem; }
+            #timer-display { font-size: 0.95rem; }
+            #counters-row { display: flex; align-items: center; gap: 1rem; }
         }
 
         /* Tablet e telas maiores */
@@ -142,10 +190,237 @@
                 padding: 2rem;
             }
         }
+        /* Notebooks/desktops: deixar modal mais largo e reduzir espaço vertical */
+        @media (min-width: 1024px) {
+            .modal-content { max-width: 780px; }
+            #how-to-play-modal .modal-content img { width: 96px; margin-bottom: 0.25rem; }
+        }
+        @media (min-width: 768px) and (max-height: 900px) {
+            .modal-content { padding-top: 1rem; padding-bottom: 1rem; }
+            #how-to-play-modal .modal-content img { width: 96px; margin-bottom: 0.25rem; }
+        }
+
+        /* (removidos) Ajustes de posição dos botões para manter alinhamento original */
         .card.hint-highlight {
             outline: 3px solid #3b82f6; /* blue-500 */
             outline-offset: 2px;
         }
+
+        /* Estilo dourado do botão de ranking (somente visual, sem mover) */
+        #ranking-button {
+            background: linear-gradient(135deg, #fde68a 0%, #fbbf24 45%, #f59e0b 100%) !important;
+            color: #7c4d00 !important;
+            box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.55);
+            transition: filter 150ms ease-in-out, box-shadow 150ms ease-in-out;
+        }
+        #ranking-button:hover {
+            filter: brightness(1.05) saturate(1.02);
+            box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.7);
+        }
+
+        /* (revertido) estilos extras do botão de ranking removidos */
+
+        /* Telas interativas: muito largas e com pouca altura (ex.: Nest Hub) */
+        @media (max-height: 600px) and (min-width: 800px) {
+            .modal-content {
+                padding: 1rem;
+                max-height: 92vh; /* aproveita melhor a altura disponível */
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            #how-to-play-modal .modal-content img {
+                width: 80px;
+            }
+        }
+        
+        /* Ranking: Corrida (pista única com cenário) */
+        .race-stage {
+            position: relative;
+            width: 100%;
+            height: 160px;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: inset 0 0 0 1px #e5e7eb;
+            background: linear-gradient(180deg, #cfe8ff 0%, #eaf4ff 65%, #b6d7a8 66%, #a5cf9b 100%);
+        }
+        .race-layer { position: absolute; inset: 0; pointer-events: none; }
+        /* Cidade ao fundo */
+        .race-city { background:
+            repeating-linear-gradient(
+              90deg,
+              rgba(147,197,253,0.35) 0 24px,
+              rgba(147,197,253,0.5) 24px 48px
+            );
+            opacity: .6;
+            transform: translateZ(0);
+            animation: cityMove 12s linear infinite;
+        }
+        @keyframes cityMove { from { background-position-x: 0; } to { background-position-x: -240px; } }
+        /* Grama/hills no meio */
+        .race-hills { top: 60%; height: 40%; background:
+            repeating-linear-gradient(
+              90deg,
+              rgba(34,197,94,0.25) 0 30px,
+              rgba(34,197,94,0.35) 30px 60px
+            );
+            animation: hillsMove 6s linear infinite;
+        }
+        @keyframes hillsMove { from { background-position-x: 0; } to { background-position-x: -180px; } }
+        /* Estrada */
+        .race-road { position: absolute; left: 0; right: 0; bottom: 0; height: 56px; background: #2f3035; z-index: 1; }
+        .race-road::before { content: ''; position: absolute; left: 0; right: 0; top: 26px; height: 4px; background:
+            repeating-linear-gradient(90deg, #ffffff 0 30px, transparent 30px 60px);
+            opacity: 0.9; animation: roadMove 1.1s linear infinite; }
+        @keyframes roadMove { from { background-position-x: 0; } to { background-position-x: -120px; } }
+        /* Corredores */
+        .race-runners { position: absolute; left: 0; right: 0; bottom: 0; top: 28px; z-index: 2; }
+        .race-runner { position: absolute; left: 0; bottom: 2px; transition: left 1.2s ease-out; z-index: 2; display: flex; flex-direction: column-reverse; align-items: center; gap: 2px; }
+        .runner-gif { width: 50px; height: 50px; object-fit: contain; }
+        .runner-visual { display:inline-block; animation: bob 0.6s ease-in-out infinite alternate; }
+        /* Tablets: todos os nomes (labels) brancos com borda preta mais visível; GIFs inalterados
+           Ampliado para incluir iPads em 1024px (paisagem) */
+        @media (min-width: 768px) and (max-width: 1200px) {
+            #ranking-modal .race-runners .runner-label {
+                color: white !important;
+                background: transparent !important;
+                border: none !important;
+                text-shadow: 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black !important;
+                font-size: 10.5px !important; /* Aumenta um pouco o texto */
+                max-width: none !important; /* Remove o limite de largura para evitar corte */
+            }
+            /* Tablets: zumbi menor com maior especificidade para sobrepor ajustes gerais */
+            #ranking-modal .race-runners .runner-gif[src$="zumbi.gif"] {
+                width: 32px !important;
+                height: 32px !important;
+            }
+        }
+        @keyframes bob { from { transform: translateY(-2px); } to { transform: translateY(2px); } }
+        .runner-label { position: static; transform: none; z-index: 3; pointer-events: none; font-size: 9.5px; white-space: nowrap; background: rgba(255,255,255,0.95); padding: 1px 4px; border-radius: 9999px; border:1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.08); max-width: 90px; overflow: hidden; text-overflow: ellipsis; }
+        .runner-label.z2 { margin-bottom: 6px; }
+        @media (max-width: 480px) { .runner-label { max-width: 56px; font-size: 8px; padding: 1px 3px; } }
+        @media (min-width: 768px) and (max-width: 1023px) { .runner-label { max-width: 84px; font-size: 9px; } .runner-label.z2 { margin-bottom: 6px; } }
+        @media (min-width: 1024px) { .runner-label { max-width: 90px; font-size: 9.5px; } .runner-label.z2 { margin-bottom: 8px; } }
+        @media (max-width: 480px) { .race-stage { height: 125px; } .runner-gif { width: 44px; height: 44px; } .runner-label { font-size: 10px; } }
+        @media (min-width: 768px) { .race-stage { height: 165px; } .runner-gif { width: 56px; height: 56px; } }
+        @media (min-width: 1024px) { .race-stage { height: 185px; } .runner-gif { width: 60px; height: 60px; } }
+
+        /* Ajustes finos por personagem (corrida) */
+        .runner-gif[src$="policia.gif"]{ width: 94px !important; height: 94px !important; }
+        .runner-gif[src$="rica.gif"]{ width: 84px !important; height: 84px !important; }
+        .runner-gif[src$="menina.gif"]{ width: 94px !important; height: 94px !important; }
+        .runner-gif[src$="corredor_frio.gif"]{ width: 84px !important; height: 84px !important; }
+        .runner-gif[src$="corredor.gif"] { width: 84px !important; height: 84px !important; }
+        .runner-gif[src$="zumbi.gif"] { width: 46px !important; height: 46px !important; }
+
+        /* Desce levemente os que foram aumentados para não sair da pista */
+        .race-runner:has(.runner-gif[src$="policia.gif"]),
+        .race-runner:has(.runner-gif[src$="rica.gif"]),
+        .race-runner:has(.runner-gif[src$="menina.gif"]),
+        .race-runner:has(.runner-gif[src$="corredor_frio.gif"]),
+        .race-runner:has(.runner-gif[src$="corredor.gif"]) {
+            transform: translateY(12px);
+        }
+
+        /* Tablet estreito: 768–820px — reduzir personagens e nomes para caber */
+        @media (min-width: 768px) and (max-width: 820px) {
+            .race-stage { height: 138px; }
+            .runner-gif { width: 36px; height: 36px; }
+            .runner-gif[src$="policia.gif"],
+            .runner-gif[src$="rica.gif"],
+            .runner-gif[src$="menina.gif"],
+            .runner-gif[src$="corredor_frio.gif"],
+            .runner-gif[src$="corredor.gif"] { width: 40px !important; height: 40px !important; }
+            .race-runner:has(.runner-gif[src$="policia.gif"]),
+            .race-runner:has(.runner-gif[src$="rica.gif"]),
+            .race-runner:has(.runner-gif[src$="menina.gif"]),
+            .race-runner:has(.runner-gif[src$="corredor_frio.gif"]),
+            .race-runner:has(.runner-gif[src$="corredor.gif"]) { transform: translateY(8px); }
+            .runner-label { font-size: 6.2px; max-width: 38px; padding: 0 1px; letter-spacing: -0.1px; }
+            .runner-label.z2 { margin-bottom: 4px; }
+        }
+
+        /* Celular: esconda o botão de Corrida */
+        @media (max-width: 767px) { #ranking-view-race { display: none; } }
+
+        /* Ranking modal largura maior em telas grandes */
+        #ranking-modal .modal-content { max-width: 720px; }
+        @media (min-width: 768px) { #ranking-modal .modal-content { max-width: 820px; } }
+        @media (min-width: 1024px) { #ranking-modal .modal-content { max-width: 960px; } }
+        @media (prefers-reduced-motion: reduce) {
+            .race-runner { transition: none; }
+        }
+
+        /* Lista: permitir Top 50 com rolagem suave dentro do modal */
+        #ranking-modal #ranking-list.list-mode {
+            max-height: 60vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-right: 6px; /* espaço para a barra de rolagem */
+        }
+        @media (max-width: 480px) {
+            #ranking-modal #ranking-list.list-mode { max-height: 66vh; }
+        }
+        @media (min-width: 768px) and (max-width: 1023px) {
+            #ranking-modal #ranking-list.list-mode { max-height: 58vh; }
+        }
+
+        /* Scroll para a lista do ranking quando for Top 50 */
+        #ranking-list {
+            max-height: 400px; /* Altura máxima antes de mostrar a barra de rolagem */
+            overflow-y: auto;
+            padding-right: 8px; /* Espaço para a barra de rolagem */
+        }
+        
+        /* Balão de fala para o resumo do placar no submit */
+        .speech-bubble {
+            position: relative;
+            background: #f3f4f6; /* gray-100 */
+            border: 1px solid #e5e7eb; /* gray-200 */
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+        }
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            left: -8px; /* aponta para o Jean à esquerda em telas grandes */
+            top: 14px;
+            width: 0; height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid #e5e7eb; /* borda */
+        }
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 15px;
+            width: 0; height: 0;
+            border-top: 7px solid transparent;
+            border-bottom: 7px solid transparent;
+            border-right: 7px solid #f3f4f6; /* fundo */
+        }
+        /* Em mobile também mostramos o rabicho para apontar para o Jean à esquerda */
+        /* (revertido) sem overrides de alinhamento mobile para os controles superiores */
+        
+        /* Espaçamento extra dos botões flutuantes em tablets e celulares */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            #floating-actions-right { bottom: 0.5rem; }
+            #ranking-button { bottom: 0.5rem; }
+            #streak-button { bottom: 0.5rem; }
+        }
+        @media (max-width: 767px) {
+            #floating-actions-right { bottom: calc(max(0.25rem, env(safe-area-inset-bottom))); }
+            #ranking-button { bottom: calc(max(0.25rem, env(safe-area-inset-bottom))); }
+            #streak-button { bottom: calc(max(0.25rem, env(safe-area-inset-bottom))); }
+        }
+
+        /* Streak button states */
+        #streak-button.streak-on {
+            background: linear-gradient(135deg, #fde68a 0%, #fbbf24 45%, #f59e0b 100%);
+            color: #7c4d00;
+            box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.55);
+        }
+        #streak-button .streak-icon.off { filter: grayscale(1) brightness(0.9); opacity: 0.7; }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center md:justify-start min-h-screen p-2 sm:p-4">
@@ -165,13 +440,17 @@
             
             <!-- Novos Controles Superiores -->
             <div class="flex justify-between items-center mb-4 text-sm font-semibold flex-wrap gap-y-2">
-                <div class="flex items-center gap-2">
+                <div id="top-actions" class="flex items-center gap-2">
                     <button id="give-up-button" class="text-red-500 hover:text-red-400 font-bold transition-colors">Desistir</button>
                     <button id="hint-button" class="px-3 py-1 bg-violet-500 text-white rounded-full hover:bg-violet-600 transition-colors">💡 Dica</button>
                 </div>
-                <div class="flex items-center gap-4 text-gray-700">
-                    <div>Dicas: <span id="hints-used-counter">0</span></div>
-                    <div>Tentativas: <span id="attempts-counter">0</span></div>
+                <div id="top-stats" class="flex items-center gap-4 text-gray-700">
+                    <button id="timer-visibility-toggle" class="text-gray-400 hover:text-violet-600 focus:outline-none text-xs sm:text-sm" title="Mostrar tempo" aria-pressed="false">⏱️ Mostrar</button>
+                    <div id="timer-display" class="hidden">Tempo: <span id="timer-text">00:00</span></div>
+                    <div id="counters-row" class="flex items-center gap-4">
+                        <div>Dicas: <span id="hints-used-counter">0</span></div>
+                        <div>Tentativas: <span id="attempts-counter">0</span></div>
+                    </div>
                 </div>
             </div>
 
@@ -189,17 +468,19 @@
                 </div>
             </div>
 
-            <button id="credits-button" class="absolute bottom-3 right-4 w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors" aria-label="Créditos">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                </svg>
-            </button>
-            <button id="how-to-play-open-button" class="absolute bottom-3 right-20 w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors" aria-label="Como Jogar">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-                </svg>
-            </button>
+            <div id="floating-actions-right" class="absolute bottom-3 right-4 flex items-center gap-2">
+                <button id="how-to-play-open-button" class="px-4 py-2 bg-violet-600 text-white rounded-md font-semibold hover:bg-violet-700 transition-colors" aria-label="Como Jogar">Como Jogar</button>
+                <button id="credits-button" class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors shrink-0" aria-label="Créditos">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
             <button id="ranking-button" class="absolute bottom-3 left-4 w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors text-2xl" aria-label="Ranking">🏆</button>
+            <button id="streak-button" class="absolute bottom-3 left-20 h-12 px-3 bg-gray-200 rounded-full flex items-center gap-2 text-gray-700 hover:bg-gray-300 transition-colors" aria-label="Sequência">
+                <span class="streak-icon text-2xl">🔥</span>
+                <span id="streak-count" class="text-base font-semibold">0</span>
+            </button>
         </main>
     </div>
 
@@ -215,17 +496,31 @@
 
     <!-- Modal para Como Jogar -->
     <div id="how-to-play-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h2 class="text-xl font-bold mb-2">Como Jogar</h2>
+        <div class="modal-content text-gray-800">
+            <img src="../src/assets/images/Jean_abre-bracos.gif" alt="Personagem Jean explicando o jogo" class="w-32 h-auto mx-auto mb-2">
+            <h2 class="text-2xl font-bold mb-2">Como Jogar Conexo</h2>
             <p class="text-gray-600 mb-4">
-                Encontre grupos de quatro palavras que tenham algo em comum.
+                Seu objetivo é encontrar <strong>4 grupos de 4 palavras</strong> que tenham algo em comum.
             </p>
-            <div class="text-left space-y-3 text-gray-700">
-                <p>1. Selecione quatro palavras que você acha que pertencem ao mesmo grupo.</p>
-                <p>2. Clique em 'Enviar' para verificar sua resposta.</p>
-                <p>3. Se estiver certo, o grupo será revelado. Se errar, você perde uma tentativa.</p>
+            
+            <div class="text-left space-y-2 text-gray-700 mb-6">
+                <p><strong>1. Selecione</strong> quatro palavras que você acha que formam um grupo.</p>
+                <p><strong>2. Envie</strong> para verificar. Se acertar, o grupo é revelado!</p>
+                <p><strong>3. Use Dicas</strong> se precisar de uma ajudinha para encontrar um grupo.</p>
             </div>
-            <button id="how-to-play-close-button" class="mt-6 w-full px-4 py-2 bg-gray-800 text-white rounded-md font-semibold hover:bg-gray-700 transition-colors">Entendi, vamos jogar!</button>
+
+            <!-- Dicas de Pontuação -->
+            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-r-lg" role="alert">
+                <p class="font-bold text-lg">⚠️ Atenção na Pontuação! ⚠️</p>
+                <p class="mt-2">Para fazer mais pontos, seja rápido e preciso!</p>
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                    <li>Cada <strong>tentativa errada</strong> custa <strong class="text-red-600">-150 pontos</strong>.</li>
+                    <li>Usar uma <strong>dica</strong> custa <strong class="text-red-600">-500 pontos</strong>.</li>
+                    <li><strong>Tempo</strong>: a cada segundo são <strong class="text-red-600">-5 pontos</strong>.</li>
+                </ul>
+            </div>
+
+            <button id="how-to-play-close-button" class="mt-6 w-full px-4 py-2 bg-violet-600 text-white rounded-md font-semibold hover:bg-violet-700 transition-colors">Entendi, vamos jogar!</button>
         </div>
     </div>
 
@@ -247,21 +542,64 @@
                 <button id="daily-ranking-tab" class="py-2 px-6 font-semibold text-gray-500 border-b-2 border-transparent hover:text-violet-600 hover:border-violet-600 focus:outline-none transition-colors">Diário</button>
                 <button id="weekly-ranking-tab" class="py-2 px-6 font-semibold text-gray-500 border-b-2 border-transparent hover:text-violet-600 hover:border-violet-600 focus:outline-none transition-colors">Semanal</button>
             </div>
+            <p id="ranking-info" class="text-sm text-gray-600 mb-2 hidden">Ranking semanal: média das pontuações diárias, de domingo a sábado.</p>
             <ul id="ranking-list" class="text-left space-y-2 min-h-[100px]">
                 <!-- O ranking será preenchido aqui -->
             </ul>
+            <div class="mt-3 flex justify-center gap-2">
+                <button id="ranking-view-list" class="py-1 px-3 text-sm font-semibold text-gray-600 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none">Lista</button>
+                <button id="ranking-view-race" class="py-1 px-3 text-sm font-semibold text-gray-600 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none">Corrida</button>
+            </div>
             <button id="ranking-modal-close-button" class="mt-6 w-full px-4 py-2 bg-gray-800 text-white rounded-md font-semibold hover:bg-gray-700 transition-colors">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Modal para Streak / Ofensivas -->
+    <div id="streak-modal" class="modal-overlay">
+        <div class="modal-content text-gray-800">
+            <h2 class="text-xl font-bold mb-2">🔥 Sequência</h2>
+            <p class="text-gray-600 mb-4">Complete jogos diariamente para manter sua sequência.</p>
+            <div id="streak-week" class="mb-4">
+                <!-- Semaninha gerada por JS -->
+            </div>
+            <div class="grid grid-cols-2 gap-4 text-center">
+                <div>
+                    <div id="streak-current" class="text-2xl font-extrabold">0 dias</div>
+                    <div class="text-gray-600">Sequência atual</div>
+                </div>
+                <div>
+                    <div id="streak-best" class="text-2xl font-extrabold">0 dias</div>
+                    <div class="text-gray-600">Melhor sequência</div>
+                </div>
+            </div>
+            <button id="streak-modal-close-button" class="mt-6 w-full px-4 py-2 bg-gray-800 text-white rounded-md font-semibold hover:bg-gray-700 transition-colors">Fechar</button>
         </div>
     </div>
 
     <!-- Modal para Submeter Score -->
     <div id="submit-score-modal" class="modal-overlay">
         <div class="modal-content text-gray-800">
-            <h2 class="text-xl font-bold mb-2">🎉 Fim de Jogo! 🎉</h2>
-            <p class="text-gray-600 mb-4">Você completou os 3 jogos de hoje. Veja seu desempenho e entre para o ranking!</p>
-            <div id="score-summary" class="text-left bg-gray-100 p-3 rounded-lg mb-4 space-y-1"></div>
+            <h2 class="text-xl font-bold mb-1">🎉 Fim de Jogo! 🎉</h2>
+            <p class="text-gray-600 mb-3">Você completou os 3 jogos de hoje. Veja seu desempenho e entre para o ranking!</p>
+
+            <div class="flex items-start gap-3 mb-3">
+                <img src="../src/assets/images/Jean_abre-bracos.gif" alt="Jean comemorando seu resultado" class="w-16 h-auto md:w-24 select-none" draggable="false">
+                <div class="speech-bubble flex-1">
+                    <div id="score-summary" class="text-left space-y-1"></div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 mb-2">
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-600">Avatar:</span>
+                    <span id="selected-avatar" class="text-2xl" title="Seu avatar">🏃‍♂️</span>
+                </div>
+                <button id="change-avatar-button" class="ml-auto px-2 py-1 text-sm rounded bg-gray-100 hover:bg-gray-200 text-gray-700">Escolher avatar</button>
+            </div>
+            <div id="avatar-picker" class="hidden grid grid-cols-8 gap-2 p-2 bg-gray-50 rounded border mb-2"></div>
             <input type="text" id="player-name-input" placeholder="Digite seu nome (máx. 15 caracteres)" maxlength="15" class="w-full p-2 border rounded-md mb-2 text-gray-800">
             <button id="submit-score-button" class="w-full px-4 py-2 bg-violet-600 text-white rounded-md font-semibold hover:bg-violet-700 transition-colors">Enviar para o Ranking</button>
+            <button id="open-ranking-from-submit" class="mt-2 w-full px-4 py-2 bg-gray-800 text-white rounded-md font-semibold hover:bg-gray-700 transition-colors">Ver Ranking</button>
             <button id="submit-score-close-button" class="mt-2 w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-md font-semibold hover:bg-gray-300 transition-colors">Fechar</button>
         </div>
     </div>
@@ -475,20 +813,38 @@
             const creditsModal = document.getElementById('credits-modal');
             const creditsModalCloseButton = document.getElementById('credits-modal-close-button');
             const rankingButton = document.getElementById('ranking-button');
+            const streakButton = document.getElementById('streak-button');
             const rankingModal = document.getElementById('ranking-modal');
             const rankingList = document.getElementById('ranking-list');
             const rankingModalCloseButton = document.getElementById('ranking-modal-close-button');
             const dailyRankingTab = document.getElementById('daily-ranking-tab');
             const weeklyRankingTab = document.getElementById('weekly-ranking-tab');
+            const streakModal = document.getElementById('streak-modal');
+            const streakModalCloseButton = document.getElementById('streak-modal-close-button');
+            const streakWeekEl = document.getElementById('streak-week');
+            const streakCurrentEl = document.getElementById('streak-current');
+            const streakBestEl = document.getElementById('streak-best');
+            const rankingInfoEl = document.getElementById('ranking-info');
             const submitScoreModal = document.getElementById('submit-score-modal');
             const scoreSummaryEl = document.getElementById('score-summary');
             const playerNameInput = document.getElementById('player-name-input');
+            const avatarPicker = document.getElementById('avatar-picker');
+            const changeAvatarButton = document.getElementById('change-avatar-button');
+            const selectedAvatarEl = document.getElementById('selected-avatar');
             const howToPlayModal = document.getElementById('how-to-play-modal');
             const howToPlayCloseButton = document.getElementById('how-to-play-close-button');
             const howToPlayOpenButton = document.getElementById('how-to-play-open-button');
 
             const submitScoreButton = document.getElementById('submit-score-button');
             const submitScoreCloseButton = document.getElementById('submit-score-close-button');
+            const openRankingFromSubmit = document.getElementById('open-ranking-from-submit');
+            const rankingViewListBtn = document.getElementById('ranking-view-list');
+            const rankingViewRaceBtn = document.getElementById('ranking-view-race');
+
+            // Timer elements
+            const timerDisplay = document.getElementById('timer-display');
+            const timerText = document.getElementById('timer-text');
+            const timerToggleBtn = document.getElementById('timer-visibility-toggle');
 
             let selectedWords = [];
             let attempts = 0;
@@ -500,6 +856,48 @@
             let hintState = { groupCategory: null, revealedWords: [] };
             let hintsUsed = 0;
             let gameStartTime = 0;
+            let rankingViewMode = localStorage.getItem('conexo-ranking-view') || 'list'; // 'list' | 'race'
+            let cachedRankingData = null;
+            const EMOJI_AVATARS = [];
+            // 3 GIF runners (adicione seus arquivos nesses caminhos)
+            const GIF_AVATARS = [
+                '/src/assets/avatars/menina.gif',
+                '/src/assets/avatars/policia.gif',
+                '/src/assets/avatars/cachorro.gif',
+                '/src/assets/avatars/corredor.gif',
+                '/src/assets/avatars/corredor_frio.gif',
+                '/src/assets/avatars/gato.gif',
+                '/src/assets/avatars/homem_linha.gif',
+                '/src/assets/avatars/passaro.gif',
+                '/src/assets/avatars/rica.gif',
+                '/src/assets/avatars/zumbi.gif'
+            ];
+            // Mantemos Lottie apenas como reserva futura (não usado por padrão)
+            const LOTTIE_AVATARS = [];
+            function simpleHash(str){ let h=0; for(let i=0;i<str.length;i++){ h=((h<<5)-h)+str.charCodeAt(i); h|=0; } return Math.abs(h); }
+            const hasLottie = () => false; // desativado no momento
+            function getLocalAvatarChoice(){
+                const mode = localStorage.getItem('conexo-avatar-mode');
+                const idx = Number(localStorage.getItem('conexo-avatar-index')||0);
+                if (mode === 'gif') return { mode, index: idx, url: GIF_AVATARS[idx % GIF_AVATARS.length] };
+                if (mode === 'emoji') return { mode, index: 0, char: '🏃' };
+                // retrocompatibilidade com antigo 'conexo-avatar' (emoji)
+                const old = localStorage.getItem('conexo-avatar');
+                if (old) return { mode: 'emoji', index: 0, char: old };
+                // padrão: gif se existir, senão emoji
+                if (GIF_AVATARS.length) return { mode: 'gif', index: 0, url: GIF_AVATARS[0] };
+                return { mode: 'emoji', index: 0, char: '🏃' };
+            }
+            function setLocalAvatarGif(index){ localStorage.setItem('conexo-avatar-mode','gif'); localStorage.setItem('conexo-avatar-index', String(index)); renderSelectedAvatarPreview(); }
+            function setLocalAvatarEmoji(index){ localStorage.setItem('conexo-avatar-mode','emoji'); localStorage.setItem('conexo-avatar-index', String(index)); renderSelectedAvatarPreview(); }
+            function getVisualForName(name){
+                const myName = localStorage.getItem('conexo-player-name');
+                if (myName && name === myName) return getLocalAvatarChoice();
+                const idx = simpleHash(name);
+                if (GIF_AVATARS.length) return { mode: 'gif', index: idx % GIF_AVATARS.length, url: GIF_AVATARS[idx % GIF_AVATARS.length] };
+                return { mode: 'emoji', index: 0, char: '🏃' };
+            }
+            let timerInterval = null;
 
             // !!! URL do seu script do Google Sheets !!!
             const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZCYw3e1bU3bA0L3zW36e-M6-5G390cWIyA-CFuKWzrvUTsTL34EySzvaqdJdE_R6t6Q/exec";
@@ -531,7 +929,6 @@
             function setupDailyGames() {
                 const today = new Date();
                 const dateString = today.toISOString().split('T')[0];
-                const hasSeenInstructions = localStorage.getItem(`conexo-instructions-seen-${dateString}`);
                 const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
                 
                 const savedProgress = JSON.parse(localStorage.getItem(`conexo-progress-${dateString}`));
@@ -565,10 +962,8 @@
                 const firstUnfinishedGame = dailyProgress.completed.indexOf(false);
                 if (firstUnfinishedGame !== -1) {
                     currentGameIndex = firstUnfinishedGame;
-                    if (!hasSeenInstructions && currentGameIndex === 0) {
-                        showHowToPlayModal();
-                        localStorage.setItem(`conexo-instructions-seen-${dateString}`, 'true');
-                    }
+                    // Mostra o modal "Como Jogar" toda vez que a página é carregada e há um jogo para jogar.
+                    showHowToPlayModal();
                     initGame(currentGameIndex);
                 } else {
                     // All games for today are completed
@@ -589,7 +984,15 @@
                 solvedContainer.innerHTML = '';
                 board.style.pointerEvents = 'auto';
                 gameStartTime = Date.now();
+                window.gameStartTime = gameStartTime;
                 hintState = { groupCategory: null, revealedWords: [] };
+
+                // Reinicia o cronômetro conforme preferência
+                stopTimer();
+                if (getTimerPreference()) {
+                    timerText.textContent = '00:00';
+                    startTimer();
+                }
                 
                 currentPuzzle = dailyPuzzles[index]; 
                 let allWords = currentPuzzle.groups.flatMap(group => group.words);
@@ -810,11 +1213,84 @@
                 howToPlayModal.addEventListener('click', (e) => { if (e.target === howToPlayModal) closeHowToPlayModal(); });
             }
             rankingButton.addEventListener('click', showRankingModal);
+            if (streakButton) streakButton.addEventListener('click', showStreakModal);
             rankingModalCloseButton.addEventListener('click', () => rankingModal.classList.remove('visible'));
             dailyRankingTab.addEventListener('click', () => fetchAndDisplayRanking('daily'));
             weeklyRankingTab.addEventListener('click', () => fetchAndDisplayRanking('weekly'));
             submitScoreButton.addEventListener('click', submitScore);
             submitScoreCloseButton.addEventListener('click', () => submitScoreModal.classList.remove('visible'));
+            if (openRankingFromSubmit) {
+                openRankingFromSubmit.addEventListener('click', () => {
+                    submitScoreModal.classList.remove('visible');
+                    showRankingModal();
+                });
+            }
+            function renderSelectedAvatarPreview(){
+                if (!selectedAvatarEl) return;
+                const choice = getLocalAvatarChoice();
+                selectedAvatarEl.innerHTML = '';
+                if (choice.mode === 'gif') {
+                    const img = document.createElement('img');
+                    img.src = choice.url;
+                    img.alt = 'Avatar';
+                    img.className = 'avatar-gif';
+                    img.style.width = '28px';
+                    img.style.height = '28px';
+                    img.style.objectFit = 'contain';
+                    img.onerror = () => { selectedAvatarEl.textContent = '🏃'; };
+                    selectedAvatarEl.appendChild(img);
+                } else {
+                    selectedAvatarEl.textContent = choice.char || '🏃';
+                }
+            }
+            if (changeAvatarButton && avatarPicker && selectedAvatarEl) {
+                renderSelectedAvatarPreview();
+                changeAvatarButton.addEventListener('click', () => {
+                    if (avatarPicker.classList.contains('hidden')) {
+                        const gifGrid = GIF_AVATARS.map((u,i)=>`<button class="p-1 rounded hover:bg-gray-200" data-type="gif" data-index="${i}"><img src="${u}" alt="Avatar ${i+1}" style="width:36px;height:36px;object-fit:contain" onerror="this.style.display='none'"/></button>`).join('');
+                        avatarPicker.innerHTML = gifGrid;
+                        avatarPicker.classList.remove('hidden');
+                    } else {
+                        avatarPicker.classList.add('hidden');
+                    }
+                });
+                avatarPicker.addEventListener('click', (e)=>{
+                    const btn = e.target.closest('[data-type][data-index]');
+                    if (!btn) return;
+                    const type = btn.dataset.type; const idx = Number(btn.dataset.index);
+                    if (type==='gif') setLocalAvatarGif(idx); else setLocalAvatarEmoji(idx);
+                    avatarPicker.classList.add('hidden');
+                });
+            }
+            if (rankingViewListBtn && rankingViewRaceBtn) {
+                const syncViewButtons = () => {
+                    const on = ['bg-violet-600','text-white'];
+                    const off = ['bg-gray-100','text-gray-600'];
+                    rankingViewListBtn.classList.remove(...on, ...off);
+                    rankingViewRaceBtn.classList.remove(...on, ...off);
+                    if (rankingViewMode==='list') { rankingViewListBtn.classList.add(...on); rankingViewRaceBtn.classList.add(...off); }
+                    else { rankingViewRaceBtn.classList.add(...on); rankingViewListBtn.classList.add(...off); }
+                };
+                // Em celulares, força LISTA e esconde a opção de Corrida
+                const isMobile = window.matchMedia('(max-width: 767px)').matches;
+                if (isMobile) {
+                    rankingViewMode = 'list';
+                    try { localStorage.setItem('conexo-ranking-view','list'); } catch {}
+                    rankingViewRaceBtn.style.display = 'none';
+                }
+                rankingViewListBtn.addEventListener('click', ()=>{ rankingViewMode='list'; localStorage.setItem('conexo-ranking-view','list'); syncViewButtons(); if (cachedRankingData) renderRanking(cachedRankingData); });
+                rankingViewRaceBtn.addEventListener('click', ()=>{ rankingViewMode='race'; localStorage.setItem('conexo-ranking-view','race'); syncViewButtons(); if (cachedRankingData) renderRanking(cachedRankingData); });
+                syncViewButtons();
+            }
+
+            // (revertido) sem badge/nudge no botão de ranking
+
+            // --- Timer visibility toggle ---
+            timerToggleBtn.addEventListener('click', () => {
+                const newValue = !getTimerPreference();
+                setTimerPreference(newValue);
+                applyTimerVisibility();
+            });
 
             // --- Helper Functions ---
             function shuffleArray(array) {
@@ -845,6 +1321,22 @@
             
             // --- Start Game ---
             setupDailyGames();
+            applyTimerVisibility();
+            // Atualiza o botão de sequência após montar a tela
+            try { if (streakButton) renderStreakButton(); } catch {}
+            // Atalho de teste: abrir o modal de envio sem completar 3 jogos
+            // Use ?testSubmit=1 ou #testSubmit na URL
+            const url = new URL(window.location.href);
+            if (url.searchParams.get('testSubmit') === '1' || window.location.hash === '#testSubmit') {
+                // Inclui alguns números fictícios para visualização
+                dailyProgress = { completed: [true, true, true], stats: [{a:0,h:0,t:60},{a:1,h:2,t:120},{a:0,h:1,t:90}] };
+                window.setTimeout(() => {
+                    try { showSubmitScoreModal(); } catch (e) { console.warn('Teste submit modal:', e); }
+                }, 300);
+            }
+
+            // Expoe atalho no console para testes manuais
+            window.debugOpenSubmitScoreModal = () => { try { showSubmitScoreModal(); } catch (e) { console.error(e); } };
 
             // --- Ranking & Score Logic ---
             function calculateFinalScore() {
@@ -858,7 +1350,7 @@
                 const baseScore = 30000;
                 const attemptPenalty = totalStats.a * 150;
                 const hintPenalty = totalStats.h * 500;
-                const timePenalty = Math.floor(totalStats.t * 2);
+                const timePenalty = Math.floor(totalStats.t * 5); // 5 pontos por segundo
 
                 const finalScore = Math.max(0, baseScore - attemptPenalty - hintPenalty - timePenalty);
                 return { score: finalScore, stats: totalStats };
@@ -880,6 +1372,11 @@
                 if (!name) {
                     alert('Por favor, digite seu nome para entrar no ranking.');
                     return;
+                }
+                // Persistir nome e avatar localmente
+                localStorage.setItem('conexo-player-name', name);
+                if (!localStorage.getItem('conexo-avatar')) {
+                    localStorage.setItem('conexo-avatar', '🏃‍♂️');
                 }
 
                 // Verificação de palavras proibidas
@@ -939,6 +1436,18 @@
             }
 
             function showRankingModal() {
+                // Garanta que abrimos na visualização Lista (Top 50)
+                rankingViewMode = 'list';
+                try { localStorage.setItem('conexo-ranking-view','list'); } catch {}
+                // Sincroniza botões se existirem
+                if (rankingViewListBtn && rankingViewRaceBtn) {
+                    const on = ['bg-violet-600','text-white'];
+                    const off = ['bg-gray-100','text-gray-600'];
+                    rankingViewListBtn.classList.remove(...off);
+                    rankingViewListBtn.classList.add(...on);
+                    rankingViewRaceBtn.classList.remove(...on);
+                    rankingViewRaceBtn.classList.add(...off);
+                }
                 rankingModal.classList.add('visible');
                 fetchAndDisplayRanking('daily'); // Carrega o ranking diário por padrão
             }
@@ -954,10 +1463,21 @@
                 activeTab.classList.add('text-violet-600', 'border-violet-600');
                 activeTab.classList.remove('text-gray-500', 'border-transparent');
 
+                // Mostra explicação curta quando estiver no semanal
+                if (rankingInfoEl) {
+                    if (period === 'weekly') {
+                        rankingInfoEl.textContent = 'Ranking semanal: média das pontuações diárias, de domingo a sábado.';
+                        rankingInfoEl.classList.remove('hidden');
+                    } else {
+                        rankingInfoEl.classList.add('hidden');
+                    }
+                }
+
                 rankingList.innerHTML = '<li>Carregando ranking...</li>';
                 try {
                     const url = new URL(SCRIPT_URL);
-                    url.searchParams.append('period', period); // Adiciona o parâmetro 'period'
+                    url.searchParams.append('period', period);
+                    url.searchParams.append('limit', '50'); // Pede ao servidor o Top 50
 
                     const response = await fetch(url);
                     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -966,8 +1486,46 @@
                     const rankingData = data.ranking || [];
                     const dateInfo = data.serverDate || (period === 'daily' ? 'hoje' : 'esta semana');
                     const message = period === 'daily' ? `Ninguém no ranking de hoje (${dateInfo}). Seja o primeiro!` : `Ninguém no ranking desta semana. Seja o primeiro!`;
+                    cachedRankingData = rankingData;
+                    renderRanking(rankingData, message);
+                } catch (error) {
+                    console.error(`Erro ao buscar ranking ${period}:`, error);
+                    rankingList.innerHTML = '<li>Erro ao carregar o ranking. Tente novamente mais tarde.</li>';
+                }
+            }
 
-                    rankingList.innerHTML = rankingData.map((entry, index) => {
+            function renderRanking(rankingData, emptyMessage='Sem dados'){
+                // Avatar consistente por nome para Lista e Corrida
+                const visualsMap = (function(){
+                    const used = new Set();
+                    const myName = localStorage.getItem('conexo-player-name');
+                    const map = new Map();
+                    rankingData.forEach(entry => {
+                        if (myName && entry.name === myName) {
+                            const v = getLocalAvatarChoice();
+                            map.set(entry.name, v);
+                            if (v && v.mode==='gif') used.add(v.index);
+                            return;
+                        }
+                        if (GIF_AVATARS.length) {
+                            let idx = simpleHash(entry.name) % GIF_AVATARS.length;
+                            let tries = 0;
+                            while (used.has(idx) && tries < GIF_AVATARS.length) { idx = (idx+1) % GIF_AVATARS.length; tries++; }
+                            used.add(idx);
+                            map.set(entry.name, { mode:'gif', index: idx, url: GIF_AVATARS[idx] });
+                        } else {
+                            map.set(entry.name, { mode:'emoji', index:0, char:'🏃' });
+                        }
+                    });
+                    return map;
+                })();
+                if (rankingViewMode === 'list') {
+                    // Ativa estilo de lista com rolagem (Top 50)
+                    rankingList.classList.add('list-mode');
+                    // Para a lista, usamos Top 50 (ou menos, se o servidor retornar menos)
+                    const list = rankingData.slice(0, 50);
+                    const visuals = list.map(e => visualsMap.get(e.name) || getVisualForName(e.name)); 
+                    rankingList.innerHTML = list.map((entry, index) => {
                         let positionHtml;
                         if (index === 0) {
                             positionHtml = '<span class="w-8 inline-block text-center text-2xl" title="1º Lugar">👑</span>';
@@ -978,12 +1536,144 @@
                         } else {
                             positionHtml = `<span class="w-8 inline-block text-center font-bold text-gray-500">${index + 1}.</span>`;
                         }
-                        return `<li class="flex items-center py-1">${positionHtml}<span class="ml-2">${entry.name} - <span class="text-green-600">${entry.score.toLocaleString('pt-BR')} pts</span></span></li>`;
-                    }).join('') || `<li class="text-center text-gray-500">${message}</li>`;
-                } catch (error) {
-                    console.error(`Erro ao buscar ranking ${period}:`, error);
-                    rankingList.innerHTML = '<li>Erro ao carregar o ranking. Tente novamente mais tarde.</li>';
+                        const visual = visuals[index] || getVisualForName(entry.name);
+                        let avHtml;
+                        if (visual.mode==='gif') {
+                            avHtml = `<span class=\"w-8 inline-flex justify-center\"><img src=\"${visual.url}\" alt=\"avatar\" style=\"width:24px;height:24px;object-fit:contain\" onerror=\"this.outerHTML='🏃'\"></span>`;
+                        } else {
+                            avHtml = `<span class=\"w-8 inline-flex justify-center text-xl\">${visual.char || '🏃'}</span>`;
+                        }
+                        return `<li class="flex items-center py-1">${positionHtml}${avHtml}<span class="ml-2">${entry.name} - <span class="text-green-600">${entry.score.toLocaleString('pt-BR')} pts</span></span></li>`;
+                    }).join('') || `<li class="text-center text-gray-500">${emptyMessage}</li>`;
+                    return;
                 }
+                // Race view (pista única, todos juntos)
+                rankingList.classList.remove('list-mode');
+                if (!rankingData.length) { rankingList.innerHTML = `<li class="text-center text-gray-500">${emptyMessage}</li>`; return; }
+                const screenW = window.innerWidth || document.documentElement.clientWidth;
+                const isTablet = screenW >= 768 && screenW <= 1023;
+                const isTabletColor = screenW >= 768 && screenW <= 1200;
+                const topCount = isTablet ? 8 : 10;
+                // Para a corrida, limitamos aos 10 primeiros
+                const top = rankingData.slice(0, topCount); 
+                const maxScore = Math.max(...top.map(r=>r.score));
+                const amp = 0; // manter todos na mesma linha
+                const runnersHtml = top.map((entry, index) => {
+                    const visual = visualsMap.get(entry.name) || getVisualForName(entry.name);
+                    const posIcon = index===0?'👑': index===1?'🥈': index===2?'🥉': (index+1)+'.';
+                    const isNarrowTablet = screenW >= 768 && screenW <= 820;
+                    // Alterna faixas: para tablets estreitos, aumenta um pouco a separação vertical
+                    const isLowLane = (index % 2 === 0);
+                    const laneBottom = isNarrowTablet ? (isLowLane ? 4 : 44) : (isLowLane ? 6 : 30);
+                    let content;
+                    if (visual.mode==='gif') {
+                        content = `<img class=\"runner-gif runner-visual\" src=\"${visual.url}\" alt=\"avatar\" onerror=\"this.outerHTML='${EMOJI_AVATARS[0]}'\">`;
+                    } else {
+                        content = `<span class=\"text-3xl runner-visual\">${visual.char}</span>`;
+                    }
+                    const showLabel = screenW >= 768 || index < 3; // em mobile só Top 3
+                    const zebraClass = (screenW >= 768 && index % 2 === 1) ? ' z2' : '';
+                    const safeName = entry.name.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+                    // Em tablets, força nomes brancos com borda preta (todos os lanes)
+                    const labelHtml = showLabel
+                        ? `<div class="runner-label${zebraClass}" title="${safeName}"><span class="runner-label-text">${posIcon} ${safeName}</span></div>`
+                        : '';
+                    const laneClass = isLowLane ? ' low-lane' : '';
+                    return `<div class=\"race-runner${laneClass}\" data-score=\"${entry.score}\" data-max=\"${maxScore}\" data-rank=\"${index}\" style=\"bottom:${laneBottom}px\">${content}${labelHtml}</div>`;
+                }).join('');
+                rankingList.innerHTML = `<li class=\"py-2\"><div class=\"race-stage\"><div class=\"race-layer race-city\"></div><div class=\"race-layer race-hills\"></div><div class=\"race-runners\">${runnersHtml}</div><div class=\"race-road\"></div></div></li>`;
+
+                const positionRunners = () => {
+                    const track = rankingList.querySelector('.race-stage');
+                    if (!track) return;
+                    const runners = Array.from(rankingList.querySelectorAll('.race-runner'));
+                    const trackRect = track.getBoundingClientRect();
+                    const screenW = window.innerWidth || document.documentElement.clientWidth;
+                    const isNarrowTablet = screenW >= 768 && screenW <= 820;
+                    // Em tablets estreitos, reduza o gap e aumente o padding direito
+                    // para evitar acumular muito à direita e garantir que todos caibam.
+                    const baseMinGap = isNarrowTablet ? 52 : (screenW >= 1024 ? 90 : (screenW >= 768 ? 68 : 42));
+                    const padding = isNarrowTablet ? 18 : 8; // mais margem à direita em tablets
+                    const leftPadding = screenW >= 1024 ? 16 : (screenW >= 768 ? 12 : 8); // margem esquerda
+                    const count = runners.length;
+                    const data = runners.map((r, idx) => {
+                        const holder = r.querySelector('.runner-gif');
+                        const totalWidth = r.getBoundingClientRect().width || 56; // inclui label
+                        const gifWidth = holder ? (holder.getBoundingClientRect().width || 56) : 56;
+                        const width = Math.max(totalWidth, gifWidth);
+                        const score = Number(r.dataset.score)||0;
+                        const max = Number(r.dataset.max)||1;
+                        const rank = Number(r.dataset.rank ?? idx);
+                        // Distribuição: em tablets estreitos, priorize espaçamento uniforme por rank.
+                        // Em outras telas, mantenha a curva por score.
+                        let pct;
+                        if (isNarrowTablet) {
+                            // Fracção por rank com margens (evita encostar nas bordas)
+                            const frac = count > 1 ? (rank + 1) / (count + 1) : 0.5;
+                            pct = Math.max(0.06, Math.min(0.94, frac));
+                        } else {
+                            // curva levemente não-linear para espalhar quando scores são próximos
+                            const basePct = max>0 ? Math.max(0.05, Math.min(1, score/max)) : 0;
+                            const exponent = (screenW >= 1024 ? 0.88 : (screenW >= 768 ? 0.9 : 1.0));
+                            pct = Math.pow(basePct, exponent);
+                        }
+                        const maxRight = trackRect.width - width - padding;
+                        const desired = Math.max(0, Math.min(maxRight, maxRight * pct));
+                        return { el: r, width, desired, maxRight, score, idx, rank };
+                    });
+                    // Posiciona em ordem de ranking por score (do pior para o melhor),
+                    // garantindo que o 1º fique sempre mais à direita.
+                    const posArr = new Array(data.length).fill(0);
+                    if (isNarrowTablet) {
+                        // Posicionamento específico para tablets estreitos:
+                        // 1) ancora o 1º colocado na posição alvo à direita
+                        // 2) cada próximo acompanha à esquerda com espaçamento mínimo
+                        const orderBest = [...data].sort((a,b)=>b.score-a.score); // melhor -> pior
+                        const usableWidth = trackRect.width - leftPadding - padding;
+                        const stepPix = usableWidth / (count + 1);
+                        let prevLeft = null;
+                        for (let i=0; i<orderBest.length; i++) {
+                            const d = orderBest[i];
+                            const rankFromWorst = count - d.rank; // best => count, worst => 1
+                            let target = leftPadding + rankFromWorst * stepPix;
+                            const maxRight = d.maxRight; // já considera largura e padding
+                            if (target > maxRight) target = maxRight;
+                            let minGap = Math.max(40, d.width * 0.75);
+                            let left = target;
+                            if (prevLeft != null) {
+                                left = Math.min(target, prevLeft - minGap);
+                            }
+                            left = Math.max(leftPadding, Math.min(left, maxRight));
+                            posArr[d.idx] = left;
+                            prevLeft = left;
+                        }
+                    } else {
+                        // Demais telas: mantém lógica de pior->melhor garantindo monotonia à direita
+                        const order = [...data].sort((a,b)=>a.score-b.score);
+                        for (let i=0;i<order.length;i++) {
+                            const prevLeft = i>0 ? posArr[order[i-1].idx] : null;
+                            // Em telas largas use gap base proporcional
+                            let minGap = Math.max(baseMinGap, order[i].width * 0.9);
+                            const remaining = order.length - i - 1;
+                            const spaceForRest = remaining * baseMinGap; // reserva mínima para os próximos
+                            const maxAllowedHere = order[i].maxRight - spaceForRest;
+                            const candidate = Math.min(order[i].desired, maxAllowedHere);
+                            const minLeftThis = prevLeft==null ? leftPadding : (prevLeft + minGap);
+                            const left = Math.max(candidate, minLeftThis);
+                            posArr[order[i].idx] = Math.min(left, order[i].maxRight);
+                        }
+                    }
+                    // Aplica posições
+                    data.forEach(d => {
+                        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                        if (prefersReduced) d.el.style.transition = 'none';
+                        d.el.style.left = (posArr[d.idx] || d.desired) + 'px';
+                    });
+                };
+                requestAnimationFrame(positionRunners);
+                setTimeout(positionRunners, 400);
+                // Recalcula ao redimensionar (especialmente útil em tablets rotacionando)
+                window.addEventListener('resize', positionRunners, { passive: true });
             }
 
             // --- Credits Modal Logic ---
@@ -997,7 +1687,152 @@
                 if (e.target === creditsModal) creditsModal.classList.remove('visible');
             });
 
+            // === Streak logic ===
+            function ymd(d){ return d.toISOString().slice(0,10); }
+            function addDays(d, n){ const x = new Date(d); x.setDate(x.getDate()+n); return x; }
+            function getCompletedDatesSet(){
+                const set = new Set();
+                try {
+                    for (let i=0;i<localStorage.length;i++){
+                        const k = localStorage.key(i);
+                        if (!k || !k.startsWith('conexo-progress-')) continue;
+                        const dateStr = k.substring('conexo-progress-'.length);
+                        try {
+                            const obj = JSON.parse(localStorage.getItem(k));
+                            if (obj && Array.isArray(obj.completed) && obj.completed.length===3 && obj.completed.every(Boolean)) {
+                                set.add(dateStr);
+                            }
+                        } catch {}
+                    }
+                } catch {}
+                return set;
+            }
+            function getCurrentStreak(completed){
+                let streak = 0; let d = new Date();
+                for(;;){
+                    const s = ymd(d);
+                    if (completed.has(s)) { streak++; d = addDays(d,-1); } else { break; }
+                }
+                return streak;
+            }
+            function getBestStreak(completed){
+                // varre últimos 180 dias para estimar melhor sequência
+                let best = 0; let cur = 0; let d = addDays(new Date(), -180);
+                for (let i=0;i<=180;i++){
+                    const s = ymd(d);
+                    if (completed.has(s)) { cur++; best = Math.max(best, cur); } else { cur = 0; }
+                    d = addDays(d,1);
+                }
+                return best;
+            }
+            function renderStreakButton(){
+                const completed = getCompletedDatesSet();
+                const todayDone = completed.has(ymd(new Date()));
+                const current = getCurrentStreak(completed);
+                const iconEl = streakButton.querySelector('.streak-icon');
+                const countEl = document.getElementById('streak-count');
+                if (todayDone) {
+                    streakButton.classList.add('streak-on');
+                    iconEl.classList.remove('off');
+                } else {
+                    streakButton.classList.remove('streak-on');
+                    iconEl.classList.add('off');
+                }
+                countEl.textContent = String(current);
+            }
+            function renderStreakModal(){
+                const completed = getCompletedDatesSet();
+                const now = new Date();
+                const dow = now.getDay(); // 0=Dom
+                const start = addDays(new Date(now.getFullYear(), now.getMonth(), now.getDate()), -dow);
+                const daysLabels = ['Do','2ª','3ª','4ª','5ª','6ª','Sa'];
+                let html = '<div class="flex items-center justify-between mb-1">';
+                for (let i=0;i<7;i++){
+                    const d = addDays(start, i);
+                    const done = completed.has(ymd(d));
+                    const isToday = ymd(d)===ymd(now);
+                    const fire = done ? '🔥' : '•';
+                    const color = done ? 'text-orange-500' : 'text-gray-300';
+                    html += `<div class=\"flex flex-col items-center w-10\"><div class=\"text-xl ${color}\">${fire}</div><div class=\"text-[11px] ${isToday?'font-bold text-gray-800':'text-gray-500'}\">${daysLabels[i]}</div></div>`;
+                }
+                html += '</div>';
+                streakWeekEl.innerHTML = html;
+                const cur = getCurrentStreak(completed);
+                const best = getBestStreak(completed);
+                streakCurrentEl.textContent = `${cur} ${cur===1?'dia':'dias'}`;
+                streakBestEl.textContent = `${best} ${best===1?'dia':'dias'}`;
+            }
+            function showStreakModal(){
+                if (!streakModal) return;
+                renderStreakModal();
+                streakModal.classList.add('visible');
+            }
+            if (streakModalCloseButton) {
+                streakModalCloseButton.addEventListener('click', ()=> streakModal.classList.remove('visible'));
+                streakModal.addEventListener('click', (e)=>{ if (e.target===streakModal) streakModal.classList.remove('visible'); });
+            }
+
+
         });
+    </script>
+    <script>
+        // Cronômetro utilitários (isolados para clareza)
+        (function(){
+            const timerDisplay = document.getElementById('timer-display');
+            const timerText = document.getElementById('timer-text');
+            const timerToggleBtn = document.getElementById('timer-visibility-toggle');
+            // Se elementos não existem, não prossegue (defesa)
+            if (!timerDisplay || !timerText || !timerToggleBtn) return;
+
+            // Integra com variáveis globais definidas acima
+            let timerIntervalRef = null;
+
+            window.getTimerPreference = function() {
+                try { return JSON.parse(localStorage.getItem('conexo-timer-visible') || 'false'); } catch { return false; }
+            };
+
+            window.setTimerPreference = function(value) {
+                localStorage.setItem('conexo-timer-visible', JSON.stringify(!!value));
+            };
+
+            window.startTimer = function() {
+                if (timerIntervalRef) return;
+                updateTimerText();
+                timerIntervalRef = setInterval(updateTimerText, 1000);
+            };
+
+            window.stopTimer = function() {
+                if (timerIntervalRef) {
+                    clearInterval(timerIntervalRef);
+                    timerIntervalRef = null;
+                }
+            };
+
+            window.applyTimerVisibility = function() {
+                const visible = getTimerPreference();
+                timerToggleBtn.setAttribute('aria-pressed', String(visible));
+                if (visible) {
+                    timerDisplay.classList.remove('hidden');
+                    timerToggleBtn.textContent = '⏱️ Ocultar';
+                    timerToggleBtn.title = 'Ocultar tempo';
+                    startTimer();
+                } else {
+                    timerDisplay.classList.add('hidden');
+                    timerToggleBtn.textContent = '⏱️ Mostrar';
+                    timerToggleBtn.title = 'Mostrar tempo';
+                    stopTimer();
+                }
+            };
+
+            function updateTimerText() {
+                // Usa gameStartTime global do script principal
+                const start = window.gameStartTime || Date.now();
+                const elapsedSec = Math.max(0, Math.floor((Date.now() - start) / 1000));
+                const mm = String(Math.floor(elapsedSec / 60)).padStart(2, '0');
+                const ss = String(elapsedSec % 60).padStart(2, '0');
+                timerText.textContent = `${mm}:${ss}`;
+            }
+        })();
     </script>
 
 </body>
