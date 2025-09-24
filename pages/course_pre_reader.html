@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pre-reader Express</title>
+  <link rel="stylesheet" href="../src/css/curriculum.css" />
+</head>
+<body>
+  <div class="course-page" id="courseRoot">
+    <div class="course-header">
+      <div>
+        <h1 class="course-title">Pre-reader Express (2024)</h1>
+        <div class="course-sub">Sequenciamento de lições para estudantes em fase de pré-leitura.</div>
+      </div>
+      <div class="toolbar">
+        <button class="btn" onclick="alert('Materiais do professor em breve')">Recursos do professor</button>
+        <button class="btn" onclick="window.print()">Opções de impressão</button>
+      </div>
+    </div>
+
+    <section class="accordion" id="lessons"></section>
+  </div>
+
+  <script>
+    // Manifesto do curso (pode vir de JSON futuramente)
+    const COURSE_ID = 'pre_reader_2024';
+    const lessons = [
+      { id:'l1_click', title:'Lição 1: Clique no bloco', desc:'Primeiro contato: clique no bloco para avançar.', steps: 1, activity:'click_block' },
+      { id:'l2_drag', title:'Lição 2: Arraste até o alvo', desc:'Pratique o arrastar e soltar: mova o bloco até a área verde.', steps: 1, activity:'drag_target' },
+      { id:'l3_jean2', title:'Lição 3: Monte a imagem (2 partes)', desc:'Monte a figura do Jean com duas peças.', steps: 1, activity:'jean2' },
+      { id:'l4_jean2_fix', title:'Lição 4: Corrija a ordem (2 partes)', desc:'A figura começa errada. Reorganize para a ordem certa.', steps: 1, activity:'jean2_fix' },
+      { id:'l5_jean3', title:'Lição 5: Monte a imagem (3 partes)', desc:'Agora com três peças: atenção à ordem.', steps: 1, activity:'jean3' },
+      { id:'l6_flor', title:'Lição 6: Monte a flor (3 partes)', desc:'Repita a montagem, agora com a flor.', steps: 1, activity:'flor' },
+      { id:'l7_seq', title:'Lição 7: Sequência de números', desc:'Empilhe os números em ordem crescente.', steps: 1, activity:'seq_numbers' }
+    ];
+
+    const progressKey = 'progress:' + COURSE_ID;
+    function getProgress(){ try { return JSON.parse(localStorage.getItem(progressKey))||{} } catch(_) { return {} } }
+    function setProgress(p){ localStorage.setItem(progressKey, JSON.stringify(p)); }
+
+    function nextActivityFor(lesson){
+      const idx = lessons.findIndex(l => l.id === lesson.id);
+      if (idx >= 0 && idx < lessons.length - 1) {
+        const n = lessons[idx+1];
+        return n.activity || null;
+      }
+      return null;
+    }
+
+    function pill(courseId, lesson, i, done){
+      const span = document.createElement('span');
+      span.className = 'pill' + (done ? ' done' : '');
+      const a = document.createElement('a');
+      a.textContent = i;
+      if (lesson.activity) {
+        const nact = nextActivityFor(lesson);
+        const nextParam = nact ? `&next=${nact}` : '';
+        a.href = `blockly.html?activity=${lesson.activity}&level=${i}${nextParam}`;
+        a.addEventListener('click', ()=>{
+          // Marca como iniciado/concluído (otimista). Integração real pode voltar e setar corretamente.
+          const p = getProgress();
+          p[lesson.id] = p[lesson.id] || {};
+          p[lesson.id][i] = true; setProgress(p);
+        });
+      } else {
+        a.href = '#'; a.onclick = (e)=>{ e.preventDefault(); alert('Em breve'); };
+      }
+      span.appendChild(a);
+      return span;
+    }
+
+    function render(){
+      const root = document.getElementById('lessons');
+      root.innerHTML='';
+      const prog = getProgress();
+      lessons.forEach(lesson => {
+        const article = document.createElement('article');
+        article.className = 'lesson' + (lesson.activity? '' : ' disabled');
+        const header = document.createElement('header');
+        const h3 = document.createElement('h3'); h3.textContent = lesson.title; header.appendChild(h3);
+        const pills = document.createElement('div'); pills.className = 'pill-steps';
+        const lp = prog[lesson.id] || {};
+        for(let i=1;i<=lesson.steps;i++) pills.appendChild(pill(COURSE_ID, lesson, i, !!lp[i]));
+        header.appendChild(pills);
+        article.appendChild(header);
+
+        const content = document.createElement('div'); content.className='content';
+        const left = document.createElement('div');
+        const meta = document.createElement('div'); meta.className='meta'; meta.textContent = lesson.activity? 'Desenvolvimento de habilidades' : 'Em breve';
+        const desc = document.createElement('div'); desc.className='desc'; desc.textContent = lesson.desc;
+        left.appendChild(meta); left.appendChild(desc);
+        const side = document.createElement('div'); side.className='side';
+        const btn = document.createElement('a'); btn.className='btn';
+        if (lesson.activity) { const nact = nextActivityFor(lesson); const nextParam = nact ? `&next=${nact}` : ''; btn.href = `blockly.html?activity=${lesson.activity}${nextParam}`; btn.textContent='Iniciar lição'; }
+        else { btn.href='#'; btn.textContent='Em breve'; }
+        side.appendChild(btn);
+        content.appendChild(left); content.appendChild(side);
+        article.appendChild(content);
+        root.appendChild(article);
+      });
+    }
+    render();
+  </script>
+</body>
+</html>

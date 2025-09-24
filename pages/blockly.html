@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atividade Blockly</title>
+  <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+  <link rel="stylesheet" href="../src/css/blockly_styles/base.css" />
+  <!-- CSS específico da atividade será injetado pelo boot.js, se existir -->
+</head>
+<body>
+  <div id="instructionBar" class="inst-bar" role="region" aria-label="Instruções">
+    <div class="inst-header">
+      <span>Instruções</span>
+      <div class="inst-actions" aria-hidden="true">
+        <button class="inst-btn" title="Ouvir" disabled>🔊</button>
+      </div>
+    </div>
+    <div id="instText" class="inst-text"></div>
+    <div class="inst-footer">
+      <button id="instNext" class="inst-next" style="display:none">Próxima atividade ▶</button>
+    </div>
+  </div>
+  <div id="stage">
+    <div id="blocklyDiv"></div>
+  </div>
+  <button id="checkBtn">Verificar</button>
+  <div id="feedback"></div>
+  <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display:none"></xml>
+
+  <script src="../src/js/blockly/boot.js"></script>
+</body>
+</html>
