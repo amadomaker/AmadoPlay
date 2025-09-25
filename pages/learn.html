@@ -4,39 +4,111 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Aprenda no seu próprio ritmo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../src/css/curriculum.css" />
+  <link rel="stylesheet" href="../src/css/learn.css" />
 </head>
-<body>
-  <section class="hero">
-    <h1>Aprenda no seu próprio ritmo</h1>
-    <p>Crie jogos, histórias e aprenda conceitos de computação brincando.</p>
-  </section>
+<body class="learn-page">
+  <!-- Adicionar o Header padrão do site aqui -->
 
-  <section class="catalog">
-    <article class="course-card">
-      <header>GRAUS K-3</header>
-      <h2>Fundamentos de Computação: Expresso para Pré-leitura</h2>
-      <div class="thumb">
-        <img src="https://images.unsplash.com/photo-1520975954732-35dd22f47514?q=80&w=1200&auto=format&fit=crop" alt="Pré-leitura" />
+  <main>
+    <section class="hero">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <h1 class="gradient-title">A geração mudou. A forma de aprender, também.</h1>
+          <p>Nossas trilhas transformam a curiosidade em superpoderes digitais. Com atividades lúdicas e desafios progressivos, cada passo é uma nova descoberta.</p>
+        </div>
+        <div class="hero-visual">
+          <div class="stage">
+            <div class="hill hill--left"></div>
+            <div class="hill hill--right"></div>
+            <div class="balloon balloon--1"></div>
+            <div class="balloon balloon--2"></div>
+            <div class="balloon balloon--3"></div>
+            <img class="character character--jean" src="../src/assets/images/Jean_abre-bracos.gif" alt="Jean celebrando" />
+            <img class="character character--mari" src="../src/assets/images/Mari_Idle.gif" alt="Mari comemorando" />
+            <div class="path-counter">
+              <span>Nível 1</span>
+              <span>Nível 2</span>
+              <span>Nível 3</span>
+            </div>
+          </div>
+        </div>
       </div>
-      <p>Atividades guiadas para alunos em fase de pré-leitura. Aprenda arrastar, soltar e sequenciar blocos.</p>
-      <div class="actions">
-        <a class="btn" href="course_pre_reader.html">Explorar currículo</a>
-      </div>
-    </article>
+    </section>
 
-    <article class="course-card">
-      <header>3ª a 8ª SÉRIES</header>
-      <h2>Fundamentos de Computação: Curso Expresso</h2>
-      <div class="thumb">
-        <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?q=80&w=1200&auto=format&fit=crop" alt="Curso expresso" />
+    <section class="catalog-section" id="catalogo">
+      <header class="catalog-head">
+        <h2>Trilhas disponíveis</h2>
+        <p>Cada trilha é uma jornada única. Explore os currículos e comece a aventura!</p>
+      </header>
+      <div class="catalog-grid">
+        <article class="course-card course-card--primary">
+          <header>Pré-leitores</header>
+          <h2>Mundo da Flor e dos Amigos</h2>
+          <div class="thumb decorative">
+            <img src="../src/assets/images/blockly-images/capas-cards/capa_pre_reader.png" alt="Pré-leitura" />
+          </div>
+          <ul class="course-points">
+            <li>Introdução ao clique, arrastar e soltar</li>
+            <li>Montagem de blocos para formar sequências</li>
+            <li>Desenvolve o raciocínio lógico inicial</li>
+          </ul>
+          <div class="actions">
+            <a class="btn" href="course_pre_reader.html">Explorar currículo</a>
+          </div>
+        </article>
+
+        <article class="course-card course-card--secondary">
+          <header>Exploradores (em breve)</header>
+          <h2>Laboratório das Sequências</h2>
+          <div class="thumb decorative">
+            <img src="../src/assets/images/blockly-images/capas-cards/capa_infantil.png" alt="Curso expresso" />
+          </div>
+          <ul class="course-points">
+            <li>Desafios de lógica visual</li>
+            <li>Introdução a eventos e repetição</li>
+            <li>Cenários temáticos com missões cooperativas</li>
+          </ul>
+          <div class="actions">
+            <button class="btn" type="button" onclick="alert('Estamos preparando essa trilha com muito carinho!')">Quero ser avisado</button>
+          </div>
+        </article>
       </div>
-      <p>Atividades com blocos, lógica e criatividade. Resolva desafios e crie projetos divertidos.</p>
-      <div class="actions">
-        <a class="btn" href="#" onclick="alert('Em breve!')">Explorar currículo</a>
+    </section>
+
+    <section class="pathway" aria-labelledby="pathway-title">
+      <div class="pathway-inner">
+        <h2 id="pathway-title">Um percurso pensado para evoluir com a criança</h2>
+        <p>Os nossos mundos são organizados em trilhas coloridas. Cada etapa apresenta um foco de habilidade, com atividades curtas e comemoradas pelos personagens do AmadoPlay.</p>
+        <div class="pathway-track">
+          <div class="path-step">
+            <span class="path-badge">1</span>
+            <h3>Descobrir</h3>
+            <p>Primeiros cliques, arrastar e soltar, reconhecer padrões simples.</p>
+          </div>
+          <div class="path-step">
+            <span class="path-badge">2</span>
+            <h3>Montar</h3>
+            <p>Quebra-cabeças com blocos, correção de ordem e histórias visuais.</p>
+          </div>
+          <div class="path-step">
+            <span class="path-badge">3</span>
+            <h3>Criar</h3>
+            <p>Sequências numéricas, lógica básica e introdução a loops visuais.</p>
+          </div>
+          <div class="path-step">
+            <span class="path-badge">4</span>
+            <h3>Desafiar</h3>
+            <p>Projetos guiados e desafios temáticos com metas criativas.</p>
+          </div>
+        </div>
       </div>
-    </article>
-  </section>
+    </section>
+  </main>
+
+  <!-- Adicionar o Footer e o Widget de Acessibilidade aqui -->
 </body>
 </html>
-
