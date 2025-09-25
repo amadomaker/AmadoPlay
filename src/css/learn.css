@@ -1,9 +1,17 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Restaura o fundo específico da página de aprendizado */
 body.learn-page {
   margin: 0;
   background: radial-gradient(circle at top, #dbeafe 0%, #fbf5ff 45%, #fff 100%);
   color: #1f2937;
   font-family: 'Montserrat', 'Poppins', sans-serif;
   font-weight: 400;
+}
+
+/* Desativa o pseudo-elemento de fundo roxo global nesta página */
+body.learn-page::before {
+  display: none;
 }
 
 .hero {
@@ -46,6 +54,7 @@ body.learn-page {
   border-radius: 28px;
   padding: 32px;
   overflow: hidden;
+  border: 6px solid #fff;
   background: linear-gradient(180deg, #60a5fa 0%, #2563eb 70%, #1e3a8a 100%);
   box-shadow: 0 18px 36px rgba(59, 130, 246, 0.35);
 }
@@ -81,8 +90,9 @@ body.learn-page {
   height: 72px;
   border-radius: 40% 40% 50% 50%;
   background: linear-gradient(180deg, #f87171 0%, #ef4444 70%);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   opacity: 0.9;
-  animation: float 6s ease-in-out infinite;
+  transform-origin: bottom center;
   z-index: 2;
 }
 
@@ -97,9 +107,24 @@ body.learn-page {
   transform: translateX(-50%);
 }
 
-.balloon--1 { top: 40px; left: 40px; }
-.balloon--2 { top: 20px; right: 60px; background: linear-gradient(180deg, #fb923c, #f97316); animation-delay: 1.2s; }
-.balloon--3 { top: 90px; right: 160px; background: linear-gradient(180deg, #a855f7, #7c3aed); animation-delay: 2.4s; }
+.balloon--1 { top: 40px; left: 40px; animation: float 6s ease-in-out infinite, wiggle 2s ease-in-out infinite; }
+.balloon--2 { top: 20px; right: 60px; background: linear-gradient(180deg, #fb923c, #f97316); animation: float 7s ease-in-out infinite, wiggle 2.5s ease-in-out infinite; }
+.balloon--3 { top: 90px; right: 160px; background: linear-gradient(180deg, #a855f7, #7c3aed); animation: float 5s ease-in-out infinite, wiggle 3s ease-in-out infinite; }
+
+@keyframes stagePulse {
+  0%, 100% {
+    box-shadow: 0 18px 36px rgba(59, 130, 246, 0.35);
+  }
+  50% {
+    box-shadow: 0 18px 36px rgba(124, 58, 237, 0.5);
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(5deg); }
+  75% { transform: rotate(-5deg); }
+}
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }
@@ -113,8 +138,8 @@ body.learn-page {
   z-index: 3;
 }
 
-.character--jean { left: 40px; width: clamp(140px, 20vw, 180px); }
-.character--mari { right: 24px; width: clamp(140px, 19vw, 190px); bottom: -6px; transform: scaleX(-1); }
+.character--jean { left: 15px; width: clamp(140px, 20vw, 180px); }
+.character--mari { right: 7px; width: clamp(140px, 19vw, 190px); bottom: -6px; transform: scaleX(-1); }
 
 .path-counter {
   position: absolute;
@@ -122,18 +147,45 @@ body.learn-page {
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 18px;
+  gap: 12px;
   color: #fff;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   z-index: 4;
 }
 
 .path-counter span {
   background: rgba(15, 23, 42, 0.45);
-  padding: 6px 12px;
+  padding: 5px 10px;
   border-radius: 999px;
   backdrop-filter: blur(6px);
+}
+
+@media (max-width: 1024px) {
+  .hero-copy h1 {
+    font-size: clamp(2.2rem, 5vw, 2.8rem);
+  }
+
+  .path-counter {
+    bottom: 20px;
+    gap: 10px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 820px) {
+  .hero-copy h1 {
+    font-size: clamp(1.8rem, 5vw, 2.2rem);
+  }
+
+  .path-counter {
+    gap: 8px;
+    font-size: 0.7rem;
+  }
+
+  .path-counter span {
+    white-space: nowrap;
+  }
 }
 
 .pathway {
@@ -176,13 +228,27 @@ body.learn-page {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  border: 2px solid white;
   display: grid;
   place-items: center;
   font-weight: 700;
+  font-size: 1.2rem;
   color: #fff;
   background: linear-gradient(135deg, #7c3aed, #4c1d95);
   box-shadow: 0 6px 12px rgba(124,58,237,0.3);
+  transition: transform 0.2s ease;
 }
+
+.path-badge:hover {
+  transform: scale(1.05);
+}
+
+/* Gradientes para cada badge */
+.path-step:nth-child(1) .path-badge { background: linear-gradient(135deg, #f87171, #ef4444); }
+.path-step:nth-child(2) .path-badge { background: linear-gradient(135deg, #fb923c, #f97316); }
+.path-step:nth-child(3) .path-badge { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+.path-step:nth-child(4) .path-badge { background: linear-gradient(135deg, #60a5fa, #2563eb); }
+
 
 .path-step h3 {
   margin: 0 0 6px;
@@ -214,6 +280,11 @@ body.learn-page {
 .catalog-head h2 {
   font-size: clamp(1.8rem, 3vw, 2.3rem);
   margin-bottom: 8px;
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  background-color: #60a5fa;
+  color: #fff;
+  border-radius: 999px;
 }
 
 .catalog-head p {
@@ -236,6 +307,8 @@ body.learn-page {
   box-shadow: 0 14px 28px rgba(124, 58, 237, 0.15);
   padding-bottom: 18px;
   background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.85));
+  display: flex;
+  flex-direction: column;
 }
 
 .course-card header {
@@ -274,10 +347,20 @@ body.learn-page {
   font-size: 0.95rem;
 }
 
-.course-card .actions { padding: 0 24px; }
+.course-card .course-description {
+  padding: 0 24px;
+  margin: 0 0 16px;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.course-card .actions { 
+  padding: 0 24px; 
+  margin-top: auto;
+}
 
 .course-card--primary {
-  background: linear-gradient(180deg, rgba(236,233,254,0.95), rgba(255,255,255,0.95));
+  background: linear-gradient(180deg, rgba(240,249,255,0.95), rgba(255,255,255,0.95));
 }
 
 .course-card--secondary {
@@ -300,7 +383,18 @@ body.learn-page {
 }
 
 @media (max-width: 640px) {
-  .catalog-grid { grid-template-columns: 1fr; }
+  .hero {
+    padding: 1.5rem 1rem;
+  }
+  .hero-grid {
+    gap: 1.5rem;
+  }
+  .hero-copy p {
+    font-size: 0.9rem;
+  }
+  .catalog-grid { 
+    grid-template-columns: 1fr; 
+  }
 }
 
 .catalog-section .btn {
@@ -315,4 +409,5 @@ body.learn-page {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  height: 48px;
 }

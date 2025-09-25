@@ -248,7 +248,7 @@
     },
     {
       id: 'meses-ano',
-      titulo: 'Meses do Ano - Arraste para Ordenar',
+      titulo: 'Meses do Ano',
       descricao: 'Organize os meses do ano na ordem correta e aprenda a relação com as estações. Uma atividade divertida para desenvolver o senso temporal.',
       imagem: 'src/assets/images/fundo_meses_ano.png',
       interno: 'pages/meses_ano.html',
