@@ -5,27 +5,56 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Atividade Blockly</title>
   <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../src/css/blockly_styles/base.css" />
   <!-- CSS específico da atividade será injetado pelo boot.js, se existir -->
 </head>
-<body>
-  <div id="instructionBar" class="inst-bar" role="region" aria-label="Instruções">
-    <div class="inst-header">
-      <span>Instruções</span>
-      <div class="inst-actions" aria-hidden="true">
-        <button class="inst-btn" title="Ouvir" disabled>🔊</button>
+<body class="activity-body">
+  <div class="activity-shell">
+    <header id="instructionBar" class="inst-bar" role="region" aria-label="Instruções">
+      <div class="inst-topbar">
+        <a class="back-link" href="course_pre_reader.html">⟵ Voltar à trilha</a>
+        <div class="inst-track">
+          <span id="instTitle" class="inst-title">Atividade</span>
+          <div class="inst-progress" id="instProgress" role="group" aria-label="Progresso da trilha" style="display:none">
+            <span id="progressLabel"></span>
+            <ul class="progress-dots" id="progressDots"></ul>
+          </div>
+        </div>
+        <div class="inst-actions" aria-hidden="true">
+          <button class="inst-btn" title="Ouvir" disabled>🔊</button>
+        </div>
       </div>
-    </div>
-    <div id="instText" class="inst-text"></div>
-    <div class="inst-footer">
-      <button id="instNext" class="inst-next" style="display:none">Próxima atividade ▶</button>
-    </div>
+      <div class="inst-panel">
+        <div class="inst-label">Instruções</div>
+        <div id="instText" class="inst-text"></div>
+      </div>
+      <button id="instNext" class="inst-next" style="display:none" aria-label="Avançar para a próxima atividade"></button>
+    </header>
+
+    <main class="workspace-area">
+      <div class="workspace-canvas">
+        <div class="workspace-label">Área de trabalho</div>
+        <div id="blocklyDiv"></div>
+      </div>
+    </main>
   </div>
-  <div id="stage">
-    <div id="blocklyDiv"></div>
-  </div>
-  <button id="checkBtn">Verificar</button>
   <div id="feedback"></div>
+  <div id="completionModal" class="completion-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose" aria-label="Fechar">✕</button>
+      <div class="modal-body">
+        <h2 id="modalHeading" class="modal-heading">Parabéns!</h2>
+        <p class="modal-message" id="modalMessage">Você completou este desafio.</p>
+      </div>
+      <button id="modalAction" class="modal-action">
+        <span id="modalActionLabel">Avançar</span>
+        <span id="modalActionIcon" aria-hidden="true">➜</span>
+      </button>
+    </div>
+  </div>
   <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display:none"></xml>
 
   <script src="../src/js/blockly/boot.js"></script>

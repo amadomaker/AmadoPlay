@@ -3,103 +3,314 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pre-reader Express</title>
+  <title>Jardim Encantado — Trilha de Sequenciamento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../src/css/main.css" />
+  <link rel="stylesheet" href="../src/css/global.css" />
+  <link rel="stylesheet" href="../src/css/learn.css" />
   <link rel="stylesheet" href="../src/css/curriculum.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body.learn-page {
+      background: #f9fafb;
+    }
+    .course-container {
+      max-width: 960px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+    .unit {
+      background: #fff;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+    }
+    .unit.disabled {
+      opacity: 0.6;
+    }
+    .unit.disabled .lesson-grid {
+      pointer-events: none;
+    }
+    .unit-header {
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e5e7eb;
+      margin-bottom: 1.5rem;
+    }
+    .unit-header h2 {
+      font-size: 1.75rem;
+      font-family: 'Baloo 2', cursive;
+      color: #111827;
+      margin: 0;
+    }
+    .unit-header p {
+      margin: 0.25rem 0 0;
+      color: #6b7280;
+      font-size: 1rem;
+    }
+    .lesson-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 1.5rem 1rem;
+      justify-content: center;
+    }
+    .lesson-bubble {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #374151;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+    .lesson-bubble .bubble {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: 'Baloo 2', cursive;
+      margin-bottom: 0.5rem;
+      border: 4px solid #e5e7eb;
+      background: #fff;
+      color: #9ca3af;
+      transition: all 0.2s ease-in-out;
+    }
+    .lesson-bubble:not(.disabled):hover .bubble {
+      transform: translateY(-3px) scale(1.05);
+      border-color: #93c5fd;
+    }
+    .lesson-bubble.done .bubble {
+      background: #22c55e;
+      border-color: #16a34a;
+      color: #fff;
+    }
+    .lesson-bubble.current .bubble {
+      background: #3b82f6;
+      border-color: #2563eb;
+      color: #fff;
+    }
+    .lesson-bubble.disabled .bubble {
+      background-color: #f3f4f6;
+      color: #d1d5db;
+    }
+    .lesson-bubble.disabled {
+      pointer-events: none;
+      opacity: 0.8;
+    }
+    .lesson-bubble span {
+      display: block;
+      line-height: 1.3;
+      max-width: 80px;
+    }
+    /* Footer Styles */
+    .footer {
+      width: 100%;
+      background: linear-gradient(135deg, #1e293b, #334155);
+      color: white;
+      padding: 30px 20px;
+      margin-top: 50px;
+      text-align: center;
+    }
+    .footer-content { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+    .footer-links { margin-bottom: 15px; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .footer-links a { color: #e2e8f0; text-decoration: none; font-weight: 500; padding: 5px 10px; border-radius: 4px; transition: all 0.3s ease; }
+    .footer-links a:hover { color: white; background: rgba(255, 255, 255, 0.1); }
+    .separator { color: #64748b; font-weight: bold; margin: 0 5px; }
+    .footer-copyright { font-size: 0.9rem; color: #94a3b8; padding-top: 15px; border-top: 1px solid #475569; }
+    @media (max-width: 768px) {
+      .footer-links { flex-direction: column; gap: 5px; }
+      .separator { display: none; }
+      .footer-links a { display: block; width: auto; }
+      .footer-copyright { font-size: 0.8rem; }
+    }
+  </style>
 </head>
-<body>
-  <div class="course-page" id="courseRoot">
-    <div class="course-header">
-      <div>
-        <h1 class="course-title">Pre-reader Express (2024)</h1>
-        <div class="course-sub">Sequenciamento de lições para estudantes em fase de pré-leitura.</div>
-      </div>
-      <div class="toolbar">
-        <button class="btn" onclick="alert('Materiais do professor em breve')">Recursos do professor</button>
-        <button class="btn" onclick="window.print()">Opções de impressão</button>
+<body class="learn-page">
+  <!-- HEADER -->
+  <header class="main-header" role="banner">
+    <div class="header-top">
+      <div class="header-container">
+        <div class="logo-section">
+          <img src="../src/assets/images/Diyogo-02.png" alt="Logo AmadoPlay" width="90" height="90" loading="eager"/>
+          <div class="logo-text"><h1>AmadoPlay</h1><p>Plataforma Educacional Interativa</p></div>
+        </div>
+        <div class="nav-actions">
+          <div class="search-bar" role="search">
+            <label for="search-input" class="sr-only">Buscar</label>
+            <input type="text" id="search-input" placeholder="Buscar..." aria-label="Campo de busca" autocomplete="off"/>
+            <button type="submit" aria-label="Buscar">🔍</button>
+          </div>
+          <div class="user-menu"><button class="btn-login">Entrar</button></div>
+        </div>
+        <button class="mobile-menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="main-navigation">
+          <span class="hamburger-line"></span><span class="hamburger-line"></span><span class="hamburger-line"></span>
+        </button>
       </div>
     </div>
+    <nav class="main-nav" role="navigation" id="main-navigation" aria-label="Menu principal">
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="../index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Início</span></a></li>
+        <li class="nav-item"><a href="learn.html" class="nav-link" aria-current="page"><span class="nav-icon">💡</span><span>Trilhas Computação</span></a></li>
+        <li class="nav-item"><a href="quem_somos.html" class="nav-link"><span class="nav-icon">ℹ️</span><span>Quem Somos</span></a></li>
+      </ul>
+    </nav>
+  </header>
 
-    <section class="accordion" id="lessons"></section>
-  </div>
+  <main class="course-container">
+    <div id="course-units"></div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-content">
+      <nav class="footer-links" aria-label="Links do rodapé">
+        <a href="privacidade.html">Política de Privacidade</a><span class="separator" aria-hidden="true">•</span>
+        <a href="termos_de_uso.html">Termos de Uso</a><span class="separator" aria-hidden="true">•</span>
+        <a href="contato.html">Contato</a>
+      </nav>
+      <div class="footer-copyright"><p>&copy; 2025 AMADO TECNOLOGIA LTDA (AMADOTEC). Todos os direitos reservados.</p></div>
+    </div>
+  </footer>
 
   <script>
-    // Manifesto do curso (pode vir de JSON futuramente)
-    const COURSE_ID = 'pre_reader_2024';
-    const lessons = [
-      { id:'l1_click', title:'Lição 1: Clique no bloco', desc:'Primeiro contato: clique no bloco para avançar.', steps: 1, activity:'click_block' },
-      { id:'l2_drag', title:'Lição 2: Arraste até o alvo', desc:'Pratique o arrastar e soltar: mova o bloco até a área verde.', steps: 1, activity:'drag_target' },
-      { id:'l3_jean2', title:'Lição 3: Monte a imagem (2 partes)', desc:'Monte a figura do Jean com duas peças.', steps: 1, activity:'jean2' },
-      { id:'l4_jean2_fix', title:'Lição 4: Corrija a ordem (2 partes)', desc:'A figura começa errada. Reorganize para a ordem certa.', steps: 1, activity:'jean2_fix' },
-      { id:'l5_jean3', title:'Lição 5: Monte a imagem (3 partes)', desc:'Agora com três peças: atenção à ordem.', steps: 1, activity:'jean3' },
-      { id:'l6_flor', title:'Lição 6: Monte a flor (3 partes)', desc:'Repita a montagem, agora com a flor.', steps: 1, activity:'flor' },
-      { id:'l7_seq', title:'Lição 7: Sequência de números', desc:'Empilhe os números em ordem crescente.', steps: 1, activity:'seq_numbers' }
+    const COURSE_ID = 'garden_encantado_sequencing';
+    const courseData = [
+      {
+        id: 'garden_sequencing',
+        title: 'Unidade 1: Jardim Encantado',
+        description: 'Sequências para pré-leitores com os amigos do Jardim Encantado.',
+        lessons: [
+          { id:'l1_click', title:'Clique na Turma', activity:'garden_click_turma' },
+          { id:'l2_drag', title:'Arraste o Vagalume', activity:'garden_drag_vagalume' },
+          { id:'l3_caracol2', title:'Monte o Caracol (2 partes)', activity:'garden_two_caracol' },
+          { id:'l4_caracol2_fix', title:'Corrija o Caracol (2 partes)', activity:'garden_two_caracol_fix' },
+          { id:'l5_caracol3', title:'Monte o Caracol (3 partes)', activity:'garden_three_caracol' },
+          { id:'l6_caracol3_fix', title:'Corrija o Caracol (3 partes)', activity:'garden_three_caracol_fix' },
+          { id:'l7_vagalume3', title:'Monte o Vagalume (3 partes)', activity:'garden_three_vagalume' },
+          { id:'l8_vagalume3_fix', title:'Corrija o Vagalume (3 partes)', activity:'garden_three_vagalume_fix' },
+          { id:'l9_turma3', title:'Monte a Turma (3 partes)', activity:'garden_three_turma' },
+          { id:'l10_turma3_fix', title:'Corrija a Turma (3 partes)', activity:'garden_three_turma_fix' }
+        ]
+      },
+      {
+        id: 'creative_puzzles',
+        title: 'Unidade 2: Quebra-Cabeças Criativos',
+        description: 'Use a lógica para montar padrões e resolver desafios visuais.',
+        lessons: Array(10).fill({}).map((_, i) => ({id: `u2_l${i+1}`, title: 'Em Breve', activity: null}))
+      },
+      {
+        id: 'events_world',
+        title: 'Unidade 3: O Mundo dos Eventos',
+        description: 'Descubra como criar ações e reações com eventos simples.',
+        lessons: Array(10).fill({}).map((_, i) => ({id: `u3_l${i+1}`, title: 'Em Breve', activity: null}))
+      }
     ];
 
     const progressKey = 'progress:' + COURSE_ID;
     function getProgress(){ try { return JSON.parse(localStorage.getItem(progressKey))||{} } catch(_) { return {} } }
     function setProgress(p){ localStorage.setItem(progressKey, JSON.stringify(p)); }
 
-    function nextActivityFor(lesson){
-      const idx = lessons.findIndex(l => l.id === lesson.id);
-      if (idx >= 0 && idx < lessons.length - 1) {
-        const n = lessons[idx+1];
-        return n.activity || null;
+    function handleCompletion() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const completedLesson = urlParams.get('lesson_completed');
+      if (completedLesson) {
+        const p = getProgress();
+        p[completedLesson] = true;
+        setProgress(p);
+        window.history.replaceState({}, document.title, window.location.pathname);
       }
-      return null;
     }
 
-    function pill(courseId, lesson, i, done){
-      const span = document.createElement('span');
-      span.className = 'pill' + (done ? ' done' : '');
-      const a = document.createElement('a');
-      a.textContent = i;
-      if (lesson.activity) {
-        const nact = nextActivityFor(lesson);
-        const nextParam = nact ? `&next=${nact}` : '';
-        a.href = `blockly.html?activity=${lesson.activity}&level=${i}${nextParam}`;
-        a.addEventListener('click', ()=>{
-          // Marca como iniciado/concluído (otimista). Integração real pode voltar e setar corretamente.
-          const p = getProgress();
-          p[lesson.id] = p[lesson.id] || {};
-          p[lesson.id][i] = true; setProgress(p);
+    function buildLessonLinks(lessons){
+      const links = lessons.map(() => '');
+      for (let i = lessons.length - 1; i >= 0; i--) {
+        const lesson = lessons[i];
+        if (!lesson || !lesson.activity) continue;
+        const params = new URLSearchParams({
+          activity: lesson.activity,
+          lesson_id: lesson.id,
+          course_id: COURSE_ID
         });
-      } else {
-        a.href = '#'; a.onclick = (e)=>{ e.preventDefault(); alert('Em breve'); };
+        for (let j = i + 1; j < lessons.length; j++) {
+          if (links[j]) {
+            params.set('next', links[j]);
+            break;
+          }
+        }
+        links[i] = params.toString();
       }
-      span.appendChild(a);
-      return span;
+      return links;
     }
 
-    function render(){
-      const root = document.getElementById('lessons');
-      root.innerHTML='';
-      const prog = getProgress();
-      lessons.forEach(lesson => {
-        const article = document.createElement('article');
-        article.className = 'lesson' + (lesson.activity? '' : ' disabled');
-        const header = document.createElement('header');
-        const h3 = document.createElement('h3'); h3.textContent = lesson.title; header.appendChild(h3);
-        const pills = document.createElement('div'); pills.className = 'pill-steps';
-        const lp = prog[lesson.id] || {};
-        for(let i=1;i<=lesson.steps;i++) pills.appendChild(pill(COURSE_ID, lesson, i, !!lp[i]));
-        header.appendChild(pills);
-        article.appendChild(header);
+    function render() {
+      const container = document.getElementById('course-units');
+      container.innerHTML = '';
+      const progress = getProgress();
+      
+      courseData.forEach(unit => {
+        const unitEl = document.createElement('div');
+        unitEl.className = 'unit';
+        const hasPlayableLessons = unit.lessons.some(l => l.activity);
+        if (!hasPlayableLessons) {
+          unitEl.classList.add('disabled');
+        }
 
-        const content = document.createElement('div'); content.className='content';
-        const left = document.createElement('div');
-        const meta = document.createElement('div'); meta.className='meta'; meta.textContent = lesson.activity? 'Desenvolvimento de habilidades' : 'Em breve';
-        const desc = document.createElement('div'); desc.className='desc'; desc.textContent = lesson.desc;
-        left.appendChild(meta); left.appendChild(desc);
-        const side = document.createElement('div'); side.className='side';
-        const btn = document.createElement('a'); btn.className='btn';
-        if (lesson.activity) { const nact = nextActivityFor(lesson); const nextParam = nact ? `&next=${nact}` : ''; btn.href = `blockly.html?activity=${lesson.activity}${nextParam}`; btn.textContent='Iniciar lição'; }
-        else { btn.href='#'; btn.textContent='Em breve'; }
-        side.appendChild(btn);
-        content.appendChild(left); content.appendChild(side);
-        article.appendChild(content);
-        root.appendChild(article);
+        const lessonLinks = buildLessonLinks(unit.lessons);
+        let unitContent = `
+          <div class="unit-header">
+            <h2>${unit.title}</h2>
+            <p>${unit.description}</p>
+          </div>
+          <div class="lesson-grid">
+        `;
+        
+        let isCurrentSetInUnit = false;
+
+        unit.lessons.forEach((lesson, index) => {
+          const isDone = progress[lesson.id];
+          let lessonClass = 'lesson-bubble';
+          
+          if (isDone) {
+            lessonClass += ' done';
+          } else if (!isCurrentSetInUnit && lesson.activity) {
+            lessonClass += ' current';
+            isCurrentSetInUnit = true;
+          }
+
+          if (!lesson.activity) {
+            lessonClass += ' disabled';
+          }
+
+          let lessonUrl = '#';
+          if (lesson.activity) {
+            const encodedLink = lessonLinks[index];
+            if (encodedLink) {
+              lessonUrl = `blockly.html?${encodedLink}`;
+            }
+          }
+
+          unitContent += `
+            <a href="${lessonUrl}" class="${lessonClass}" title="${lesson.title}">
+              <div class="bubble">${index + 1}</div>
+              <span>${lesson.title}</span>
+            </a>
+          `;
+        });
+
+        unitContent += '</div>';
+        unitEl.innerHTML = unitContent;
+        container.appendChild(unitEl);
       });
     }
+
+    handleCompletion();
     render();
   </script>
 </body>
