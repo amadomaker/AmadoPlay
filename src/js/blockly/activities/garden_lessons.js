@@ -3,8 +3,9 @@
   function computeScale(){
     const w = window.innerWidth;
     const h = window.innerHeight;
-    if (w < 420) return 0.8;
-    if (w < 768) return 0.9;
+    if (w <= 480) return 0.32;
+    if (w <= 640) return 0.45;
+    if (w < 900) return 0.7;
     if (w > 1800 && h < 900) return 1.1;
     return 1;
   }
@@ -30,19 +31,31 @@
 
   function columnX(ws){
     const m = getMetrics(ws);
-    const centered = m.x + (m.width / 2) - 120;
-    return Math.max(m.x + 40, centered);
+    const viewportWidth = window.innerWidth || 1024;
+    const offset = viewportWidth <= 640 ? 100 : 120;
+    const centered = m.x + (m.width / 2) - offset;
+    const minX = m.x + (viewportWidth <= 640 ? 24 : 40);
+    return Math.max(minX, centered);
   }
 
   function startY(ws){
     const m = getMetrics(ws);
-    return m.y + Math.max(80, m.height * 0.15);
+    const w = window.innerWidth || 1024;
+    let offset = Math.max(80, m.height * 0.15);
+    if (w <= 900) offset = Math.max(48, m.height * 0.1);
+    if (w <= 600) offset = Math.max(28, m.height * 0.075);
+    return m.y + offset;
   }
 
   function layoutColumn(ws, blocks, blockHeight, lockedIds){
     const x = columnX(ws);
     const y0 = startY(ws);
-    const spacing = blockHeight + 36;
+    const viewportWidth = window.innerWidth || 1024;
+    let spacingMultiplier = 1;
+    if (viewportWidth <= 900) spacingMultiplier = 0.68;
+    if (viewportWidth <= 640) spacingMultiplier = 0.48;
+    if (viewportWidth <= 480) spacingMultiplier = 0.34;
+    const spacing = (blockHeight + 24) * spacingMultiplier;
     blocks.forEach((block, idx) => {
       if (!block) return;
       if (lockedIds && lockedIds.has(block.id)) return;
@@ -56,10 +69,16 @@
   function referencePosition(ws){
     const m = getMetrics(ws);
     const base = columnX(ws);
-    const desired = base + 320;
-    const maxX = m.x + m.width - 280;
-    const x = Math.min(maxX, Math.max(base + 260, desired));
-    const y = m.y + Math.max(60, m.height * 0.18);
+    const w = window.innerWidth || 1024;
+    const desired = base + (w <= 480 ? 120 : w <= 640 ? 190 : 320);
+    const boundsOffset = w <= 480 ? 140 : w <= 640 ? 200 : 280;
+    const minOffset = w <= 480 ? 80 : w <= 640 ? 160 : 260;
+    const maxX = m.x + m.width - boundsOffset;
+    const x = Math.min(maxX, Math.max(base + minOffset, desired));
+    let offsetY = Math.max(60, m.height * 0.18);
+    if (w <= 900) offsetY = Math.max(42, m.height * 0.11);
+    if (w <= 600) offsetY = Math.max(26, m.height * 0.075);
+    const y = m.y + offsetY;
     return { x, y };
   }
 
@@ -83,8 +102,6 @@
 
     const plate = ensure(`ref-plate-${set}`, () => {
       const rect = document.createElementNS(svgNS, 'rect');
-      rect.setAttribute('width', '240');
-      rect.setAttribute('height', '240');
       rect.setAttribute('rx', '18');
       rect.setAttribute('fill', GardenBlocks.BLOCK_COLOUR);
       rect.setAttribute('opacity', '0.2');
@@ -94,8 +111,6 @@
 
     const img = ensure(`ref-img-${set}`, () => {
       const image = document.createElementNS(svgNS, 'image');
-      image.setAttribute('width', '240');
-      image.setAttribute('height', '240');
       image.setAttribute('opacity', '0.45');
       image.style.pointerEvents = 'none';
       image.setAttributeNS(xlinkNS, 'xlink:href', GardenBlocks.IMAGE_PATH + data.full);
@@ -105,10 +120,18 @@
 
     function position(){
       const pos = referencePosition(ws);
-      [plate, img].forEach(el => {
-        el.setAttribute('x', String(pos.x));
-        el.setAttribute('y', String(pos.y));
-      });
+      const viewportWidth = window.innerWidth || 1024;
+      const size = viewportWidth <= 480 ? 120 : viewportWidth <= 640 ? 170 : 240;
+      const radius = viewportWidth <= 480 ? 8 : viewportWidth <= 640 ? 14 : 18;
+      plate.setAttribute('width', String(size));
+      plate.setAttribute('height', String(size));
+      plate.setAttribute('rx', String(radius));
+      img.setAttribute('width', String(size));
+      img.setAttribute('height', String(size));
+      plate.setAttribute('x', String(pos.x));
+      plate.setAttribute('y', String(pos.y));
+      img.setAttribute('x', String(pos.x));
+      img.setAttribute('y', String(pos.y));
     }
 
     position();

@@ -258,6 +258,8 @@
   const modalActionLabel = document.getElementById('modalActionLabel');
   const modalActionIcon = document.getElementById('modalActionIcon');
   const modalClose = document.getElementById('modalClose');
+  const orientationPrompt = document.getElementById('orientationPrompt');
+  const orientationDismiss = document.getElementById('orientationDismiss');
 
   function closeModal(){
     if (!modal) return;
@@ -297,6 +299,32 @@
     modal.setAttribute('aria-hidden', 'false');
     modal.classList.add('is-visible');
     setTimeout(() => { try { modalAction.focus(); } catch (_) {} }, 40);
+  }
+
+  function deviceLikelyMobile(){
+    return 'ontouchstart' in window || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+  }
+
+  function shouldShowOrientationPrompt(){
+    if (!orientationPrompt) return false;
+    const width = window.innerWidth || document.documentElement.clientWidth;
+    const height = window.innerHeight || document.documentElement.clientHeight;
+    if (!deviceLikelyMobile()) return false;
+    if (width >= 1100) return false;
+    return width < height;
+  }
+
+  let orientationTimer = null;
+  function updateOrientationPrompt(){
+    if (!orientationPrompt) return;
+    const show = shouldShowOrientationPrompt();
+    orientationPrompt.classList.toggle('is-visible', show);
+    orientationPrompt.setAttribute('aria-hidden', show ? 'false' : 'true');
+    document.body.classList.toggle('orientation-lock', show);
+    if (!show) {
+      const card = orientationPrompt.querySelector('.orientation-card');
+      if (card) card.classList.remove('is-warning');
+    }
   }
 
   // Utils globais simples para atividades
@@ -508,6 +536,33 @@
     if (modalClose) modalClose.addEventListener('click', closeModal);
     modal.addEventListener('click', (evt) => { if (evt.target === modal) closeModal(); });
     document.addEventListener('keydown', (evt) => { if (evt.key === 'Escape') closeModal(); });
+  }
+
+  if (orientationPrompt) {
+    updateOrientationPrompt();
+    const scheduleUpdate = () => {
+      if (orientationTimer) clearTimeout(orientationTimer);
+      orientationTimer = setTimeout(updateOrientationPrompt, 140);
+    };
+    window.addEventListener('resize', scheduleUpdate, { passive: true });
+    window.addEventListener('orientationchange', scheduleUpdate);
+    if (orientationDismiss) {
+      orientationDismiss.addEventListener('click', () => {
+        if (shouldShowOrientationPrompt()) {
+          const card = orientationPrompt.querySelector('.orientation-card');
+          if (card) {
+            card.classList.remove('is-warning');
+            void card.offsetWidth;
+            card.classList.add('is-warning');
+            setTimeout(() => card.classList.remove('is-warning'), 420);
+          }
+          return;
+        }
+        orientationPrompt.classList.remove('is-visible');
+        orientationPrompt.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('orientation-lock');
+      });
+    }
   }
 
   // Fluxo: blocks -> activity -> init
