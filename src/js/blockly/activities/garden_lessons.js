@@ -1,11 +1,14 @@
 // Atividades do módulo "Jardim Encantado"
 (function(global){
+  const FULL_BLOCK_SIZE = 240;
   function computeScale(){
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    if (w <= 480) return 0.32;
-    if (w <= 640) return 0.45;
-    if (w < 900) return 0.7;
+    const w = window.innerWidth || 1024;
+    const h = window.innerHeight || 768;
+    const shortest = Math.min(w, h);
+    if (shortest <= 520) return 0.55;
+    if (w <= 820) return 0.62;
+    if (w <= 1024) return 0.68;
+    if (w <= 1366) return 0.8;
     if (w > 1800 && h < 900) return 1.1;
     return 1;
   }
@@ -29,17 +32,150 @@
     };
   }
 
+  function getViewportLayout(){
+    const width = window.innerWidth || 1024;
+    const height = window.innerHeight || 768;
+    const shortest = Math.min(width, height);
+
+    if (shortest <= 520 || width <= 520) {
+      return {
+        mode: 'mobile',
+        padding: 14,
+        blockOffset: 72,
+        blockWidth: FULL_BLOCK_SIZE,
+        startOffsetMin: 12,
+        startOffsetRatio: 0.035,
+        refSize: FULL_BLOCK_SIZE,
+        refGapPx: 80,
+        refTopMin: 44,
+        refTopRatio: 0.16,
+        spacing: {
+          gapPx: 60,
+          baseFactor: 1.02,
+          minFactor: 1.06,
+          maxFactor: 1.32,
+          reservedBottomPx: 24
+        }
+      };
+    }
+
+    if (width <= 820) {
+      return {
+        mode: 'tablet-small',
+        padding: 20,
+        blockOffset: 64,
+        blockWidth: FULL_BLOCK_SIZE,
+        startOffsetMin: 24,
+        startOffsetRatio: 0.05,
+        refSize: FULL_BLOCK_SIZE,
+        refGapPx: 92,
+        refTopMin: 50,
+        refTopRatio: 0.17,
+        spacing: {
+          gapPx: 120,
+          baseFactor: 1.05,
+          minFactor: 1.1,
+          maxFactor: 1.5,
+          reservedBottomPx: 40
+        }
+      };
+    }
+
+    if (width <= 1024) {
+      return {
+        mode: 'tablet-large',
+        padding: 26,
+        blockOffset: 58,
+        blockWidth: FULL_BLOCK_SIZE,
+        startOffsetMin: 30,
+        startOffsetRatio: 0.055,
+        refSize: FULL_BLOCK_SIZE,
+        refGapPx: 100,
+        refTopMin: 56,
+        refTopRatio: 0.18,
+        spacing: {
+          gapPx: 100,
+          baseFactor: 1.05,
+          minFactor: 1.08,
+          maxFactor: 1.4,
+          reservedBottomPx: 50
+        }
+      };
+    }
+
+    return null;
+  }
+
+  function computeLayoutSpacing(ws, layout, blockHeight, blocks, y0){
+    if (!layout || !layout.spacing) return null;
+    const cfg = layout.spacing;
+    const scale = ws.scale || 1;
+    const firstBlock = blocks.find(Boolean);
+    const size = firstBlock && typeof firstBlock.getHeightWidth === 'function'
+      ? firstBlock.getHeightWidth()
+      : null;
+    const actualHeight = size && typeof size.height === 'number' ? size.height : blockHeight;
+
+    const gapUnits = (cfg.gapPx || 0) / scale;
+    let spacing = actualHeight * (cfg.baseFactor || 1) + gapUnits;
+
+    if (cfg.extraPx) {
+      spacing += cfg.extraPx / scale;
+    }
+
+    const metrics = getMetrics(ws);
+    const totalBlocks = Math.max(blocks.filter(Boolean).length, 1);
+
+    if (totalBlocks > 1) {
+      const reserved = (cfg.reservedBottomPx || 0) / scale;
+      const available = Math.max(0, metrics.height - (y0 - metrics.y) - actualHeight - reserved);
+      const maxByViewport = available / (totalBlocks - 1);
+      spacing = Math.min(spacing, maxByViewport);
+    }
+
+    const minFactor = cfg.minFactor || cfg.baseFactor || 1;
+    spacing = Math.max(spacing, actualHeight * minFactor);
+
+    if (cfg.maxFactor) {
+      spacing = Math.min(spacing, actualHeight * cfg.maxFactor);
+    }
+
+    if (cfg.maxPx) {
+      spacing = Math.min(spacing, cfg.maxPx / scale);
+    }
+
+    return spacing;
+  }
+
   function columnX(ws){
     const m = getMetrics(ws);
-    const viewportWidth = window.innerWidth || 1024;
-    const offset = viewportWidth <= 640 ? 100 : 120;
-    const centered = m.x + (m.width / 2) - offset;
-    const minX = m.x + (viewportWidth <= 640 ? 24 : 40);
-    return Math.max(minX, centered);
+    const layout = getViewportLayout();
+    if (!layout) {
+      const viewportWidth = window.innerWidth || 1024;
+      const offset = viewportWidth <= 640 ? 100 : 120;
+      const minXClamp = viewportWidth <= 640 ? 24 : 40;
+      const centered = m.x + (m.width / 2) - offset;
+      const minX = m.x + minXClamp;
+      return Math.max(minX, centered);
+    }
+    const blockWidth = layout.blockWidth || FULL_BLOCK_SIZE;
+    const base = m.x + layout.padding + (layout.blockOffset || 0);
+    const minX = m.x + layout.padding;
+    const maxX = m.x + m.width - layout.padding - blockWidth;
+    if (maxX <= minX) {
+      return minX;
+    }
+    return Math.max(minX, Math.min(base, maxX));
   }
 
   function startY(ws){
     const m = getMetrics(ws);
+    const layout = getViewportLayout();
+    if (layout) {
+      const minOffset = typeof layout.startOffsetMin === 'number' ? layout.startOffsetMin : 12;
+      const ratio = typeof layout.startOffsetRatio === 'number' ? layout.startOffsetRatio : 0.04;
+      return m.y + Math.max(minOffset, m.height * ratio);
+    }
     const w = window.innerWidth || 1024;
     let offset = Math.max(80, m.height * 0.15);
     if (w <= 900) offset = Math.max(48, m.height * 0.1);
@@ -50,17 +186,24 @@
   function layoutColumn(ws, blocks, blockHeight, lockedIds){
     const x = columnX(ws);
     const y0 = startY(ws);
-    const viewportWidth = window.innerWidth || 1024;
+    const layout = getViewportLayout();
+    const layoutSpacing = computeLayoutSpacing(ws, layout, blockHeight, blocks, y0);
+    const hasLayoutSpacing = typeof layoutSpacing === 'number' && Number.isFinite(layoutSpacing) && layoutSpacing > 0;
     let spacingMultiplier = 1;
-    if (viewportWidth <= 900) spacingMultiplier = 0.68;
-    if (viewportWidth <= 640) spacingMultiplier = 0.48;
-    if (viewportWidth <= 480) spacingMultiplier = 0.34;
-    const spacing = (blockHeight + 24) * spacingMultiplier;
+    if (!hasLayoutSpacing) {
+      const viewportWidth = window.innerWidth || 1024;
+      if (viewportWidth <= 900) spacingMultiplier = 0.68;
+      if (viewportWidth <= 640) spacingMultiplier = 0.48;
+      if (viewportWidth <= 480) spacingMultiplier = 0.34;
+    }
     blocks.forEach((block, idx) => {
       if (!block) return;
       if (lockedIds && lockedIds.has(block.id)) return;
       const pos = block.getRelativeToSurfaceXY();
       const targetX = x;
+      const spacing = hasLayoutSpacing
+        ? layoutSpacing
+        : (blockHeight + 24) * spacingMultiplier;
       const targetY = y0 + idx * spacing;
       block.moveBy(targetX - pos.x, targetY - pos.y);
     });
@@ -68,18 +211,35 @@
 
   function referencePosition(ws){
     const m = getMetrics(ws);
+    const layout = getViewportLayout();
     const base = columnX(ws);
-    const w = window.innerWidth || 1024;
-    const desired = base + (w <= 480 ? 120 : w <= 640 ? 190 : 320);
-    const boundsOffset = w <= 480 ? 140 : w <= 640 ? 200 : 280;
-    const minOffset = w <= 480 ? 80 : w <= 640 ? 160 : 260;
-    const maxX = m.x + m.width - boundsOffset;
-    const x = Math.min(maxX, Math.max(base + minOffset, desired));
-    let offsetY = Math.max(60, m.height * 0.18);
-    if (w <= 900) offsetY = Math.max(42, m.height * 0.11);
-    if (w <= 600) offsetY = Math.max(26, m.height * 0.075);
+    if (!layout) {
+      const w = window.innerWidth || 1024;
+      const desired = base + (w <= 480 ? 120 : w <= 640 ? 190 : 320);
+      const boundsOffset = w <= 480 ? 140 : w <= 640 ? 200 : 280;
+      const minOffset = w <= 480 ? 80 : w <= 640 ? 160 : 260;
+      const maxX = m.x + m.width - boundsOffset;
+      const x = Math.min(maxX, Math.max(base + minOffset, desired));
+      let offsetY = Math.max(60, m.height * 0.18);
+      if (w <= 900) offsetY = Math.max(42, m.height * 0.11);
+      if (w <= 600) offsetY = Math.max(26, m.height * 0.075);
+      const y = m.y + offsetY;
+      return { x, y, size: w <= 480 ? 120 : w <= 640 ? 170 : 240 };
+    }
+    const blockWidth = layout.blockWidth || FULL_BLOCK_SIZE;
+    const refSize = typeof layout.refSize === 'number' ? layout.refSize : FULL_BLOCK_SIZE;
+    const minX = m.x + layout.padding;
+    const maxX = m.x + m.width - layout.padding - refSize;
+    const scale = ws.scale || 1;
+    const refGapPx = typeof layout.refGapPx === 'number' ? layout.refGapPx : 64;
+    const refGap = refGapPx / scale;
+    const desired = base + blockWidth + refGap;
+    const x = Math.max(minX, Math.min(desired, Math.max(minX, maxX)));
+    const refTopMin = typeof layout.refTopMin === 'number' ? layout.refTopMin : 60;
+    const refTopRatio = typeof layout.refTopRatio === 'number' ? layout.refTopRatio : 0.18;
+    const offsetY = Math.max(refTopMin, m.height * refTopRatio);
     const y = m.y + offsetY;
-    return { x, y };
+    return { x, y, size: refSize };
   }
 
   function addReference(ws, set){
@@ -88,41 +248,47 @@
     const canvas = ws.getCanvas();
     const parent = canvas && canvas.parentNode;
     if (!parent) return;
+    const svgLayer = canvas;
     const svgNS = 'http://www.w3.org/2000/svg';
     const xlinkNS = 'http://www.w3.org/1999/xlink';
+    const layout = getViewportLayout();
 
-    function ensure(id, builder){
-      let el = parent.querySelector(`#${id}`);
-      if (!el){
-        el = builder();
-        parent.insertBefore(el, canvas);
-      }
-      return el;
+    let layer = svgLayer.querySelector('g[data-role="reference-layer"]');
+    if (!layer){
+      layer = document.createElementNS(svgNS, 'g');
+      layer.setAttribute('data-role', 'reference-layer');
+      layer.style.pointerEvents = 'none';
+      svgLayer.insertBefore(layer, svgLayer.firstChild);
     }
 
-    const plate = ensure(`ref-plate-${set}`, () => {
-      const rect = document.createElementNS(svgNS, 'rect');
-      rect.setAttribute('rx', '18');
-      rect.setAttribute('fill', GardenBlocks.BLOCK_COLOUR);
-      rect.setAttribute('opacity', '0.2');
-      rect.style.pointerEvents = 'none';
-      return rect;
-    });
+    let plate = layer.querySelector(`#ref-plate-${set}`);
+    if (!plate){
+      plate = document.createElementNS(svgNS, 'rect');
+      plate.setAttribute('id', `ref-plate-${set}`);
+      plate.setAttribute('rx', '18');
+      plate.setAttribute('fill', GardenBlocks.BLOCK_COLOUR);
+      plate.setAttribute('opacity', '0.2');
+      plate.style.pointerEvents = 'none';
+      layer.appendChild(plate);
+    }
 
-    const img = ensure(`ref-img-${set}`, () => {
-      const image = document.createElementNS(svgNS, 'image');
-      image.setAttribute('opacity', '0.45');
-      image.style.pointerEvents = 'none';
-      image.setAttributeNS(xlinkNS, 'xlink:href', GardenBlocks.IMAGE_PATH + data.full);
-      image.setAttribute('href', GardenBlocks.IMAGE_PATH + data.full);
-      return image;
-    });
+    let img = layer.querySelector(`#ref-img-${set}`);
+    if (!img){
+      img = document.createElementNS(svgNS, 'image');
+      img.setAttribute('id', `ref-img-${set}`);
+      img.setAttribute('opacity', '0.45');
+      img.style.pointerEvents = 'none';
+      img.setAttributeNS(xlinkNS, 'xlink:href', GardenBlocks.IMAGE_PATH + data.full);
+      img.setAttribute('href', GardenBlocks.IMAGE_PATH + data.full);
+      layer.appendChild(img);
+    } else if (img.parentNode !== layer) {
+      layer.appendChild(img);
+    }
 
     function position(){
       const pos = referencePosition(ws);
-      const viewportWidth = window.innerWidth || 1024;
-      const size = viewportWidth <= 480 ? 120 : viewportWidth <= 640 ? 170 : 240;
-      const radius = viewportWidth <= 480 ? 8 : viewportWidth <= 640 ? 14 : 18;
+      const size = pos.size;
+      const radius = size >= 220 ? 18 : size >= 180 ? 14 : 9;
       plate.setAttribute('width', String(size));
       plate.setAttribute('height', String(size));
       plate.setAttribute('rx', String(radius));
@@ -148,8 +314,8 @@
   function blockOverTarget(block, target){
     if (!block || !target) return false;
     const pos = block.getRelativeToSurfaceXY();
-    let bw = 240;
-    let bh = 240;
+    let bw = FULL_BLOCK_SIZE;
+    let bh = FULL_BLOCK_SIZE;
     if (typeof block.getHeightWidth === 'function') {
       const size = block.getHeightWidth();
       if (size) {
@@ -380,22 +546,33 @@
       addReference(workspace, setName);
 
       const canvas = workspace.getCanvas();
-      const parent = canvas && canvas.parentNode;
       let target = null;
-      if (parent) {
+      if (canvas) {
         const svgNS = 'http://www.w3.org/2000/svg';
-        target = document.createElementNS(svgNS, 'rect');
-        target.setAttribute('id', 'garden-target');
-        target.setAttribute('width', '240');
-        target.setAttribute('height', '240');
-        target.setAttribute('rx', '18');
+        let overlayLayer = canvas.querySelector('g[data-role="reference-layer"]');
+        if (!overlayLayer){
+          overlayLayer = document.createElementNS(svgNS, 'g');
+          overlayLayer.setAttribute('data-role', 'reference-layer');
+          overlayLayer.style.pointerEvents = 'none';
+          canvas.insertBefore(overlayLayer, canvas.firstChild);
+        }
+        target = overlayLayer.querySelector('#garden-target');
+        if (!target){
+          target = document.createElementNS(svgNS, 'rect');
+          target.setAttribute('id', 'garden-target');
+          overlayLayer.appendChild(target);
+        }
         target.setAttribute('fill', '#34d399');
         target.setAttribute('opacity', '0.35');
         target.style.pointerEvents = 'none';
-        parent.insertBefore(target, canvas);
 
         function positionTarget(){
           const pos = referencePosition(workspace);
+          const size = pos.size;
+          const radius = size >= 220 ? 18 : size >= 180 ? 14 : 9;
+          target.setAttribute('width', String(size));
+          target.setAttribute('height', String(size));
+          target.setAttribute('rx', String(radius));
           target.setAttribute('x', String(pos.x));
           target.setAttribute('y', String(pos.y));
         }
