@@ -463,16 +463,20 @@
     ActivityUtils.hideCheck();
     ActivityUtils.setProgress(config.progress || null, activityId);
 
+    const moveConfig = { scrollbars: false, drag: config.mode !== 'click', wheel: false };
+
     const workspace = Blockly.inject('blocklyDiv', {
       toolbox: null,
       trashcan: false,
       zoom: { controls: false, wheel: false, startScale: computeScale() },
-      move: { scrollbars: false, drag: true, wheel: false }
+      move: moveConfig
     });
 
     window.addEventListener('resize', () => {
       Blockly.svgResize(workspace);
     });
+
+    const cleanupCallbacks = [];
 
     let solved = false;
     function finish(){
@@ -503,6 +507,12 @@
       } else {
         ActivityUtils.defaultNext(completionConfig);
       }
+
+      if (cleanupCallbacks.length) {
+        cleanupCallbacks.splice(0).forEach(fn => {
+          try { fn(); } catch (_) {}
+        });
+      }
     }
 
     if (config.mode === 'click') {
@@ -513,9 +523,54 @@
       const root = block.getSvgRoot();
       if (root) {
         root.style.cursor = 'pointer';
-        root.addEventListener('click', finish, { once: true });
-        root.addEventListener('touchend', finish, { once: true });
+        root.style.touchAction = 'manipulation';
+
+        const handlePointerDown = (evt) => {
+          if (solved) return;
+          evt.stopPropagation();
+        };
+        const handleTouchStart = (evt) => {
+          if (solved) return;
+          evt.stopPropagation();
+        };
+        const handleClick = (evt) => {
+          if (solved) return;
+          evt.stopPropagation();
+          finish();
+        };
+        const handleTouchEnd = (evt) => {
+          if (solved) return;
+          evt.stopPropagation();
+          evt.preventDefault();
+          finish();
+        };
+
+        root.addEventListener('pointerdown', handlePointerDown);
+        root.addEventListener('touchstart', handleTouchStart, { passive: true });
+        root.addEventListener('click', handleClick);
+        root.addEventListener('touchend', handleTouchEnd);
+
+        cleanupCallbacks.push(() => {
+          root.removeEventListener('pointerdown', handlePointerDown);
+          root.removeEventListener('touchstart', handleTouchStart);
+          root.removeEventListener('click', handleClick);
+          root.removeEventListener('touchend', handleTouchEnd);
+        });
       }
+
+      const UI_EVENT = (Blockly.Events && Blockly.Events.UI) || 'ui';
+      const CLICK_ELEMENT = (Blockly.Events && Blockly.Events.CLICK) || 'click';
+
+      const clickListener = (event) => {
+        if (!event) return;
+        if (event.type === UI_EVENT && event.element === CLICK_ELEMENT && event.blockId === block.id) {
+          workspace.removeChangeListener(clickListener);
+          finish();
+        }
+      };
+      workspace.addChangeListener(clickListener);
+      cleanupCallbacks.push(() => workspace.removeChangeListener(clickListener));
+
       const blocks = [block];
       const relayout = () => layoutColumn(workspace, blocks, 240);
       relayout();

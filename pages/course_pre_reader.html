@@ -24,8 +24,8 @@
     .unit {
       background: #fff;
       border-radius: 1rem;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
       border: 1px solid #e5e7eb;
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
     }
@@ -36,12 +36,12 @@
       pointer-events: none;
     }
     .unit-header {
-      padding-bottom: 1rem;
+      padding-bottom: 0.75rem;
       border-bottom: 1px solid #e5e7eb;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
     .unit-header h2 {
-      font-size: 1.75rem;
+      font-size: 1.5rem;
       font-family: 'Baloo 2', cursive;
       color: #111827;
       margin: 0;
@@ -49,12 +49,12 @@
     .unit-header p {
       margin: 0.25rem 0 0;
       color: #6b7280;
-      font-size: 1rem;
+      font-size: 0.9rem;
     }
     .lesson-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-      gap: 1.5rem 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 1rem 0.75rem;
       justify-content: center;
     }
     .lesson-bubble {
@@ -64,16 +64,16 @@
       text-decoration: none;
       color: #374151;
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       text-align: center;
     }
     .lesson-bubble .bubble {
-      width: 60px;
-      height: 60px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       display: grid;
       place-items: center;
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       font-weight: 700;
       font-family: 'Baloo 2', cursive;
       margin-bottom: 0.5rem;
@@ -107,7 +107,7 @@
     .lesson-bubble span {
       display: block;
       line-height: 1.3;
-      max-width: 80px;
+      max-width: 70px;
     }
     /* Footer Styles */
     .footer {
@@ -156,9 +156,66 @@
     </div>
     <nav class="main-nav" role="navigation" id="main-navigation" aria-label="Menu principal">
       <ul class="nav-menu">
-        <li class="nav-item"><a href="../index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Início</span></a></li>
-        <li class="nav-item"><a href="learn.html" class="nav-link" aria-current="page"><span class="nav-icon">💡</span><span>Trilhas Computação</span></a></li>
-        <li class="nav-item"><a href="quem_somos.html" class="nav-link"><span class="nav-icon">ℹ️</span><span>Quem Somos</span></a></li>
+        <li class="nav-item">
+          <a href="../index.html" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">🏠</span>
+            <span>Início</span>
+          </a>
+        </li>
+
+        <li class="nav-item dropdown-parent">
+          <a class="nav-link dropdown-trigger" href="#" aria-expanded="false" aria-haspopup="true">
+            <span class="nav-icon" aria-hidden="true">📚</span>
+            <span>Área do Conhecimento</span>
+            <span class="arrow" aria-hidden="true">▼</span>
+          </a>
+          <div class="dropdown" aria-label="Submenu Área do Conhecimento">
+            <a href="#" class="dropdown-item" data-materia="matematica"><span class="dropdown-icon" aria-hidden="true">🧮</span><span>Matemática</span></a>
+            <a href="#" class="dropdown-item" data-materia="portugues"><span class="dropdown-icon" aria-hidden="true">📖</span><span>Língua Portuguesa</span></a>
+            <a href="#" class="dropdown-item" data-materia="ciencias"><span class="dropdown-icon" aria-hidden="true">🔬</span><span>Ciências</span></a>
+            <a href="#" class="dropdown-item" data-materia="historia"><span class="dropdown-icon" aria-hidden="true">🏛️</span><span>História</span></a>
+            <a href="#" class="dropdown-item" data-materia="geografia"><span class="dropdown-icon" aria-hidden="true">🌎</span><span>Geografia</span></a>
+            <a href="#" class="dropdown-item" data-materia="multidisciplinar"><span class="dropdown-icon" aria-hidden="true">🎨</span><span>Multidisciplinar</span></a>
+            <a href="#" class="dropdown-item" data-materia="artes"><span class="dropdown-icon" aria-hidden="true">🎨</span><span>Artes</span></a>
+            <a href="#" class="dropdown-item" data-materia="educação física"><span class="dropdown-icon" aria-hidden="true">🤸</span><span>Educação Física</span></a>
+            <a href="#" class="dropdown-item" data-materia="língua estrangeira"><span class="dropdown-icon" aria-hidden="true">🗣️</span><span>Língua Estrangeira</span></a>
+          </div>
+        </li>
+
+        <li class="nav-item dropdown-parent">
+          <a class="nav-link dropdown-trigger" href="#" aria-expanded="false" aria-haspopup="true">
+            <span class="nav-icon" aria-hidden="true">🎒</span>
+            <span>Ano de Escolaridade</span>
+            <span class="arrow" aria-hidden="true">▼</span>
+          </a>
+          <div class="dropdown" aria-label="Submenu Ano de Escolaridade">
+            <a href="#" class="dropdown-item" data-search="educação infantil"><span class="dropdown-icon" aria-hidden="true">👶</span><span>Educação Infantil</span></a>
+            <a href="#" class="dropdown-item" data-serie="1"><span class="dropdown-icon" aria-hidden="true">1️⃣</span><span>1º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="2"><span class="dropdown-icon" aria-hidden="true">2️⃣</span><span>2º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="3"><span class="dropdown-icon" aria-hidden="true">3️⃣</span><span>3º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="4"><span class="dropdown-icon" aria-hidden="true">4️⃣</span><span>4º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="5"><span class="dropdown-icon" aria-hidden="true">5️⃣</span><span>5º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="6"><span class="dropdown-icon" aria-hidden="true">6️⃣</span><span>6º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="7"><span class="dropdown-icon" aria-hidden="true">7️⃣</span><span>7º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="8"><span class="dropdown-icon" aria-hidden="true">8️⃣</span><span>8º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="9"><span class="dropdown-icon" aria-hidden="true">9️⃣</span><span>9º Ano</span></a>
+            <a href="#" class="dropdown-item" data-search="eja"><span class="dropdown-icon" aria-hidden="true">📘</span><span>EJA</span></a>
+            <a href="#" class="dropdown-item" data-search="ensino médio"><span class="dropdown-icon" aria-hidden="true">🎓</span><span>Ensino Médio</span></a>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a href="learn.html" class="nav-link" aria-current="page">
+            <span class="nav-icon" aria-hidden="true">💡</span>
+            <span>Trilhas Computação</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="quem_somos.html" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">ℹ️</span>
+            <span>Quem Somos</span>
+          </a>
+        </li>
       </ul>
     </nav>
   </header>
