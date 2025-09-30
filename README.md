@@ -1,22 +1,38 @@
 # AmadoPlay
 
-Documento de referência interno do time responsável pelo AmadoPlay, plataforma educacional web com trilhas gamificadas baseadas em Blockly. O objetivo é orientar novos membros da equipe na compreensão da arquitetura, fluxos e responsabilidades do projeto.
+Documento de referência interno do time responsável pelo AmadoPlay, plataforma educacional web que agrupa atividades lúdicas, jogos temáticos e trilhas gamificadas. O objetivo é dar visão ampla da arquitetura, dos módulos existentes e do fluxo de contribuição.
 
 ## Visão Geral da Plataforma
 
-- **Propósito**: oferecer experiências educacionais lúdicas para crianças, com progressão por trilhas.
-- **Escopo principal atual**: trilha Jardim Encantado (sequenciamento para pré-leitores) + biblioteca de páginas temáticas (alfabeto móvel, pirâmide alimentar etc.).
-- **Stack**: aplicativo estático (HTML/CSS/JS) com Bootstrap próprio, suporte a PWA (`manifest.json` + `service-worker.js`) e engine Blockly customizada (`src/js/blockly`).
-- **Ambiente alvo**: navegadores desktop, tablets e celulares (com foco em tablets paisagem para Blockly).
+- **Propósito**: disponibilizar um “hub” educacional com múltiplos formatos de aprendizagem: jogos HTML, simuladores, exercícios interativos e trilhas de computação.
+- **Público**: estudantes da educação infantil e anos iniciais, professores e responsáveis que buscam atividades prontas para sala ou casa.
+- **Pilares atuais**:
+  1. **Portal institucional**: páginas de apresentação, contato, termos etc.
+  2. **Atividades temáticas**: experiências isoladas (alfabeto móvel, pirâmide alimentar, mapa do Brasil, roleta dos meses, entre outras) desenvolvidas em HTML/JS puro.
+  3. **Trilhas de Computação**: sequência guiada baseada em Blockly (Jardim Encantado) com progressão e armazenamento de resultados.
+- **Stack**: aplicativo estático (HTML/CSS/JS). As trilhas utilizam [Blockly](https://developers.google.com/blockly); jogos individuais usam scripts próprios (por exemplo `src/js/piramide_alimentar.js`, `roleta.js`, `separar_silabas.js`).
+- **Ambiente alvo**: navegadores em desktop, tablets e celulares (com atenção especial a tablets em modo paisagem para as trilhas).
+
+## Módulos Principais
+
+| Módulo | Descrição | Arquivos-chave |
+|--------|-----------|----------------|
+| **Portal / Conteúdo Institucional** | Home (`index.html`), páginas de quem somos, contato, termos, política etc. | `pages/*.html`, `src/css/global.css`, `src/js/acessibilidade.js` |
+| **Catálogo de Trilhas** | Apresenta trilhas disponíveis e funil para as jornadas. | `pages/learn.html`, `src/css/learn.css`, `src/assets/images/blockly-images/capas-cards/*` |
+| **Trilha Jardim Encantado** | Sequência de 10 lições com blocos de montar. | `pages/course_pre_reader.html`, `pages/blockly.html`, `src/js/blockly/` (manifest, atividades, blocos), sprites em `src/assets/images/blockly-images/modulo-jardim-encantado/` |
+| **Jogos Educacionais Individuais** | Atividades independentes (alfabeto móvel, pirâmide alimentar, mapa do Brasil, roleta cultural, conta bolhas, etc.). | `pages/Alfabeto_movel.html`, `pages/piramide_alimentar.html`, `pages/mapa_brasil.html`, `pages/roleta.html`, scripts dedicados em `src/js/…` |
+| **PWA / Offline** | Configuração para instalação e cache básico. | `manifest.json`, `service-worker.js` |
+
+> **Observação**: Trilhas são uma fatia do ecossistema. Jogos HTML e páginas temáticas continuam evoluindo em paralelo; documentações específicas podem ser adicionadas posteriormente em `/docs`.
 
 ## Funcionalidades Atuais
 
-- **Portal de conteúdos** (`pages/*.html`): landing `index`, catálogo `learn`, páginas temáticas (alfabeto, mapa do Brasil etc.).
-- **Trilhas computacionais**: fluxo `learn → course_pre_reader → blockly` com salvamento de progresso.
-- **Blockly Shell customizado** (`src/js/blockly/`): manifest configurável, modal de conclusão reutilizável, utilitários (`ActivityUtils`), responsividade e orientação forçada para tablets.
-- **Estilos modulares** (`src/css/`): camadas separadas para global, currículo, learn e Blockly.
-- **Assets organizados** (`src/assets/images`): personagens, capas de curso, sprites do Jardim Encantado.
-- **PWA / Offline básico**: `manifest.json` + `service-worker.js` (A ser documentado detalhadamente).
+- **Portal de conteúdo**: home institucional, catálogos, landing pages temáticas.
+- **Atividades HTML isoladas**: alfabetização, ciências, geografia etc., cada uma com seu JS/CSS dedicado.
+- **Trilhas de computação**: jornada com salvamento de progresso e modais de conclusão.
+- **Engine Blockly**: manifest configurável, utilitários (`ActivityUtils`), responsividade e lógica de navegação entre lições.
+- **Estrutura de estilos modularizada**: arquivos separados para base global, catálogo (learn), currículo, e temas específicos de Blockly.
+- **PWA e assets**: manifest, service worker básico e biblioteca centralizada de imagens.
 
 ## Estrutura de Arquivos
 
@@ -42,17 +58,18 @@ AmadoPlay/
 │   │   └── demais scripts das páginas
 │   └── assets/images/
 ├── docs/
-│   └── trilhas-computacao.md
+│   └── trilhas-computacao.md     # Guia específico da trilha Jardim Encantado
 ├── manifest.json
 ├── service-worker.js
 └── README.md (este arquivo)
 ```
 
-> **Decisão**: o `/docs` concentra guias específicos (ex.: trilhas de computação) enquanto o README fornece a visão sistêmica necessária para novos colaboradores internos.
+> **Decisão**: `/docs` abrigará guias temáticos (ex.: trilhas, jogos específicos). O README mantém a visão macro da plataforma para onboarding interno.
 
 ## Documentação Complementar
 
-- [Trilhas de Computação](docs/trilhas-computacao.md) — fluxo detalhado, estrutura dos dados, arquivos relevantes e backlog (com itens “A ser escrito”).
+- [Trilhas de Computação](docs/trilhas-computacao.md) — fluxo detalhado, estrutura dos dados, backlog específico.
+- **A ser produzido**: guias para jogos HTML (ex.: Alfabeto Móvel, Pirâmide Alimentar), políticas PWA, guidelines visuais dos personagens.
 
 ## Preparação e Execução em Ambiente Local
 
@@ -69,7 +86,9 @@ AmadoPlay/
    - `http://localhost:<porta>/pages/course_pre_reader.html` – hub Jardim Encantado
    - `http://localhost:<porta>/pages/blockly.html?activity=garden_click_turma` – exemplo de lição
 
-## Fluxo da Trilha Jardim Encantado (Resumo)
+## Fluxos Principais
+
+### Trilhas de Computação — Jardim Encantado
 
 1. `learn.html` → botão “Explorar currículo” → `course_pre_reader.html`.
 2. `course_pre_reader.html` renderiza unidades, lê/escreve `localStorage` com chave `progress:<course_id>`.
@@ -79,13 +98,24 @@ AmadoPlay/
 
 Mais detalhes: veja [`docs/trilhas-computacao.md`](docs/trilhas-computacao.md).
 
+### Atividades Independentes
+
+Cada atividade em `pages/*.html` carrega seus próprios estilos/scripts via `src/css/*.css` e `src/js/*.js`. A navegação parte de `index.html` ou de LPs que apontam diretamente para a atividade. Exemplos relevantes:
+
+- `Alfabeto_movel.html` ↔ `src/js/letras.js` *(nome fictício — confirmar script exato)* — **A ser escrito**
+- `piramide_alimentar.html` ↔ `src/js/piramide_alimentar.js`
+- `mapa_brasil.html` ↔ `src/js/mapBr.js`
+- `roleta.html` ↔ `src/js/roleta.js`
+
+> Documentar cada uma com regras de negócio, assets e dependências — **A ser escrito**.
+
 ## Orientações de Desenvolvimento Interno
 
-- **CSS e componentes**: estilos transversais em `global.css`; ajustes específicos de trilha em `curriculum.css` e `blockly_styles/base.css`.
-- **Novas trilhas**: replicar o fluxo `learn → course → blockly` e adicionar as entradas necessárias em `courseData` e no manifest de `boot.js`.
-- **Acessibilidade**: há semântica básica; necessário expandir testes de teclado/leitor de tela (A ser escrito).
-- **Performance**: monitorar peso de sprites/ilustrações e aplicar lazy-loading quando pertinente (A ser escrito).
-- **PWA/Offline**: revisar `service-worker.js` e garantir cache coerente (A ser escrito).
+- **CSS e componentes**: manter estilos globais coesos (`global.css`) e encapsular ajustes específicos em arquivos dedicados (`learn.css`, `curriculum.css`, `blockly_styles/base.css`).
+- **Novas trilhas**: replicar o fluxo `learn → course → blockly`, adicionar manifest no `boot.js` e garantir novos sprites no diretório adequado.
+- **Novas atividades HTML**: seguir padrão das páginas existentes (estrutura semântica, CSS no `/src/css`, JS no `/src/js`). Documentar regras no `/docs` quando houver lógica complexa — **A ser escrito**.
+- **Acessibilidade**: expandir testes de teclado/leitor de tela, revisar contraste e rotas ARIA — **A ser escrito**.
+- **Performance e PWA**: monitorar assets pesados, revisar `service-worker.js`, definir política de cache — **A ser escrito**.
 
 ## Backlog de Documentação
 
