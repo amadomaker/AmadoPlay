@@ -257,10 +257,21 @@
         ]
       },
       {
-        id: 'creative_puzzles',
-        title: 'Unidade 2: Quebra-Cabeças Criativos',
-        description: 'Use a lógica para montar padrões e resolver desafios visuais.',
-        lessons: Array(10).fill({}).map((_, i) => ({id: `u2_l${i+1}`, title: 'Em Breve', activity: null}))
+        id: 'maze_farm',
+        title: 'Unidade 2: Labirinto da Fazenda',
+        description: 'Explore 10 fases progressivas do labirinto usando blocos do tipo mover e virar.',
+        lessons: [
+          { id: 'maze_l1_reto', title: 'Fase 1 – Primeiro passo', activity: 'maze_level_1' },
+          { id: 'maze_l2_primeira_curva', title: 'Fase 2 – Dois passos', activity: 'maze_level_2' },
+          { id: 'maze_l3_sobe_desce', title: 'Fase 3 – Primeiro desvio', activity: 'maze_level_3' },
+          { id: 'maze_l4_fardos', title: 'Fase 4 – Duas curvas', activity: 'maze_level_4' },
+          { id: 'maze_l5_cruzamentos', title: 'Fase 5 – Volta ao canteiro', activity: 'maze_level_5' },
+          { id: 'maze_l6_corredores', title: 'Fase 6 – Caminho em U', activity: 'maze_level_6' },
+          { id: 'maze_l7_volta_inicio', title: 'Fase 7 – Zigue-zague curto', activity: 'maze_level_7' },
+          { id: 'maze_l8_caminho_oculto', title: 'Fase 8 – Volta grande', activity: 'maze_level_8' },
+          { id: 'maze_l9_desvios', title: 'Fase 9 – Desvios rápidos', activity: 'maze_level_9' },
+          { id: 'maze_l10_grande_finale', title: 'Fase 10 – Grande finale', activity: 'maze_level_10' }
+        ]
       },
       {
         id: 'events_world',
