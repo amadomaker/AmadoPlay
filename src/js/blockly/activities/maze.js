@@ -80,24 +80,16 @@
     const workspaceArea = document.querySelector('.workspace-area');
     if (workspaceArea) workspaceArea.classList.add('maze-layout');
 
-    const mazeContainer = document.getElementById('mazeBoard') || document.querySelector('.workspace-canvas');
+    const mazeContainer = document.querySelector('.maze-stage');
     if (!mazeContainer) {
-      console.error("Container do labirinto (mazeBoard) não encontrado!");
+      console.error("Container do labirinto (.maze-stage) não encontrado!");
       return;
     }
+    mazeContainer.innerHTML = ''; // Limpa o container do stage
 
-    let grid = document.getElementById('maze-grid-container');
-    if (grid) {
-        grid.remove();
-        grid.innerHTML = '';
-    } else {
-        grid = document.createElement('div');
-        grid.id = 'maze-grid-container';
-    }
-
+    let grid = document.createElement('div');
+    grid.id = 'maze-grid-container';
     grid.className = 'maze-grid';
-
-    mazeContainer.innerHTML = '';
     mazeContainer.appendChild(grid);
 
     grid.style.position = 'relative';
@@ -408,15 +400,13 @@
   }
 
   function createMazeControls() {
-    const controls = document.getElementById('mazeControls');
-    if (!controls) return;
-
-    controls.innerHTML = '';
+    const controlsContainer = document.querySelector('.maze-stage');
+    if (!controlsContainer) return;
 
     runButton = document.createElement('button');
     runButton.id = 'runBtn';
     runButton.className = 'maze-run-btn';
-    controls.appendChild(runButton);
+    controlsContainer.appendChild(runButton);
 
     setRunButtonMode('run');
   }
@@ -478,8 +468,8 @@
         if (ActivityUtils) ActivityUtils.feedback('Erro ao carregar a área de blocos.', false);
       }
 
-      createMazeControls();
       renderMaze(config);
+      createMazeControls();
 
       ActivityUtils.setInstructions(config.instructions || 'Monte os blocos para levar o personagem ao seu objetivo.');
       ActivityUtils.setProgress(config.progress, activityId);
