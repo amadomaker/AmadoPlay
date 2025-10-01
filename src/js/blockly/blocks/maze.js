@@ -3,31 +3,39 @@
 // Block definitions
 const blockDefs = [
   {
-    "type": "maze_move_forward",
-    "message0": "mover para frente →",
+    "type": "maze_move_up",
+    "message0": "mover para cima ▲",
     "previousStatement": null,
     "nextStatement": null,
     "colour": "#007BFF",
-    "tooltip": "Move o personagem uma casa para frente",
+    "tooltip": "Move o personagem uma casa para cima",
     "helpUrl": ""
   },
   {
-    "type": "maze_turn",
-    "message0": "virar %1",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "DIRECTION",
-        "options": [
-          [ "à esquerda ↺", "left" ],
-          [ "à direita ↻", "right" ]
-        ]
-      }
-    ],
+    "type": "maze_move_down",
+    "message0": "mover para baixo ▼",
     "previousStatement": null,
     "nextStatement": null,
-    "colour": "#28a745",
-    "tooltip": "Vira o personagem para a esquerda ou direita",
+    "colour": "#007BFF",
+    "tooltip": "Move o personagem uma casa para baixo",
+    "helpUrl": ""
+  },
+  {
+    "type": "maze_move_left",
+    "message0": "mover para esquerda ◀",
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": "#007BFF",
+    "tooltip": "Move o personagem uma casa para a esquerda",
+    "helpUrl": ""
+  },
+  {
+    "type": "maze_move_right",
+    "message0": "mover para direita ►",
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": "#007BFF",
+    "tooltip": "Move o personagem uma casa para a direita",
     "helpUrl": ""
   }
 ];
@@ -36,28 +44,20 @@ const blockDefs = [
 function registerStubs(Blockly) {
   if (!Blockly.JavaScript) return;
 
-  Blockly.JavaScript['maze_move_forward'] = function() {
-    return 'moveForward();\n';
-  };
-
-  Blockly.JavaScript['maze_turn'] = function(block) {
-    const direction = block.getFieldValue('DIRECTION');
-    return `turn("${direction}");\n`;
-  };
+  Blockly.JavaScript['maze_move_up'] = function() { return 'moveUp();\n'; };
+  Blockly.JavaScript['maze_move_down'] = function() { return 'moveDown();\n'; };
+  Blockly.JavaScript['maze_move_left'] = function() { return 'moveLeft();\n'; };
+  Blockly.JavaScript['maze_move_right'] = function() { return 'moveRight();\n'; };
 }
 
 // Toolbox definition
 const toolbox = {
   "kind": "flyoutToolbox",
   "contents": [
-    {
-      "kind": "block",
-      "type": "maze_move_forward"
-    },
-    {
-      "kind": "block",
-      "type": "maze_turn"
-    }
+    { "kind": "block", "type": "maze_move_up" },
+    { "kind": "block", "type": "maze_move_down" },
+    { "kind": "block", "type": "maze_move_left" },
+    { "kind": "block", "type": "maze_move_right" }
   ]
 };
 

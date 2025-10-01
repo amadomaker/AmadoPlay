@@ -257,31 +257,9 @@
 
   function computePathStats(path) {
     if (!Array.isArray(path) || path.length < 2) {
-      return { moves: 0, turns: 0 };
+      return { moves: 0 };
     }
-    let moves = path.length - 1;
-    let turns = 0;
-    for (let i = 1; i < path.length - 1; i += 1) {
-      const prev = path[i - 1];
-      const curr = path[i];
-      const next = path[i + 1];
-      const dx1 = curr.x - prev.x;
-      const dy1 = curr.y - prev.y;
-      const dx2 = next.x - curr.x;
-      const dy2 = next.y - curr.y;
-      if (dx1 !== dx2 || dy1 !== dy2) turns += 1;
-    }
-    return { moves, turns };
-  }
-
-  function deriveInitialDir(path) {
-    if (!Array.isArray(path) || path.length < 2) return 'east';
-    const start = path[0];
-    const next = path[1];
-    if (next.x > start.x) return 'east';
-    if (next.x < start.x) return 'west';
-    if (next.y > start.y) return 'south';
-    return 'north';
+    return { moves: path.length - 1 };
   }
 
   const mazeLevels = [
@@ -338,7 +316,7 @@
       instructions: 'Siga o caminho, vire para cima e depois para a direita para pegar a cebola.',
       path: [{ x: 1, y: 4 }, { x: 2, y: 4 }, { x: 2, y: 3 }, { x: 2, y: 2 }, { x: 3, y: 2 }, { x: 4, y: 2 }],
       openCells: [{ x: 1, y: 3 }, { x: 3, y: 4 }, { x: 4, y: 3 }],
-      decorations: [deco(3, 3, 'Objects/GardenBed_Onions_01.png', 0.92)],
+      decorations: [deco(4, 3, 'Objects/GardenBed_Onions_01.png', 0.92)],
       goalSprite: mazeAsset('Objects/Onion.png'),
       goalScale: 0.85,
       extraMessage: 'Cheiro de cebola pela fazenda!',
@@ -353,7 +331,7 @@
       instructions: 'Cuidado com a poça de água! Desvie dela para colher o pepino.',
       path: [{ x: 1, y: 1 }, { x: 1, y: 2 }, { x: 1, y: 3 }, { x: 2, y: 3 }, { x: 3, y: 3 }, { x: 4, y: 3 }, { x: 5, y: 3 }],
       openCells: [{ x: 2, y: 2 }, { x: 3, y: 2 }, { x: 4, y: 2 }, { x: 3, y: 4 }],
-      decorations: [deco(3, 2, 'Objects/Water_Shadowed.png', 0.75), deco(5, 2, 'Objects/GardenBed_Tomatoes_01.png', 0.9)],
+      decorations: [deco(3, 2, 'Objects/GardenBed_Tomatoes_01.png', 0.9)],
       obstacles: [{ x: 3, y: 2, type: 'hole' }],
       goalSprite: mazeAsset('Objects/Cucumber.png'),
       goalScale: 0.85,
@@ -401,7 +379,7 @@
       instructions: 'Contorne o lago de lama com cuidado para não cair! A volta é grande, mas segura.',
       path: [{ x: 1, y: 3 }, { x: 2, y: 3 }, { x: 3, y: 3 }, { x: 4, y: 3 }, { x: 4, y: 4 }, { x: 4, y: 5 }, { x: 5, y: 5 }, { x: 5, y: 4 }, { x: 5, y: 3 }, { x: 5, y: 2 }, { x: 4, y: 2 }, { x: 3, y: 2 }],
       openCells: [{ x: 2, y: 2 }, { x: 2, y: 4 }, { x: 3, y: 5 }],
-      decorations: [deco(4, 4, 'Objects/Water_Shadowed.png', 0.78), deco(3, 1, 'Objects/GardenBed_Tomatoes_02.png', 0.92)],
+      decorations: [deco(4, 4, 'Objects/GardenBed_Tomatoes_02.png', 0.92)],
       obstacles: [{ x: 4, y: 4, type: 'hole' }],
       goalSprite: mazeAsset('Objects/Tomato.png'),
       goalScale: 0.82,
@@ -433,7 +411,7 @@
       instructions: 'O grande final! Desvie da bomba e da poça de água para colher o último tomate.',
       path: [{ x: 1, y: 3 }, { x: 2, y: 3 }, { x: 3, y: 3 }, { x: 4, y: 3 }, { x: 4, y: 2 }, { x: 4, y: 1 }, { x: 5, y: 1 }, { x: 5, y: 2 }, { x: 5, y: 3 }, { x: 5, y: 4 }, { x: 4, y: 4 }, { x: 3, y: 4 }, { x: 3, y: 5 }, { x: 4, y: 5 }, { x: 5, y: 5 }],
       openCells: [{ x: 2, y: 1 }, { x: 2, y: 2 }, { x: 2, y: 4 }, { x: 2, y: 5 }, { x: 4, y: 5 }],
-      decorations: [deco(2, 2, 'Objects/Bomb.png', 0.6), deco(2, 5, 'Objects/Water_Shadowed.png', 0.75)],
+      decorations: [deco(2, 2, 'Objects/Bomb.png', 0.6)],
       obstacles: [{ x: 2, y: 2, type: 'bomb' }, { x: 2, y: 5, type: 'hole' }],
       goalSprite: mazeAsset('Objects/Tomato.png'),
       goalScale: 0.85,
@@ -453,10 +431,9 @@
   mazeLevels.forEach((level, index) => {
     const layout = buildMazeLayout(level.size || DEFAULT_MAZE_SIZE, level.path, level.openCells || []);
     const stats = computePathStats(level.path);
-    const startDir = level.startDir || deriveInitialDir(level.path);
 
     const meta = {
-      optimalBlocks: stats.moves + stats.turns,
+      optimalBlocks: stats.moves,
       tip: level.tip,
       toast: level.toast,
       heading: level.heading,
@@ -480,7 +457,7 @@
       config: {
         instructions: level.instructions,
         layout,
-        start: { x: level.path[0].x, y: level.path[0].y, dir: startDir },
+        start: { x: level.path[0].x, y: level.path[0].y, dir: 'south' },
         meta,
         decorations: level.decorations || [],
         obstacles: level.obstacles || [],

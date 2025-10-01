@@ -33,23 +33,6 @@
     west: `${ASSET_BASE}/Characters/Fox_Left.png`
   };
 
-  const START_ARROW_ROTATION = {
-    north: '-90deg',
-    east: '0deg',
-    south: '90deg',
-    west: '180deg'
-  };
-
-  const dirUpdate = {
-    'north': { x: 0, y: -1 },
-    'east': { x: 1, y: 0 },
-    'south': { x: 0, y: 1 },
-    'west': { x: -1, y: 0 }
-  };
-
-  const turnLeftMap = { 'north': 'west', 'west': 'south', 'south': 'east', 'east': 'north' };
-  const turnRightMap = { 'north': 'east', 'east': 'south', 'south': 'west', 'west': 'north' };
-
   // --- Game Functions ---
 
   function addTileSprite(container, src, scale = 1) {
@@ -157,9 +140,6 @@
             addTileSprite(cellDiv, goalSprite, goalScale);
             cellDiv.dataset.type = 'goal';
           } else if (cell === 3) {
-            const arrow = addTileSprite(cellDiv, TILE_TEXTURES.start, 0.7);
-            const rotation = START_ARROW_ROTATION[startConfig.dir] || '0deg';
-            arrow.style.transform = `translate(-50%, -50%) rotate(${rotation})`;
             cellDiv.dataset.type = 'start';
           } else {
             cellDiv.dataset.type = 'path';
@@ -192,7 +172,7 @@
       playerElement.style.backgroundPosition = 'center';
       playerElement.style.pointerEvents = 'none';
       playerElement.style.zIndex = '5';
-      playerElement.style.transition = `transform ${EXECUTION_SPEED * 0.9}ms ease-in-out`;
+      playerElement.style.transition = `transform ${EXECUTION_SPEED * 0.9}ms ease-in-out, background-image 100ms step-end`;
       gridContainer.appendChild(playerElement);
     }
 
@@ -200,26 +180,24 @@
     const playerX = player.x * TILE_SIZE + offset;
     const playerY = player.y * TILE_SIZE + offset;
     playerElement.style.transform = `translate(${playerX}px, ${playerY}px)`;
-    const sprite = PLAYER_SPRITES[player.dir] || PLAYER_SPRITES.east;
+    
+    const sprite = PLAYER_SPRITES[player.dir] || PLAYER_SPRITES.south;
     playerElement.style.backgroundImage = `url(${sprite})`;
   }
 
   // --- Block API & Interpreter ---
 
   function initApi(interpreter, globalObject) {
-    const highlightWrapper = (id) => () => workspace.highlightBlock(id);
-
-    interpreter.setProperty(globalObject, 'moveForward', 
+    const createAsyncMoveFn = (moveFn) => 
       interpreter.createAsyncFunction(function(callback) {
-        moveForward();
+        moveFn();
         setTimeout(callback, EXECUTION_SPEED);
-    }));
+    });
 
-    interpreter.setProperty(globalObject, 'turn', 
-      interpreter.createAsyncFunction(function(direction, callback) {
-        turn(direction.toString());
-        setTimeout(callback, EXECUTION_SPEED);
-    }));
+    interpreter.setProperty(globalObject, 'moveUp', createAsyncMoveFn(moveUp));
+    interpreter.setProperty(globalObject, 'moveDown', createAsyncMoveFn(moveDown));
+    interpreter.setProperty(globalObject, 'moveLeft', createAsyncMoveFn(moveLeft));
+    interpreter.setProperty(globalObject, 'moveRight', createAsyncMoveFn(moveRight));
   }
 
   function checkCollision() {
@@ -234,10 +212,9 @@
     return false; // No collision
   }
 
-  function moveForward() {
-    const move = dirUpdate[player.dir];
-    const nextX = player.x + move.x;
-    const nextY = player.y + move.y;
+  function performMove(dx, dy) {
+    const nextX = player.x + dx;
+    const nextY = player.y + dy;
 
     if (maze[nextY] && maze[nextY][nextX] !== 1) {
       player.x = nextX;
@@ -250,16 +227,14 @@
     if (checkCollision()) {
       if (runner) clearTimeout(runner);
       runner = null;
-      // Delay reset to allow user to see the feedback message
       setTimeout(() => setRunButtonMode('reset'), 100);
     }
   }
 
-  function turn(direction) {
-    player.dir = direction === 'left' ? turnLeftMap[player.dir] : turnRightMap[player.dir];
-    console.log("Virou para", player.dir);
-    renderPlayer(document.getElementById('maze-grid-container'));
-  }
+  const moveUp = () => { player.dir = 'north'; performMove(0, -1); };
+  const moveDown = () => { player.dir = 'south'; performMove(0, 1); };
+  const moveLeft = () => { player.dir = 'west'; performMove(-1, 0); };
+  const moveRight = () => { player.dir = 'east'; performMove(1, 0); };
 
   function runCode() {
     setRunButtonMode('running');
@@ -283,7 +258,7 @@
     function nextStep() {
       try {
         if (interpreter.run()) {
-          runner = setTimeout(nextStep, 10); // Small delay to allow async functions to register
+          runner = setTimeout(nextStep, 10);
         } else {
           runner = null;
           setRunButtonMode('reset');
@@ -303,7 +278,6 @@
   }
 
   function checkWinCondition() {
-    // Do not declare victory if a collision also happened
     if (checkCollision()) return;
 
     const reachedGoal = maze[player.y][player.x] === 2;
@@ -326,7 +300,8 @@
       };
 
       setTimeout(() => ActivityUtils.defaultNext(payload), 900);
-    } else {
+    }
+    else {
       let message = 'Tente novamente!';
       if (currentLevelMeta && currentLevelMeta.tip) {
         message += ` ${currentLevelMeta.tip}`;
@@ -336,30 +311,25 @@
   }
 
   function compileWorkspace(ws) {
-    const emptyResult = {
-      code: '',
-      stats: { moves: 0, turns: 0, total: 0 },
-      unknownTypes: []
-    };
-
+    const emptyResult = { code: '', stats: { moves: 0, total: 0 }, unknownTypes: [] };
     if (!ws) return emptyResult;
 
     const lines = [];
-    const stats = { moves: 0, turns: 0, total: 0 };
+    const stats = { moves: 0, total: 0 };
     const unknown = new Set();
 
     const visitChain = (block) => {
       if (!block) return;
       const type = block.type;
-      if (type === 'maze_move_forward') {
-        lines.push('moveForward();');
+      let move = null;
+      if (type === 'maze_move_up') move = 'moveUp';
+      else if (type === 'maze_move_down') move = 'moveDown';
+      else if (type === 'maze_move_left') move = 'moveLeft';
+      else if (type === 'maze_move_right') move = 'moveRight';
+
+      if (move) {
+        lines.push(`${move}();`);
         stats.moves += 1;
-        stats.total += 1;
-      } else if (type === 'maze_turn') {
-        const dirRaw = typeof block.getFieldValue === 'function' ? block.getFieldValue('DIRECTION') : '';
-        const direction = dirRaw === 'left' ? 'left' : (dirRaw === 'right' ? 'right' : 'left');
-        lines.push(`turn('${direction}');`);
-        stats.turns += 1;
         stats.total += 1;
       } else {
         if (type) unknown.add(type);
@@ -383,14 +353,11 @@
 
   function buildSuccessFeedback() {
     const moves = lastRunStats.moves || 0;
-    const turns = lastRunStats.turns || 0;
-    const total = lastRunStats.total || (moves + turns);
+    const total = lastRunStats.total || moves;
 
-    const moveLabel = moves === 1 ? '1 bloco de mover' : `${moves} blocos de mover`;
-    const turnLabel = turns === 0 ? 'nenhum bloco de virar' : (turns === 1 ? '1 bloco de virar' : `${turns} blocos de virar`);
     const totalLabel = total === 1 ? '1 bloco' : `${total} blocos`;
 
-    let modalMessage = `Você usou ${moveLabel} e ${turnLabel} (total de ${totalLabel}).`;
+    let modalMessage = `Você usou um total de ${totalLabel}.`;
 
     const optimal = typeof currentLevelMeta?.optimalBlocks === 'number' ? currentLevelMeta.optimalBlocks : null;
     if (optimal !== null) {
@@ -486,7 +453,7 @@
     'fontStyle': {
       'family': 'Montserrat, sans-serif',
       'weight': '600',
-      'size': 14
+      'size': 16
     }
   });
 
