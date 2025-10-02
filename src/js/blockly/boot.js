@@ -480,6 +480,13 @@
     return;
   }
 
+  // Adiciona uma classe específica para o tipo de atividade (Jardim ou Labirinto)
+  if (activity.blocks && activity.blocks.includes('maze.js')) {
+    document.body.classList.add('maze-activity');
+  } else {
+    document.body.classList.add('garden-activity');
+  }
+
   const instEl = document.getElementById('instText') || document.getElementById('instructions');
   if (instEl) instEl.textContent = '';
   const titleEl = document.getElementById('instTitle');

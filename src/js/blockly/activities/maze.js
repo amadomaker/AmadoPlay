@@ -13,7 +13,7 @@
   let runButton = null;
   let runButtonMode = 'run';
 
-  const TILE_SIZE = 64;
+  const TILE_SIZE = 45;
   const EXECUTION_SPEED = 250; // ms per step
   const PLAYER_SCALE = 0.85;
 
@@ -400,8 +400,15 @@
   }
 
   function createMazeControls() {
-    const controlsContainer = document.querySelector('.maze-stage');
-    if (!controlsContainer) return;
+    const mazePane = document.querySelector('.maze-pane');
+    if (!mazePane) return;
+
+    let controlsContainer = mazePane.querySelector('.maze-controls');
+    if (!controlsContainer) {
+      controlsContainer = document.createElement('div');
+      controlsContainer.className = 'maze-controls';
+      mazePane.appendChild(controlsContainer);
+    }
 
     runButton = document.createElement('button');
     runButton.id = 'runBtn';

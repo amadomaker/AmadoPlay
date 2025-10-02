@@ -1,4 +1,4 @@
-// src/js/blockly/blocks/maze.js
+ // src/js/blockly/blocks/maze.js
 
 // Block definitions
 const blockDefs = [
