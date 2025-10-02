@@ -85,16 +85,24 @@ body.orientation-lock {
 }
 
 /* Instruction bar */
-.inst-bar { position: sticky; top: 0; z-index: 6; padding: clamp(12px, 2vw, 18px) clamp(16px, 4vw, 32px) 0; position: relative; }
+.inst-bar {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  position: relative;
+  width: 100%;
+  padding: 0;
+  background: #fff;
+}
 .inst-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   background: linear-gradient(135deg, #4338ca, #7c3aed);
   color: #fdf4ff;
-  padding: 8px 16px;
-  border-radius: 18px 18px 0 0;
-  box-shadow: 0 10px 24px rgba(67, 56, 202, 0.25);
+  padding: clamp(10px, 2vw, 18px) clamp(16px, 4vw, 32px);
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .back-link { color: #fdf2f8; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 6px 12px; border-radius: 999px; background: rgba(244, 114, 182, 0.25); transition: background 0.2s ease; }
@@ -131,7 +139,14 @@ body.orientation-lock {
 .inst-actions { display:none; }
 .inst-btn { background:transparent; border:none; color:#e5e7eb; cursor:default; font-size:1.1rem; }
 
-.inst-panel { background: #ffffff; padding: clamp(6px, 1.2vw, 10px) clamp(10px, 2vw, 14px); border: 1px solid rgba(148, 163, 184, 0.18); border-top: none; border-radius: 0 0 18px 18px; box-shadow: 0 10px 22px rgba(67, 56, 202, 0.16); }
+.inst-panel {
+  background: #f8fafc;
+  padding: clamp(10px, 2vw, 18px) clamp(16px, 4vw, 32px);
+  border: none;
+  border-top: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 0;
+  box-shadow: none;
+}
 
 .inst-label {
   font-size: 0.82rem;
@@ -347,11 +362,9 @@ body.orientation-lock .orientation-prompt {
 }
 
 @media (max-width: 900px) {
-    .inst-bar {
-        padding: clamp(8px, 2vw, 14px) clamp(12px, 3.5vw, 20px) 0;
-    }
+    .inst-bar { padding: 0; }
     .inst-topbar {
-        padding: 8px 14px;
+        padding: clamp(10px, 3vw, 16px) clamp(14px, 4vw, 28px);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -380,7 +393,7 @@ body.orientation-lock .orientation-prompt {
         font-size: 0.72rem;
     }
     .inst-panel {
-        padding: clamp(8px, 3vw, 12px) clamp(12px, 4vw, 18px);
+        padding: clamp(10px, 3vw, 16px) clamp(14px, 4vw, 28px);
     }
     .inst-text {
         font-size: 0.88rem;
@@ -404,14 +417,12 @@ body.orientation-lock .orientation-prompt {
 }
 
 @media (max-width: 640px) {
-    .inst-bar {
-        padding: clamp(4px, 3.5vw, 6px) clamp(8px, 3.5vw, 12px) clamp(6px, 3vw, 9px);
-    }
+    .inst-bar { padding: 0; }
     .inst-topbar {
-        padding: clamp(8px, 3vw, 12px);
-        border-radius: 16px;
+        padding: clamp(10px, 4vw, 16px);
         background: linear-gradient(135deg, #4338ca, #7c3aed);
-        box-shadow: 0 8px 18px rgba(67, 56, 202, 0.22);
+        border-radius: 0;
+        box-shadow: none;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -445,8 +456,8 @@ body.orientation-lock .orientation-prompt {
         padding: 5px 12px;
     }
     .inst-panel {
-        padding: clamp(3px, 2vw, 5px) clamp(8px, 3.2vw, 11px);
-        border-radius: 12px;
+        padding: clamp(6px, 3vw, 10px) clamp(10px, 4vw, 18px);
+        border-radius: 0;
         margin-top: clamp(4px, 2vw, 6px);
     }
     .workspace-area {
@@ -470,14 +481,14 @@ body.orientation-lock .orientation-prompt {
 }
 
 @media (max-width: 480px){
-  .inst-bar { padding: clamp(3px, 3vw, 5px) clamp(6px, 3vw, 9px) clamp(6px, 3vw, 9px); }
-  .inst-topbar { padding: clamp(6px, 3vw, 9px); row-gap: clamp(3px, 1.5vw, 5px); border-radius: 14px; }
+  .inst-bar { padding: 0; }
+  .inst-topbar { padding: clamp(8px, 4vw, 12px); row-gap: clamp(3px, 1.5vw, 5px); border-radius: 0; box-shadow: none; }
   .back-link { margin: 0; }
   .inst-track { gap: clamp(2px, 1.5vw, 4px); }
   .inst-title { font-size: 0.74rem; }
   .inst-progress { font-size: 0.68rem; }
   .progress-dot { width: 14px; height: 14px; font-size: 0.5rem; }
-  .inst-panel { padding: clamp(2px, 1.8vw, 4px) clamp(6px, 2.5vw, 9px); border-radius: 9px; }
+    .inst-panel { padding: clamp(8px, 4vw, 14px) clamp(12px, 5vw, 20px); border-radius: 0; }
   .inst-label { font-size: 0.6rem; }
   .inst-text { font-size: 0.64rem; padding: 3px 6px; min-height: 20px; line-height: 1.24; }
   .workspace-area { padding: clamp(3px, 4.5vw, 6px); }
@@ -491,6 +502,74 @@ body.orientation-lock .orientation-prompt {
 @media (min-width: 1024px){
   .inst-text { font-size: 1.05rem; }
   #checkBtn { font-size: 1.1rem; }
+
+  .maze-activity .activity-shell {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(280px, max-content) minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-areas:
+      "topbar topbar"
+      "maze instructions"
+      "maze workspace";
+    column-gap: clamp(24px, 4vw, 48px);
+    row-gap: 0;
+    align-items: start;
+    padding: clamp(8px, 2.5vw, 20px) clamp(18px, 5vw, 40px) clamp(20px, 5vw, 44px);
+    box-sizing: border-box;
+  }
+
+  .maze-activity .inst-bar {
+    display: contents;
+  }
+
+  .maze-activity .inst-topbar {
+    grid-area: topbar;
+    position: sticky;
+    top: 0;
+    z-index: 7;
+  }
+
+  .maze-activity #instNext {
+    grid-area: topbar;
+    position: static;
+    justify-self: end;
+    align-self: center;
+    margin-right: clamp(16px, 4vw, 32px);
+  }
+
+  .maze-activity .inst-panel {
+    grid-area: instructions;
+    align-self: start;
+    margin-top: clamp(8px, 1vw, 14px);
+    position: sticky;
+    top: clamp(36px, 6vh, 68px);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: clamp(18px, 2.6vw, 26px);
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 20px;
+    box-shadow: 0 22px 44px -26px rgba(79, 70, 229, 0.22);
+    background: #f8fafc;
+    overflow: auto;
+    max-height: calc(100vh - clamp(136px, 22vh, 240px));
+  }
+
+  .maze-activity .workspace-area {
+    display: contents;
+  }
+
+  .maze-activity .maze-pane {
+    grid-area: maze;
+    align-self: start;
+  }
+
+  .maze-activity .workspace-canvas {
+    grid-area: workspace;
+    align-self: start;
+    width: 100%;
+  }
 }
 
 /* Layout para atividade de labirinto */
@@ -676,6 +755,16 @@ body.orientation-lock .orientation-prompt {
 
 .workspace-area:not(.maze-layout) .maze-pane {
   display: none;
+}
+
+@media (min-width: 1024px){
+  .maze-activity .workspace-area.maze-layout {
+    display: contents;
+  }
+
+  .maze-activity .workspace-area.maze-layout .workspace-canvas {
+    margin-top: clamp(14px, 1.4vw, 24px);
+  }
 }
 
 /*
