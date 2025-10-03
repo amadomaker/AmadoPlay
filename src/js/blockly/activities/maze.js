@@ -13,9 +13,23 @@
   let runButton = null;
   let runButtonMode = 'run';
 
-  const TILE_SIZE = 45;
+  const BASE_TILE_SIZE = 45;
+  let TILE_SIZE = BASE_TILE_SIZE;
   const EXECUTION_SPEED = 250; // ms per step
   const PLAYER_SCALE = 0.85;
+
+  const RESPONSIVE_PROFILES = [
+    { id: 'landscape-phone-xs', maxWidth: 640, tileScale: 0.48, blockScale: 0.54 },
+    { id: 'landscape-phone', maxWidth: 820, tileScale: 0.62, blockScale: 0.64 },
+    { id: 'landscape-small', maxWidth: 1024, tileScale: 0.8, blockScale: 0.82 },
+    { id: 'landscape-medium', maxWidth: 1180, tileScale: 0.9, blockScale: 0.9 },
+    { id: 'landscape-large', maxWidth: 1366, tileScale: 0.95, blockScale: 0.94 }
+  ];
+  const DEFAULT_PROFILE = { id: 'desktop', tileScale: 1, blockScale: 1 };
+  let currentResponsiveProfile = DEFAULT_PROFILE;
+  let currentConfigSnapshot = null;
+  let responsiveResizeTimer = null;
+  let responsiveHandlerAttached = false;
 
   const ASSET_BASE = '../src/assets/images/AnimalsFarmAndPuzzlePack';
   const TILE_TEXTURES = {
@@ -70,12 +84,98 @@
     }
   }
 
+  function computeResponsiveProfile() {
+    const width = window.innerWidth || document.documentElement.clientWidth || screen.width;
+    const height = window.innerHeight || document.documentElement.clientHeight || screen.height || width;
+    const landscapeWidth = Math.max(width, height);
+    let chosen = DEFAULT_PROFILE;
+    for (const profile of RESPONSIVE_PROFILES) {
+      if (landscapeWidth <= profile.maxWidth) {
+        chosen = profile;
+        break;
+      }
+    }
+    return chosen;
+  }
+
+  function applyResponsiveProfile({ force } = {}) {
+    const nextProfile = computeResponsiveProfile();
+    const profileChanged = force || !currentResponsiveProfile || currentResponsiveProfile.id !== nextProfile.id;
+    currentResponsiveProfile = nextProfile;
+
+    const nextTileSize = Math.round(BASE_TILE_SIZE * nextProfile.tileScale);
+    const tileChanged = nextTileSize !== TILE_SIZE;
+    TILE_SIZE = nextTileSize;
+
+    if (workspace) {
+      const currentScale = typeof workspace.getScale === 'function'
+        ? workspace.getScale()
+        : (workspace.scale || 1);
+      const shouldAdjustScale = profileChanged || Math.abs(currentScale - nextProfile.blockScale) > 0.01;
+
+      if (shouldAdjustScale) {
+        if (typeof workspace.zoomToScale === 'function') {
+          workspace.zoomToScale(nextProfile.blockScale);
+        } else if (typeof workspace.setScale === 'function') {
+          workspace.setScale(nextProfile.blockScale);
+        }
+      }
+
+      const flyout = typeof workspace.getFlyout === 'function' ? workspace.getFlyout() : null;
+      if (flyout) {
+        const flyoutScaleTarget = nextProfile.blockScale;
+        if (typeof flyout.setScale === 'function') flyout.setScale(flyoutScaleTarget);
+
+        let flyoutWidth = null;
+        if (nextProfile.id === 'landscape-phone-xs') flyoutWidth = 120;
+        else if (nextProfile.id === 'landscape-phone') flyoutWidth = 150;
+        else if (nextProfile.id === 'landscape-small') flyoutWidth = 190;
+
+        if (flyoutWidth) {
+          if (typeof flyout.setWidth === 'function') {
+            flyout.setWidth(flyoutWidth);
+          } else if (flyout.svgGroup_) {
+            flyout.svgGroup_.style.width = `${flyoutWidth}px`;
+          }
+        }
+
+        if (typeof flyout.relayout === 'function') flyout.relayout();
+        else if (typeof flyout.reflow === 'function') flyout.reflow();
+      }
+
+      if (shouldAdjustScale && typeof workspace.scrollCenter === 'function') workspace.scrollCenter();
+      if (window.Blockly && typeof Blockly.svgResize === 'function') {
+        Blockly.svgResize(workspace);
+      }
+    }
+
+    return profileChanged || tileChanged;
+  }
+
+  function scheduleResponsiveUpdate() {
+    clearTimeout(responsiveResizeTimer);
+    responsiveResizeTimer = setTimeout(() => {
+      const changed = applyResponsiveProfile();
+      if (changed && currentConfigSnapshot) {
+        if (playerElement && playerElement.parentNode) {
+          playerElement.parentNode.removeChild(playerElement);
+        }
+        playerElement = null;
+        renderMaze(currentConfigSnapshot);
+      } else if (workspace && window.Blockly && typeof Blockly.svgResize === 'function') {
+        Blockly.svgResize(workspace);
+      }
+    }, 160);
+  }
+
   function renderMaze(config) {
+    applyResponsiveProfile();
     maze = config.layout;
     startConfig = { ...config.start };
     player = { ...startConfig };
     obstacles = config.obstacles || [];
     currentLevelMeta = config.meta || {};
+    currentConfigSnapshot = config;
 
     const workspaceArea = document.querySelector('.workspace-area');
     if (workspaceArea) workspaceArea.classList.add('maze-layout');
@@ -85,6 +185,11 @@
       console.error("Container do labirinto (.maze-stage) não encontrado!");
       return;
     }
+    if (playerElement && playerElement.parentNode) {
+      playerElement.parentNode.removeChild(playerElement);
+    }
+    playerElement = null;
+
     mazeContainer.innerHTML = ''; // Limpa o container do stage
 
     let grid = document.createElement('div');
@@ -165,6 +270,8 @@
       playerElement.style.pointerEvents = 'none';
       playerElement.style.zIndex = '5';
       playerElement.style.transition = `transform ${EXECUTION_SPEED * 0.9}ms ease-in-out, background-image 100ms step-end`;
+      gridContainer.appendChild(playerElement);
+    } else if (playerElement.parentNode !== gridContainer) {
       gridContainer.appendChild(playerElement);
     }
 
@@ -471,6 +578,8 @@
           theme: childFriendlyTheme
         });
 
+        applyResponsiveProfile({ force: true });
+
         if (workspace && typeof Blockly.svgResize === 'function') {
           requestAnimationFrame(() => Blockly.svgResize(workspace));
         }
@@ -482,6 +591,24 @@
 
       renderMaze(config);
       createMazeControls();
+
+      if (!responsiveHandlerAttached) {
+        window.addEventListener('resize', scheduleResponsiveUpdate);
+        responsiveHandlerAttached = true;
+
+        if (window.matchMedia && typeof window.matchMedia === 'function') {
+          try {
+            const landscapeWatcher = window.matchMedia('(orientation: landscape)');
+            if (landscapeWatcher && typeof landscapeWatcher.addEventListener === 'function') {
+              landscapeWatcher.addEventListener('change', scheduleResponsiveUpdate);
+            } else if (landscapeWatcher && typeof landscapeWatcher.addListener === 'function') {
+              landscapeWatcher.addListener(scheduleResponsiveUpdate);
+            }
+          } catch (_) {
+            // Ignora navegadores sem suporte a matchMedia
+          }
+        }
+      }
 
       ActivityUtils.setInstructions(config.instructions || 'Monte os blocos para levar o personagem ao seu objetivo.');
       ActivityUtils.setProgress(config.progress, activityId);

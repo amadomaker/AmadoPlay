@@ -367,15 +367,15 @@ body.orientation-lock .orientation-prompt {
 
 /* Responsividade */
 @media (max-width: 1200px) {
-  .workspace-area.maze-layout {
+  body:not(.maze-activity) .workspace-area.maze-layout {
     grid-template-columns: 1fr;
   }
 
-  .maze-stage {
+  body:not(.maze-activity) .maze-stage {
     min-height: 240px;
   }
 
-  .workspace-area.maze-layout .workspace-canvas {
+  body:not(.maze-activity) .workspace-area.maze-layout .workspace-canvas {
     min-height: 440px;
     max-width: none;
   }
@@ -498,6 +498,196 @@ body.orientation-lock .orientation-prompt {
     .orientation-card {
         width: min(260px, 78vw);
     }
+}
+
+/* Responsividade específica do labirinto: manter layout side-by-side e apenas escalar */
+@media (max-width: 1200px) {
+  .maze-activity .activity-shell {
+    grid-template-columns: minmax(220px, 34vw) 1fr;
+    padding: clamp(4px, 1.2vw, 12px) clamp(12px, 3.2vw, 24px) clamp(10px, 2.4vw, 18px);
+  }
+
+  .maze-activity .inst-topbar {
+    padding: clamp(4px, 1.1vw, 10px) clamp(14px, 3.4vw, 26px);
+    margin-inline: calc(-1 * clamp(12px, 3.2vw, 24px));
+  }
+
+  .maze-activity .inst-panel {
+    padding: clamp(6px, 1.4vw, 14px);
+    max-height: clamp(170px, 28vh, 220px);
+  }
+
+  .maze-activity .inst-text {
+    font-size: clamp(0.78rem, 1.7vw, 0.92rem);
+  }
+
+  .maze-activity .workspace-area.maze-layout {
+    column-gap: clamp(4px, 1vw, 12px);
+  }
+
+  .maze-activity .workspace-area.maze-layout .workspace-canvas {
+    min-height: clamp(460px, 70vh, 640px);
+  }
+
+  .maze-activity .workspace-area.maze-layout #blocklyDiv {
+    padding: 0 0 clamp(16px, 2.1vw, 24px);
+  }
+}
+
+@media (max-width: 900px) {
+  .maze-activity .activity-shell {
+    grid-template-columns: minmax(210px, 38vw) 1fr;
+    padding: clamp(4px, 1.4vw, 12px) clamp(10px, 3vw, 22px) clamp(8px, 2vw, 16px);
+    row-gap: clamp(6px, 1.8vw, 14px);
+  }
+
+  .maze-activity .inst-topbar {
+    padding: clamp(4px, 1.3vw, 11px) clamp(12px, 3.2vw, 22px);
+    margin-inline: calc(-1 * clamp(10px, 3vw, 22px));
+  }
+
+  .maze-activity .inst-panel {
+    max-height: clamp(160px, 32vh, 210px);
+    padding: clamp(5px, 1.3vw, 12px);
+  }
+
+  .maze-activity .inst-label {
+    font-size: clamp(0.68rem, 1.5vw, 0.78rem);
+  }
+
+  .maze-activity .inst-text {
+    font-size: clamp(0.74rem, 1.6vw, 0.88rem);
+  }
+
+  .maze-activity .workspace-area.maze-layout .workspace-canvas {
+    min-height: clamp(430px, 68vh, 600px);
+  }
+
+  .maze-activity .workspace-area.maze-layout #blocklyDiv {
+    padding: 0 0 clamp(14px, 2vw, 22px);
+  }
+}
+
+@media (max-width: 768px) {
+  .maze-activity .activity-shell {
+    grid-template-columns: minmax(200px, 42vw) 1fr;
+    padding: clamp(2px, 1vw, 10px) clamp(8px, 2.8vw, 18px) clamp(6px, 1.8vw, 14px);
+  }
+
+  .maze-activity .inst-topbar {
+    padding: clamp(3px, 1vw, 9px) clamp(10px, 2.8vw, 18px);
+    margin-inline: calc(-1 * clamp(8px, 2.8vw, 18px));
+  }
+
+  .maze-activity .inst-panel {
+    max-height: clamp(150px, 34vh, 200px);
+    padding: clamp(4px, 1.2vw, 11px);
+  }
+
+  .maze-activity .inst-text {
+    font-size: clamp(0.7rem, 1.5vw, 0.84rem);
+  }
+
+  .maze-activity .workspace-area.maze-layout {
+    column-gap: clamp(2px, 0.8vw, 8px);
+  }
+
+  .maze-activity .workspace-area.maze-layout .workspace-canvas {
+    min-height: clamp(400px, 66vh, 560px);
+  }
+
+  .maze-activity .workspace-area.maze-layout #blocklyDiv {
+    padding: 0 0 clamp(12px, 1.8vw, 20px);
+  }
+
+  .maze-activity .blockly-labels .workspace-label {
+    font-size: clamp(1rem, 2.3vw, 1.2rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .maze-activity .activity-shell {
+    grid-template-columns: minmax(100px, 28vw) 1fr;
+    padding: clamp(1px, 0.9vw, 8px) clamp(4px, 1.8vw, 12px) clamp(5px, 1.4vw, 10px);
+    row-gap: clamp(3px, 1.2vw, 10px);
+  }
+
+  .maze-activity .inst-topbar {
+    padding: clamp(3px, 0.8vw, 7px) clamp(8px, 2vw, 14px);
+    margin-inline: calc(-1 * clamp(5px, 2vw, 14px));
+  }
+
+  .maze-activity .inst-panel {
+    max-height: clamp(140px, 34vh, 190px);
+    padding: clamp(4px, 1.1vw, 10px);
+  }
+
+  .maze-activity .inst-text {
+    font-size: clamp(0.68rem, 1.4vw, 0.8rem);
+  }
+
+  .maze-activity .workspace-area.maze-layout {
+    grid-template-columns: minmax(115px, 28vw) 1fr;
+    column-gap: clamp(0px, 0.2vw, 2px);
+  }
+
+  .maze-activity .maze-stage {
+    padding: clamp(2px, 0.5vw, 4px);
+  }
+
+  .maze-activity .workspace-area.maze-layout .workspace-canvas {
+    min-height: clamp(260px, 52vh, 400px);
+  }
+
+  .maze-activity .workspace-area.maze-layout #blocklyDiv {
+    padding: 0 0 clamp(4px, 0.8vw, 10px);
+  }
+
+  .maze-activity .blockly-labels .workspace-label {
+    font-size: clamp(0.84rem, 1.6vw, 1rem);
+  }
+}
+
+@media (max-width: 540px) {
+  .maze-activity .activity-shell {
+    grid-template-columns: minmax(90px, 24vw) 1fr;
+    padding: clamp(1px, 0.7vw, 6px) clamp(3px, 1.6vw, 10px) clamp(4px, 1.2vw, 9px);
+  }
+
+  .maze-activity .inst-topbar {
+    padding: clamp(2px, 0.7vw, 6px) clamp(7px, 1.8vw, 11px);
+    margin-inline: calc(-1 * clamp(4px, 1.8vw, 11px));
+  }
+
+  .maze-activity .inst-panel {
+    max-height: clamp(120px, 34vh, 160px);
+    padding: clamp(3px, 0.9vw, 8px);
+  }
+
+  .maze-activity .inst-text {
+    font-size: clamp(0.6rem, 1.1vw, 0.72rem);
+  }
+
+  .maze-activity .workspace-area.maze-layout {
+    grid-template-columns: minmax(105px, 24vw) 1fr;
+    column-gap: clamp(0px, 0.15vw, 2px);
+  }
+
+  .maze-activity .maze-stage {
+    padding: clamp(2px, 0.4vw, 3px);
+  }
+
+  .maze-activity .workspace-area.maze-layout .workspace-canvas {
+    min-height: clamp(240px, 50vh, 380px);
+  }
+
+  .maze-activity .workspace-area.maze-layout #blocklyDiv {
+    padding: 0 0 clamp(2px, 0.6vw, 8px);
+  }
+
+  .maze-activity .blockly-labels .workspace-label {
+    font-size: clamp(0.78rem, 1.3vw, 0.92rem);
+  }
 }
 
 @media (max-width: 480px){
