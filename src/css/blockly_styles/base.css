@@ -73,15 +73,35 @@ body.orientation-lock {
   transform: translateX(-50%);
 }
 
-.blocklySvg { position: absolute !important; left: 0 !important; top: 0 !important; background: transparent !important; }
-.blocklyMainBackground { fill: transparent !important; }
+.blocklySvg {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: transparent !important;
+}
+
+.blocklyMainBackground {
+  fill: transparent !important;
+  width: 100% !important;
+  height: 100% !important;
+}
 
 #checkBtn { display: none; }
 
 #feedback {
-  position: fixed; right: 24px; bottom: 24px; z-index: 3;
-  font-size: 1.2em; font-weight: bold; background: rgba(255,255,255,0.7);
-  padding: 8px 12px; border-radius: 12px;
+  position: fixed;
+  right: 18px;
+  bottom: 32px;
+  z-index: 1200;
+  font-size: 1.15em;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.78);
+  padding: 8px 14px;
+  border-radius: 10px;
+  pointer-events: none;
+  box-shadow: 0 12px 28px -20px rgba(15, 23, 42, 0.45);
 }
 
 /* Instruction bar */
@@ -512,10 +532,10 @@ body.orientation-lock .orientation-prompt {
       "topbar topbar"
       "maze instructions"
       "maze workspace";
-    column-gap: clamp(24px, 4vw, 48px);
+    column-gap: clamp(4px, 1.2vw, 18px);
     row-gap: 0;
     align-items: start;
-    padding: clamp(8px, 2.5vw, 20px) clamp(18px, 5vw, 40px) clamp(20px, 5vw, 44px);
+    padding: 0 clamp(12px, 3.4vw, 28px) clamp(8px, 2.4vw, 20px);
     box-sizing: border-box;
   }
 
@@ -528,6 +548,9 @@ body.orientation-lock .orientation-prompt {
     position: sticky;
     top: 0;
     z-index: 7;
+    padding: clamp(3px, 0.9vw, 9px) clamp(14px, 3.6vw, 28px);
+    margin-inline: calc(-1 * clamp(12px, 3.4vw, 28px));
+    border-radius: 0;
   }
 
   .maze-activity #instNext {
@@ -541,19 +564,19 @@ body.orientation-lock .orientation-prompt {
   .maze-activity .inst-panel {
     grid-area: instructions;
     align-self: start;
-    margin-top: clamp(8px, 1vw, 14px);
+    margin-top: 0;
     position: sticky;
-    top: clamp(36px, 6vh, 68px);
+    top: clamp(24px, 4.5vh, 48px);
     width: 100%;
-    max-width: 100%;
+    max-width: none;
     box-sizing: border-box;
-    padding: clamp(18px, 2.6vw, 26px);
+    padding: clamp(8px, 1.6vw, 18px);
     border: 1px solid rgba(148, 163, 184, 0.28);
-    border-radius: 20px;
+    border-radius: 0;
     box-shadow: 0 22px 44px -26px rgba(79, 70, 229, 0.22);
     background: #f8fafc;
     overflow: auto;
-    max-height: calc(100vh - clamp(136px, 22vh, 240px));
+    max-height: 220px;
   }
 
   .maze-activity .workspace-area {
@@ -576,8 +599,8 @@ body.orientation-lock .orientation-prompt {
 .workspace-area.maze-layout {
   display: grid;
   grid-template-columns: minmax(280px, max-content) 1fr;
-  column-gap: 0;
-  row-gap: clamp(12px, 3vw, 20px);
+  column-gap: clamp(2px, 0.6vw, 10px);
+  row-gap: clamp(4px, 1.2vw, 12px);
   align-items: stretch;
   justify-content: start;
   max-width: min(100%, 1500px);
@@ -606,7 +629,7 @@ body.orientation-lock .orientation-prompt {
 .maze-stage {
   background: linear-gradient(135deg, #f8fafc, #eef2ff);
   border-radius: 18px;
-  padding: 0.85rem;
+  padding: clamp(8px, 1.2vw, 12px);
   box-shadow: 0 16px 32px -20px rgba(30, 41, 59, 0.55);
   display: flex;
   flex-direction: column;
@@ -664,16 +687,16 @@ body.orientation-lock .orientation-prompt {
   font-family: 'Baloo 2', cursive;
   font-size: 1.05rem;
   font-weight: 600;
-  border-radius: 999px;
-  padding: 0.75rem 1.9rem;
+  border-radius: 10px;
+  padding: 0.68rem 1.7rem;
   cursor: pointer;
-  box-shadow: 0 10px 16px -12px rgba(15, 118, 110, 0.9);
+  box-shadow: 0 10px 18px -14px rgba(15, 118, 110, 0.78);
   transition: transform 120ms ease, box-shadow 120ms ease, background 160ms ease;
 }
 
 .maze-run-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 16px 22px -16px rgba(15, 118, 110, 0.9);
+  box-shadow: 0 18px 24px -18px rgba(15, 118, 110, 0.78);
 }
 
 .maze-run-btn:active {
@@ -682,7 +705,7 @@ body.orientation-lock .orientation-prompt {
 
 .maze-run-btn.is-reset {
   background: linear-gradient(135deg, #6366f1, #4338ca);
-  box-shadow: 0 10px 16px -12px rgba(99, 102, 241, 0.9);
+  box-shadow: 0 10px 18px -14px rgba(99, 102, 241, 0.78);
 }
 
 .maze-run-btn:disabled {
@@ -699,20 +722,21 @@ body.orientation-lock .orientation-prompt {
   display: flex;
   flex-direction: column;
   width: 100%;
+  max-width: none;
+  box-sizing: border-box;
   justify-self: stretch;
   align-self: stretch;
-  min-height: clamp(560px, calc(100vh - 220px), 760px);
+  min-height: clamp(500px, calc(100vh - 260px), 680px);
   height: auto;
   overflow: visible;
-  margin-top: 2px;
 }
 
 .blockly-labels {
   display: flex;
   justify-content: space-around;
   background: #f1f3f4;
-  border-radius: 12px 12px 0 0;
-  border-bottom: 1px solid #ddd;
+  border-radius: 8px 8px 0 0;
+  border-bottom: 1px solid #e2e8f0;
   overflow: hidden;
 }
 
@@ -737,12 +761,12 @@ body.orientation-lock .orientation-prompt {
 .workspace-area.maze-layout #blocklyDiv {
   position: static;
   flex: 1 1 auto;
-  height: 100%;
-  min-height: clamp(560px, calc(100vh - 220px), 760px);
+  min-height: 0;
   width: 100%;
   min-width: 100%;
-  padding-bottom: 80px;
-  padding-right: clamp(40px, 4vw, 72px);
+  margin: 0;
+  box-sizing: border-box;
+  padding: 0 0 clamp(18px, 2.2vw, 26px);
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -763,7 +787,7 @@ body.orientation-lock .orientation-prompt {
   }
 
   .maze-activity .workspace-area.maze-layout .workspace-canvas {
-    margin-top: clamp(14px, 1.4vw, 24px);
+    margin-top: 0;
   }
 }
 
@@ -781,7 +805,8 @@ body.orientation-lock .orientation-prompt {
 /* 2. Reduz a altura e o padding do painel de texto das instruções */
 .maze-activity .inst-text {
   min-height: 20px;
-  padding: clamp(4px, 1.2vw, 8px);
+  padding: clamp(2px, 0.9vw, 5px);
+  border-radius: 0;
 }
 
 /* 3. Remove o padding superior da área principal do workspace */

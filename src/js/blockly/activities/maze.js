@@ -470,6 +470,11 @@
           renderer: 'zelos',
           theme: childFriendlyTheme
         });
+
+        if (workspace && typeof Blockly.svgResize === 'function') {
+          requestAnimationFrame(() => Blockly.svgResize(workspace));
+        }
+
       } catch (e) {
         console.error('[Maze] Error initializing Blockly workspace:', e);
         if (ActivityUtils) ActivityUtils.feedback('Erro ao carregar a área de blocos.', false);
