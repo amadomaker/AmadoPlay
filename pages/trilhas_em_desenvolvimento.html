@@ -2,61 +2,17 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  
-  <!-- Performance e SEO -->
-  <title>AmadoPlay - Plataforma Educacional Interativa</title>
-  <meta name="description" content="Transforme o aprendizado em uma aventura com ferramentas educacionais interativas para todas as idades. Matemática, Português, Ciências e muito mais!" />
-  <meta name="keywords" content="educação, ferramentas educacionais, matemática, português, ciências, ábaco digital, material dourado" />
-  <meta name="author" content="AMADO TECNOLOGIA LTDA" />
-  
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="AmadoPlay - Plataforma Educacional Interativa" />
-  <meta property="og:description" content="Ferramentas interativas e atividades educacionais para engajar alunos de todas as idades" />
-  <meta property="og:url" content="https://amadoplay.com" />
-  <meta property="og:site_name" content="AmadoPlay" />
-  
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="AmadoPlay - Plataforma Educacional" />
-  <meta name="twitter:description" content="Transforme o aprendizado em uma aventura com ferramentas educacionais interativas" />
-  
-  <!-- Performance otimization -->
-  <meta name="theme-color" content="#667eea" />
-  <meta name="robots" content="index, follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trilhas em Desenvolvimento • AmadoPlay</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="dns-prefetch" href="//www.youtube.com" />
-  
-  <!-- PWA -->
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="AmadoPlay" />
-  
-  <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  
-  <!-- CSS -->
-  <link rel="stylesheet" href="src/css/main.css" />
-  <link rel="stylesheet" href="src/css/global.css" />
-  
-  <!-- Preload critical resources -->
-  <link rel="preload" href="src/assets/images/Diyogo-02.png" as="image" type="image/png" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../src/css/main.css" />
+  <link rel="stylesheet" href="../src/css/global.css" />
+  <link rel="stylesheet" href="../src/css/curriculum.css" />
+  <link rel="stylesheet" href="../src/css/trilhas-placeholder.css" />
 </head>
-<body>
-  <!-- Formas flutuantes otimizadas -->
-  <div class="floating-shapes" aria-hidden="true">
-    <div class="shape" role="presentation"></div>
-    <div class="shape" role="presentation"></div>
-    <div class="shape" role="presentation"></div>
-    <div class="shape" role="presentation"></div>
-    <div class="shape" role="presentation"></div>
-    <div class="shape" role="presentation"></div>
-  </div>
-  
+<body class="coming-soon-page learn-page">
   <!-- HEADER -->
   <header class="main-header" role="banner">
     <div class="header-top">
@@ -64,7 +20,7 @@
         <!-- Logo -->
         <div class="logo-section">
           <img 
-            src="src/assets/images/Diyogo-02.png" 
+            src="../src/assets/images/Diyogo-02.png" 
             alt="Logo AmadoPlay - Plataforma Educacional Interativa" 
             width="90" 
             height="90"
@@ -112,7 +68,7 @@
     <nav class="main-nav" role="navigation" id="main-navigation" aria-label="Menu principal">
       <ul class="nav-menu">
         <li class="nav-item">
-          <a href="#" class="nav-link" aria-current="page">
+          <a href="../index.html" class="nav-link">
             <span class="nav-icon" aria-hidden="true">🏠</span>
             <span>Início</span>
           </a>
@@ -205,13 +161,13 @@
         </li>
 
         <li class="nav-item">
-          <a href="pages/trilhas_em_desenvolvimento.html" class="nav-link">
+          <a href="trilhas_em_desenvolvimento.html" class="nav-link" aria-current="page">
             <span class="nav-icon" aria-hidden="true">💡</span>
             <span>Trilhas Computação</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="../pages/quem_somos.html" class="nav-link">
+          <a href="quem_somos.html" class="nav-link">
             <span class="nav-icon" aria-hidden="true">ℹ️</span>
             <span>Quem Somos</span>
           </a>
@@ -220,180 +176,31 @@
     </nav>
   </header>
 
-  <!-- HERO -->
-  <section class="hero-section" role="banner">
-    <div class="hero-content">
-      <h1 class="hero-title">Transforme o Aprendizado em uma Aventura</h1>
-      <!--<p class="hero-subtitle">Ferramentas interativas e atividades educacionais para engajar alunos de todas as idades</p>-->
-    </div>
-  </section>
-
-  <!-- CONTEÚDO PRINCIPAL -->
-  <main class="main-container" role="main">
-    <section class="filters-section" id="filters-section">
-  <!-- Contadores e Controles Principais -->
-  <div class="filters-header">
-    <div class="results-info">
-      <span id="results-count" aria-live="polite">0 ferramentas encontradas</span>
-      <div class="logic-toggle">
-        <label class="toggle-switch">
-          <input type="radio" name="logic" value="AND" checked>
-          <span>E (todos)</span>
-        </label>
-        <label class="toggle-switch">
-          <input type="radio" name="logic" value="OR">
-          <span>OU (qualquer)</span>
-        </label>
+  <main class="coming-soon-main" role="main">
+    <section class="coming-soon-card" aria-labelledby="coming-soon-title">
+      <div class="coming-soon-icon" aria-hidden="true">
+        <span>🚧</span>
       </div>
-    </div>
-    <div class="filters-actions">
-      <select id="sort-select" class="sort-select">
-        <option value="popular">Mais usados</option>
-        <option value="alphabetic">Alfabética</option>
-        <option value="recent">Mais recentes</option>
-        <option value="difficulty">Dificuldade</option>
-      </select>
-      <button id="clear-filters" class="clear-btn">Limpar filtros</button>
-    </div>
-  </div>
-
-  <!-- Busca com Autocomplete -->
-  <div class="search-container">
-    <div class="search-wrapper">
-      <input type="text" id="main-search" placeholder="Buscar por título, descrição ou tags..." class="search-input">
-      <div id="autocomplete-dropdown" class="autocomplete-dropdown hidden"></div>
-    </div>
-  </div>
-
-  <!-- Toggle só para mobile/tablet -->
-  <div class="filters-mobile-toggle">
-    <button id="toggle-filters" class="btn-filters" aria-expanded="false" aria-controls="filters-content">
-      <span class="label">Filtros</span>
-      <span class="badge" id="active-filters-count">0</span>
-    </button>
-
-  </div>
-  <div id="filters-content" class="filters-content is-collapsed">
-  <!-- Filtros -->
-  <div class="filters-grid">
-    <!-- Matéria -->
-    <div class="filter-group">
-      <h4>Área do Conhecimento</h4>
-      <div class="filter-chips" data-filter="materia">
-        <label class="chip"><input type="checkbox" value="matematica"><span>Matemática</span></label>
-        <label class="chip"><input type="checkbox" value="portugues"><span>Português</span></label>
-        <label class="chip"><input type="checkbox" value="ciencias"><span>Ciências</span></label>
-        <label class="chip"><input type="checkbox" value="geografia"><span>Geografia</span></label>
-        <label class="chip"><input type="checkbox" value="historia"><span>História</span></label>
-        <label class="chip"><input type="checkbox" value="multidisciplinar"><span>Multidisciplinar</span></label>
-        <label class="chip"><input type="checkbox" value="artes"><span>Artes</span></label>
-        <label class="chip"><input type="checkbox" value="educacao_fisica"><span>Educação Física</span></label>
-        <label class="chip"><input type="checkbox" value="lingua_estrangeira"><span>Língua Estrangeira</span></label>
+      <h1 id="coming-soon-title">Trilhas de Computação em Desenvolvimento</h1>
+      <p>
+        Estamos finalizando uma experiência super especial para as trilhas de computação. Enquanto isso,
+        você pode explorar os outros conteúdos da plataforma.
+      </p>
+      <div class="coming-soon-actions">
+        <a class="primary" href="../index.html">Ir para a página inicial</a>
       </div>
-    </div>
-
-    <!-- Série -->
-    <div class="filter-group">
-      <h4>Ano de Escolaridade</h4>
-      <div class="range-filter">
-        <label>De: <select id="serie-min">
-          <option value="">Todas</option>
-          <option value="0">E. Infantil</option>
-          <option value="1">1º ano</option>
-          <option value="2">2º ano</option>
-          <option value="3">3º ano</option>
-          <option value="4">4º ano</option>
-          <option value="5">5º ano</option>
-          <option value="6">6º ano</option>
-          <option value="7">7º ano</option>
-          <option value="8">8º ano</option>
-          <option value="9">9º ano</option>
-          <option value="10">EJA</option>
-          <option value="11">Ensino Médio</option>
-        </select></label>
-        <label>Até: <select id="serie-max">
-          <option value="">Todas</option>
-          <option value="0">E. Infantil</option>
-          <option value="1">1º ano</option>
-          <option value="2">2º ano</option>
-          <option value="3">3º ano</option>
-          <option value="4">4º ano</option>
-          <option value="5">5º ano</option>
-          <option value="6">6º ano</option>
-          <option value="7">7º ano</option>
-          <option value="8">8º ano</option>
-          <option value="9">9º ano</option>
-          <option value="10">EJA</option>
-          <option value="11">Ensino Médio</option>
-        </select></label>
-      </div>
-    </div>
-
-    <!-- Tipo -->
-    <div class="filter-group">
-      <h4>Tipo de Recurso</h4>
-      <div class="filter-chips" data-filter="tipo">
-        <label class="chip"><input type="checkbox" value="interativo"><span>Interativo</span></label>
-        <label class="chip"><input type="checkbox" value="visual"><span>Visual</span></label>
-        <label class="chip"><input type="checkbox" value="auditivo"><span>Auditivo</span></label>
-        <label class="chip"><input type="checkbox" value="pratico"><span>Prático</span></label>
-      </div>
-    </div>
-
-    <!-- Dificuldade -->
-    <div class="filter-group">
-      <h4>Dificuldade</h4>
-      <div class="filter-chips" data-filter="dificuldade">
-        <label class="chip"><input type="radio" name="dificuldade" value="basico"><span>Básico</span></label>
-        <label class="chip"><input type="radio" name="dificuldade" value="intermediario"><span>Intermediário</span></label>
-        <label class="chip"><input type="radio" name="dificuldade" value="avancado"><span>Avançado</span></label>
-      </div>
-    </div>
-  </div>
-  </div>
-
-
-
-  
-  <!-- Cabeçalho da listagem -->
-  <section class="cards-intro" aria-labelledby="tools-title">
-    <h2 id="tools-title">Nossas ferramentas interativas</h2>
-  
-    <!-- <p class="cards-subtitle">Explore por matéria, série, tipo e dificuldade</p> -->
-  </section>
-
-    <!-- Lista de Cards -->
-  <section class="cards-section" aria-label="Resultados">
-      <!-- Estado Vazio -->
-      <div id="empty-state" class="empty-state hidden">
-        <div class="empty-content">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="11" cy="11" r="8"/>
-            <path d="M21 21l-4.35-4.35"/>
-          </svg>
-          <h3>Nenhuma ferramenta encontrada</h3>
-          <p>Tente ajustar os filtros ou buscar por outros termos.</p>
-          <button id="reset-search" class="reset-btn">Limpar busca e filtros</button>
-        </div>
-      </div>
-    <div class="cards-grid" aria-live="polite"></div>
-  </section>
-
-  
-</section>
-
-  
+    </section>
   </main>
 
   <!-- Rodapé -->
   <footer class="footer" role="contentinfo">
     <div class="footer-content">
       <nav class="footer-links" aria-label="Links do rodapé">
-        <a href="pages/privacidade.html">Política de Privacidade</a>
+        <a href="privacidade.html">Política de Privacidade</a>
         <span class="separator" aria-hidden="true">•</span>
-        <a href="pages/termos_de_uso.html">Termos de Uso</a>
+        <a href="termos_de_uso.html">Termos de Uso</a>
         <span class="separator" aria-hidden="true">•</span>
-        <a href="pages/contato.html">Contato</a>
+        <a href="contato.html">Contato</a>
       </nav>
       <div class="footer-copyright">
         <p>&copy; 2025 AMADO TECNOLOGIA LTDA (AMADOTEC). Todos os direitos reservados.</p>
@@ -505,27 +312,8 @@
     }
   </style>
 
-  <!-- Scripts otimizados para abrir as ferramentas -->
-   
-  <script>
-
-
-
-    // Service Worker otimizado
-    //if ('serviceWorker' in navigator) {
-      //window.addEventListener('load', () => {
-        //navigator.serviceWorker.register('/AmadoPlay/service-worker.js')
-          //.then(reg => console.log('Service Worker registrado:', reg))
-          //.catch(err => console.error('Erro ao registrar o Service Worker:', err));
-      //});
-    //}
-  </script>
-  <!-- ===========================
-      Widget de Acessibilidade
-      =========================== -->
-
-  <!-- Botão Flutuante de Acessibilidade -->
-  <button
+  <!-- Botão de acessibilidade flutuante -->
+  <button 
     class="accessibility-float-btn"
     id="accessibilityFloatBtn"
     aria-label="Abrir menu de acessibilidade"
@@ -533,10 +321,9 @@
     aria-expanded="false"
     onclick="toggleAccessibilityPanel()"
   >
-  <span class="accessibility-icon" aria-hidden="true">
-    <img src="src/assets/images/icon-acessibilidade.png" alt="">
-  </span>
-
+    <span class="accessibility-icon" aria-hidden="true">
+      <img src="../src/assets/images/icon-acessibilidade.png" alt="">
+    </span>
   </button>
 
   <!-- Overlay -->
@@ -700,11 +487,8 @@
   </script>
 
   <!-- Script principal carregado de forma assíncrona -->
-  <script src="src/js/educational-tools-data.js" defer></script>
-  <script src="src/js/index.js" defer></script>
-  <script src="src/js/acessibilidade.js" defer></script>
-
-
-
+  <script src="../src/js/educational-tools-data.js" defer></script>
+  <script src="../src/js/index.js" defer></script>
+  <script src="../src/js/acessibilidade.js" defer></script>
 </body>
 </html>
