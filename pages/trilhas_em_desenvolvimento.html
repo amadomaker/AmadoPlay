@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trilhas em Desenvolvimento • AmadoPlay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../src/css/main.css" />
+  <link rel="stylesheet" href="../src/css/global.css" />
+  <link rel="stylesheet" href="../src/css/curriculum.css" />
+  <link rel="stylesheet" href="../src/css/trilhas-placeholder.css" />
+</head>
+<body class="coming-soon-page learn-page">
+  <!-- HEADER -->
+  <header class="main-header" role="banner">
+    <div class="header-top">
+      <div class="header-container">
+        <!-- Logo -->
+        <div class="logo-section">
+          <img 
+            src="../src/assets/images/Diyogo-02.png" 
+            alt="Logo AmadoPlay - Plataforma Educacional Interativa" 
+            width="90" 
+            height="90"
+            loading="eager"
+          />
+          <div class="logo-text">
+            <h1>AmadoPlay</h1>
+            <p>Plataforma Educacional Interativa</p>
+          </div>
+        </div>
+
+        <!-- Ações topo -->
+        <div class="nav-actions">
+          <div class="search-bar" role="search">
+            <label for="search-input" class="sr-only">Buscar ferramentas e atividades</label>
+            <input 
+              type="text" 
+              id="search-input"
+              placeholder="Buscar ferramentas, atividades…" 
+              aria-label="Campo de busca"
+              autocomplete="off"
+            />
+            <button type="submit" aria-label="Buscar">🔍</button>
+          </div>
+          <div class="user-menu">
+            <button class="btn-login" aria-label="Fazer login na plataforma">Entrar</button>
+          </div>
+        </div>
+
+        <!-- Botão mobile -->
+        <button 
+          class="mobile-menu-toggle" 
+          aria-label="Abrir menu de navegação"
+          aria-expanded="false"
+          aria-controls="main-navigation"
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MENU PRINCIPAL -->
+    <nav class="main-nav" role="navigation" id="main-navigation" aria-label="Menu principal">
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="../index.html" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">🏠</span>
+            <span>Início</span>
+          </a>
+        </li>
+        
+        <!-- Área do Conhecimento -->
+        <li class="nav-item dropdown-parent">
+          <a 
+            class="nav-link dropdown-trigger" 
+            href="#"
+            aria-expanded="false"
+            aria-haspopup="true"
+          >
+            <span class="nav-icon" aria-hidden="true">📚</span>
+            <span>Área do Conhecimento</span>
+            <span class="arrow" aria-hidden="true">▼</span>
+          </a>
+          <div class="dropdown" aria-label="Submenu Área do Conhecimento">
+            <a href="#" class="dropdown-item" data-materia="matematica">
+              <span class="dropdown-icon" aria-hidden="true">🧮</span><span>Matemática</span>
+            </a>
+            <a href="#" class="dropdown-item" data-materia="portugues">
+              <span class="dropdown-icon" aria-hidden="true">📖</span><span>Língua Portuguesa</span>
+            </a>
+            <a href="#" class="dropdown-item" data-materia="ciencias">
+              <span class="dropdown-icon" aria-hidden="true">🔬</span><span>Ciências</span>
+            </a>
+            <a href="#" class="dropdown-item" data-materia="historia">
+              <span class="dropdown-icon" aria-hidden="true">🏛️</span><span>História</span>
+            </a>
+            <a href="#" class="dropdown-item" data-materia="geografia">
+              <span class="dropdown-icon" aria-hidden="true">🌎</span><span>Geografia</span>
+            </a>
+            <a href="#" class="dropdown-item" data-materia="multidisciplinar">
+              <span class="dropdown-icon" aria-hidden="true">🎨</span><span>Multidisciplinar</span>
+            </a>
+
+            <!-- Estes três, por enquanto, só disparam a BUSCA -->
+            <a href="#" class="dropdown-item" data-materia="artes">
+              <span class="dropdown-icon" aria-hidden="true">🎨</span><span>Artes</span>
+            </a>
+            <a href="#" class="dropdown-item" data-materia="educação física">
+              <span class="dropdown-icon" aria-hidden="true">🤸</span><span>Educação Física</span>
+            </a>
+            <a href="#" class="dropdown-item" data-materia="língua estrangeira">
+              <span class="dropdown-icon" aria-hidden="true">🗣️</span><span>Língua Estrangeira</span>
+            </a>
+          </div>
+
+        </li>
+
+        <!-- Ano de Ensino -->
+        <li class="nav-item dropdown-parent">
+          <a 
+            class="nav-link dropdown-trigger"
+            href="#"
+            aria-expanded="false"
+            aria-haspopup="true"
+          >
+            <span class="nav-icon" aria-hidden="true">🎒</span>
+            <span>Ano de Escolaridade</span>
+            <span class="arrow" aria-hidden="true">▼</span>
+          </a>
+          <div class="dropdown" aria-label="Submenu Ano de Escolaridade">
+            <!-- Por enquanto busca simples para estes -->
+            <a href="#" class="dropdown-item" data-search="educação infantil">
+              <span class="dropdown-icon" aria-hidden="true">👶</span><span>Educação Infantil</span>
+            </a>
+
+            <!-- 1 a 9 com data-serie -->
+            <a href="#" class="dropdown-item" data-serie="1"><span class="dropdown-icon" aria-hidden="true">1️⃣</span><span>1º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="2"><span class="dropdown-icon" aria-hidden="true">2️⃣</span><span>2º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="3"><span class="dropdown-icon" aria-hidden="true">3️⃣</span><span>3º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="4"><span class="dropdown-icon" aria-hidden="true">4️⃣</span><span>4º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="5"><span class="dropdown-icon" aria-hidden="true">5️⃣</span><span>5º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="6"><span class="dropdown-icon" aria-hidden="true">6️⃣</span><span>6º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="7"><span class="dropdown-icon" aria-hidden="true">7️⃣</span><span>7º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="8"><span class="dropdown-icon" aria-hidden="true">8️⃣</span><span>8º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="9"><span class="dropdown-icon" aria-hidden="true">9️⃣</span><span>9º Ano</span></a>
+
+            <!-- Por enquanto busca simples para estes -->
+            <a href="#" class="dropdown-item" data-search="eja">
+              <span class="dropdown-icon" aria-hidden="true">📘</span><span>EJA</span>
+            </a>
+            <a href="#" class="dropdown-item" data-search="ensino médio">
+              <span class="dropdown-icon" aria-hidden="true">🎓</span><span>Ensino Médio</span>
+            </a>
+          </div>
+
+        </li>
+
+        <li class="nav-item">
+          <a href="trilhas_em_desenvolvimento.html" class="nav-link" aria-current="page">
+            <span class="nav-icon" aria-hidden="true">💡</span>
+            <span>Trilhas Computação</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="quem_somos.html" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">ℹ️</span>
+            <span>Quem Somos</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="coming-soon-main" role="main">
+    <section class="coming-soon-card" aria-labelledby="coming-soon-title">
+      <div class="coming-soon-icon" aria-hidden="true">
+        <span>🚧</span>
+      </div>
+      <h1 id="coming-soon-title">Trilhas de Computação em Desenvolvimento</h1>
+      <p>
+        Estamos finalizando uma experiência super especial para as trilhas de computação. Enquanto isso,
+        você pode explorar os outros conteúdos da plataforma.
+      </p>
+      <div class="coming-soon-actions">
+        <a class="primary" href="../index.html">Ir para a página inicial</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Rodapé -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-content">
+      <nav class="footer-links" aria-label="Links do rodapé">
+        <a href="privacidade.html">Política de Privacidade</a>
+        <span class="separator" aria-hidden="true">•</span>
+        <a href="termos_de_uso.html">Termos de Uso</a>
+        <span class="separator" aria-hidden="true">•</span>
+        <a href="contato.html">Contato</a>
+      </nav>
+      <div class="footer-copyright">
+        <p>&copy; 2025 AMADO TECNOLOGIA LTDA (AMADOTEC). Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Screen reader utility -->
+  <div class="sr-only">
+    AmadoPlay - Plataforma educacional com ferramentas interativas para aprendizado em matemática, português, ciências e outras disciplinas.
+  </div>
+
+  <!-- CSS inline otimizado para o footer -->
+  <style>
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .hamburger-line {
+      display: block;
+      width: 25px;
+      height: 3px;
+      background: var(--primary-color);
+      margin: 5px 0;
+      transition: 0.3s;
+      border-radius: 2px;
+    }
+
+    .footer {
+      width: 100%;
+      background: linear-gradient(135deg, #1e293b, #334155);
+      color: white;
+      padding: 30px 20px;
+      margin-top: 50px;
+      text-align: center;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+      box-sizing: border-box;
+    }
+
+    .footer-links {
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .footer-links a {
+      color: #e2e8f0;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .separator {
+      color: #64748b;
+      font-weight: bold;
+      margin: 0 5px;
+    }
+
+    .footer-copyright {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      padding-top: 15px;
+      border-top: 1px solid #475569;
+    }
+
+    @media (max-width: 768px) {
+      .footer-links {
+        flex-direction: column;
+        gap: 5px;
+      }
+      
+      .separator {
+        display: none;
+      }
+      
+      .footer-links a {
+        display: block;
+        width: auto;
+      }
+      
+      .footer-copyright {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+
+  <!-- Botão de acessibilidade flutuante -->
+  <button 
+    class="accessibility-float-btn"
+    id="accessibilityFloatBtn"
+    aria-label="Abrir menu de acessibilidade"
+    aria-controls="accessibilityPanel"
+    aria-expanded="false"
+    onclick="toggleAccessibilityPanel()"
+  >
+    <span class="accessibility-icon" aria-hidden="true">
+      <img src="../src/assets/images/icon-acessibilidade.png" alt="">
+    </span>
+  </button>
+
+  <!-- Overlay -->
+  <div
+    class="accessibility-panel-overlay"
+    id="accessibilityOverlay"
+    onclick="closeAccessibilityPanel()"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Painel de Acessibilidade (drawer à direita) -->
+  <div
+    class="accessibility-panel-modern right-drawer"
+    id="accessibilityPanel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="accessibilityPanelTitle"
+  >
+    <div class="panel-header-modern">
+      <h2 id="accessibilityPanelTitle">Menu de Acessibilidade</h2>
+      <button
+        class="close-btn"
+        type="button"
+        aria-label="Fechar menu de acessibilidade"
+        onclick="closeAccessibilityPanel()"
+      >
+        ×
+      </button>
+    </div>
+
+    <!-- Área rolável do painel -->
+    <div class="panel-content" id="accessibilityPanelContent" tabindex="-1">
+      <!-- Perfis de Acessibilidade -->
+      <div class="accessibility-profiles">
+        <h3>Selecione seu perfil de acessibilidade</h3>
+        <div class="profiles-grid">
+          <button class="profile-btn" onclick="applyProfile('motor')" data-profile="motor" type="button">
+            <span class="profile-icon" aria-hidden="true">🦽</span>
+            <span class="profile-text">Deficiência Motora</span>
+          </button>
+          <button class="profile-btn" onclick="applyProfile('visual')" data-profile="visual" type="button">
+            <span class="profile-icon" aria-hidden="true">👁️</span>
+            <span class="profile-text">Deficiência Visual</span>
+          </button>
+          <button class="profile-btn" onclick="applyProfile('cognitive')" data-profile="cognitive" type="button">
+            <span class="profile-icon" aria-hidden="true">🧠</span>
+            <span class="profile-text">Deficiência Cognitiva</span>
+          </button>
+          <button class="profile-btn" onclick="applyProfile('hearing')" data-profile="hearing" type="button">
+            <span class="profile-icon" aria-hidden="true">🦻</span>
+            <span class="profile-text">Deficiência Auditiva</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ferramentas Individuais -->
+      <div class="tools-grid" role="group" aria-label="Ferramentas de acessibilidade">
+        <!-- Linha 1 -->
+        <button class="tool-btn" onclick="toggleTextToSpeech()" id="ttsBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔊</span>
+          <span class="tool-text">Clique para Ouvir</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleHighContrast()" id="contrastBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🌓</span>
+          <span class="tool-text">Alto Contraste</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleDarkMode()" id="darkModeBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🌙</span>
+          <span class="tool-text">Modo Escuro</span>
+        </button>
+
+        <!-- Linha 2 -->
+        <button class="tool-btn" onclick="decreaseFontSize()" id="decreaseFontBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔤</span>
+          <span class="tool-text">Diminuir Fonte</span>
+        </button>
+
+        <button class="tool-btn" onclick="increaseFontSize()" id="increaseFontBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔠</span>
+          <span class="tool-text">Aumentar Fonte</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleDyslexiaFont()" id="dyslexiaBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">📝</span>
+          <span class="tool-text">Fonte Dislexia</span>
+        </button>
+
+        <!-- Linha 3 -->
+        <button class="tool-btn" onclick="toggleGrayscale()" id="grayscaleBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">⚫</span>
+          <span class="tool-text">Monocromático</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleLowSaturation()" id="lowSatBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔘</span>
+          <span class="tool-text">Baixa Saturação</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleHighSaturation()" id="highSatBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🟡</span>
+          <span class="tool-text">Alta Saturação</span>
+        </button>
+
+        <!-- Linha 4 -->
+        <button class="tool-btn" onclick="toggleReadingRuler()" id="rulerBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">📏</span>
+          <span class="tool-text">Régua de Leitura</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleMagnifier()" id="magnifierBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">📖</span>
+          <span class="tool-text">Mascara de Leitura</span>
+        </button>
+
+        <button class="tool-btn" onclick="toggleFocusHighlight()" id="focusBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🎯</span>
+          <span class="tool-text">Destacar Links</span>
+        </button>
+
+        <!-- Linha 5 -->
+        <button class="tool-btn" onclick="pauseAnimations()" id="animationBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">⏸️</span>
+          <span class="tool-text">Pausar Animações</span>
+        </button>
+
+        <button class="tool-btn" onclick="showKeyboardShortcuts()" type="button">
+          <span class="tool-icon" aria-hidden="true">⌨️</span>
+          <span class="tool-text">Atalhos Teclado</span>
+        </button>
+
+        <!-- NOVO: Botão para ativar VLibras -->
+        <button class="tool-btn" onclick="enableVLibras()" id="vlibrasBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🤟</span>
+          <span class="tool-text">Ativar VLibras</span>
+        </button>
+
+        <button class="tool-btn" onclick="resetAll()" id="resetBtn" type="button">
+          <span class="tool-icon" aria-hidden="true">🔄</span>
+          <span class="tool-text">Resetar Tudo</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Elementos auxiliares fora do painel -->
+  <div class="reading-ruler" id="readingRuler" aria-hidden="true"></div>
+  <div class="magnifier-circle" id="magnifier" aria-hidden="true"></div>
+
+  <!-- VLibras -->
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+  </script>
+
+  <!-- Script principal carregado de forma assíncrona -->
+  <script src="../src/js/educational-tools-data.js" defer></script>
+  <script src="../src/js/index.js" defer></script>
+  <script src="../src/js/acessibilidade.js" defer></script>
+</body>
+</html>

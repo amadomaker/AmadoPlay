@@ -221,11 +221,270 @@
     }
   };
 
+
+  const MAZE_ASSET_BASE = '../src/assets/images/AnimalsFarmAndPuzzlePack';
+  const DEFAULT_MAZE_SIZE = 7;
+
+  const mazeAsset = (file) => `${MAZE_ASSET_BASE}/${file}`;
+  const deco = (x, y, file, scale = 1) => ({ x, y, sprite: mazeAsset(file), scale });
+
+  function buildMazeLayout(size, path, openCells = []) {
+    const width = Array.isArray(size) ? size[0] : size;
+    const height = Array.isArray(size) ? size[1] : size;
+    const layout = Array.from({ length: height }, () => Array(width).fill(1));
+
+    if (Array.isArray(path) && path.length >= 2) {
+      path.forEach((pos, idx) => {
+        if (!pos) return;
+        const { x, y } = pos;
+        if (y < 0 || y >= height || x < 0 || x >= width) return;
+        if (idx === 0) layout[y][x] = 3;
+        else if (idx === path.length - 1) layout[y][x] = 2;
+        else layout[y][x] = 0;
+      });
+    }
+
+    openCells.forEach((pos) => {
+      if (!pos) return;
+      const { x, y } = pos;
+      if (y < 0 || y >= height || x < 0 || x >= width) return;
+      if (layout[y][x] === 3 || layout[y][x] === 2) return;
+      layout[y][x] = 0;
+    });
+
+    return layout;
+  }
+
+  function computePathStats(path) {
+    if (!Array.isArray(path) || path.length < 2) {
+      return { moves: 0 };
+    }
+    return { moves: path.length - 1 };
+  }
+
+  const mazeLevels = [
+    {
+      id: 'maze_level_1',
+      lessonId: 'maze_l1_reto',
+      title: 'Labirinto da Fazenda 1 – Primeiro passo',
+      shortTitle: 'Primeiro passo',
+      instructions: 'Leve a raposa até a cenoura. Use um bloco de mover.',
+      path: [{ x: 1, y: 3 }, { x: 2, y: 3 }],
+      openCells: [{ x: 1, y: 2 }, { x: 2, y: 2 }],
+      decorations: [deco(2, 2, 'Objects/GardenBed_Carrots_01.png', 0.9)],
+      goalSprite: mazeAsset('Objects/Carrot.png'),
+      goalScale: 0.85,
+      extraMessage: 'Você colheu a cenoura fresquinha!',
+      tip: 'Conte os passos que a raposa precisa dar.',
+      toast: 'Cenoura colhida!'
+    },
+    {
+      id: 'maze_level_2',
+      lessonId: 'maze_l2_primeira_curva',
+      title: 'Labirinto da Fazenda 2 – Dois passos',
+      shortTitle: 'Dois passos',
+      instructions: 'Use dois blocos de mover para alcançar a beterraba.',
+      path: [{ x: 1, y: 3 }, { x: 2, y: 3 }, { x: 3, y: 3 }],
+      openCells: [{ x: 1, y: 2 }, { x: 2, y: 2 }, { x: 3, y: 2 }],
+      decorations: [deco(3, 2, 'Objects/GardenBed_Beetroot_01.png', 0.9)],
+      goalSprite: mazeAsset('Objects/Beetroot.png'),
+      goalScale: 0.82,
+      extraMessage: 'Beterraba no cesto!',
+      tip: 'Experimente alinhar os blocos antes de executar.',
+      toast: 'Muito bem!'
+    },
+    {
+      id: 'maze_level_3',
+      lessonId: 'maze_l3_sobe_desce',
+      title: 'Labirinto da Fazenda 3 – Primeiro desvio',
+      shortTitle: 'Primeiro desvio',
+      instructions: 'Vire à esquerda para desviar e pegar o rabanete.',
+      path: [{ x: 1, y: 3 }, { x: 2, y: 3 }, { x: 2, y: 2 }, { x: 2, y: 1 }],
+      openCells: [{ x: 1, y: 2 }, { x: 3, y: 3 }, { x: 3, y: 2 }],
+      decorations: [deco(3, 2, 'Objects/Goo_02.png', 0.65)],
+      goalSprite: mazeAsset('Objects/Radish.png'),
+      goalScale: 0.85,
+      extraMessage: 'Você aprendeu a virar para colher os rabanetes!',
+      tip: 'Vire antes de bater na cerca verde.',
+      toast: 'Que curva perfeita!'
+    },
+    {
+      id: 'maze_level_4',
+      lessonId: 'maze_l4_fardos',
+      title: 'Labirinto da Fazenda 4 – Duas curvas',
+      shortTitle: 'Duas curvas',
+      instructions: 'Siga o caminho, vire para cima e depois para a direita para pegar a cebola.',
+      path: [{ x: 1, y: 4 }, { x: 2, y: 4 }, { x: 2, y: 3 }, { x: 2, y: 2 }, { x: 3, y: 2 }, { x: 4, y: 2 }],
+      openCells: [{ x: 1, y: 3 }, { x: 3, y: 4 }, { x: 4, y: 3 }],
+      decorations: [deco(4, 3, 'Objects/GardenBed_Onions_01.png', 0.92)],
+      goalSprite: mazeAsset('Objects/Onion.png'),
+      goalScale: 0.85,
+      extraMessage: 'Cheiro de cebola pela fazenda!',
+      tip: 'Depois de virar para cima, já prepare o bloco de virar à direita.',
+      toast: 'Ótimo controle!'
+    },
+    {
+      id: 'maze_level_5',
+      lessonId: 'maze_l5_cruzamentos',
+      title: 'Labirinto da Fazenda 5 – Cuidado com a poça',
+      shortTitle: 'Cuidado com a poça',
+      instructions: 'Cuidado com a poça de água! Desvie dela para colher o pepino.',
+      path: [{ x: 1, y: 1 }, { x: 1, y: 2 }, { x: 1, y: 3 }, { x: 2, y: 3 }, { x: 3, y: 3 }, { x: 4, y: 3 }, { x: 5, y: 3 }],
+      openCells: [{ x: 2, y: 2 }, { x: 3, y: 2 }, { x: 4, y: 2 }, { x: 3, y: 4 }],
+      decorations: [deco(3, 2, 'Objects/GardenBed_Tomatoes_01.png', 0.9)],
+      obstacles: [{ x: 3, y: 2, type: 'hole' }],
+      goalSprite: mazeAsset('Objects/Cucumber.png'),
+      goalScale: 0.85,
+      extraMessage: 'Pepino fresquinho garantido!',
+      tip: 'Use os blocos de virar para contornar a poça.',
+      toast: 'Excelente desvio!'
+    },
+    {
+      id: 'maze_level_6',
+      lessonId: 'maze_l6_corredores',
+      title: 'Labirinto da Fazenda 6 – Perigos no caminho',
+      shortTitle: 'Perigos no caminho',
+      instructions: 'Desça e vire, mas cuidado! Não caia no buraco nem acerte a bomba.',
+      path: [{ x: 1, y: 5 }, { x: 1, y: 4 }, { x: 1, y: 3 }, { x: 1, y: 2 }, { x: 1, y: 1 }, { x: 2, y: 1 }, { x: 3, y: 1 }, { x: 4, y: 1 }, { x: 5, y: 1 }],
+      openCells: [{ x: 3, y: 2 }, { x: 3, y: 3 }, { x: 4, y: 3 }, { x: 2, y: 4 }],
+      decorations: [deco(3, 3, 'Objects/Hole.png', 0.78), deco(2, 4, 'Objects/Bomb.png', 0.6), deco(5, 2, 'Objects/GardenBed_Radish_02.png', 0.92)],
+      obstacles: [{ x: 3, y: 3, type: 'hole' }, { x: 2, y: 4, type: 'bomb' }],
+      goalSprite: mazeAsset('Objects/Tomato.png'),
+      goalScale: 0.85,
+      extraMessage: 'Você colheu tomates vermelhinhos!',
+      tip: 'Repare que o caminho tem várias curvas.',
+      toast: 'Curvas caprichadas!'
+    },
+    {
+      id: 'maze_level_7',
+      lessonId: 'maze_l7_volta_inicio',
+      title: 'Labirinto da Fazenda 7 – Zigue-zague com armadilha',
+      shortTitle: 'Zigue-zague com armadilha',
+      instructions: 'Cuidado com o caminho sem saída! Desvie da bomba para fazer o zigue-zague e chegar na cebolinha.',
+      path: [{ x: 1, y: 3 }, { x: 2, y: 3 }, { x: 3, y: 3 }, { x: 3, y: 2 }, { x: 3, y: 1 }, { x: 4, y: 1 }, { x: 5, y: 1 }],
+      openCells: [{ x: 2, y: 2 }, { x: 4, y: 2 }, { x: 5, y: 2 }],
+      decorations: [deco(2, 2, 'Objects/Bomb.png', 0.6)],
+      obstacles: [{ x: 2, y: 2, type: 'bomb' }],
+      goalSprite: mazeAsset('Objects/Onion.png'),
+      goalScale: 0.82,
+      extraMessage: 'As cebolinhas foram colhidas!',
+      tip: 'Planeje a sequência antes de começar para não se perder no zigue-zague.',
+      toast: 'Quanto controle!'
+    },
+    {
+      id: 'maze_level_8',
+      lessonId: 'maze_l8_caminho_oculto',
+      title: 'Labirinto da Fazenda 8 – A volta grande',
+      shortTitle: 'Volta grande',
+      instructions: 'Contorne o lago de lama com cuidado para não cair! A volta é grande, mas segura.',
+      path: [{ x: 1, y: 3 }, { x: 2, y: 3 }, { x: 3, y: 3 }, { x: 4, y: 3 }, { x: 4, y: 4 }, { x: 4, y: 5 }, { x: 5, y: 5 }, { x: 5, y: 4 }, { x: 5, y: 3 }, { x: 5, y: 2 }, { x: 4, y: 2 }, { x: 3, y: 2 }],
+      openCells: [{ x: 2, y: 2 }, { x: 2, y: 4 }, { x: 3, y: 5 }],
+      decorations: [deco(4, 4, 'Objects/GardenBed_Tomatoes_02.png', 0.92)],
+      obstacles: [{ x: 4, y: 4, type: 'hole' }],
+      goalSprite: mazeAsset('Objects/Tomato.png'),
+      goalScale: 0.82,
+      extraMessage: 'Tomatinhos garantidos!',
+      tip: 'Observe que é preciso contornar o lago por completo.',
+      toast: 'Voltinha perfeita!'
+    },
+    {
+      id: 'maze_level_9',
+      lessonId: 'maze_l9_desvios',
+      title: 'Labirinto da Fazenda 9 – Labirinto final',
+      shortTitle: 'Labirinto final',
+      instructions: 'Este é um labirinto de verdade! Encontre o caminho e desvie das poças verdes.',
+      path: [{ x: 1, y: 1 }, { x: 2, y: 1 }, { x: 3, y: 1 }, { x: 3, y: 2 }, { x: 3, y: 3 }, { x: 3, y: 4 }, { x: 3, y: 5 }, { x: 4, y: 5 }, { x: 5, y: 5 }],
+      openCells: [{ x: 1, y: 2 }, { x: 2, y: 3 }, { x: 2, y: 5 }, { x: 4, y: 1 }, { x: 4, y: 2 }, { x: 5, y: 2 }, { x: 5, y: 3 }],
+      decorations: [deco(1, 2, 'Objects/Goo_03.png', 0.7), deco(4, 2, 'Objects/Goo_01.png', 0.7), deco(5, 3, 'Objects/GardenBed_Beetroot_02.png', 0.92)],
+      obstacles: [{ x: 1, y: 2, type: 'hole' }, { x: 4, y: 2, type: 'hole' }],
+      goalSprite: mazeAsset('Objects/Beetroot.png'),
+      goalScale: 0.82,
+      extraMessage: 'Beterrabas resgatadas!',
+      tip: 'Use as curvas para desviar dos respingos verdes.',
+      toast: 'Desvios brilhantes!'
+    },
+    {
+      id: 'maze_level_10',
+      lessonId: 'maze_l10_grande_finale',
+      title: 'Labirinto da Fazenda 10 – Grande finale',
+      shortTitle: 'Grande finale',
+      instructions: 'O grande final! Desvie da bomba e da poça de água para colher o último tomate.',
+      path: [{ x: 1, y: 3 }, { x: 2, y: 3 }, { x: 3, y: 3 }, { x: 4, y: 3 }, { x: 4, y: 2 }, { x: 4, y: 1 }, { x: 5, y: 1 }, { x: 5, y: 2 }, { x: 5, y: 3 }, { x: 5, y: 4 }, { x: 4, y: 4 }, { x: 3, y: 4 }, { x: 3, y: 5 }, { x: 4, y: 5 }, { x: 5, y: 5 }],
+      openCells: [{ x: 2, y: 1 }, { x: 2, y: 2 }, { x: 2, y: 4 }, { x: 2, y: 5 }, { x: 4, y: 5 }],
+      decorations: [deco(2, 2, 'Objects/Bomb.png', 0.6)],
+      obstacles: [{ x: 2, y: 2, type: 'bomb' }, { x: 2, y: 5, type: 'hole' }],
+      goalSprite: mazeAsset('Objects/Tomato.png'),
+      goalScale: 0.85,
+      extraMessage: 'Parabéns! Você venceu todas as fases do labirinto.',
+      tip: 'Revise o programa e procure usar só os blocos necessários.',
+      toast: 'Fantástico!',
+      isFinal: true
+    }
+  ];
+
+  const mazeOrder = mazeLevels.map(level => ({
+    activity: level.id,
+    lessonId: level.lessonId,
+    label: level.shortTitle || level.title
+  }));
+
+  mazeLevels.forEach((level, index) => {
+    const layout = buildMazeLayout(level.size || DEFAULT_MAZE_SIZE, level.path, level.openCells || []);
+    const stats = computePathStats(level.path);
+
+    const meta = {
+      optimalBlocks: stats.moves,
+      tip: level.tip,
+      toast: level.toast,
+      heading: level.heading,
+      actionLabel: level.isFinal ? 'Voltar para a trilha' : 'Próxima fase',
+      actionIcon: level.isFinal ? '↩' : '➜',
+      extraMessage: level.extraMessage,
+      isFinal: !!level.isFinal,
+      goalSprite: level.goalSprite,
+      goalScale: level.goalScale
+    };
+
+    if (level.isFinal) {
+      meta.finalActionLabel = 'Voltar para a trilha';
+      meta.finalActionIcon = '↩';
+    }
+
+    MANIFEST[level.id] = {
+      title: level.title,
+      blocks: '../src/js/blockly/blocks/maze.js',
+      activity: '../src/js/blockly/activities/maze.js',
+      config: {
+        instructions: level.instructions,
+        layout,
+        start: { x: level.path[0].x, y: level.path[0].y, dir: 'south' },
+        meta,
+        decorations: level.decorations || [],
+        obstacles: level.obstacles || [],
+        progress: {
+          step: index + 1,
+          total: mazeLevels.length,
+          course: gardenCourseId,
+          order: mazeOrder
+        }
+      }
+    };
+  });
+
+
+
   const activity = MANIFEST[activityId];
   if (!activity) {
     const t = document.getElementById('instText') || document.getElementById('instructions');
     if (t) t.textContent = 'Atividade não encontrada.';
     return;
+  }
+
+  // Adiciona uma classe específica para o tipo de atividade (Jardim ou Labirinto)
+  if (activity.blocks && activity.blocks.includes('maze.js')) {
+    document.body.classList.add('maze-activity');
+  } else {
+    document.body.classList.add('garden-activity');
   }
 
   const instEl = document.getElementById('instText') || document.getElementById('instructions');
