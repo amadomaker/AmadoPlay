@@ -1587,11 +1587,20 @@ if (typeof module !== 'undefined' && module.exports) {
       if (tool.novo) badges.push('<span class="card-badge new">Novo</span>');
 
       const tags = [
-        { text: this.getMateriaLabel(tool.materia), class: 'materia' },
-        { text: `${Math.min(...tool.series)}º-${Math.max(...tool.series)}º`, class: 'serie' },
-        { text: tool.tipo.join(', '), class: 'tipo' },
-        { text: this.getDificuldadeLabel(tool.dificuldade), class: 'dificuldade' }
+        { text: this.getMateriaLabel(tool.materia), class: 'materia' }
       ];
+
+      const serieLabel = this.getSerieLabel(tool.series);
+      if (serieLabel) {
+        tags.push({ text: serieLabel, class: 'serie' });
+      }
+
+      const tipoLabel = this.formatTipoTag(tool.tipo);
+      if (tipoLabel) {
+        tags.push({ text: tipoLabel, class: 'tipo' });
+      }
+
+      tags.push({ text: this.getDificuldadeLabel(tool.dificuldade), class: 'dificuldade' });
 
       const bnccChips = (tool.bncc || []).map(b =>
         `<button type="button" class="bncc-chip" data-code="${b.codigo}" data-desc="${b.descricao || ''}" aria-label="Ver BNCC ${b.codigo}">
@@ -1706,6 +1715,53 @@ if (typeof module !== 'undefined' && module.exports) {
         avancado: 'Avançado'
       };
       return labels[dificuldade] || dificuldade;
+    }
+
+    getSerieLabel(series) {
+      if (!Array.isArray(series) || series.length === 0) return '';
+
+      const uniqueSeries = [...new Set(series)].sort((a, b) => a - b);
+      const formatOrdinal = (value) => `${value}º`;
+      const first = uniqueSeries[0];
+      const last = uniqueSeries[uniqueSeries.length - 1];
+
+      if (first === last) {
+        return `${formatOrdinal(first)} Ano`;
+      }
+
+      return `${formatOrdinal(first)} ao ${formatOrdinal(last)} Ano`;
+    }
+
+    formatTipoTag(tipos) {
+      if (!Array.isArray(tipos) || tipos.length === 0) return '';
+      return tipos.map(tipo => this.getTipoLabel(tipo)).filter(Boolean).join(', ');
+    }
+
+    getTipoLabel(tipo) {
+      if (!tipo) return '';
+
+      const normalized = String(tipo).toLowerCase();
+      const labels = {
+        interativo: 'Interativo',
+        visual: 'Visual',
+        auditivo: 'Auditivo',
+        pratico: 'Prático',
+        ludico: 'Lúdico',
+        gramatica: 'Gramática',
+        memoria: 'Memória',
+        organizacao: 'Organização',
+        'raciocinio-logico': 'Raciocínio Lógico'
+      };
+
+      if (labels[normalized]) {
+        return labels[normalized];
+      }
+
+      return normalized
+        .split(/[-_\s]+/)
+        .filter(Boolean)
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ');
     }
 
     updateResultsCount() {

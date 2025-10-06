@@ -329,6 +329,25 @@ body {
     max-width: 80%;
 }
 
+#wordFormation[data-slot-count="5"] {
+    flex-wrap: nowrap;
+    gap: 18px;
+    max-width: min(920px, 92vw);
+    padding-inline: 16px;
+}
+
+#wordFormation[data-slot-count="5"] .syllableSlot {
+    flex: 0 1 120px;
+}
+
+@media (max-width: 767px) {
+    #wordFormation[data-slot-count="5"] {
+        flex-wrap: wrap;
+        max-width: 100%;
+        padding-inline: 0;
+    }
+}
+
 .syllableSlot {
     width: 121px;
     height: 80px; /* Corrigido: Aumento de 1px apenas na largura */

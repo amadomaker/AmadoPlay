@@ -15,12 +15,11 @@
       tipo: ['interativo', 'ludico', 'gramatica'],
       dificuldade: 'intermediario',
       bncc: [
-        // Habilidades de Língua Inglesa (BNCC) relacionadas a interação e uso de estruturas para perguntas
-        { codigo: 'EF15LI08', descricao: 'Fazer e responder perguntas simples para solicitar e fornecer informações pessoais, de rotina e preferências em interações guiadas.' },
-        { codigo: 'EF06LI10', descricao: 'Mobilizar conhecimentos linguísticos (léxico e estruturas), como pronomes interrogativos e verbos auxiliares, para compreender e produzir enunciados simples em situações de uso.' },
-        { codigo: 'EF06LI12', descricao: 'Participar de interações orais para pedir, dar e checar informações em contextos significativos, fazendo perguntas e respondendo de forma adequada.' }
+        { codigo: 'EF06LI02', descricao: 'Coletar informações do grupo, perguntando e respondendo sobre a família, os amigos, a escola e a comunidade.' },
+        { codigo: 'EF06LI11', descricao: 'Explorar ambientes virtuais e/ou aplicativos para construir repertório lexical na língua inglesa.' },
+        { codigo: 'EF07LI01', descricao: 'Interagir em situações de intercâmbio oral para realizar atividades em sala, trocando ideias e engajando-se em brincadeiras e jogos.' }
       ],
-      tags: ['ingles', 'wh-questions', 'question words', 'simple present', 'to be', 'auxiliares', 'oralidade', 'escrita', 'EF15LI08', 'EF06LI10', 'EF06LI12'],
+      tags: ['ingles', 'wh-questions', 'question words', 'simple present', 'to be', 'auxiliares', 'oralidade', 'escrita', 'EF06LI02', 'EF06LI11', 'EF07LI01'],
       popular: false,
       novo: true,
       acessos: 0
@@ -189,7 +188,7 @@
       titulo: 'Sílabas Embaralhadas',
       descricao: 'Vamos formar palavras? Arraste e solte as sílabas embaralhadas para construir palavras de forma divertida e interativa!',
       imagem: 'src/assets/images/fundo_separar_silabas.png', 
-      materia: 'lingua-portuguesa',
+      materia: 'portugues',
       series: [1, 2, 3],
       tipo: ['interativo', 'ludico'],
       dificuldade: 'basico',
@@ -211,7 +210,7 @@
       descricao: 'Encontre grupos de quatro palavras que compartilham uma conexão secreta. Teste seu raciocínio, vocabulário e capacidade de associação!',
       imagem: 'src/assets/images/fundo_conexo.png',
       interno: 'pages/conexo.html',
-      materia: 'lingua-portuguesa',
+      materia: 'portugues',
       series: [5, 6, 7, 8, 9],
       tipo: ['interativo', 'ludico', 'raciocinio-logico'],
       dificuldade: 'intermediario',
@@ -229,7 +228,7 @@
     ,{
       id: 'jogo-memoria',
       titulo: 'Jogo da Memória - Animais',
-      descricao: 'Vire as cartas e encontre os pares de animais. Treine memória, atenção e raciocínio de forma divertida!',
+      descricao: 'Treine sua memória! Encontre os pares de animais e pratique a leitura dos nomes enquanto se diverte.',
       imagem: 'src/assets/images/fundo_jogo_memoria.png',
       interno: 'pages/jogo_memoria.html',
       materia: 'ciencias',
