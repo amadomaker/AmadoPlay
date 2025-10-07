@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../src/css/global.css">
     <title>Jogo do Material Dourado</title>
     <style>
@@ -13,34 +16,11 @@
         }
 
         body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-family: 'Montserrat', Arial, sans-serif;
             background: linear-gradient(135deg, #6c63ff 0%, #7c4dff 35%, #9c27b0 70%, #673ab7 100%);
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
-        }
-
-        /* Estrelas animadas de fundo */
-        .stars {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle 2s infinite alternate;
-        }
-
-        @keyframes twinkle {
-            0% { opacity: 0.3; transform: scale(1); }
-            100% { opacity: 1; transform: scale(1.2); }
         }
 
         .game-container {
@@ -60,29 +40,6 @@
             font-size: 2.5em;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             margin-bottom: 10px;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .score-area {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .score-box {
-            background: rgba(255,255,255,0.9);
-            padding: 10px 20px;
-            border-radius: 15px;
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #764ba2;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
         .input-section {
@@ -93,6 +50,13 @@
             text-align: center;
             margin-bottom: 20px;
             backdrop-filter: blur(10px);
+        }
+        .input-section span {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #4c2dbb;
+            margin-right: 12px;
+            vertical-align: middle;
         }
         @media (max-width: 990px) {
             .input-section {
@@ -123,30 +87,34 @@
         }
 
         .generate-btn, .check-btn, .reset-btn {
-            background: linear-gradient(45deg, #f093fb, #f5576c);
-            color: white;
+            color: #fff;
             border: none;
-            padding: 12px 25px;
+            padding: 12px 26px;
             font-size: 1.1em;
-            border-radius: 15px;
+            border-radius: 16px;
             cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-weight: 700;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
             margin: 0 5px;
         }
 
+        .generate-btn {
+            background: linear-gradient(135deg, #ff8a00, #ff3d00);
+        }
+
         .check-btn {
-            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
         }
 
         .reset-btn {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #b721ff, #5b40f9);
         }
 
         .generate-btn:hover, .check-btn:hover, .reset-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+            filter: brightness(1.05);
         }
 
         .target-number {
@@ -405,31 +373,24 @@
     </style>
 </head>
 <body>
-    <div class="stars" id="stars"></div>
-    
     <div class="game-container">
         <div class="header">
-            <h1 class="title">🎲 Jogo do Material Dourado 🎲</h1>
-        </div>
-
-        <div class="score-area">
-            <div class="score-box">🏆 Pontos: <span id="score">0</span></div>
-            <div class="score-box">✅ Acertos: <span id="correct">0</span></div>
+            <h1 class="title">Jogo do Material Dourado</h1>
         </div>
 
         <div class="input-section">
-            <span>🎯 Digite um número:</span>
+            <span>Digite um número:</span>
             <input type="number" id="numberInput" class="number-input" placeholder="Ex: 1247" min="1" max="9999">
-            <button onclick="generateChallenge()" class="generate-btn">✨ Gerar Desafio</button>
-            <button onclick="checkAnswer()" class="check-btn">🔍 Verificar</button>
-            <button onclick="resetGame()" class="reset-btn">🔄 Reiniciar</button>
+            <button onclick="generateChallenge()" class="generate-btn">Gerar Desafio</button>
+            <button onclick="checkAnswer()" class="check-btn">Verificar</button>
+            <button onclick="resetGame()" class="reset-btn">Reiniciar</button>
             <div id="targetNumber" class="target-number"></div>
         </div>
 
         <div class="main-area">
             <!-- Banco de Materiais -->
             <div class="materials-bank">
-                <h3 class="bank-title">📦 Banco de Materiais</h3>
+                <h3 class="bank-title">Banco de Materiais</h3>
                 <div class="materials-grid">
                     <div class="material-type">
                         <div class="thousand-cube material-piece" draggable="true" data-value="1000">
@@ -461,7 +422,7 @@
 
             <!-- Área de Trabalho -->
             <div class="workspace">
-                <h3 class="workspace-title">🎨 Sua Resposta</h3>
+                <h3 class="workspace-title">Sua Resposta</h3>
                 <div class="drop-area" id="dropArea">
                     <div class="empty-message">Arraste as peças aqui!</div>
                     <div class="count-display" id="countDisplay">Total: 0</div>
@@ -473,21 +434,6 @@
     <div class="feedback" id="feedback"></div>
 
     <script>
-        // Criar estrelas animadas
-        function createStars() {
-            const starsContainer = document.getElementById('stars');
-            for(let i = 0; i < 50; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.width = Math.random() * 4 + 2 + 'px';
-                star.style.height = star.style.width;
-                star.style.animationDelay = Math.random() * 2 + 's';
-                starsContainer.appendChild(star);
-            }
-        }
-
         // Criar peças do material dourado
         function createMaterialPieces() {
             // Centena (placa 10x10)
@@ -508,8 +454,6 @@
         }
 
         let currentNumber = 0;
-        let score = 0;
-        let correctAnswers = 0;
         let droppedPieces = [];
 
         function generateChallenge() {
@@ -517,12 +461,12 @@
             const number = parseInt(input.value);
             
             if(!number || number < 1 || number > 9999) {
-                showFeedback('❌ Digite um número entre 1 e 9999!', '#e74c3c');
+                showFeedback('Digite um número entre 1 e 9999.', '#e74c3c');
                 return;
             }
 
             currentNumber = number;
-            document.getElementById('targetNumber').innerHTML = `🎯 Represente o número: <strong>${number}</strong>`;
+            document.getElementById('targetNumber').textContent = `Represente o número: ${number}`;
             
             // Limpar área de trabalho
             clearWorkspace();
@@ -560,35 +504,31 @@
 
         function checkAnswer() {
             if(currentNumber === 0) {
-                showFeedback('⚠️ Digite um número primeiro!', '#f39c12');
+                showFeedback('Digite um número primeiro.', '#f39c12');
                 return;
             }
 
             const total = droppedPieces.reduce((sum, piece) => sum + piece.value, 0);
             const dropArea = document.getElementById('dropArea');
-            
+            dropArea.classList.remove('correct', 'incorrect');
+
             if(total === currentNumber) {
-                score += 10;
-                correctAnswers++;
-                updateScore();
-                showFeedback('🎉 Parabéns! Você acertou! 🎉', '#27ae60');
+                showFeedback('Parabéns! Você acertou.', '#27ae60');
                 dropArea.classList.add('correct');
-                
+
                 // Efeito sonoro simulado com vibração se suportado
                 if (navigator.vibrate) {
                     navigator.vibrate([100, 30, 100, 30, 100]);
                 }
             } else {
-                score = Math.max(0, score - 5);
-                updateScore();
-                showFeedback(`❌ Errado! Você fez ${total}, mas era ${currentNumber}`, '#e74c3c');
+                showFeedback(`Você montou ${total}, mas o número era ${currentNumber}.`, '#e74c3c');
                 dropArea.classList.add('incorrect');
             }
         }
 
         function showFeedback(message, color) {
             const feedback = document.getElementById('feedback');
-            feedback.innerHTML = message;
+            feedback.textContent = message;
             feedback.style.color = color;
             feedback.classList.add('show');
             
@@ -597,15 +537,10 @@
             }, 3000);
         }
 
-        function updateScore() {
-            document.getElementById('score').textContent = score;
-            document.getElementById('correct').textContent = correctAnswers;
-        }
-
         function resetGame() {
             currentNumber = 0;
             document.getElementById('numberInput').value = '';
-            document.getElementById('targetNumber').innerHTML = '';
+            document.getElementById('targetNumber').textContent = '';
             clearWorkspace();
         }
 
@@ -637,7 +572,7 @@
             dropArea.classList.remove('drag-over');
             
             if(currentNumber === 0) {
-                showFeedback('⚠️ Digite um número primeiro!', '#f39c12');
+                showFeedback('Digite um número primeiro.', '#f39c12');
                 return;
             }
             
@@ -673,7 +608,6 @@
         });
 
         // Inicializar
-        createStars();
         createMaterialPieces();
     </script>
         <!-- Footer pequeno e discreto -->
