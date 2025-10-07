@@ -59,27 +59,10 @@
             font-size: 3em;
             margin-bottom: 20px;
             text-align: center;
-            background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
-            background-size: 400% 400%;
             color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.45);
             font-weight: 800;
             font-family: 'Montserrat', Arial, sans-serif;
-        }
-
-        @keyframes gradient {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .subtitle {
-            text-align: center;
-            font-size: 1.3em;
-            margin-bottom: 30px;
-            opacity: 0.95;
-            font-weight: 600;
-            font-family: 'Montserrat', Arial, sans-serif;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
 
         .abaco-container {
@@ -309,53 +292,157 @@
         .btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 12px 25px rgba(0,0,0,0.3);
-            background: linear-gradient(145deg, #764ba2, #667eea);
+            filter: brightness(1.05);
         }
 
         .btn:active {
             transform: translateY(-1px);
         }
 
-        .btn.reset { background: linear-gradient(145deg, #ff6b6b, #ee5a52); }
-        .btn.example { background: linear-gradient(145deg, #feca57, #ff9ff3); }
-        .btn.help { background: linear-gradient(145deg, #48dbfb, #0abde3); }
+        .btn.reset { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
+        .btn.example { background: linear-gradient(135deg, #f9d423, #ff4e50); }
+        .btn.help { background: linear-gradient(135deg, #43e97b, #38f9d7); }
 
-        .instructions {
-            background: rgba(255,255,255,0.95);
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 8, 30, 0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 24px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: modalFade 0.25s ease;
+        }
+
+        @keyframes modalFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.98), rgba(240,240,255,0.95));
+            border-radius: 24px;
+            max-width: 560px;
+            width: 100%;
+            padding: 32px;
             color: #2d3436;
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            font-size: 1.1em;
-            line-height: 1.6;
-            font-family: 'Montserrat', Arial, sans-serif;
-        }
-
-        .instructions h3 {
-            color: #6c5ce7;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-            font-weight: 700;
-        }
-
-        .instructions ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .instructions li {
-            margin-bottom: 10px;
-            padding-left: 25px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.35);
             position: relative;
-            font-weight: 500;
+            overflow: hidden;
+            animation: modalScale 0.35s ease;
         }
 
-        .instructions li::before {
-            content: "🎯";
+        @keyframes modalScale {
+            from { transform: translateY(12px) scale(0.96); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .modal-card::before {
+            content: '';
             position: absolute;
-            left: 0;
-            top: 0;
+            top: -40%;
+            right: -20%;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(135,86,255,0.25) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .modal-header h2 {
+            font-size: 1.6em;
+            font-weight: 700;
+            color: #5b40f9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .close-modal {
+            background: transparent;
+            border: none;
+            color: #666;
+            font-size: 1.6em;
+            cursor: pointer;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+
+        .close-modal:hover {
+            transform: scale(1.1);
+            color: #5b40f9;
+        }
+
+        .modal-body {
+            margin-top: 10px;
+            font-size: 1.05em;
+            line-height: 1.6;
+        }
+
+        .modal-body p {
+            margin-bottom: 12px;
+        }
+
+        .modal-body ul {
+            list-style: none;
+            padding: 0;
+            margin: 16px 0 0;
+        }
+
+        .modal-body li {
+            margin-bottom: 12px;
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .modal-body li span {
+            font-weight: 700;
+            color: #4c2dbb;
+            min-width: 95px;
+        }
+
+        .modal-highlight {
+            background: rgba(91, 64, 249, 0.1);
+            border-left: 4px solid #5b40f9;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            color: #3f2fa7;
+        }
+
+        .modal-actions {
+            margin-top: 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .modal-action-btn {
+            padding: 10px 24px;
+            border-radius: 16px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(135deg, #5b40f9, #8b63ff);
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(91, 64, 249, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .modal-action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 28px rgba(91, 64, 249, 0.35);
         }
 
 
@@ -365,8 +452,7 @@
 
 
     <div class="main-content">
-        <h1 class="title">🧮 ÁBACO VIRTUAL</h1>
-        <p class="subtitle">Aprendendo Matemática de Forma Divertida!</p>
+        <h1 class="title">Ábaco Virtual</h1>
         
         <div class="abaco-container">
             <div class="display">
@@ -392,16 +478,39 @@
             <button class="btn help" onclick="toggleInstructions()">💡 Como Usar</button>
         </div>
 
-        <div class="instructions" id="instructions" style="display: none;">
-            <h3>🎯 Como usar o Ábaco Virtual:</h3>
-            <ul>
-                <li><strong>Contas Vermelhas (Céu):</strong> Cada conta vale 5 unidades</li>
-                <li><strong>Contas Coloridas (Terra):</strong> Cada conta vale 1 unidade</li>
-                <li><strong>Clique nas contas</strong> para movê-las entre ativo/inativo</li>
-                <li><strong>Contas ativas</strong> ficam próximas ao centro da haste</li>
-                <li><strong>Exemplo:</strong> Para fazer 7, use 1 conta do céu (5) + 2 contas da terra (2)</li>
-                <li><strong>O número</strong> aparece automaticamente no display digital</li>
-            </ul>
+        <div class="modal-overlay" id="exampleModal" aria-hidden="true">
+            <div class="modal-card" role="dialog" aria-labelledby="exampleModalTitle">
+                <div class="modal-header">
+                    <h2 id="exampleModalTitle">Exemplo</h2>
+                    <button class="close-modal" type="button" aria-label="Fechar exemplo" onclick="closeModal('exampleModal')">×</button>
+                </div>
+                <div class="modal-body" id="exampleContent"></div>
+                <div class="modal-actions">
+                    <button class="modal-action-btn" type="button" onclick="closeModal('exampleModal')">Entendi</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="instructionsModal" aria-hidden="true">
+            <div class="modal-card" role="dialog" aria-labelledby="instructionsModalTitle">
+                <div class="modal-header">
+                    <h2 id="instructionsModalTitle">Como Usar</h2>
+                    <button class="close-modal" type="button" aria-label="Fechar instruções" onclick="closeModal('instructionsModal')">×</button>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-highlight">Descubra como representar números com o ábaco virtual.</p>
+                    <ul>
+                        <li><span>Contas do céu</span>Cada conta vermelha vale 5 unidades.</li>
+                        <li><span>Contas da terra</span>Cada conta colorida vale 1 unidade.</li>
+                        <li><span>Clique</span>Ative ou desative as contas aproximando-as do divisor central.</li>
+                        <li><span>Observe</span>O número é atualizado automaticamente no display digital.</li>
+                        <li><span>Dica</span>Combine contas do céu e da terra para formar qualquer número.</li>
+                    </ul>
+                </div>
+                <div class="modal-actions">
+                    <button class="modal-action-btn" type="button" onclick="closeModal('instructionsModal')">Vamos lá!</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -764,38 +873,101 @@
             const examples = [1234, 5678, 987, 42, 2025, 1357, 8642];
             const randomExample = examples[Math.floor(Math.random() * examples.length)];
             abaco.setNumber(randomExample);
-            
-            // Mostrar explicação do número
+
             setTimeout(() => {
-                const explanation = explainNumber(randomExample);
-                alert(`🎯 Exemplo: ${randomExample}\n\n${explanation}\n\n✨ Observe como as contas se posicionam!`);
-            }, 800);
+                const explanationItems = explainNumber(randomExample);
+                const content = document.getElementById('exampleContent');
+                content.innerHTML = '';
+
+                const highlight = document.createElement('div');
+                highlight.className = 'modal-highlight';
+                highlight.textContent = `Número escolhido: ${randomExample}`;
+                content.appendChild(highlight);
+
+                if (explanationItems.length) {
+                    const list = document.createElement('ul');
+                    explanationItems.forEach(({ position, digit, heaven, earth }) => {
+                        const li = document.createElement('li');
+                        const parts = [];
+                        if (heaven > 0) {
+                            parts.push(`${heaven} conta${heaven > 1 ? 's' : ''} do céu (×5)`);
+                        }
+                        if (earth > 0) {
+                            parts.push(`${earth} conta${earth > 1 ? 's' : ''} da terra (×1)`);
+                        }
+                        li.innerHTML = `<span>${position}:</span> ${digit} = ${parts.join(' + ')}`;
+                        list.appendChild(li);
+                    });
+                    content.appendChild(list);
+                } else {
+                    const message = document.createElement('p');
+                    message.textContent = 'Todas as casas estão zeradas. Nenhuma conta precisa ser ativada.';
+                    content.appendChild(message);
+                }
+
+                const tip = document.createElement('p');
+                tip.textContent = 'Observe como as contas se posicionam nas hastes correspondentes.';
+                content.appendChild(tip);
+
+                openModal('exampleModal');
+            }, 600);
         }
 
         function explainNumber(num) {
             const digits = num.toString().padStart(4, '0').split('').map(Number);
             const positions = ['Milhares', 'Centenas', 'Dezenas', 'Unidades'];
-            let explanation = 'Como formar este número:\n\n';
-            
-            digits.forEach((digit, i) => {
-                if (digit > 0) {
-                    const heaven = Math.floor(digit / 5);
-                    const earth = digit % 5;
-                    explanation += `${positions[i]}: ${digit} = `;
-                    if (heaven > 0) explanation += `${heaven} conta do céu (×5)`;
-                    if (heaven > 0 && earth > 0) explanation += ' + ';
-                    if (earth > 0) explanation += `${earth} conta(s) da terra (×1)`;
-                    explanation += '\n';
-                }
-            });
-            
-            return explanation;
+
+            return digits.map((digit, index) => {
+                if (digit === 0) return null;
+                const heaven = Math.floor(digit / 5);
+                const earth = digit % 5;
+                return {
+                    position: positions[index],
+                    digit,
+                    heaven,
+                    earth
+                };
+            }).filter(Boolean);
         }
 
         function toggleInstructions() {
-            const instructions = document.getElementById('instructions');
-            instructions.style.display = instructions.style.display === 'none' ? 'block' : 'none';
+            openModal('instructionsModal');
         }
+
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            if (!modal) return;
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+
+            const focusable = modal.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (focusable) {
+                focusable.focus({ preventScroll: true });
+            }
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            if (!modal) return;
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+        }
+
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    closeModal(modal.id);
+                }
+            });
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+                    closeModal(modal.id);
+                });
+            }
+        });
     </script>
     <script src="../src/js/acessibilidade.js"></script>
 
