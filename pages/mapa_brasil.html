@@ -6,6 +6,9 @@
   <title>Mapa Interativo do Brasil</title>
 
   <!-- CSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../src/css/mapBr.css" />
   <link rel="stylesheet" href="../src/css/global.css" />
 </head>
@@ -15,75 +18,64 @@
 
   <div class="container">
     <div class="header">
-      <h1 class="title">Mapa do Brasil!</h1>
-      <p class="subtitle">Explore nosso país de forma informativa</p>
-    </div>
-
-    <div class="controls">
-      <button class="btn" onclick="toggleCapitals()" id="capitalsBtn">🏛️ Mostrar Capitais</button>
-      <button class="btn regions" onclick="highlightRegions()" id="regionsBtn">🗺️ Destacar Regiões</button>
-      <button class="btn reset" onclick="resetMap()" id="resetBtn">🔄 Resetar</button>
+      <h1 class="title">Mapa do Brasil</h1>
     </div>
 
     <div class="main-content">
       <!-- MAPA -->
       <div class="map-container">
-        <div id="mapWrapper"></div>
-      </div>
-
-      <!-- PAINEL LATERAL -->
-      <div class="info-panel">
-        <div class="stats">
-          <h3>📊 Suas Estatísticas</h3>
-          <div class="stat-item">
-            <span>Estados Visitados:</span>
-            <span id="visitedCount">0/27</span>
-          </div>
-          <div class="stat-item">
-            <span>Região Atual:</span>
-            <span id="currentRegion">-</span>
-          </div>
+        <div class="map-actions">
+          <button class="map-action-btn" type="button" onclick="toggleCapitals()" id="capitalsBtn" aria-label="Mostrar capitais">
+            Mostrar Capitais
+          </button>
+          <button class="map-action-btn legend-btn" type="button" onclick="openLegendModal()" aria-label="Abrir legenda de regiões">
+            Legendas
+          </button>
         </div>
-
-        <div id="stateInfo">
-          <h3>ℹ️ Informações</h3>
-          <p>Passe o mouse sobre os estados para ver informações rápidas, ou clique para detalhes completos!</p>
+        <div id="mapWrapper">
+          <!-- O mapa SVG será inserido aqui pelo brmap.js -->
         </div>
-
-        <div class="legend">
-          <h4>Legenda das Regiões:</h4>
-          <div class="legend-item">
-            <div class="legend-color" style="background:#32CD32;"></div><span>Norte</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-color" style="background:#FF6347;"></div><span>Nordeste</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-color" style="background:#FFD700;"></div><span>Centro-Oeste</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-color" style="background:#4169E1;"></div><span>Sudeste</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-color" style="background:#9370DB;"></div><span>Sul</span>
-          </div>
-        </div>
+        <button id="credits-btn" class="info-btn" title="Créditos" aria-label="Créditos">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+        </button>
       </div>
     </div>
   </div>
 
   <!-- MODAL -->
-  <div id="stateModal" class="modal">
+  <dialog id="stateModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
       <h2 id="modalTitle">Estado</h2>
       <div id="modalContent" class="modal-info"></div>
     </div>
+  </dialog>
+
+  <dialog id="legendModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeLegendModal()">&times;</span>
+      <h2>Legenda das Regiões</h2>
+      <div class="modal-info legend-list">
+        <div><strong class="legend north">Norte</strong> — AM, AC, RR, PA, AP, TO, RO</div>
+        <div><strong class="legend northeast">Nordeste</strong> — MA, PI, CE, RN, PB, PE, AL, SE, BA</div>
+        <div><strong class="legend midwest">Centro-Oeste</strong> — MT, MS, GO, DF</div>
+        <div><strong class="legend southeast">Sudeste</strong> — MG, ES, RJ, SP</div>
+        <div><strong class="legend south">Sul</strong> — PR, SC, RS</div>
+      </div>
+    </div>
   </div>
-      <!-- Footer pequeno e discreto -->
-    <footer class="game-footer-abaco">
-        <p>Ferramenta Educacional - Ábaco Digital | Criação e desenvolvimento por João Jr</p>
-    </footer>
+
+    <!-- Modal de Créditos -->
+    <dialog id="credits-modal">
+        <div class="modal-container">
+            <div class="modal-box">
+                <h2>Créditos</h2>
+                <p><strong>Ferramenta:</strong> Mapa do Brasil Interativo</p>
+                <p><strong>Criação e Desenvolvimento:</strong> Ana Paula Camara e João Jr.</p>
+                <button id="credits-close-btn" class="map-action-btn">Fechar</button>
+            </div>
+        </div>
+    </dialog>
       <!-- ===========================
       Widget de Acessibilidade
       =========================== -->

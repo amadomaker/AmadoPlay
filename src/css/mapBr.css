@@ -5,11 +5,18 @@
   box-sizing: border-box;
 }
 
+html {
+  min-height: 100%;
+  background: linear-gradient(135deg, #6c63ff 0%, #7c4dff 35%, #9c27b0 70%, #673ab7 100%);
+}
+
 body {
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Montserrat', Arial, sans-serif;
   background: linear-gradient(135deg, #6c63ff 0%, #7c4dff 35%, #9c27b0 70%, #673ab7 100%);
   min-height: 100vh;
   overflow-x: hidden;
+  color: #1f2933;
+  line-height: 1.6;
 }
 
 .container {
@@ -24,17 +31,11 @@ body {
 }
 
 .title {
-  font-size: 3rem;
+  font-size: clamp(2rem, 4vw, 3rem);
   color: #fff;
-  text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
-  animation: bounce 2s infinite;
+  text-shadow: 3px 3px 6px rgba(0,0,0,0.35);
   margin-bottom: 10px;
-}
-
-.subtitle {
-  font-size: 1.2rem;
-  color: #FFD700;
-  font-weight: bold;
+  font-weight: 800;
 }
 
 /* ==== ANIMAÇÕES ==== */
@@ -61,75 +62,106 @@ body {
 }
 
 /* ==== CONTROLES ==== */
-.controls {
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.map-actions {
   display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-bottom: 30px;
-  flex-wrap: wrap;
+  justify-content: flex-end; /* Alinha os botões à direita */
+  gap: 12px;
+  margin-bottom: 16px; /* Adiciona um espaço abaixo, antes do mapa */
+  /* Por padrão (mobile-first), os botões ficam acima do mapa */
 }
 
-.btn {
-  background: linear-gradient(45deg, #32CD32, #228B22);
-  color: white;
+.map-action-btn {
+  border-radius: 12px;
   border: none;
-  padding: 12px 24px;
-  border-radius: 25px;
-  font-family: 'Comic Sans MS', cursive;
-  font-size: 14px;
-  font-weight: bold;
+  background: rgba(30, 41, 59, 0.75);
+  color: #fff;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  text-transform: uppercase;
+  padding: 0 18px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  font-size: 0.95rem;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-.btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+.map-action-btn.legend {
+  background: rgba(15, 118, 110, 0.8);
 }
 
-.btn.reset {
-  background: linear-gradient(45deg, #FFD700, #FFA500);
+.map-action-btn.active {
+  background: rgba(129, 140, 248, 0.85);
+  box-shadow: 0 10px 24px rgba(99, 102, 241, 0.35);
 }
 
-.btn.regions {
-  background: linear-gradient(45deg, #87CEEB, #4682B4);
+.map-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.3);
+  background: rgba(30, 41, 59, 0.9);
+}
+
+.map-action-btn.legend-btn:hover {
+  background: rgba(13, 104, 97, 0.9);
+}
+
+.map-action-btn:focus-visible {
+  outline: 3px solid rgba(129, 140, 248, 0.7);
+  outline-offset: 3px;
 }
 
 /* ==== LAYOUT PRINCIPAL ==== */
 .main-content {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 30px;
-  align-items: start;
+  gap: 24px;
 }
 
 .map-container {
   background: rgba(255,255,255,0.95);
   border-radius: 20px;
-  padding: 30px;
+  padding: 20px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  display: flex;
-  justify-content: center;
-  align-items: center;
   position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  height: auto;
 }
 
 #mapWrapper {
-  max-width: 100%;
-  width: 800px;
-  max-height: 600px;
-  margin: 0 auto;
-  position: relative;
+    position: relative;
+    overflow: hidden;
+    cursor: grab;
+}
+
+#mapWrapper svg {
+  width: 100%;
+  height: 100%;
 }
 
 .info-panel {
   background: rgba(255,255,255,0.95);
   border-radius: 20px;
-  padding: 25px;
+  padding: clamp(18px, 3vw, 28px);
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
 /* ==== ESTILOS DO SVG/BRMAP ==== */
@@ -192,11 +224,14 @@ body {
   height: 100%;
   background-color: rgba(0,0,0,0.5);
   animation: fadeIn 0.3s ease;
+  /* Added for centering */
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-content {
   background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-  margin: 5% auto;
+  margin: 0; /* Replaced margin: 5% auto */
   padding: 30px;
   border-radius: 20px;
   width: 90%;
@@ -234,6 +269,94 @@ body {
   color: #555;
 }
 
+.info-btn {
+    width: 40px;
+    height: 40px;
+    background-color: #e9ecef;
+    color: #495057;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dee2e6;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.info-btn:hover { transform: scale(1.1); background-color: #dee2e6; }
+
+.info-btn svg { width: 20px; height: 20px; fill: #495057; }
+
+/* Créditos: botão flutuante no canto inferior direito do tabuleiro */
+#credits-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.95);
+    border: 1px solid #dee2e6;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+    z-index: 5;
+}
+#credits-btn svg { width: 20px; height: 20px; fill: #495057; }
+#credits-btn:hover { transform: translateY(-1px); }
+
+/* Estilo do modal de créditos - centralizado (via container interno) */
+#credits-modal[open] {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh; /* Usar dvh quando disponível */
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent; /* O dialog em si é transparente */
+}
+
+/* O ::backdrop é o fundo escuro que o navegador cria para o modal */
+#credits-modal::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+}
+
+#credits-modal .modal-container {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+#credits-modal .modal-box {
+    background: #fff;
+    color: #1f2937;
+    padding: 1.25rem 1.5rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    width: min(420px, 90vw);
+    text-align: center;
+    animation: zoomIn 0.3s ease;
+}
+
+/* Estilo para o botão de fechar do modal de créditos */
+#credits-modal .map-action-btn {
+    margin-top: 1rem;
+    background: #6c63ff;
+    /* Adicionado para centralizar o botão */
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .modal-info div {
   margin-bottom: 15px;
   padding: 10px;
@@ -241,6 +364,27 @@ body {
   border-radius: 10px;
   border-left: 4px solid #667eea;
 }
+
+.legend-list div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(103, 126, 234, 0.12);
+  border-left: 4px solid rgba(103, 126, 234, 0.6);
+}
+
+.legend-list strong.legend {
+  font-weight: 700;
+}
+
+.legend-list strong.legend.north { color: #32CD32; }
+.legend-list strong.legend.northeast { color: #FF6347; }
+.legend-list strong.legend.midwest { color: #B8860B; }
+.legend-list strong.legend.southeast { color: #4169E1; }
+.legend-list strong.legend.south { color: #9370DB; }
 
 /* Estatísticas e legenda */
 .stats {
@@ -251,15 +395,15 @@ body {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .legend {
   margin-top: 20px;
   padding: 15px;
   background: rgba(255,255,255,0.9);
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
 .legend h4 {
@@ -297,15 +441,79 @@ body {
 }
 
 /* ==== RESPONSIVO ==== */
+@media (max-width: 1200px) {
+}
+
+@media (max-width: 900px) {
+}
+
 @media (max-width: 768px) {
-  .main-content {
-    grid-template-columns: 1fr;
+  /* Transforma o container principal em flex para reordenar os filhos */
+  .map-container {
+    display: flex;
+    flex-direction: column;
+
+    /* Remove o estilo visual do container pai */
+    background: none;
+    box-shadow: none;
+    padding: 0;
   }
-  .title {
-    font-size: 2rem;
+
+  /* Move os botões para o topo */
+  .map-actions {
+    order: -1; /* Garante que os botões venham primeiro */
+    align-self: flex-end; /* Alinha os botões à direita */
+    margin-bottom: 16px; /* Cria espaço entre os botões e o mapa */
   }
+
+  /* Aplica o estilo visual diretamente no wrapper do mapa */
   #mapWrapper {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     width: 100%;
-    height: auto;
+  }
+
+  /* Ajusta o tamanho do modal para telas menores */
+  .modal-content {
+    padding: 20px;
+    width: 92%;
+  }
+
+  .modal h2 {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.8rem;
+  }
+
+  #credits-btn {
+      width: 36px;
+      height: 36px;
+      bottom: 8px;
+      right: 8px;
+  }
+}
+
+/* Regra específica para celulares (telas menores que 480px) */
+@media (max-width: 480px) {
+  .map-actions {
+    /* Remove o posicionamento relativo ao padding e alinha ao canto */
+    top: 0;
+    right: 0;
+    margin: 10px; /* Adiciona um pequeno respiro da borda */
+    gap: 8px;     /* Menos espaço entre os botões */
+  }
+
+  .map-action-btn {
+    height: 36px;         /* Botões mais baixos */
+    padding: 0 12px;      /* Menos padding horizontal */
+    font-size: 0.8rem;    /* Fonte menor */
+    letter-spacing: 0.2px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
   }
 }
