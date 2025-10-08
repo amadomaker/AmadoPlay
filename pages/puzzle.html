@@ -28,7 +28,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 10px;
         }
 
         #canvas {
@@ -103,9 +103,9 @@
             background: linear-gradient(145deg, #6c63ff 0%, #7c4dff 100%);
             color: white;
             border: none;
-            padding: 18px 45px;
-            font-size: 1.3em;
-            border-radius: 50px;
+            padding: 15px 35px;
+            font-size: 1.2em;
+            border-radius: 15px;
             cursor: pointer;
             box-shadow: 
                 0 8px 20px rgba(108, 99, 255, 0.4),
@@ -125,10 +125,23 @@
             transform: translateY(-1px);
         }
 
+        .stats-container {
+            margin: 25px 0;
+            background: rgba(0,0,0,0.05);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .stats-container p {
+            font-size: 1.1em;
+            color: #555;
+            margin: 5px 0;
+        }
+
         #gameInfo {
             text-align: center;
             color: #fff;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
         }
 
         #gameInfo h2 {
@@ -136,6 +149,125 @@
             margin-bottom: 10px;
             letter-spacing: 2px;
             font-weight: bold;
+        }
+
+        .level-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        #levelIndicator {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        #levelSelectionModal .modalContent {
+            width: 600px;
+        }
+
+        #levelGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .level-select-btn {
+            background: linear-gradient(145deg, #e0e0e0 0%, #f5f5f5 100%);
+            border: 1px solid #ccc;
+            font-size: 2em;
+            font-weight: bold;
+            color: #888;
+            height: 100px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .level-select-btn.locked {
+            background: #ccc;
+            cursor: not-allowed;
+            font-size: 2.5em;
+        }
+
+        .level-select-btn.unlocked {
+            color: #6c63ff;
+            background: linear-gradient(145deg, #f0f2ff 0%, #ffffff 100%);
+            border-color: #6c63ff;
+        }
+
+        .level-select-btn.unlocked:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(108, 99, 255, 0.3);
+        }
+
+        #game-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1050px;
+            padding: 0 10px;
+            margin-bottom: 10px;
+        }
+
+        .control-btn {
+            background: linear-gradient(145deg, #8e78ff, #6c63ff);
+            color: white;
+            border: none;
+            width: 55px;
+            height: 55px;
+            border-radius: 18px;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+            font-size: 1.8em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        .control-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #game-stats {
+            display: flex;
+            gap: 25px;
+            background: rgba(0,0,0,0.25);
+            padding: 10px 25px;
+            border-radius: 18px;
+            color: white;
+            font-weight: bold;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .stat {
+            text-align: center;
+            font-size: 1.4em;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 0.6em;
+            font-weight: normal;
+            opacity: 0.8;
+            letter-spacing: 1px;
         }
 
         @media (max-width: 768px) {
@@ -152,15 +284,45 @@
             #gameInfo h2 {
                 font-size: 2em;
             }
+            #game-controls {
+                max-width: 95vw;
+            }
+            .control-btn { width: 50px; height: 50px; border-radius: 15px; font-size: 1.6em;}
+            #game-stats { gap: 15px; padding: 8px 15px; }
+            .stat { font-size: 1.2em; }
         }
     </style>
 </head>
 <body>
     <div id="gameContainer">
+        <div id="game-controls">
+            <a href="#" id="homeBtn" class="control-btn">🏠</a>
+            <div id="game-stats">
+                <div class="stat">
+                    <span class="stat-label">TEMPO</span>
+                    <span id="timeCounter">0s</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">MOV.</span>
+                    <span id="moveCounter">0</span>
+                </div>
+            </div>
+            <a href="#" id="restartBtn" class="control-btn">🔄</a>
+        </div>
         <div id="gameInfo">
             <h2>Desafio dos Blocos</h2>
+             <div class="level-nav">
+                <span id="levelIndicator">Nível 1</span>
+            </div>
         </div>
         <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="levelSelectionModal" class="modal">
+        <div class="modalContent">
+            <h1>Selecione o Nível</h1>
+            <div id="levelGrid"></div>
+        </div>
     </div>
 
     <div id="welcomeModal" class="modal">
@@ -174,9 +336,16 @@
 
     <div id="victoryModal" class="modal">
         <div class="modalContent">
-            <h1>🎉 PARABÉNS! 🎉</h1>
-            <p>Você moveu o bloco especial para a saída!</p>
-            <button class="restartBtn" onclick="resetGame()">Jogar Novamente</button>
+            <h1>Parabéns!</h1>
+            <p>Você completou o nível com sucesso.</p>
+            <div class="stats-container">
+                <p><strong>Tempo:</strong> <span id="timeStat">0s</span></p>
+                <p><strong>Movimentos:</strong> <span id="movesStat">0</span></p>
+            </div>
+            <div style="display: flex; justify-content: center; gap: 15px;">
+                <button class="restartBtn" onclick="resetGame()">Tentar Novamente</button>
+                <button id="nextLevelModalBtn" class="restartBtn" onclick="goToNextLevel()">Próximo Nível</button>
+            </div>
         </div>
     </div>
 
@@ -325,24 +494,75 @@
         let blocks = [];
         let selectedBlock = null;
         let gameWon = false;
+        let currentLevel = 0;
+        let moveCount = 0;
+        let startTime = null;
+        let gameTimer = null;
 
-        function initializeBlocks() {
+        const levels = [
+            // Nível 2 (Fácil) -> agora é Nível 1
+            [
+                { r: 2, c: 1, w: 2, h: 1, t: true }, 
+                { r: 0, c: 0, w: 2, h: 1 },
+                { r: 1, c: 0, w: 1, h: 3 }, 
+                { r: 1, c: 3, w: 1, h: 3 }, 
+                { r: 4, c: 0, w: 1, h: 2 },
+                { r: 0, c: 5, w: 1, h: 3 },
+                { r: 5, c: 2, w: 3, h: 1 },
+                { r: 4, c: 5, w: 2, h: 1 },
+
+            ],
+            // Nível 3 (Médio) -> agora é Nível 2
+            [
+                { r: 2, c: 0, w: 2, h: 1, t: true }, { r: 0, c: 0, w: 1, h: 2 },
+                { r: 0, c: 1, w: 1, h: 2 }, { r: 0, c: 3, w: 2, h: 1 },
+                { r: 1, c: 3, w: 1, h: 2 }, { r: 3, c: 2, w: 2, h: 1 },
+                { r: 4, c: 2, w: 1, h: 2 }, { r: 5, c: 3, w: 3, h: 1 },
+                { r: 2, c: 4, w: 2, h: 1 }, { r: 0, c: 5, w: 1, h: 2 },
+                { r: 3, c: 5, w: 1, h: 2 }
+            ],
+            // Nível 1 (Original) -> agora é Nível 3
+            [
+                { r: 2, c: 0, w: 2, h: 1, t: true }, { r: 0, c: 0, w: 1, h: 2 },
+                { r: 0, c: 4, w: 1, h: 3 }, { r: 0, c: 6, w: 1, h: 2 },
+                { r: 2, c: 5, w: 1, h: 3 }, { r: 1, c: 7, w: 1, h: 3 },
+                { r: 3, c: 1, w: 1, h: 2 }, { r: 1, c: 1, w: 3, h: 1 },
+                { r: 0, c: 2, w: 2, h: 1 }, { r: 3, c: 2, w: 2, h: 1 },
+                { r: 4, c: 3, w: 2, h: 1 }, { r: 4, c: 2, w: 1, h: 2 },
+                { r: 5, c: 4, w: 4, h: 1 }
+            ]
+        ];
+
+        function updateTimer() {
+            if (gameWon || !startTime) return;
+            const now = new Date();
+            const seconds = Math.floor((now - startTime) / 1000);
+            document.getElementById('timeCounter').innerText = `${seconds}s`;
+        }
+
+        function initializeBlocks(levelIndex) {
             blocks = [];
             gameWon = false;
+            currentLevel = levelIndex;
+            moveCount = 0;
+            startTime = new Date();
+            document.getElementById('moveCounter').innerText = moveCount;
 
-            blocks.push(new Block(2, 0, 2, 1, true));
-            blocks.push(new Block(0, 0, 1, 2));
-            blocks.push(new Block(0, 4, 1, 3));
-            blocks.push(new Block(0, 6, 1, 2));
-            blocks.push(new Block(2, 5, 1, 3));
-            blocks.push(new Block(1, 7, 1, 3));
-            blocks.push(new Block(3, 1, 1, 2));
-            blocks.push(new Block(1, 1, 3, 1));
-            blocks.push(new Block(0, 2, 2, 1));
-            blocks.push(new Block(3, 2, 2, 1));
-            blocks.push(new Block(4, 3, 2, 1));
-            blocks.push(new Block(4, 2, 1, 2));
-            blocks.push(new Block(5, 4, 4, 1));
+            if (gameTimer) clearInterval(gameTimer);
+            gameTimer = setInterval(updateTimer, 1000);
+            updateTimer();
+
+            const levelData = levels[currentLevel];
+            if (!levelData) return;
+
+            levelData.forEach(b => {
+                blocks.push(new Block(b.r, b.c, b.w, b.h, b.t || false));
+            });
+
+            const levelIndicator = document.getElementById('levelIndicator');
+            if(levelIndicator) {
+                levelIndicator.innerText = `Nível ${currentLevel + 1}`;
+            }
         }
 
         // ============================================
@@ -350,8 +570,13 @@
         // ============================================
         function wouldCollide(block, newRow, newCol) {
             if (newRow < 0 || newCol < 0) return true;
+
             if (newRow + block.height > GRID_ROWS || newCol + block.width > GRID_COLS) {
-                return true;
+                // Exceção para o bloco de destino alcançar a saída
+                if (block.isTarget && newRow === 2 && newCol === (GRID_COLS - 1)) {
+                    return false; // Não colide com a parede da saída
+                }
+                return true; // Colide com as outras paredes
             }
             for (let other of blocks) {
                 if (other === block) continue;
@@ -375,22 +600,91 @@
 
         function closeWelcomeModal() {
             document.getElementById('welcomeModal').style.display = 'none';
+            showLevelSelectionModal();
+        }
+
+        function showLevelSelectionModal() {
+            const levelGrid = document.getElementById('levelGrid');
+            let unlockedLevels = localStorage.getItem('unlockedLevels');
+            if (!unlockedLevels) {
+                unlockedLevels = Array(levels.length).fill(false);
+                unlockedLevels[0] = true;
+                localStorage.setItem('unlockedLevels', JSON.stringify(unlockedLevels));
+            }
+            unlockedLevels = JSON.parse(localStorage.getItem('unlockedLevels'));
+
+            levelGrid.innerHTML = '';
+            levels.forEach((level, index) => {
+                const levelButton = document.createElement('button');
+                levelButton.textContent = index + 1;
+                levelButton.classList.add('level-select-btn');
+                if (unlockedLevels[index]) {
+                    levelButton.classList.add('unlocked');
+                    levelButton.onclick = () => {
+                        document.getElementById('levelSelectionModal').style.display = 'none';
+                        document.getElementById('gameContainer').style.display = 'flex';
+                        initializeBlocks(index);
+                        draw();
+                    };
+                } else {
+                    levelButton.classList.add('locked');
+                    levelButton.textContent = '🔒';
+                }
+                levelGrid.appendChild(levelButton);
+            });
+            document.getElementById('levelSelectionModal').style.display = 'flex';
         }
 
         function checkWin() {
             const targetBlock = blocks.find(b => b.isTarget);
-            return targetBlock && targetBlock.col >= 6 && targetBlock.row === 2;
+            // A vitória ocorre precisamente quando o bloco alvo atinge a penúltima coluna
+            return targetBlock && targetBlock.col === (GRID_COLS - 1) && targetBlock.row === 2;
         }
 
         function showVictory() {
             gameWon = true;
+            clearInterval(gameTimer);
+            const endTime = new Date();
+            const timeTaken = Math.round((endTime - startTime) / 1000);
+            
+            document.getElementById('timeStat').innerText = `${timeTaken} segundos`;
+            document.getElementById('movesStat').innerText = moveCount;
+
+            const nextLevelBtn = document.getElementById('nextLevelModalBtn');
+            if (currentLevel >= levels.length - 1) {
+                nextLevelBtn.innerText = 'Ver Níveis';
+            } else {
+                nextLevelBtn.innerText = 'Próximo Nível';
+            }
+
             document.getElementById('victoryModal').style.display = 'flex';
+        }
+
+        function restartCurrentLevel() {
+            initializeBlocks(currentLevel);
+            draw();
         }
 
         function resetGame() {
             document.getElementById('victoryModal').style.display = 'none';
-            initializeBlocks();
-            draw();
+            restartCurrentLevel();
+        }
+
+        function goToNextLevel() {
+            document.getElementById('victoryModal').style.display = 'none';
+            const nextLevel = currentLevel + 1;
+
+            if (nextLevel < levels.length) {
+                let unlocked = JSON.parse(localStorage.getItem('unlockedLevels'));
+                unlocked[nextLevel] = true;
+                localStorage.setItem('unlockedLevels', JSON.stringify(unlocked));
+                
+                initializeBlocks(nextLevel);
+                draw();
+            } else {
+                document.getElementById('gameContainer').style.display = 'none';
+                showLevelSelectionModal();
+            }
         }
 
         // ============================================
@@ -512,6 +806,8 @@
             if ((newRow !== selectedBlock.row || newCol !== selectedBlock.col) && !wouldCollide(selectedBlock, newRow, newCol)) {
                 selectedBlock.row = newRow;
                 selectedBlock.col = newCol;
+                moveCount++;
+                document.getElementById('moveCounter').innerText = moveCount;
                 selectedBlock.dragStartX = pos.x;
                 selectedBlock.dragStartY = pos.y;
                 draw();
@@ -559,11 +855,21 @@
         // INICIALIZAÇÃO
         // ============================================
         document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('gameContainer').style.display = 'none';
             showWelcomeModal();
-        });
 
-        initializeBlocks();
-        draw();
+            document.getElementById('homeBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                if (gameTimer) clearInterval(gameTimer);
+                document.getElementById('gameContainer').style.display = 'none';
+                showLevelSelectionModal();
+            });
+
+            document.getElementById('restartBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                restartCurrentLevel();
+            });
+        });
     </script>
 </body>
 </html>
