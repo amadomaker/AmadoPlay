@@ -263,6 +263,26 @@
       popular: false,
       novo: true,
       acessos: 0
+    },
+    {
+      id: 'desafio-blocos',
+      titulo: 'Desafio dos Blocos',
+      descricao: 'Deslize os blocos para liberar a saída do bloco-alvo e exercite lógica espacial, planejamento de movimentos e pensamento computacional.',
+      imagem: 'src/assets/images/block_card.png',
+      interno: 'pages/puzzle.html',
+      materia: 'matematica',
+      series: [3, 4, 5, 6, 7, 8, 9],
+      tipo: ['interativo', 'ludico', 'raciocinio-logico'],
+      dificuldade: 'intermediario',
+      bncc: [
+        { codigo: 'EF03CO03', descricao: 'Aplicar a estratégia de decomposição para resolver problemas complexos, dividindo o problema em partes menores, resolvendo-as e combinando suas soluções.' },
+        { codigo: 'EF05CO04', descricao: 'Criar e simular algoritmos representados em linguagem oral, escrita ou pictográfica, com sequências, repetições e seleções condicionais para resolver problemas de forma independente e colaborativa.' },
+        { codigo: 'EF05MA15', descricao: 'Interpretar, descrever e representar a localização ou movimentação de objetos no plano cartesiano (primeiro quadrante), utilizando coordenadas cartesianas e indicando mudanças de direção, sentido e giros.' }
+      ],
+      tags: ['puzzle', 'blocos deslizantes', 'planejamento', 'pensamento computacional', 'plano cartesiano', 'raciocínio lógico', 'EF03CO03', 'EF05CO04', 'EF05MA15'],
+      popular: false,
+      novo: true,
+      acessos: 0
     }
 
 

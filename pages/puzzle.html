@@ -210,27 +210,39 @@
             box-shadow: 0 10px 20px rgba(108, 99, 255, 0.3);
         }
 
-        #game-controls {
+        #playArea {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 1050px;
-            padding: 0 10px;
-            margin-bottom: 10px;
+            justify-content: center;
+            gap: 15px;
+            position: relative;
+        }
+
+        #game-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
         }
 
         .control-btn {
             background: linear-gradient(145deg, #8e78ff, #6c63ff);
             color: white;
             border: none;
-            width: 55px;
-            height: 55px;
-            border-radius: 18px;
+            width: 68px;
+            height: 68px;
+            border-radius: 20px;
             cursor: pointer;
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
             transition: all 0.2s ease;
-            font-size: 1.8em;
+            font-size: 2.2em;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -248,9 +260,11 @@
 
         #game-stats {
             display: flex;
-            gap: 25px;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
             background: rgba(0,0,0,0.25);
-            padding: 10px 25px;
+            padding: 16px 22px;
             border-radius: 18px;
             color: white;
             font-weight: bold;
@@ -284,38 +298,42 @@
             #gameInfo h2 {
                 font-size: 2em;
             }
-            #game-controls {
-                max-width: 95vw;
-            }
-            .control-btn { width: 50px; height: 50px; border-radius: 15px; font-size: 1.6em;}
-            #game-stats { gap: 15px; padding: 8px 15px; }
+            #playArea { flex-direction: column; gap: 12px; }
+            #game-controls { flex-direction: row; margin-right: 0; margin-top: 10px; gap: 12px; justify-content: center; flex-wrap: wrap; }
+            .control-group { flex-direction: row; gap: 10px; }
+            .control-btn { width: 56px; height: 56px; border-radius: 16px; font-size: 1.8em;}
+            #game-stats { flex-direction: row; gap: 15px; padding: 8px 15px; }
             .stat { font-size: 1.2em; }
         }
     </style>
 </head>
 <body>
     <div id="gameContainer">
-        <div id="game-controls">
-            <a href="#" id="homeBtn" class="control-btn">🏠</a>
-            <div id="game-stats">
-                <div class="stat">
-                    <span class="stat-label">TEMPO</span>
-                    <span id="timeCounter">0s</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">MOV.</span>
-                    <span id="moveCounter">0</span>
-                </div>
-            </div>
-            <a href="#" id="restartBtn" class="control-btn">🔄</a>
-        </div>
         <div id="gameInfo">
             <h2>Desafio dos Blocos</h2>
              <div class="level-nav">
                 <span id="levelIndicator">Nível 1</span>
             </div>
         </div>
-        <canvas id="canvas"></canvas>
+        <div id="playArea">
+            <div id="game-controls">
+                <div class="control-group">
+                    <a href="#" id="homeBtn" class="control-btn">🏠</a>
+                    <a href="#" id="restartBtn" class="control-btn">🔄</a>
+                </div>
+                <div id="game-stats">
+                    <div class="stat">
+                        <span class="stat-label">TEMPO</span>
+                        <span id="timeCounter">0s</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">MOV.</span>
+                        <span id="moveCounter">0</span>
+                    </div>
+                </div>
+            </div>
+            <canvas id="canvas"></canvas>
+        </div>
     </div>
 
     <div id="levelSelectionModal" class="modal">
@@ -356,17 +374,20 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         
-        const GRID_ROWS = 6;
-        const GRID_COLS = 8;
         const CELL_SIZE = 90;
         const PADDING_LEFT = 70;
         const PADDING_TOP = 70;
+        const EXIT_EXTENSION_CELLS = 2;
 
-        const BOARD_WIDTH = GRID_COLS * CELL_SIZE;
-        const BOARD_HEIGHT = GRID_ROWS * CELL_SIZE;
+        let gridRows = 6;
+        let gridCols = 8;
+        let exitRow = 2;
 
-        const CANVAS_WIDTH = PADDING_LEFT + BOARD_WIDTH + 250 + 20;
-        const CANVAS_HEIGHT = PADDING_TOP + BOARD_HEIGHT + 70;
+        const MAX_GRID_ROWS = 6;
+        const MAX_GRID_COLS = 8;
+
+        const CANVAS_WIDTH = PADDING_LEFT + MAX_GRID_COLS * CELL_SIZE + 250 + 20;
+        const CANVAS_HEIGHT = PADDING_TOP + MAX_GRID_ROWS * CELL_SIZE + 70;
 
         canvas.width = CANVAS_WIDTH;
         canvas.height = CANVAS_HEIGHT;
@@ -500,37 +521,50 @@
         let gameTimer = null;
 
         const levels = [
-            // Nível 2 (Fácil) -> agora é Nível 1
-            [
-                { r: 2, c: 1, w: 2, h: 1, t: true }, 
-                { r: 0, c: 0, w: 2, h: 1 },
-                { r: 1, c: 0, w: 1, h: 3 }, 
-                { r: 1, c: 3, w: 1, h: 3 }, 
-                { r: 4, c: 0, w: 1, h: 2 },
-                { r: 0, c: 5, w: 1, h: 3 },
-                { r: 5, c: 2, w: 3, h: 1 },
-                { r: 4, c: 5, w: 2, h: 1 },
-
-            ],
-            // Nível 3 (Médio) -> agora é Nível 2
-            [
-                { r: 2, c: 0, w: 2, h: 1, t: true }, { r: 0, c: 0, w: 1, h: 2 },
-                { r: 0, c: 1, w: 1, h: 2 }, { r: 0, c: 3, w: 2, h: 1 },
-                { r: 1, c: 3, w: 1, h: 2 }, { r: 3, c: 2, w: 2, h: 1 },
-                { r: 4, c: 2, w: 1, h: 2 }, { r: 5, c: 3, w: 3, h: 1 },
-                { r: 2, c: 4, w: 2, h: 1 }, { r: 0, c: 5, w: 1, h: 2 },
-                { r: 3, c: 5, w: 1, h: 2 }
-            ],
-            // Nível 1 (Original) -> agora é Nível 3
-            [
-                { r: 2, c: 0, w: 2, h: 1, t: true }, { r: 0, c: 0, w: 1, h: 2 },
-                { r: 0, c: 4, w: 1, h: 3 }, { r: 0, c: 6, w: 1, h: 2 },
-                { r: 2, c: 5, w: 1, h: 3 }, { r: 1, c: 7, w: 1, h: 3 },
-                { r: 3, c: 1, w: 1, h: 2 }, { r: 1, c: 1, w: 3, h: 1 },
-                { r: 0, c: 2, w: 2, h: 1 }, { r: 3, c: 2, w: 2, h: 1 },
-                { r: 4, c: 3, w: 2, h: 1 }, { r: 4, c: 2, w: 1, h: 2 },
-                { r: 5, c: 4, w: 4, h: 1 }
-            ]
+            {
+                grid: { rows: 6, cols: 6 },
+                exitRow: 2,
+                blocks: [
+                    { r: 2, c: 1, w: 2, h: 1, t: true }, 
+                    { r: 0, c: 0, w: 2, h: 1 },
+                    { r: 1, c: 0, w: 1, h: 3 }, 
+                    { r: 1, c: 3, w: 1, h: 3 }, 
+                    { r: 4, c: 0, w: 1, h: 2 },
+                    { r: 0, c: 5, w: 1, h: 3 },
+                    { r: 5, c: 2, w: 3, h: 1 },
+                    { r: 4, c: 4, w: 2, h: 1 }
+                ]
+            },
+            {
+                grid: { rows: 6, cols: 6 },
+                exitRow: 2,
+                blocks: [
+                    { r: 2, c: 0, w: 2, h: 1, t: true },
+                    { r: 0, c: 0, w: 1, h: 2 },
+                    { r: 4, c: 2, w: 1, h: 2 },
+                    { r: 0, c: 3, w: 3, h: 1 },
+                    { r: 1, c: 3, w: 1, h: 2 }, 
+                    { r: 3, c: 0, w: 3, h: 1 },
+                    { r: 5, c: 0, w: 2, h: 1 },
+                    { r: 5, c: 3, w: 2, h: 1 },
+                    { r: 2, c: 4, w: 1, h: 2 }, 
+                    { r: 1, c: 5, w: 1, h: 3 },
+                    { r: 4, c: 4, w: 2, h: 1 }
+                ]
+            },
+            {
+                grid: { rows: 6, cols: 8 },
+                exitRow: 2,
+                blocks: [
+                    { r: 2, c: 0, w: 2, h: 1, t: true }, { r: 0, c: 0, w: 1, h: 2 },
+                    { r: 0, c: 4, w: 1, h: 3 }, { r: 0, c: 6, w: 1, h: 2 },
+                    { r: 2, c: 5, w: 1, h: 3 }, { r: 1, c: 7, w: 1, h: 3 },
+                    { r: 3, c: 1, w: 1, h: 2 }, { r: 1, c: 1, w: 3, h: 1 },
+                    { r: 0, c: 2, w: 2, h: 1 }, { r: 3, c: 2, w: 2, h: 1 },
+                    { r: 4, c: 3, w: 2, h: 1 }, { r: 4, c: 2, w: 1, h: 2 },
+                    { r: 5, c: 4, w: 4, h: 1 }
+                ]
+            }
         ];
 
         function updateTimer() {
@@ -552,10 +586,18 @@
             gameTimer = setInterval(updateTimer, 1000);
             updateTimer();
 
-            const levelData = levels[currentLevel];
-            if (!levelData) return;
+            const levelConfig = levels[currentLevel];
+            if (!levelConfig) return;
 
-            levelData.forEach(b => {
+            const blockSpecs = Array.isArray(levelConfig.blocks)
+                ? levelConfig.blocks
+                : (Array.isArray(levelConfig) ? levelConfig : []);
+
+            gridRows = levelConfig.grid?.rows || MAX_GRID_ROWS;
+            gridCols = levelConfig.grid?.cols || MAX_GRID_COLS;
+            exitRow = (typeof levelConfig.exitRow === 'number') ? levelConfig.exitRow : 2;
+
+            blockSpecs.forEach(b => {
                 blocks.push(new Block(b.r, b.c, b.w, b.h, b.t || false));
             });
 
@@ -571,12 +613,17 @@
         function wouldCollide(block, newRow, newCol) {
             if (newRow < 0 || newCol < 0) return true;
 
-            if (newRow + block.height > GRID_ROWS || newCol + block.width > GRID_COLS) {
-                // Exceção para o bloco de destino alcançar a saída
-                if (block.isTarget && newRow === 2 && newCol === (GRID_COLS - 1)) {
-                    return false; // Não colide com a parede da saída
+            const exitStartCol = gridCols - 1;
+            const exitEndCol = gridCols + EXIT_EXTENSION_CELLS - block.width;
+            const isValidExitMove = block.isTarget &&
+                newRow === exitRow &&
+                newCol >= exitStartCol &&
+                newCol <= exitEndCol;
+
+            if (newRow + block.height > gridRows || newCol + block.width > gridCols) {
+                if (!isValidExitMove) {
+                    return true; // Colide fora da área da saída
                 }
-                return true; // Colide com as outras paredes
             }
             for (let other of blocks) {
                 if (other === block) continue;
@@ -637,8 +684,14 @@
 
         function checkWin() {
             const targetBlock = blocks.find(b => b.isTarget);
-            // A vitória ocorre precisamente quando o bloco alvo atinge a penúltima coluna
-            return targetBlock && targetBlock.col === (GRID_COLS - 1) && targetBlock.row === 2;
+            if (!targetBlock) return false;
+
+            const exitEntryCol = gridCols;
+            const exitFinalCol = gridCols + EXIT_EXTENSION_CELLS - targetBlock.width;
+
+            return targetBlock.row === exitRow &&
+                targetBlock.col >= exitEntryCol &&
+                targetBlock.col <= exitFinalCol;
         }
 
         function showVictory() {
@@ -692,9 +745,12 @@
         // ============================================
         function drawBoard() {
             const r = 15;
-            const exitY = PADDING_TOP + 2 * CELL_SIZE;
+            const boardWidth = gridCols * CELL_SIZE;
+            const boardHeight = gridRows * CELL_SIZE;
+            const exitY = PADDING_TOP + exitRow * CELL_SIZE;
             const exitHeight = CELL_SIZE;
-            const exitWidth = 2 * CELL_SIZE;
+            const exitWidth = EXIT_EXTENSION_CELLS * CELL_SIZE;
+            const boardRightEdge = PADDING_LEFT + boardWidth;
 
             ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
             ctx.shadowBlur = 30;
@@ -703,20 +759,20 @@
 
             ctx.beginPath();
             ctx.moveTo(PADDING_LEFT + r, PADDING_TOP);
-            ctx.lineTo(PADDING_LEFT + BOARD_WIDTH - r, PADDING_TOP);
-            ctx.quadraticCurveTo(PADDING_LEFT + BOARD_WIDTH, PADDING_TOP, PADDING_LEFT + BOARD_WIDTH, PADDING_TOP + r);
-            ctx.lineTo(PADDING_LEFT + BOARD_WIDTH, exitY - r);
-            ctx.quadraticCurveTo(PADDING_LEFT + BOARD_WIDTH, exitY, PADDING_LEFT + BOARD_WIDTH + r, exitY);
-            ctx.lineTo(PADDING_LEFT + BOARD_WIDTH + exitWidth - r, exitY);
-            ctx.quadraticCurveTo(PADDING_LEFT + BOARD_WIDTH + exitWidth, exitY, PADDING_LEFT + BOARD_WIDTH + exitWidth, exitY + r);
-            ctx.lineTo(PADDING_LEFT + BOARD_WIDTH + exitWidth, exitY + exitHeight - r);
-            ctx.quadraticCurveTo(PADDING_LEFT + BOARD_WIDTH + exitWidth, exitY + exitHeight, PADDING_LEFT + BOARD_WIDTH + exitWidth - r, exitY + exitHeight);
-            ctx.lineTo(PADDING_LEFT + BOARD_WIDTH + r, exitY + exitHeight);
-            ctx.quadraticCurveTo(PADDING_LEFT + BOARD_WIDTH, exitY + exitHeight, PADDING_LEFT + BOARD_WIDTH, exitY + exitHeight + r);
-            ctx.lineTo(PADDING_LEFT + BOARD_WIDTH, PADDING_TOP + BOARD_HEIGHT - r);
-            ctx.quadraticCurveTo(PADDING_LEFT + BOARD_WIDTH, PADDING_TOP + BOARD_HEIGHT, PADDING_LEFT + BOARD_WIDTH - r, PADDING_TOP + BOARD_HEIGHT);
-            ctx.lineTo(PADDING_LEFT + r, PADDING_TOP + BOARD_HEIGHT);
-            ctx.quadraticCurveTo(PADDING_LEFT, PADDING_TOP + BOARD_HEIGHT, PADDING_LEFT, PADDING_TOP + BOARD_HEIGHT - r);
+            ctx.lineTo(boardRightEdge - r, PADDING_TOP);
+            ctx.quadraticCurveTo(boardRightEdge, PADDING_TOP, boardRightEdge, PADDING_TOP + r);
+            ctx.lineTo(boardRightEdge, exitY - r);
+            ctx.quadraticCurveTo(boardRightEdge, exitY, boardRightEdge + r, exitY);
+            ctx.lineTo(boardRightEdge + exitWidth - r, exitY);
+            ctx.quadraticCurveTo(boardRightEdge + exitWidth, exitY, boardRightEdge + exitWidth, exitY + r);
+            ctx.lineTo(boardRightEdge + exitWidth, exitY + exitHeight - r);
+            ctx.quadraticCurveTo(boardRightEdge + exitWidth, exitY + exitHeight, boardRightEdge + exitWidth - r, exitY + exitHeight);
+            ctx.lineTo(boardRightEdge + r, exitY + exitHeight);
+            ctx.quadraticCurveTo(boardRightEdge, exitY + exitHeight, boardRightEdge, exitY + exitHeight + r);
+            ctx.lineTo(boardRightEdge, PADDING_TOP + boardHeight - r);
+            ctx.quadraticCurveTo(boardRightEdge, PADDING_TOP + boardHeight, boardRightEdge - r, PADDING_TOP + boardHeight);
+            ctx.lineTo(PADDING_LEFT + r, PADDING_TOP + boardHeight);
+            ctx.quadraticCurveTo(PADDING_LEFT, PADDING_TOP + boardHeight, PADDING_LEFT, PADDING_TOP + boardHeight - r);
             ctx.lineTo(PADDING_LEFT, PADDING_TOP + r);
             ctx.quadraticCurveTo(PADDING_LEFT, PADDING_TOP, PADDING_LEFT + r, PADDING_TOP);
             ctx.closePath();
@@ -739,7 +795,7 @@
             ctx.shadowOffsetX = 0;
             ctx.shadowOffsetY = 0;
 
-            const exitDashX = PADDING_LEFT + BOARD_WIDTH + 10;
+            const exitDashX = boardRightEdge + 10;
             const exitDashY = exitY + 10;
             const exitDashWidth = exitWidth - 20;
             const exitDashHeight = exitHeight - 20;
