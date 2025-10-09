@@ -73,20 +73,9 @@
             width: 500px;
         }
 
-        @keyframes scaleIn {
-            from { 
-                transform: scale(0.5) rotate(-5deg);
-                opacity: 0;
-            }
-            to { 
-                transform: scale(1) rotate(0deg);
-                opacity: 1;
-            }
-        }
-
         .modalContent h1 {
             font-size: 2.5em;
-            color: #6c63ff; /* Cor do novo tema */
+            color: #6c63ff;
             margin-bottom: 20px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
             font-weight: bold;
@@ -97,6 +86,17 @@
             color: #333;
             margin-bottom: 30px;
             line-height: 1.6;
+        }
+
+        @keyframes scaleIn {
+            from { 
+                transform: scale(0.5) rotate(-5deg);
+                opacity: 0;
+            }
+            to { 
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
         }
 
         .restartBtn {
@@ -284,13 +284,102 @@
             letter-spacing: 1px;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
+            body {
+                overflow: hidden;
+                touch-action: none;
+            }
+            #gameInfo {
+                display: none;
+            }
+            .modalContent {
+                width: min(90vw, 420px);
+                max-width: 420px;
+                padding: 24px 28px;
+                max-height: 85vh;
+                overflow-y: auto;
+            }
             .modalContent h1 {
-                font-size: 2em;
+                font-size: 2.15em;
             }
             .modalContent p {
                 font-size: 1.1em;
             }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .modalContent {
+                width: min(84vw, 360px);
+                max-width: 360px;
+                padding: 22px 26px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+            body {
+                justify-content: center;
+                align-items: center;
+                padding-right: 0;
+            }
+            #gameContainer {
+                gap: 12px;
+                margin-top: -55px;
+            }
+            #playArea {
+                justify-content: center;
+                margin-top: -45px;
+            }
+        }
+
+        .orientation-notice {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 32px;
+            text-align: center;
+            z-index: 1400;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .orientation-notice.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .orientation-notice .notice-card {
+            background: linear-gradient(145deg, #5c4d9a 0%, #7c4dff 100%);
+            padding: 28px 32px;
+            border-radius: 18px;
+            max-width: 420px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+        }
+
+        .orientation-notice .notice-card h3 {
+            font-size: 1.6em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .orientation-icon {
+            font-size: 1.4em;
+        }
+
+        .orientation-notice .notice-card p {
+            font-size: 1em;
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+
+        @media (max-width: 768px) and (orientation: landscape) {
             .restartBtn {
                 padding: 14px 35px;
                 font-size: 1.1em;
@@ -298,12 +387,45 @@
             #gameInfo h2 {
                 font-size: 2em;
             }
-            #playArea { flex-direction: column; gap: 12px; }
-            #game-controls { flex-direction: row; margin-right: 0; margin-top: 10px; gap: 12px; justify-content: center; flex-wrap: wrap; }
-            .control-group { flex-direction: row; gap: 10px; }
-            .control-btn { width: 56px; height: 56px; border-radius: 16px; font-size: 1.8em;}
-            #game-stats { flex-direction: row; gap: 15px; padding: 8px 15px; }
-            .stat { font-size: 1.2em; }
+            #playArea {
+                flex-direction: row;
+                align-items: center;
+                gap: 16px;
+                justify-content: center;
+                margin-top: -18px;
+            }
+            #game-controls {
+                flex-direction: column;
+                align-items: center;
+                margin: 0;
+                gap: 14px;
+            }
+            .control-group {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .control-btn { width: 56px; height: 56px; border-radius: 16px; font-size: 1.8em; }
+            #game-stats {
+                flex-direction: column;
+                gap: 16px;
+                padding: 12px 18px;
+            }
+        }
+
+        @media (max-width: 600px) and (orientation: landscape) {
+            body {
+                align-items: center;
+                padding-top: 12px;
+                overflow: hidden;
+            }
+            #gameContainer {
+                gap: 12px;
+                margin-top: -24px;
+            }
+            #playArea {
+                margin-top: -12px;
+                gap: 18px;
+            }
         }
     </style>
 </head>
@@ -364,6 +486,13 @@
                 <button class="restartBtn" onclick="resetGame()">Tentar Novamente</button>
                 <button id="nextLevelModalBtn" class="restartBtn" onclick="goToNextLevel()">Próximo Nível</button>
             </div>
+        </div>
+    </div>
+
+    <div id="orientationNotice" class="orientation-notice">
+        <div class="notice-card">
+            <h3><span class="orientation-icon" aria-hidden="true">📱🔄</span><span class="orientation-text">Gire para continuar</span></h3>
+            <p>Este jogo só funciona no modo paisagem. Por favor, gire seu dispositivo para jogar.</p>
         </div>
     </div>
 
@@ -913,6 +1042,23 @@
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('gameContainer').style.display = 'none';
             showWelcomeModal();
+
+            const orientationNotice = document.getElementById('orientationNotice');
+
+            const shouldShowOrientationNotice = () => {
+                const isPortrait = window.matchMedia('(orientation: portrait)').matches;
+                const isCompactViewport = window.innerWidth <= 1100;
+                return isPortrait && isCompactViewport;
+            };
+
+            const updateOrientationNotice = () => {
+                if (!orientationNotice) return;
+                orientationNotice.classList.toggle('visible', shouldShowOrientationNotice());
+            };
+
+            window.addEventListener('resize', updateOrientationNotice, { passive: true });
+            window.addEventListener('orientationchange', updateOrientationNotice, { passive: true });
+            updateOrientationNotice();
 
             document.getElementById('homeBtn').addEventListener('click', (e) => {
                 e.preventDefault();
