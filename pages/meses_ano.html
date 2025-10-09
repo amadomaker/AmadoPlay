@@ -386,16 +386,12 @@
             padding-left: 0;
         }
         .season-card li {
-            padding-left: 1.5rem;
-            position: relative;
+            padding-left: 0.5rem;
             margin-bottom: 0.5rem;
         }
-        .season-card li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: var(--primary-color);
-            font-weight: bold;
+        .season-card .note {
+            margin-top: 0.75rem;
+            margin-left: 0;
         }
 
         /* Botões de navegação */
@@ -664,6 +660,9 @@
                 width: 170px;
                 text-align: center;
             }
+            .learning-content {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
             .btn {
                 padding: 0.9rem 2rem;
                 font-size: 1.1rem;
@@ -691,7 +690,7 @@
                 text-align: center;
             }
             #learning-modal .learning-content {
-                grid-template-columns: repeat(2, 1fr); /* Duas colunas no modal */
+                grid-template-columns: repeat(2, minmax(0, 1fr)); /* Duas colunas no modal */
             }
         }
 
@@ -826,49 +825,53 @@
                     name: "Verão Quentinho",
                     class: "verao",
                     months: "Dezembro, Janeiro, Fevereiro",
-                    description: "É a estação mais quente do ano! Os dias são mais longos e ensolarados. Em muitas regiões, é também a época das chuvas de verão, que são rápidas e fortes.",
+                    description: "O verão é a estação mais quente do ano! O sol fica bem forte e os dias são mais longos que as noites. É quando mais faz calor e todo mundo quer ir para a praia ou piscina!",
                     characteristics: [
                         "☀️ Sol bem forte e muito calor",
-                        "🌧️ Chuvas de verão em muitas regiões",
+                        "🌧️ Chuvas rápidas e fortes",
                         "🏖️ Férias escolares",
                         "🎭 Época do Carnaval"
-                    ]
+                    ],
+                    note: "👉 Em outras regiões, como no Norte e no Nordeste, o verão também é quente, mas muitas vezes é marcado pelas chuvas típicas da estação."
                 },
                 "🍂": {
                     name: "Outono das Cores",
                     class: "outono",
                     months: "Março, Abril, Maio",
-                    description: "É uma estação de transição. Em muitas partes do Brasil, as temperaturas começam a ficar mais amenas e é tempo de colheita de várias frutas deliciosas.",
+                    description: "No outono, o calor vai embora aos pouquinhos. As folhas das árvores mudam de cor e caem no chão. É a estação que prepara a natureza para o inverno!",
                     characteristics: [
                         "🌡️ Temperatura mais fresquinha",
-                        " Época de colheita de muitas frutas",
-                        "💨 Os ventos podem ficar mais fortes",
-                        "🌙 As noites começam a ficar mais longas"
-                    ]
+                        "☔ Menos chuva que no verão",
+                        "🍎 Época de colheita de muitas frutas",
+                        "🌙 Noites começam a esfriar"
+                    ],
+                    note: "👉 Em outras regiões, como no Norte e no Nordeste, o outono não traz tanto frio, mas pode marcar mudanças no regime de chuvas."
                 },
                 "❄️": {
                     name: "Inverno Gelado",
                     class: "inverno",
                     months: "Junho, Julho, Agosto",
-                    description: "É a estação com as temperaturas mais amenas do ano. No Sul do Brasil, pode fazer muito frio, com geada e até neve! Em outras regiões, é um período mais seco.",
+                    description: "O inverno é a estação mais fria do ano! As noites ficam mais longas que os dias e precisamos usar casacos quentinhos. Em alguns lugares até neva!",
                     characteristics: [
-                        "🧥 Temperaturas mais baixas (principalmente no Sul)",
+                        "🧥 A estação mais fria",
                         "🌃 Noites bem compridas",
                         "🎪 Tempo das Festas Juninas",
-                        "💨 Ar mais seco em algumas regiões"
-                    ]
+                        "💨 Ar mais seco"
+                    ],
+                    note: "👉 Em outras regiões, como no Norte e no Nordeste, o inverno não é frio; costuma ser apenas uma época mais seca."
                 },
                 "🌸": {
                     name: "Primavera Colorida",
                     class: "primavera",
                     months: "Setembro, Outubro, Novembro",
-                    description: "Conhecida como a 'estação das flores'! A natureza fica mais colorida, o clima volta a esquentar e os animais ficam mais ativos em todo o país.",
+                    description: "A primavera é quando a natureza 'acorda' depois do inverno! As plantas fazem flores coloridas, os animais ficam mais ativos e o clima esquenta de novo!",
                     characteristics: [
                         "🌺 Plantas fazem flores",
-                        "🌡️ O clima volta a esquentar",
+                        "🌡️ Clima mais quentinho",
                         "🐝 Animais mais ativos",
-                        "🌦️ O tempo pode mudar bastante durante o dia"
-                    ]
+                        "🏃‍♀️ Tempo perfeito para brincar fora"
+                    ],
+                    note: "👉 Em outras regiões, como no Norte e no Nordeste, a primavera pode ser parecida com o verão, mas também indica o início das mudanças nas chuvas."
                 }
             };
 
@@ -1250,6 +1253,7 @@
                             <ul>
                                 ${season.characteristics.map(char => `<li>${char}</li>`).join('')}
                             </ul>
+                            ${season.note ? `<p class="note">${season.note}</p>` : ''}
                         </div>
                     `;
                     learningContent.appendChild(card);
@@ -1446,7 +1450,7 @@
 
           <button class="tool-btn" onclick="toggleMagnifier()" id="magnifierBtn" type="button">
             <span class="tool-icon" aria-hidden="true">📖</span>
-            <span class="tool-text">Mascara de Leitura</span>
+            <span class="tool-text">Máscara de Leitura</span>
           </button>
 
           <button class="tool-btn" onclick="toggleFocusHighlight()" id="focusBtn" type="button">

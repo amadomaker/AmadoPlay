@@ -44,12 +44,10 @@ const regionClass = {
 };
 
 // ========= VARIÁVEIS DE ESTADO =========
-let visitedStates = new Set();
 let showingCapitals = false;
-let highlightingRegions = false;
 
 // elementos do DOM (preenchidos no init)
-let tooltip, capitalsBtn, regionsBtn;
+let tooltip, capitalsBtn;
 
 // ========= INICIALIZAÇÃO =========
 window.addEventListener('DOMContentLoaded', initMap);
@@ -57,7 +55,6 @@ window.addEventListener('DOMContentLoaded', initMap);
 function initMap() {
   tooltip = document.getElementById('tooltip');
   capitalsBtn = document.getElementById('capitalsBtn');
-  regionsBtn = document.getElementById('regionsBtn');
 
   // desenhar mapa com BrMap
   BrMap.Draw({
@@ -69,17 +66,118 @@ function initMap() {
     }
   });
 
-  // colorir por região
+  
   colorByRegion();
-
-  updateStats();
 
   // fechar modal ao clicar fora
   window.addEventListener('click', (e) => {
     const modal = document.getElementById('stateModal');
     if (e.target === modal) closeModal();
   });
+
+  // Lógica para o modal de créditos
+  const creditsBtn = document.getElementById('credits-btn');
+  const creditsModal = document.getElementById('credits-modal');
+  const creditsCloseBtn = document.getElementById('credits-close-btn');
+
+  if (creditsBtn && creditsModal && creditsCloseBtn) {
+      creditsBtn.addEventListener('click', () => creditsModal.showModal());
+      creditsCloseBtn.addEventListener('click', () => creditsModal.close());
+      creditsModal.addEventListener('click', (e) => {
+        const overlay = creditsModal.querySelector('.modal-container');
+        if (overlay && e.target === overlay) {
+            creditsModal.close();
+        }
+      });
+  }
+
+  // Lógica de Zoom e Pan
+  const mapWrapper = document.getElementById('mapWrapper');
+  const svg = mapWrapper.querySelector('svg');
+  
+  // Adiciona uma verificação para garantir que o SVG foi carregado
+  const observer = new MutationObserver((mutations, obs) => {
+    const svgElement = mapWrapper.querySelector('svg');
+    if (svgElement) {
+      setupZoomAndPan(mapWrapper, svgElement);
+      obs.disconnect(); // Para de observar uma vez que o SVG foi encontrado
+    }
+  });
+
+  observer.observe(mapWrapper, {
+    childList: true,
+    subtree: true
+  });
+
 }
+
+function setupZoomAndPan(mapWrapper, svg) {
+  let isPanning = false;
+  let startPoint = { x: 0, y: 0 };
+  let viewBox = { x: 0, y: 0, width: 1000, height: 1000 }; // viewBox inicial
+
+  if (!svg.getAttribute('viewBox')) {
+    svg.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`);
+  } else {
+    const vb = svg.getAttribute('viewBox').split(' ').map(Number);
+    viewBox = { x: vb[0], y: vb[1], width: vb[2], height: vb[3] };
+  }
+
+  mapWrapper.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const { clientX, clientY } = e;
+    const { left, top, width, height } = mapWrapper.getBoundingClientRect();
+    
+    const x = (clientX - left) / width;
+    const y = (clientY - top) / height;
+
+    const delta = e.deltaY > 0 ? 1.1 : 0.9;
+    const newWidth = viewBox.width * delta;
+    const newHeight = viewBox.height * delta;
+
+    viewBox.x += (viewBox.width - newWidth) * x;
+    viewBox.y += (viewBox.height - newHeight) * y;
+    viewBox.width = newWidth;
+    viewBox.height = newHeight;
+
+    svg.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`);
+  });
+
+  mapWrapper.addEventListener('mousedown', (e) => {
+    isPanning = true;
+    startPoint = { x: e.clientX, y: e.clientY };
+    mapWrapper.style.cursor = 'grabbing';
+  });
+
+  mapWrapper.addEventListener('mousemove', (e) => {
+    if (!isPanning) return;
+    const endPoint = { x: e.clientX, y: e.clientY };
+    const dx = (startPoint.x - endPoint.x) * (viewBox.width / mapWrapper.getBoundingClientRect().width);
+    const dy = (startPoint.y - endPoint.y) * (viewBox.height / mapWrapper.getBoundingClientRect().height);
+    
+    const newViewBoxX = viewBox.x + dx;
+    const newViewBoxY = viewBox.y + dy;
+
+    svg.setAttribute('viewBox', `${newViewBoxX} ${newViewBoxY} ${viewBox.width} ${viewBox.height}`);
+    viewBox.x = newViewBoxX;
+    viewBox.y = newViewBoxY;
+    
+    startPoint = endPoint;
+  });
+
+  mapWrapper.addEventListener('mouseup', () => {
+    isPanning = false;
+    mapWrapper.style.cursor = 'grab';
+  });
+
+  mapWrapper.addEventListener('mouseleave', () => {
+    isPanning = false;
+    mapWrapper.style.cursor = 'grab';
+  });
+
+  mapWrapper.style.cursor = 'grab';
+}
+
 
 // ========= FUNÇÕES DE COLORAÇÃO / TOOLTIP =========
 
@@ -119,22 +217,6 @@ function showStateInfo(code) {
   const state = statesData[code];
   if (!state) return;
 
-  visitedStates.add(code);
-  updateStats();
-
-  const link = document.getElementById('state_' + code.toLowerCase());
-  if (link) link.classList.add('visited');
-
-  document.getElementById('currentRegion').textContent = state.region;
-  document.getElementById('stateInfo').innerHTML = `
-    <h3>🗺️ ${state.name}</h3>
-    <p><strong>Capital:</strong> ${state.capital}</p>
-    <p><strong>Região:</strong> ${state.region}</p>
-    <p><strong>População:</strong> ${state.population}</p>
-    <p><strong>Cultura:</strong> ${state.culture}</p>
-    <p><strong>Curiosidade:</strong> ${state.curiosity}</p>
-  `;
-
   document.getElementById('modalTitle').textContent = `${state.name} (${code})`;
   document.getElementById('modalContent').innerHTML = `
     <div><strong>🏛️ Capital:</strong> ${state.capital}</div>
@@ -143,7 +225,7 @@ function showStateInfo(code) {
     <div><strong>🎭 Cultura:</strong> ${state.culture}</div>
     <div><strong>🌟 Curiosidade:</strong> ${state.curiosity}</div>
   `;
-  document.getElementById('stateModal').style.display = 'block';
+  document.getElementById('stateModal').style.display = 'flex'; // Alterado para flex
 }
 
 function closeModal() {
@@ -152,19 +234,18 @@ function closeModal() {
 
 // ========= FUNÇÕES DE CONTROLE (BOTÕES) =========
 
-function updateStats() {
-  document.getElementById('visitedCount').textContent = `${visitedStates.size}/27`;
-}
-
 function toggleCapitals() {
-  showingCapitals = !showingCapitals;
   const svg = document.getElementById('brmap');
   if (!svg) return;
 
-  if (showingCapitals) {
-    capitalsBtn.textContent = '🏛️ Esconder Capitais';
-    capitalsBtn.style.background = 'linear-gradient(45deg, #FF69B4, #FF1493)';
+  showingCapitals = !showingCapitals;
 
+  capitalsBtn.classList.toggle('active', showingCapitals);
+  const labelText = showingCapitals ? 'Esconder capitais' : 'Mostrar capitais';
+  capitalsBtn.setAttribute('aria-label', labelText);
+  capitalsBtn.textContent = labelText;
+
+  if (showingCapitals) {
     Object.keys(statesData).forEach(code => {
       const link = document.getElementById('state_' + code.toLowerCase());
       if (!link) return;
@@ -184,63 +265,16 @@ function toggleCapitals() {
     });
 
   } else {
-    capitalsBtn.textContent = '🏛️ Mostrar Capitais';
-    capitalsBtn.style.background = 'linear-gradient(45deg, #32CD32, #228B22)';
     document.querySelectorAll('.capital-label').forEach(l => l.remove());
   }
 }
 
-function highlightRegions() {
-  highlightingRegions = !highlightingRegions;
-  const links = document.querySelectorAll('#brmap .state');
-
-  if (highlightingRegions) {
-    regionsBtn.textContent = '🗺️ Parar Destaque';
-    regionsBtn.style.background = 'linear-gradient(45deg, #FF69B4, #FF1493)';
-    links.forEach(l => l.classList.add('region-highlight'));
-
-    document.getElementById('stateInfo').innerHTML = `
-      <h3>🌈 Regiões em Destaque!</h3>
-      <div style="margin-top: 15px;">
-        <div style="margin-bottom:10px;padding:10px;background:rgba(50,205,50,.2);border-radius:8px;">
-          <strong style="color:#32CD32;">NORTE (7 estados):</strong><br><small>AM, AC, RR, PA, AP, TO, RO</small>
-        </div>
-        <div style="margin-bottom:10px;padding:10px;background:rgba(255,99,71,.2);border-radius:8px;">
-          <strong style="color:#FF6347;">NORDESTE (9 estados):</strong><br><small>MA, PI, CE, RN, PB, PE, AL, SE, BA</small>
-        </div>
-        <div style="margin-bottom:10px;padding:10px;background:rgba(255,215,0,.2);border-radius:8px;">
-          <strong style="color:#B8860B;">CENTRO-OESTE (4 estados):</strong><br><small>MT, MS, GO, DF</small>
-        </div>
-        <div style="margin-bottom:10px;padding:10px;background:rgba(65,105,225,.2);border-radius:8px;">
-          <strong style="color:#4169E1;">SUDESTE (4 estados):</strong><br><small>MG, ES, RJ, SP</small>
-        </div>
-        <div style="padding:10px;background:rgba(147,112,219,.2);border-radius:8px;">
-          <strong style="color:#9370DB;">SUL (3 estados):</strong><br><small>PR, SC, RS</small>
-        </div>
-      </div>
-    `;
-  } else {
-    regionsBtn.textContent = '🗺️ Destacar Regiões';
-    regionsBtn.style.background = 'linear-gradient(45deg, #87CEEB, #4682B4)';
-    links.forEach(l => l.classList.remove('region-highlight'));
-
-    document.getElementById('stateInfo').innerHTML = `
-      <h3>ℹ️ Informações</h3>
-      <p>Passe o mouse sobre os estados para ver informações rápidas, ou clique para detalhes completos!</p>
-    `;
-  }
+function openLegendModal() {
+  const modal = document.getElementById('legendModal');
+  if (modal) modal.style.display = 'block';
 }
 
-function resetMap() {
-  visitedStates.clear();
-  updateStats();
-  document.getElementById('currentRegion').textContent = '-';
-  document.getElementById('stateInfo').innerHTML = `
-    <h3>ℹ️ Informações</h3>
-    <p>Passe o mouse sobre os estados para ver informações rápidas, ou clique para detalhes completos!</p>
-  `;
-  document.querySelectorAll('#brmap .state').forEach(l => l.classList.remove('visited'));
-
-  if (showingCapitals) toggleCapitals();
-  if (highlightingRegions) highlightRegions();
+function closeLegendModal() {
+  const modal = document.getElementById('legendModal');
+  if (modal) modal.style.display = 'none';
 }

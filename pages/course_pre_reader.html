@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jardim Encantado — Trilha de Sequenciamento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../src/css/main.css" />
+  <link rel="stylesheet" href="../src/css/global.css" />
+  <link rel="stylesheet" href="../src/css/learn.css" />
+  <link rel="stylesheet" href="../src/css/curriculum.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body.learn-page {
+      background: #f9fafb;
+    }
+    .course-container {
+      max-width: 960px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+    .unit {
+      background: #fff;
+      border-radius: 1rem;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+    }
+    .unit.disabled {
+      opacity: 0.6;
+    }
+    .unit.disabled .lesson-grid {
+      pointer-events: none;
+    }
+    .unit-header {
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #e5e7eb;
+      margin-bottom: 1rem;
+    }
+    .unit-header h2 {
+      font-size: 1.5rem;
+      font-family: 'Baloo 2', cursive;
+      color: #111827;
+      margin: 0;
+    }
+    .unit-header p {
+      margin: 0.25rem 0 0;
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+    .lesson-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 1rem 0.75rem;
+      justify-content: center;
+    }
+    .lesson-bubble {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #374151;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+    .lesson-bubble .bubble {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+      font-family: 'Baloo 2', cursive;
+      margin-bottom: 0.5rem;
+      border: 4px solid #e5e7eb;
+      background: #fff;
+      color: #9ca3af;
+      transition: all 0.2s ease-in-out;
+    }
+    .lesson-bubble:not(.disabled):hover .bubble {
+      transform: translateY(-3px) scale(1.05);
+      border-color: #93c5fd;
+    }
+    .lesson-bubble.done .bubble {
+      background: #22c55e;
+      border-color: #16a34a;
+      color: #fff;
+    }
+    .lesson-bubble.current .bubble {
+      background: #3b82f6;
+      border-color: #2563eb;
+      color: #fff;
+    }
+    .lesson-bubble.disabled .bubble {
+      background-color: #f3f4f6;
+      color: #d1d5db;
+    }
+    .lesson-bubble.disabled {
+      pointer-events: none;
+      opacity: 0.8;
+    }
+    .lesson-bubble span {
+      display: block;
+      line-height: 1.3;
+      max-width: 70px;
+    }
+    /* Footer Styles */
+    .footer {
+      width: 100%;
+      background: linear-gradient(135deg, #1e293b, #334155);
+      color: white;
+      padding: 30px 20px;
+      margin-top: 50px;
+      text-align: center;
+    }
+    .footer-content { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+    .footer-links { margin-bottom: 15px; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .footer-links a { color: #e2e8f0; text-decoration: none; font-weight: 500; padding: 5px 10px; border-radius: 4px; transition: all 0.3s ease; }
+    .footer-links a:hover { color: white; background: rgba(255, 255, 255, 0.1); }
+    .separator { color: #64748b; font-weight: bold; margin: 0 5px; }
+    .footer-copyright { font-size: 0.9rem; color: #94a3b8; padding-top: 15px; border-top: 1px solid #475569; }
+    @media (max-width: 768px) {
+      .footer-links { flex-direction: column; gap: 5px; }
+      .separator { display: none; }
+      .footer-links a { display: block; width: auto; }
+      .footer-copyright { font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body class="learn-page">
+  <!-- HEADER -->
+  <header class="main-header" role="banner">
+    <div class="header-top">
+      <div class="header-container">
+        <div class="logo-section">
+          <img src="../src/assets/images/Diyogo-02.png" alt="Logo AmadoPlay" width="90" height="90" loading="eager"/>
+          <div class="logo-text"><h1>AmadoPlay</h1><p>Plataforma Educacional Interativa</p></div>
+        </div>
+        <div class="nav-actions">
+          <div class="search-bar" role="search">
+            <label for="search-input" class="sr-only">Buscar</label>
+            <input type="text" id="search-input" placeholder="Buscar..." aria-label="Campo de busca" autocomplete="off"/>
+            <button type="submit" aria-label="Buscar">🔍</button>
+          </div>
+          <div class="user-menu"><button class="btn-login">Entrar</button></div>
+        </div>
+        <button class="mobile-menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="main-navigation">
+          <span class="hamburger-line"></span><span class="hamburger-line"></span><span class="hamburger-line"></span>
+        </button>
+      </div>
+    </div>
+    <nav class="main-nav" role="navigation" id="main-navigation" aria-label="Menu principal">
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="../index.html" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">🏠</span>
+            <span>Início</span>
+          </a>
+        </li>
+
+        <li class="nav-item dropdown-parent">
+          <a class="nav-link dropdown-trigger" href="#" aria-expanded="false" aria-haspopup="true">
+            <span class="nav-icon" aria-hidden="true">📚</span>
+            <span>Área do Conhecimento</span>
+            <span class="arrow" aria-hidden="true">▼</span>
+          </a>
+          <div class="dropdown" aria-label="Submenu Área do Conhecimento">
+            <a href="#" class="dropdown-item" data-materia="matematica"><span class="dropdown-icon" aria-hidden="true">🧮</span><span>Matemática</span></a>
+            <a href="#" class="dropdown-item" data-materia="portugues"><span class="dropdown-icon" aria-hidden="true">📖</span><span>Língua Portuguesa</span></a>
+            <a href="#" class="dropdown-item" data-materia="ciencias"><span class="dropdown-icon" aria-hidden="true">🔬</span><span>Ciências</span></a>
+            <a href="#" class="dropdown-item" data-materia="historia"><span class="dropdown-icon" aria-hidden="true">🏛️</span><span>História</span></a>
+            <a href="#" class="dropdown-item" data-materia="geografia"><span class="dropdown-icon" aria-hidden="true">🌎</span><span>Geografia</span></a>
+            <a href="#" class="dropdown-item" data-materia="multidisciplinar"><span class="dropdown-icon" aria-hidden="true">🎨</span><span>Multidisciplinar</span></a>
+            <a href="#" class="dropdown-item" data-materia="artes"><span class="dropdown-icon" aria-hidden="true">🎨</span><span>Artes</span></a>
+            <a href="#" class="dropdown-item" data-materia="educação física"><span class="dropdown-icon" aria-hidden="true">🤸</span><span>Educação Física</span></a>
+            <a href="#" class="dropdown-item" data-materia="língua estrangeira"><span class="dropdown-icon" aria-hidden="true">🗣️</span><span>Língua Estrangeira</span></a>
+          </div>
+        </li>
+
+        <li class="nav-item dropdown-parent">
+          <a class="nav-link dropdown-trigger" href="#" aria-expanded="false" aria-haspopup="true">
+            <span class="nav-icon" aria-hidden="true">🎒</span>
+            <span>Ano de Escolaridade</span>
+            <span class="arrow" aria-hidden="true">▼</span>
+          </a>
+          <div class="dropdown" aria-label="Submenu Ano de Escolaridade">
+            <a href="#" class="dropdown-item" data-search="educação infantil"><span class="dropdown-icon" aria-hidden="true">👶</span><span>Educação Infantil</span></a>
+            <a href="#" class="dropdown-item" data-serie="1"><span class="dropdown-icon" aria-hidden="true">1️⃣</span><span>1º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="2"><span class="dropdown-icon" aria-hidden="true">2️⃣</span><span>2º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="3"><span class="dropdown-icon" aria-hidden="true">3️⃣</span><span>3º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="4"><span class="dropdown-icon" aria-hidden="true">4️⃣</span><span>4º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="5"><span class="dropdown-icon" aria-hidden="true">5️⃣</span><span>5º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="6"><span class="dropdown-icon" aria-hidden="true">6️⃣</span><span>6º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="7"><span class="dropdown-icon" aria-hidden="true">7️⃣</span><span>7º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="8"><span class="dropdown-icon" aria-hidden="true">8️⃣</span><span>8º Ano</span></a>
+            <a href="#" class="dropdown-item" data-serie="9"><span class="dropdown-icon" aria-hidden="true">9️⃣</span><span>9º Ano</span></a>
+            <a href="#" class="dropdown-item" data-search="eja"><span class="dropdown-icon" aria-hidden="true">📘</span><span>EJA</span></a>
+            <a href="#" class="dropdown-item" data-search="ensino médio"><span class="dropdown-icon" aria-hidden="true">🎓</span><span>Ensino Médio</span></a>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a href="trilhas_em_desenvolvimento.html" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">💡</span>
+            <span>Trilhas Computação</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="quem_somos.html" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">ℹ️</span>
+            <span>Quem Somos</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="course-container">
+    <div id="course-units"></div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-content">
+      <nav class="footer-links" aria-label="Links do rodapé">
+        <a href="privacidade.html">Política de Privacidade</a><span class="separator" aria-hidden="true">•</span>
+        <a href="termos_de_uso.html">Termos de Uso</a><span class="separator" aria-hidden="true">•</span>
+        <a href="contato.html">Contato</a>
+      </nav>
+      <div class="footer-copyright"><p>&copy; 2025 AMADO TECNOLOGIA LTDA (AMADOTEC). Todos os direitos reservados.</p></div>
+    </div>
+  </footer>
+
+  <script>
+    const COURSE_ID = 'garden_encantado_sequencing';
+    const courseData = [
+      {
+        id: 'garden_sequencing',
+        title: 'Unidade 1: Jardim Encantado',
+        description: 'Sequências para pré-leitores com os amigos do Jardim Encantado.',
+        lessons: [
+          { id:'l1_click', title:'Clique na Turma', activity:'garden_click_turma' },
+          { id:'l2_drag', title:'Arraste o Vagalume', activity:'garden_drag_vagalume' },
+          { id:'l3_caracol2', title:'Monte o Caracol (2 partes)', activity:'garden_two_caracol' },
+          { id:'l4_caracol2_fix', title:'Corrija o Caracol (2 partes)', activity:'garden_two_caracol_fix' },
+          { id:'l5_caracol3', title:'Monte o Caracol (3 partes)', activity:'garden_three_caracol' },
+          { id:'l6_caracol3_fix', title:'Corrija o Caracol (3 partes)', activity:'garden_three_caracol_fix' },
+          { id:'l7_vagalume3', title:'Monte o Vagalume (3 partes)', activity:'garden_three_vagalume' },
+          { id:'l8_vagalume3_fix', title:'Corrija o Vagalume (3 partes)', activity:'garden_three_vagalume_fix' },
+          { id:'l9_turma3', title:'Monte a Turma (3 partes)', activity:'garden_three_turma' },
+          { id:'l10_turma3_fix', title:'Corrija a Turma (3 partes)', activity:'garden_three_turma_fix' }
+        ]
+      },
+      {
+        id: 'maze_farm',
+        title: 'Unidade 2: Labirinto da Fazenda',
+        description: 'Explore 10 fases progressivas do labirinto usando blocos do tipo mover e virar.',
+        lessons: [
+          { id: 'maze_l1_reto', title: 'Fase 1 – Primeiro passo', activity: 'maze_level_1' },
+          { id: 'maze_l2_primeira_curva', title: 'Fase 2 – Dois passos', activity: 'maze_level_2' },
+          { id: 'maze_l3_sobe_desce', title: 'Fase 3 – Primeiro desvio', activity: 'maze_level_3' },
+          { id: 'maze_l4_fardos', title: 'Fase 4 – Duas curvas', activity: 'maze_level_4' },
+          { id: 'maze_l5_cruzamentos', title: 'Fase 5 – Volta ao canteiro', activity: 'maze_level_5' },
+          { id: 'maze_l6_corredores', title: 'Fase 6 – Caminho em U', activity: 'maze_level_6' },
+          { id: 'maze_l7_volta_inicio', title: 'Fase 7 – Zigue-zague curto', activity: 'maze_level_7' },
+          { id: 'maze_l8_caminho_oculto', title: 'Fase 8 – Volta grande', activity: 'maze_level_8' },
+          { id: 'maze_l9_desvios', title: 'Fase 9 – Desvios rápidos', activity: 'maze_level_9' },
+          { id: 'maze_l10_grande_finale', title: 'Fase 10 – Grande finale', activity: 'maze_level_10' }
+        ]
+      },
+      {
+        id: 'events_world',
+        title: 'Unidade 3: O Mundo dos Eventos',
+        description: 'Descubra como criar ações e reações com eventos simples.',
+        lessons: Array(10).fill({}).map((_, i) => ({id: `u3_l${i+1}`, title: 'Em Breve', activity: null}))
+      }
+    ];
+
+    const progressKey = 'progress:' + COURSE_ID;
+    function getProgress(){ try { return JSON.parse(localStorage.getItem(progressKey))||{} } catch(_) { return {} } }
+    function setProgress(p){ localStorage.setItem(progressKey, JSON.stringify(p)); }
+
+    function handleCompletion() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const completedLesson = urlParams.get('lesson_completed');
+      if (completedLesson) {
+        const p = getProgress();
+        p[completedLesson] = true;
+        setProgress(p);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    }
+
+    function buildLessonLinks(lessons){
+      const links = lessons.map(() => '');
+      for (let i = lessons.length - 1; i >= 0; i--) {
+        const lesson = lessons[i];
+        if (!lesson || !lesson.activity) continue;
+        const params = new URLSearchParams({
+          activity: lesson.activity,
+          lesson_id: lesson.id,
+          course_id: COURSE_ID
+        });
+        for (let j = i + 1; j < lessons.length; j++) {
+          if (links[j]) {
+            params.set('next', links[j]);
+            break;
+          }
+        }
+        links[i] = params.toString();
+      }
+      return links;
+    }
+
+    function render() {
+      const container = document.getElementById('course-units');
+      container.innerHTML = '';
+      const progress = getProgress();
+      
+      courseData.forEach(unit => {
+        const unitEl = document.createElement('div');
+        unitEl.className = 'unit';
+        const hasPlayableLessons = unit.lessons.some(l => l.activity);
+        if (!hasPlayableLessons) {
+          unitEl.classList.add('disabled');
+        }
+
+        const lessonLinks = buildLessonLinks(unit.lessons);
+        let unitContent = `
+          <div class="unit-header">
+            <h2>${unit.title}</h2>
+            <p>${unit.description}</p>
+          </div>
+          <div class="lesson-grid">
+        `;
+        
+        let isCurrentSetInUnit = false;
+
+        unit.lessons.forEach((lesson, index) => {
+          const isDone = progress[lesson.id];
+          let lessonClass = 'lesson-bubble';
+          
+          if (isDone) {
+            lessonClass += ' done';
+          } else if (!isCurrentSetInUnit && lesson.activity) {
+            lessonClass += ' current';
+            isCurrentSetInUnit = true;
+          }
+
+          if (!lesson.activity) {
+            lessonClass += ' disabled';
+          }
+
+          let lessonUrl = '#';
+          if (lesson.activity) {
+            const encodedLink = lessonLinks[index];
+            if (encodedLink) {
+              lessonUrl = `blockly.html?${encodedLink}`;
+            }
+          }
+
+          unitContent += `
+            <a href="${lessonUrl}" class="${lessonClass}" title="${lesson.title}">
+              <div class="bubble">${index + 1}</div>
+              <span>${lesson.title}</span>
+            </a>
+          `;
+        });
+
+        unitContent += '</div>';
+        unitEl.innerHTML = unitContent;
+        container.appendChild(unitEl);
+      });
+    }
+
+    handleCompletion();
+    render();
+  </script>
+</body>
+</html>

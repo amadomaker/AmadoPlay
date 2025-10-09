@@ -15,31 +15,31 @@
     // Base de palavras por nível
     const wordDatabase = {
         1: [ // 2 sílabas
-            { word: 'CASA', syllables: ['CA', 'SA'], meaning: 'lugar onde moramos' },
-            { word: 'BOLA', syllables: ['BO', 'LA'], meaning: 'brinquedo redondo usado para jogar' },
-            { word: 'PATO', syllables: ['PA', 'TO'], meaning: 'ave que nada e tem bico achatado' },
-            { word: 'FLOR', syllables: ['FLOR'], meaning: 'planta colorida que cresce nos jardins' },
-            { word: 'LIVRO', syllables: ['LI', 'VRO'], meaning: 'objeto usado para ler e estudar' },
-            { word: 'ÁGUA', syllables: ['Á', 'GUA'], meaning: 'líquido transparente essencial para a vida' },
-            { word: 'GATO', syllables: ['GA', 'TO'], meaning: 'animal doméstico que faz miau' }
+            { word: 'CASA', syllables: ['CA', 'SA'], meaning: 'Lugar onde moramos.' },
+            { word: 'BOLA', syllables: ['BO', 'LA'], meaning: 'Brinquedo redondo usado para jogar.' },
+            { word: 'PATO', syllables: ['PA', 'TO'], meaning: 'Ave que nada e tem bico achatado.' },
+            { word: 'FLOR', syllables: ['FLOR'], meaning: 'Planta colorida que cresce nos jardins.' },
+            { word: 'LIVRO', syllables: ['LI', 'VRO'], meaning: 'Objeto usado para ler e estudar.' },
+            { word: 'ÁGUA', syllables: ['Á', 'GUA'], meaning: 'Líquido transparente essencial para a vida.' },
+            { word: 'GATO', syllables: ['GA', 'TO'], meaning: 'Animal doméstico que faz miau.' }
         ],
         2: [ // 3 sílabas
-            { word: 'JANELA', syllables: ['JA', 'NE', 'LA'], meaning: 'abertura na parede para entrar luz e ar' },
-            { word: 'ESCOLA', syllables: ['ES', 'CO', 'LA'], meaning: 'lugar onde estudamos' },
-            { word: 'BANANA', syllables: ['BA', 'NA', 'NA'], meaning: 'fruta amarela rica em potássio' },
-            { word: 'CENOURA', syllables: ['CE', 'NOU', 'RA'], meaning: 'vegetal laranja que ajuda na visão' },
-            { word: 'CAMINHO', syllables: ['CA', 'MI', 'NHO'], meaning: 'rota para ir de um lugar a outro' },
-            { word: 'MENINO', syllables: ['ME', 'NI', 'NO'], meaning: 'criança do sexo masculino' },
-            { word: 'BONECA', syllables: ['BO', 'NE', 'CA'], meaning: 'brinquedo que representa uma pessoa' }
+            { word: 'JANELA', syllables: ['JA', 'NE', 'LA'], meaning: 'Abertura na parede para entrar luz e ar.' },
+            { word: 'ESCOLA', syllables: ['ES', 'CO', 'LA'], meaning: 'Lugar onde estudamos.' },
+            { word: 'BANANA', syllables: ['BA', 'NA', 'NA'], meaning: 'Fruta amarela rica em potássio.' },
+            { word: 'CENOURA', syllables: ['CE', 'NOU', 'RA'], meaning: 'Vegetal laranja que ajuda na visão.' },
+            { word: 'CAMINHO', syllables: ['CA', 'MI', 'NHO'], meaning: 'Rota para ir de um lugar a outro.' },
+            { word: 'MENINO', syllables: ['ME', 'NI', 'NO'], meaning: 'Criança do sexo masculino.' },
+            { word: 'BONECA', syllables: ['BO', 'NE', 'CA'], meaning: 'Brinquedo que representa uma pessoa.' }
         ],
         3: [ // 4+ sílabas
-            { word: 'TELEFONE', syllables: ['TE', 'LE', 'FO', 'NE'], meaning: 'aparelho usado para falar com alguém à distância' },
-            { word: 'BORBOLETA', syllables: ['BOR', 'BO', 'LE', 'TA'], meaning: 'inseto colorido com asas grandes' },
-            { word: 'ELEFANTE', syllables: ['E', 'LE', 'FAN', 'TE'], meaning: 'maior animal terrestre com tromba longa' },
-            { word: 'COMPUTADOR', syllables: ['COM', 'PU', 'TA', 'DOR'], meaning: 'máquina usada para processar informações' },
-            { word: 'BIBLIOTECA', syllables: ['BI', 'BLI', 'O', 'TE', 'CA'], meaning: 'lugar onde ficam guardados muitos livros' },
-            { word: 'HOSPITAL', syllables: ['HOS', 'PI', 'TAL'], meaning: 'lugar onde pessoas recebem cuidados médicos' },
-            { word: 'BICICLETA', syllables: ['BI', 'CI', 'CLE', 'TA'], meaning: 'veículo de duas rodas movido a pedal' }
+            { word: 'TELEFONE', syllables: ['TE', 'LE', 'FO', 'NE'], meaning: 'Aparelho usado para falar com alguém à distância.' },
+            { word: 'BORBOLETA', syllables: ['BOR', 'BO', 'LE', 'TA'], meaning: 'Inseto colorido com asas grandes.' },
+            { word: 'ELEFANTE', syllables: ['E', 'LE', 'FAN', 'TE'], meaning: 'Maior animal terrestre com tromba longa.' },
+            { word: 'COMPUTADOR', syllables: ['COM', 'PU', 'TA', 'DOR'], meaning: 'Máquina usada para processar informações.' },
+            { word: 'BIBLIOTECA', syllables: ['BI', 'BLI', 'O', 'TE', 'CA'], meaning: 'Lugar onde ficam guardados muitos livros.' },
+            { word: 'HOSPITAL', syllables: ['HOS', 'PI', 'TAL'], meaning: 'Lugar onde pessoas recebem cuidados médicos.' },
+            { word: 'BICICLETA', syllables: ['BI', 'CI', 'CLE', 'TA'], meaning: 'Veículo de duas rodas movido a pedal.' }
         ]
     };
 
@@ -377,7 +377,9 @@
                     nextBtn.textContent = 'Jogar Novamente';
                 } else {
                     title.textContent = '⭐ Excelente!';
-                    meaningEl.textContent = `Nível ${getLevelName(gameState.level)} completo! Próximo: ${getLevelName(gameState.level + 1)}`;
+                    const levelName = (getLevelName(gameState.level) || '').toLowerCase();
+                    const nextLevelName = (getLevelName(gameState.level + 1) || '').toLowerCase();
+                    meaningEl.textContent = `Nível ${levelName} completo. Próximo: ${nextLevelName}.`;
                     nextBtn.textContent = 'Próximo Nível';
                 }
                 formedWordEl.textContent = ''; // Clear the word for level complete message
@@ -462,6 +464,7 @@
   function createWordSlots() {
     const container = document.getElementById('wordFormation');
     container.innerHTML = '';
+    container.dataset.slotCount = String(gameState.currentWord.syllables.length);
     gameState.currentWord.syllables.forEach((syllable, index) => {
         const slot = document.createElement('div');
         slot.className = 'syllableSlot';
