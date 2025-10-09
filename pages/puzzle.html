@@ -249,6 +249,10 @@
             text-decoration: none;
         }
 
+        .sound-btn {
+            font-size: 1.9em;
+        }
+
         .control-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
@@ -442,6 +446,7 @@
                 <div class="control-group">
                     <a href="#" id="homeBtn" class="control-btn">🏠</a>
                     <a href="#" id="restartBtn" class="control-btn">🔄</a>
+                    <button type="button" id="soundToggle" class="control-btn sound-btn" aria-label="Ativar ou desativar som">🔊</button>
                 </div>
                 <div id="game-stats">
                     <div class="stat">
@@ -520,6 +525,99 @@
 
         canvas.width = CANVAS_WIDTH;
         canvas.height = CANVAS_HEIGHT;
+
+        // ============================================
+        // ÁUDIO
+        // ============================================
+        const SOUND_STORAGE_KEY = 'blockPuzzleSoundEnabled';
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+        let soundEnabled = true;
+        let lastMoveSoundTime = 0;
+
+        function ensureAudioContext() {
+            if (!AudioContextClass) return false;
+            if (!audioCtx) {
+                audioCtx = new AudioContextClass();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return true;
+        }
+
+        function playTone(frequency, duration = 0.12, type = 'sine', delay = 0) {
+            if (!soundEnabled || !ensureAudioContext()) return;
+
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.type = type;
+            oscillator.frequency.value = frequency;
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            const startTime = audioCtx.currentTime + delay;
+            const endTime = startTime + duration;
+
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(0.25, startTime + 0.015);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, endTime);
+
+            oscillator.start(startTime);
+            oscillator.stop(endTime + 0.02);
+        }
+
+        function playMoveSound() {
+            const now = performance.now();
+            if (now - lastMoveSoundTime < 120) return;
+            lastMoveSoundTime = now;
+            if (!soundEnabled || !ensureAudioContext()) return;
+
+            const bufferSize = audioCtx.sampleRate * 0.12;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+
+            for (let i = 0; i < bufferSize; i++) {
+                const progress = i / bufferSize;
+                const envelope = Math.pow(1 - progress, 2);
+                const random = (Math.random() * 2 - 1) * envelope;
+                data[i] = random * 0.35;
+            }
+
+            const noiseSource = audioCtx.createBufferSource();
+            noiseSource.buffer = buffer;
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.value = 500;
+            filter.Q.value = 1.5;
+
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.value = 0.4;
+
+            noiseSource.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            noiseSource.start();
+            noiseSource.stop(audioCtx.currentTime + 0.14);
+        }
+
+        function playVictorySound() {
+            playTone(523.25, 0.18, 'triangle', 0);
+            playTone(659.25, 0.16, 'triangle', 0.18);
+            playTone(783.99, 0.22, 'triangle', 0.34);
+        }
+
+        function updateSoundToggle() {
+            const soundToggle = document.getElementById('soundToggle');
+            if (!soundToggle) return;
+            const icon = soundEnabled ? '🔊' : '🔇';
+            soundToggle.textContent = icon;
+            soundToggle.setAttribute('aria-pressed', soundEnabled ? 'true' : 'false');
+        }
 
         // ============================================
         // NOVA PALETA DE CORES
@@ -832,6 +930,8 @@
             document.getElementById('timeStat').innerText = `${timeTaken} segundos`;
             document.getElementById('movesStat').innerText = moveCount;
 
+            playVictorySound();
+
             const nextLevelBtn = document.getElementById('nextLevelModalBtn');
             if (currentLevel >= levels.length - 1) {
                 nextLevelBtn.innerText = 'Ver Níveis';
@@ -993,6 +1093,7 @@
                 selectedBlock.col = newCol;
                 moveCount++;
                 document.getElementById('moveCounter').innerText = moveCount;
+                playMoveSound();
                 selectedBlock.dragStartX = pos.x;
                 selectedBlock.dragStartY = pos.y;
                 draw();
@@ -1059,6 +1160,28 @@
             window.addEventListener('resize', updateOrientationNotice, { passive: true });
             window.addEventListener('orientationchange', updateOrientationNotice, { passive: true });
             updateOrientationNotice();
+
+            const soundToggle = document.getElementById('soundToggle');
+            if (AudioContextClass) {
+                const storedSoundPref = localStorage.getItem(SOUND_STORAGE_KEY);
+                if (storedSoundPref !== null) {
+                    soundEnabled = storedSoundPref !== 'false';
+                }
+                updateSoundToggle();
+
+                if (soundToggle) {
+                    soundToggle.addEventListener('click', () => {
+                        soundEnabled = !soundEnabled;
+                        localStorage.setItem(SOUND_STORAGE_KEY, soundEnabled ? 'true' : 'false');
+                        updateSoundToggle();
+                        if (soundEnabled) {
+                            ensureAudioContext();
+                        }
+                    });
+                }
+            } else if (soundToggle) {
+                soundToggle.style.display = 'none';
+            }
 
             document.getElementById('homeBtn').addEventListener('click', (e) => {
                 e.preventDefault();
