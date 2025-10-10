@@ -1,0 +1,1304 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soletra Diário</title>
+  <style>
+    /*=== VARIÁVEIS DE ESTILO (TEMA CLARO) ===*/
+    :root {
+      --primary-color: #667eea;
+      --secondary-color: #764ba2;
+      --accent-color: #f59e0b; /* Amarelo/Laranja para destaque */
+      --success-color: #16a34a;
+      --error-color: #dc2626;
+      --text-dark: #1f2937;
+      --text-light: #f9fafb;
+      --bg-light: #f3f4f6;
+      --bg-white: #ffffff;
+      --radius: 12px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /*=== BASE E FUNDO ===*/
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 100%;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #6c63ff 0%, #7c4dff 35%, #9c27b0 70%, #673ab7 100%);
+      color: var(--text-dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      overflow-x: hidden;
+    }
+
+    /*=== CONTAINER PRINCIPAL DO JOGO ===*/
+    .game-wrapper {
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      gap: 2rem;
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      padding: 2rem;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+      color: var(--text-dark);
+      position: relative;
+    }
+
+    .game-main {
+      flex: 1.7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transform: translateX(-10px);
+    }
+
+    .sidebar-container {
+      flex: 1.4;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .game-sidebar {
+      flex: 1;
+      background: var(--bg-light);
+      border-radius: var(--radius);
+      padding: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    /*=== ÁREA DE JOGO (MAIN) ===*/
+    .word-display-container {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 0.3rem;
+    }
+    
+    .word-display {
+        min-height: 48px;
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        border-bottom: 2px solid var(--accent-color);
+        display: inline-block;
+        padding: 0 0.5rem;
+        color: var(--text-dark);
+    }
+
+    .feedback-message {
+        height: 24px;
+        margin-bottom: 1rem;
+        font-weight: 600;
+        font-size: 1rem;
+        text-align: center;
+        transition: opacity 0.3s ease;
+    }
+
+    .letter-container {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      margin: 1rem 0;
+    }
+
+    .letter-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid #d1d5db;
+      background: var(--bg-white);
+      color: var(--text-dark);
+      font-size: 2.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .letter-btn:hover {
+      background: #f9fafb;
+      transform: scale(1.05);
+      border-color: #9ca3af;
+    }
+    
+    .letter-btn.central {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--accent-color);
+      border-color: var(--accent-color);
+      color: var(--text-dark);
+    }
+     .letter-btn.central:hover {
+      background: #fbbf24;
+      transform: translate(-50%, -50%) scale(1.05);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .end-game-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .end-game-warning {
+      min-height: 1rem;
+      font-size: 0.9rem;
+      color: var(--error-color);
+      text-align: center;
+    }
+
+    .end-game-actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .game-btn {
+      padding: 12px 25px;
+      border: 1px solid #d1d5db;
+      border-radius: 30px;
+      font-weight: 600;
+      transition: var(--transition);
+      cursor: pointer;
+      background: var(--bg-white);
+      color: var(--text-dark);
+      font-size: 1rem;
+    }
+
+    .game-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border-color: #9ca3af;
+    }
+
+    .game-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: #e5e7eb;
+    }
+
+    .game-btn.primary {
+      background: #7c3aed;
+      color: white;
+      border-color: #7c3aed;
+    }
+    .game-btn.primary:hover {
+        background: #6d28d9;
+        border-color: #6d28d9;
+    }
+
+    .game-btn.end {
+      background: var(--secondary-color);
+      color: white;
+      border-color: var(--secondary-color);
+    }
+    .game-btn.end:hover {
+      background: #5b36a8;
+      border-color: #5b36a8;
+    }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(118,75,162,0.15);
+      color: var(--secondary-color);
+      font-size: 1.35rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+      background: rgba(118,75,162,0.25);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: max(12px, env(safe-area-inset-top, 12px)) max(16px, env(safe-area-inset-right, 16px)) max(12px, env(safe-area-inset-bottom, 12px)) max(16px, env(safe-area-inset-left, 16px));
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      width: min(92%, 600px);
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+      border-radius: 18px;
+      padding: 2rem 2rem 2.25rem;
+      box-shadow: 0 22px 48px rgba(15, 23, 42, 0.25);
+      position: relative;
+      color: var(--text-dark);
+      transform: translateY(24px) scale(0.96);
+      transition: transform 0.35s ease, opacity 0.35s ease;
+      opacity: 0;
+      max-height: min(88vh, 720px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .modal-backdrop.active .modal-content {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(148, 163, 184, 0.2);
+      border: none;
+      font-size: 1.75rem;
+      color: #475569;
+      cursor: pointer;
+      line-height: 1;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .modal-close:hover {
+      color: var(--secondary-color);
+      background: rgba(118, 75, 162, 0.12);
+      transform: scale(1.05);
+    }
+
+    .modal-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-header h2 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      color: var(--secondary-color);
+    }
+
+    .modal-header .modal-subtitle {
+      font-size: 1rem;
+      color: #4b5563;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+
+    .modal-section {
+      background: #f8fafc;
+      border-radius: 14px;
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .modal-section h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #1f2937;
+    }
+
+    .modal-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .modal-list li {
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+      font-size: 0.98rem;
+      color: #1f2937;
+    }
+
+    .modal-list li::before {
+      content: '•';
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-top: 0.15rem;
+    }
+
+    .modal-list span {
+      flex: 1;
+    }
+
+    .modal-highlight {
+      padding: 1.1rem 1.25rem;
+      background: linear-gradient(135deg, rgba(118, 75, 162, 0.12), rgba(102, 126, 234, 0.12));
+      border-radius: 14px;
+      border: 1px solid rgba(118, 75, 162, 0.25);
+      color: #4338ca;
+      margin-bottom: 1.2rem;
+    }
+
+    .modal-highlight strong {
+      display: block;
+      font-size: 1.05rem;
+      margin-bottom: 0.4rem;
+      color: #312e81;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    .modal-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.95rem 2.5rem;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(124, 58, 237, 0.25);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .modal-action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 32px rgba(99, 102, 241, 0.3);
+    }
+
+    .modal-action-btn.secondary {
+      background: #1f2937;
+      box-shadow: 0 12px 22px rgba(17, 24, 39, 0.25);
+    }
+
+    .modal-action-btn.secondary:hover {
+      box-shadow: 0 16px 28px rgba(17, 24, 39, 0.28);
+    }
+
+    @media (max-width: 540px) {
+      .modal-content {
+        padding: 1.75rem 1.25rem 2rem;
+        max-height: 90vh;
+      }
+      .modal-action-btn {
+        width: 100%;
+      }
+      .modal-header h2 {
+        font-size: 1.6rem;
+      }
+      .modal-header .modal-subtitle {
+        font-size: 0.9rem;
+      }
+      .modal-section {
+        padding: 1rem 1.1rem;
+      }
+    }
+
+    /*=== PAINEL LATERAL (SIDEBAR) ===*/
+    .progress-section h3, .found-words-section h3 {
+      margin-bottom: 0.75rem;
+      font-size: 1.2rem;
+      border-bottom: 1px solid #d1d5db;
+      padding-bottom: 0.5rem;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 12px;
+      background: #e5e7eb;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: var(--accent-color);
+      border-radius: 6px;
+      transition: width 0.5s ease;
+    }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--text-dark);
+    }
+    
+    #qualification-text {
+        font-weight: 700;
+        color: var(--accent-color);
+    }
+
+    .found-words-list {
+      list-style: none;
+      overflow-y: auto;
+      flex-grow: 1;
+      padding-right: 6px;
+      max-height: 280px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .found-words-list li {
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .found-words-list li.placeholder {
+      background: transparent;
+      border: 2px dashed #d1d5db;
+      color: #9ca3af;
+    }
+
+    .found-words-list li.placeholder.hinted {
+      color: var(--accent-color);
+      border-color: var(--accent-color);
+      border-style: solid;
+      font-weight: 700;
+    }
+    
+    .found-words-list li.found {
+      background: #dcfce7;
+      border-color: transparent;
+      color: #15803d;
+    }
+    
+    .found-words-list li.revealed {
+      background: #fef3c7;
+      border-color: transparent;
+      color: #b45309;
+    }
+    
+    /* Custom scrollbar */
+    .found-words-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .found-words-list::-webkit-scrollbar-track {
+      background: #e5e7eb;
+      border-radius: 3px;
+    }
+    .found-words-list::-webkit-scrollbar-thumb {
+      background: #9ca3af;
+      border-radius: 3px;
+    }
+     .found-words-list::-webkit-scrollbar-thumb:hover {
+      background: #6b7280;
+    }
+
+    /*=== RESPONSIVIDADE ===*/
+    @media (max-width: 768px) {
+      body {
+        padding: 0;
+        align-items: flex-start;
+      }
+      .game-wrapper {
+        flex-direction: column;
+        border-radius: 0;
+        padding: 1.5rem 1rem;
+        min-height: 100vh;
+      }
+      .game-main {
+        transform: none;
+      }
+      .game-sidebar {
+        order: -1; /* Move a sidebar para cima */
+      }
+      .letter-container {
+        width: 240px;
+        height: 240px;
+      }
+      .letter-btn {
+        width: 70px;
+        height: 70px;
+        font-size: 2rem;
+      }
+      .word-display {
+        font-size: 1.8rem;
+      }
+      .progress-text {
+        flex-direction: column;
+        gap: 0.25rem;
+        text-align: center;
+      }
+      .found-words-list {
+        max-height: 150px; /* Altura menor no mobile */
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+      .sidebar-container {
+        order: -1;
+        gap: 1rem;
+      }
+      .action-buttons {
+        justify-content: center;
+      }
+      .icon-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 1.2rem;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="game-wrapper">
+    <main class="game-main">
+        <div class="word-display-container">
+            <span id="word-display" class="word-display"></span>
+        </div>
+        <div id="feedback-message" class="feedback-message"></div>
+        <div id="letter-container" class="letter-container">
+            <!-- Letras serão inseridas pelo JS -->
+        </div>
+        <div class="action-buttons">
+            <button id="hint-btn" class="game-btn" title="Pedir Dica">&#128161; (<span id="hint-count">10</span>)</button>
+            <button id="delete-btn" class="game-btn">Apagar</button>
+            <button id="shuffle-btn" class="game-btn" style="font-size: 1.5rem; line-height: 1;">&#x21BB;</button>
+            <button id="confirm-btn" class="game-btn primary">Confirmar</button>
+        </div>
+    </main>
+    <div class="sidebar-container">
+        <aside class="game-sidebar">
+            <div class="progress-section">
+                <h3>Progresso</h3>
+                <div id="qualification-text">Iniciante</div>
+                <div class="progress-bar-container">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+                <div class="progress-text">
+                    <span><span id="words-found-count">0</span> de <span id="total-words-count">0</span> palavras</span>
+                    <span>Pontos: <span id="score-count">0</span></span>
+                </div>
+            </div>
+            <div class="found-words-section">
+                <h3>Palavras Encontradas</h3>
+                <ul id="found-words-list" class="found-words-list">
+                    <!-- Palavras encontradas serão inseridas aqui -->
+                </ul>
+            </div>
+        </aside>
+        <div class="end-game-wrapper">
+            <div id="end-game-warning" class="end-game-warning"></div>
+            <div class="end-game-actions">
+                <button id="end-game-btn" class="game-btn end">Encerrar Partida</button>
+                <button id="help-btn" class="icon-btn" title="Como jogar" aria-label="Como jogar">?</button>
+                <button id="credits-btn" class="icon-btn" title="Créditos" aria-label="Créditos">&#8505;</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div id="info-modal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" id="modal-close-btn" aria-label="Fechar">&times;</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const jogosDiarios = [
+        { data: '2025-10-10', letras: ['A','C','O','R','L','E','N'], central: 'A', palavras: [
+          'acne','aceno','acenar','aclarar','acelerar','arear','aerar','arar',
+          'anel','areal','areia','arena','arca','arco','arcano','oral','orla','nora',
+          'cara','caro','cera','cela','cena','cana','canoa','canal','canela','carne',
+          'coral','coroa','calar','colar','corar','clarear','cancelar','coroar','alocar',
+          'lacre','lacrar','real','renal'
+        ] },
+        { data: '2025-10-11', letras: ['M', 'O', 'C', 'A', 'L', 'N', 'T'], central: 'A', palavras: ['calma', 'canal', 'canto', 'clama', 'conta', 'local', 'manta', 'natal', 'taco', 'toca', 'lona', 'coma', 'nato', 'malta', 'mato', 'talco', 'alto', 'lata', 'calo', 'cola'] },
+        { data: '2025-10-12', letras: ['P', 'E', 'R', 'I', 'S', 'T', 'O'], central: 'S', palavras: ['piso', 'resto', 'setor', 'sorte', 'sopro', 'serio', 'pasto', 'pesto', 'pires', 'prosa', 'poste', 'peso', 'sites', 'pores', 'seis', 'perto', 'pastor'] },
+        { data: '2025-10-13', letras: ['B', 'L', 'I', 'G', 'A', 'E', 'V'], central: 'A', palavras: ['bela', 'giba', 'lava', 'vale', 'vela', 'viga', 'alga', 'baile', 'legal', 'alega', 'bagel', 'gala', 'bale', 'agave'] },
+        { data: '2025-10-14', letras: ['F', 'O', 'R', 'M', 'A', 'Ç', 'Ã'], central: 'A', palavras: ['forma', 'força', 'fação', 'fama', 'fora', 'maçã', 'março', 'moça', 'raça', 'ramo', 'roça', 'arma', 'amor', 'amar', 'maça', 'faço', 'farão', 'ração', 'marco'] },
+        { data: '2025-10-15', letras: ['D', 'O', 'B', 'A', 'S', 'U', 'M'], central: 'A', palavras: ['duas', 'soma', 'damas', 'samba', 'amado', 'muda', 'abuso', 'boas', 'ambos', 'doma', 'baus'] },
+        { data: '2025-10-16', letras: ['T', 'E', 'R', 'I', 'S', 'U', 'A'], central: 'I', palavras: ['tirar', 'sair', 'site', 'iris', 'tira', 'ires', 'rias', 'sira', 'situa', 'tuira'] },
+        { data: '2025-10-17', letras: ['C', 'O', 'L', 'E', 'A', 'R', 'P'], central: 'A', palavras: ['calor', 'coral', 'palco', 'copa', 'arco', 'clara', 'roca', 'parca', 'polar', 'colar', 'parco', 'loca', 'apelo'] },
+        { data: '2025-10-18', letras: ['M', 'I', 'L', 'A', 'E', 'R', 'O'], central: 'I', palavras: ['mira', 'limar', 'mario', 'rima', 'mirar', 'miar', 'lira', 'remi', 'moira', 'reima', 'ramie', 'meiar', 'liame'] },
+        { data: '2025-10-19', letras: ['C', 'E', 'R', 'I', 'N', 'U', 'O'], central: 'E', palavras: ['cure', 'reino', 'cine', 'urine', 'cerio', 'neuro', 'once', 'reine', 'curei', 'recuo'] },
+        { data: '2025-10-20', letras: ['S', 'A', 'G', 'U', 'R', 'I', 'O'], central: 'U', palavras: ['sugar', 'guria', 'guri', 'sagui', 'usura', 'surgi', 'rugir', 'argui', 'suor', 'ruga'] },
+        { data: '2025-10-21', letras: ['C', 'L', 'A', 'R', 'I', 'D', 'O'], central: 'A', palavras: ['clara', 'carla', 'lara', 'arida', 'cair', 'raci', 'calor', 'colar', 'dali', 'clari', 'laico'] },
+        { data: '2025-10-22', letras: ['V', 'O', 'L', 'E', 'R', 'I', 'S'], central: 'O', palavras: ['veio', 'roles', 'viole', 'rose', 'oleiro', 'sobre', 'loser', 'resol', 'orel', 'voles'] },
+        { data: '2025-10-23', letras: ['M', 'I', 'D', 'A', 'R', 'T', 'O'], central: 'A', palavras: ['tirada', 'amido', 'mataria', 'tardia', 'radia', 'atirado', 'tirado', 'matador', 'maior', 'domar', 'radio', 'arida'] },
+        { data: '2025-10-24', letras: ['P', 'E', 'S', 'A', 'M', 'O', 'R'], central: 'A', palavras: ['pesar', 'mora', 'parar', 'somar', 'amores', 'ramas', 'mapa', 'aspar', 'masar', 'maras', 'pomas', 'sopra', 'opera', 'ramos'] },
+        { data: '2025-10-25', letras: ['B', 'A', 'R', 'C', 'O', 'U', 'I'], central: 'A', palavras: ['barco', 'abriu', 'arco', 'barca', 'acuri', 'caria', 'rubia', 'baiuca', 'cariba', 'raio', 'cairo'] },
+        { data: '2025-10-26', letras: ['D', 'O', 'M', 'A', 'I', 'U', 'F'], central: 'A', palavras: ['fado', 'fama', 'domai', 'maio', 'maia', 'adia', 'audio'] },
+        { data: '2025-10-27', letras: ['P', 'A', 'S', 'C', 'O', 'U', 'E'], central: 'A', palavras: ['pausa', 'causa', 'casou', 'pesca', 'seca', 'pouca', 'acesa', 'copas', 'pecas'] },
+        { data: '2025-10-28', letras: ['B', 'L', 'U', 'A', 'R', 'I', 'S'], central: 'U', palavras: ['abriu', 'brusa', 'lusa', 'buris', 'rubai', 'bulas', 'usiar', 'sular'] },
+        { data: '2025-10-29', letras: ['G', 'O', 'R', 'A', 'S', 'E', 'M'], central: 'A', palavras: ['soma', 'mar', 'agora', 'goma', 'mesa', 'mega', 'rogar', 'gare', 'soar', 'mares', 'romas'] },
+        { data: '2025-10-30', letras: ['V', 'E', 'I', 'S', 'A', 'U', 'R'], central: 'A', palavras: ['suave', 'vai', 'varias', 'seria', 'vare', 'avisar', 'vias', 'save', 'usar', 'aura', 'raiva', 'avias', 'viras'] },
+        { data: '2025-10-31', letras: ['M', 'A', 'N', 'O', 'R', 'I', 'E'], central: 'A', palavras: ['amora', 'amino', 'maior', 'maria', 'marie', 'minora', 'minar', 'rima', 'ramon', 'arena'] },
+        { data: '2025-11-01', letras: ['C', 'O', 'N', 'A', 'S', 'E', 'L'], central: 'A', palavras: ['canoa', 'casal', 'anel', 'escola', 'cale', 'sola', 'lanes', 'aceno', 'nasce', 'acne'] },
+        { data: '2025-11-02', letras: ['V', 'A', 'R', 'I', 'O', 'L', 'E'], central: 'A', palavras: ['vela', 'vale', 'vario', 'valer', 'real', 'leira', 'alvo', 'rival', 'ovario', 'ariel'] },
+        { data: '2025-11-03', letras: ['B', 'A', 'T', 'E', 'I', 'R', 'O'], central: 'A', palavras: ['bater', 'baite', 'rato', 'iate', 'raio', 'beira', 'abate', 'tabor', 'atira'] },
+        { data: '2025-11-04', letras: ['M', 'I', 'S', 'A', 'N', 'O', 'E'], central: 'A', palavras: ['mesa', 'menos', 'mina', 'anime', 'senai', 'maio', 'manei', 'animo'] },
+        { data: '2025-11-05', letras: ['F', 'O', 'G', 'A', 'R', 'I', 'U'], central: 'A', palavras: ['fora', 'figura', 'agira', 'gira', 'raio', 'rifa', 'gaio', 'girau', 'furai', 'argui'] },
+        { data: '2025-11-06', letras: ['C', 'U', 'A', 'R', 'S', 'E', 'M'], central: 'A', palavras: ['mare', 'cursa', 'case', 'masar', 'cura', 'mares', 'marca', 'casar', 'cresa'] },
+        { data: '2025-11-07', letras: ['P', 'O', 'A', 'S', 'U', 'I', 'M'], central: 'A', palavras: ['pausa', 'mais', 'pousa', 'maius', 'pumas', 'poias'] },
+        { data: '2025-11-08', letras: ['N', 'A', 'R', 'O', 'I', 'E', 'S'], central: 'A', palavras: ['raso', 'arena', 'raio', 'rai', 'seira', 'anise', 'senao', 'reais', 'asneira'] },
+        { data: '2025-11-09', letras: ['B', 'E', 'R', 'A', 'I', 'O', 'G'], central: 'A', palavras: ['bagio', 'gaio', 'beira', 'rabia', 'abrio', 'brega', 'abri'] },
+        { data: '2025-11-10', letras: ['D', 'E', 'I', 'R', 'O', 'A', 'M'], central: 'A', palavras: ['deira', 'maior', 'arde', 'maio', 'mediar', 'remado', 'arido'] },
+        { data: '2025-11-11', letras: ['F', 'A', 'N', 'I', 'S', 'O', 'R'], central: 'A', palavras: ['afinar', 'sofia', 'safira', 'aroso', 'faisao', 'afiar', 'rais', 'afina', 'risar'] },
+        { data: '2025-11-12', letras: ['I', 'A', 'R', 'T', 'E', 'S', 'C'], central: 'A', palavras: ['ariste', 'teras', 'risa', 'teira', 'acts', 'cariste', 'riste'] },
+        { data: '2025-11-13', letras: ['M', 'E', 'R', 'A', 'O', 'L', 'U'], central: 'A', palavras: ['maure', 'mauro', 'maura', 'mural', 'orla', 'maio', 'rama', 'reuma', 'maior', 'molar', 'laura'] },
+        { data: '2025-11-14', letras: ['C', 'O', 'L', 'E', 'R', 'I', 'A'], central: 'A', palavras: ['caro', 'calor', 'clareia', 'recai', 'carie', 'lorica', 'arco'] },
+        { data: '2025-11-15', letras: ['T', 'A', 'S', 'I', 'R', 'E', 'M'], central: 'A', palavras: ['maia', 'maria', 'maira', 'rames', 'teira', 'mais', 'arte'] },
+        { data: '2025-11-16', letras: ['C', 'A', 'P', 'O', 'U', 'E', 'L'], central: 'A', palavras: ['capela', 'pouca', 'paulo', 'caule', 'colpa', 'paule'] },
+        { data: '2025-11-17', letras: ['B', 'O', 'A', 'R', 'I', 'U', 'S'], central: 'A', palavras: ['abriu', 'rubia', 'baiuca', 'bario', 'brusa', 'sabio', 'subia', 'bausa', 'ribas'] },
+        { data: '2025-11-18', letras: ['V', 'A', 'R', 'O', 'M', 'E', 'I'], central: 'A', palavras: ['amor', 'mario', 'vario', 'mar', 'maior', 'raio', 'vira', 'moira', 'aroma'] },
+        { data: '2025-11-19', letras: ['D', 'I', 'O', 'A', 'T', 'R', 'E'], central: 'A', palavras: ['diario', 'arde', 'teira', 'adire', 'redia', 'maria', 'mediar'] },
+        { data: '2025-11-20', letras: ['L', 'O', 'A', 'S', 'R', 'E', 'P'], central: 'A', palavras: ['solar', 'posar', 'lares', 'raso', 'orla', 'sola', 'perla', 'aspero'] },
+        { data: '2025-11-21', letras: ['B', 'A', 'T', 'O', 'R', 'E', 'S'], central: 'A', palavras: ['bater', 'abate', 'aberto', 'bares', 'arbo', 'baste', 'arte'] },
+        { data: '2025-11-22', letras: ['P', 'A', 'S', 'O', 'I', 'U', 'R'], central: 'A', palavras: ['pausa', 'parou', 'apois', 'ruas', 'pai', 'ripa', 'paria', 'pau'] },
+        { data: '2025-11-23', letras: ['C', 'O', 'L', 'A', 'R', 'I', 'S'], central: 'A', palavras: ['solar', 'calor', 'rosal', 'arco', 'claro', 'rias', 'corais'] },
+        { data: '2025-11-24', letras: ['B', 'A', 'T', 'O', 'I', 'U', 'S'], central: 'A', palavras: ['baio', 'batia', 'abito', 'abuso', 'abiu', 'subita', 'tabia', 'abita', 'baios'] },
+        { data: '2025-11-25', letras: ['D', 'A', 'S', 'E', 'O', 'M', 'R'], central: 'A', palavras: ['seam', 'ramas', 'adeao', 'amos', 'arda', 'desam'] },
+        { data: '2025-11-26', letras: ['V', 'O', 'L', 'A', 'E', 'R', 'C'], central: 'A', palavras: ['vela', 'calor', 'vale', 'alvear', 'claro', 'arco', 'cora', 'care', 'aleva'] },
+        { data: '2025-11-27', letras: ['F', 'I', 'A', 'L', 'R', 'M', 'E'], central: 'A', palavras: ['falar', 'firme', 'frame', 'ariel', 'alma', 'fatal', 'falem', 'falir', 'maria', 'mariel'] },
+        { data: '2025-11-28', letras: ['G', 'A', 'N', 'I', 'H', 'O', 'S'], central: 'A', palavras: ['ganho', 'agasoalho', 'oshanig', 'sionha'] },
+        { data: '2025-11-29', letras: ['P', 'I', 'R', 'A', 'C', 'E', 'M'], central: 'A', palavras: ['prima', 'caipira', 'impar', 'premia'] },
+        { data: '2025-11-30', letras: ['T', 'O', 'A', 'L', 'H', 'E', 'S'], central: 'A', palavras: ['toalha', 'saleto', 'hostel'] },
+        { data: '2025-12-01', letras: ['D', 'U', 'E', 'L', 'A', 'R', 'S'], central: 'A', palavras: ['duela', 'saldar', 'ladres', 'suadel'] },
+        { data: '2025-12-02', letras: ['C', 'A', 'M', 'P', 'O', 'I', 'S'], central: 'A', palavras: ['campo', 'ampios', 'compais'] },
+        { data: '2025-12-03', letras: ['V', 'I', 'A', 'J', 'R', 'E', 'M'], central: 'A', palavras: ['viaje', 'viajem', 'jarme'] },
+        { data: '2025-12-04', letras: ['B', 'O', 'L', 'A', 'D', 'I', 'N'], central: 'A', palavras: ['bola', 'boladi', 'bolina'] },
+        { data: '2025-12-05', letras: ['F', 'R', 'A', 'S', 'E', 'O', 'C'], central: 'A', palavras: ['frase', 'forca', 'safero', 'cafres'] },
+        { data: '2025-12-06', letras: ['M', 'U', 'A', 'R', 'L', 'H', 'O'], central: 'A', palavras: ['mural', 'alohar', 'holmar'] },
+        { data: '2025-12-07', letras: ['T', 'E', 'A', 'R', 'M', 'O', 'S'], central: 'A', palavras: ['artes', 'mostar', 'remato'] },
+        { data: '2025-12-08', letras: ['P', 'L', 'A', 'N', 'T', 'O', 'E'], central: 'A', palavras: ['planta', 'platno', 'paleto', 'panelo'] },
+        { data: '2025-12-09', letras: ['C', 'H', 'A', 'V', 'E', 'S', 'I'], central: 'A', palavras: ['chaves', 'achive', 'vasiche'] },
+        { data: '2025-12-10', letras: ['J', 'O', 'A', 'G', 'R', 'D', 'U'], central: 'A', palavras: ['jogar', 'jaguar', 'jogard'] },
+        { data: '2025-12-11', letras: ['Q', 'U', 'A', 'R', 'T', 'O', 'E'], central: 'A', palavras: ['quarto', 'quareto', 'toquear'] },
+        { data: '2025-12-12', letras: ['N', 'O', 'A', 'T', 'E', 'S', 'R'], central: 'A', palavras: ['notas', 'soante', 'rantos', 'sarone'] },
+        { data: '2025-12-13', letras: ['L', 'I', 'A', 'V', 'R', 'S', 'O'], central: 'A', palavras: ['livra', 'ovais', 'salivo', 'virolas'] },
+        { data: '2025-12-14', letras: ['M', 'O', 'A', 'D', 'E', 'L', 'R'], central: 'A', palavras: ['moeda', 'modelo', 'aromed', 'realmo'] },
+        { data: '2025-12-15', letras: ['P', 'E', 'A', 'D', 'L', 'S', 'R'], central: 'A', palavras: ['pedal', 'prelas', 'padres', 'saldre'] },
+        { data: '2025-12-16', letras: ['C', 'U', 'A', 'D', 'R', 'N', 'O'], central: 'A', palavras: ['quadra', 'curado', 'cardon'] },
+        { data: '2025-12-17', letras: ['F', 'E', 'A', 'S', 'T', 'I', 'V'], central: 'A', palavras: ['festa', 'festiva', 'faiste'] },
+        { data: '2025-12-18', letras: ['B', 'R', 'A', 'S', 'I', 'L', 'E'], central: 'A', palavras: ['brasil', 'isabrel', 'bailers'] },
+        { data: '2025-12-19', letras: ['J', 'A', 'N', 'E', 'L', 'I', 'R'], central: 'A', palavras: ['jane', 'janeli', 'jaliner'] },
+        { data: '2025-12-20', letras: ['G', 'R', 'A', 'D', 'E', 'U', 'S'], central: 'A', palavras: ['grade', 'gradeu', 'ragudes'] },
+        { data: '2025-12-21', letras: ['V', 'E', 'A', 'R', 'D', 'O', 'S'], central: 'A', palavras: ['verde', 'avesor', 'doveras'] },
+        { data: '2025-12-22', letras: ['M', 'A', 'T', 'E', 'R', 'I', 'L'], central: 'A', palavras: ['mater', 'material', 'almiter'] },
+        { data: '2025-12-23', letras: ['P', 'R', 'A', 'I', 'S', 'C', 'O'], central: 'A', palavras: ['praia', 'caprio', 'rapicos'] },
+        { data: '2025-12-24', letras: ['S', 'A', 'L', 'V', 'O', 'E', 'R'], central: 'A', palavras: ['salvar', 'resalvo', 'solvare'] },
+        { data: '2025-12-25', letras: ['C', 'O', 'A', 'Z', 'I', 'N', 'H'], central: 'A', palavras: ['coazin', 'cachoiz'] },
+        { data: '2025-12-26', letras: ['T', 'R', 'A', 'B', 'L', 'H', 'O'], central: 'A', palavras: ['trabalho', 'holbrat'] },
+        { data: '2025-12-27', letras: ['F', 'L', 'A', 'M', 'E', 'G', 'O'], central: 'A', palavras: ['flam', 'flamego', 'megalfo'] },
+        { data: '2025-12-28', letras: ['D', 'E', 'A', 'S', 'F', 'I', 'O'], central: 'A', palavras: ['deafio', 'desafio', 'ofiades'] },
+        { data: '2025-12-29', letras: ['M', 'E', 'A', 'D', 'L', 'H', 'O'], central: 'A', palavras: ['medal', 'medalho', 'holmead'] },
+        { data: '2025-12-30', letras: ['R', 'E', 'A', 'C', 'I', 'O', 'N'], central: 'A', palavras: ['reacao', 'creiona', 'anoreci'] },
+        { data: '2025-12-31', letras: ['V', 'I', 'A', 'G', 'E', 'M', 'S'], central: 'A', palavras: ['viagem', 'viages', 'gavimes'] },
+        { data: '2026-01-01', letras: ['P', 'E', 'A', 'S', 'O', 'L', 'M'], central: 'A', palavras: ['pasmo', 'paleos', 'moelas'] },
+        { data: '2026-01-02', letras: ['C', 'R', 'A', 'N', 'I', 'O', 'S'], central: 'A', palavras: ['cranio', 'carison', 'riconsa'] },
+        { data: '2026-01-03', letras: ['B', 'A', 'N', 'D', 'E', 'I', 'R'], central: 'A', palavras: ['banda', 'bander', 'bandeira'] },
+        { data: '2026-01-04', letras: ['H', 'O', 'R', 'A', 'I', 'S', 'T'], central: 'A', palavras: ['historia', 'ratos', 'horais'] },
+        { data: '2026-01-05', letras: ['L', 'E', 'A', 'T', 'R', 'O', 'S'], central: 'A', palavras: ['lateral', 'toaleras', 'salter'] },
+        { data: '2026-01-06', letras: ['M', 'I', 'A', 'N', 'G', 'O', 'S'], central: 'A', palavras: ['mago', 'mangos', 'gomas', 'anagos'] },
+        { data: '2026-01-07', letras: ['P', 'O', 'A', 'R', 'T', 'L', 'E'], central: 'A', palavras: ['portal', 'rapeto', 'paleto'] }
+      ];
+
+
+      const wordDisplay = document.getElementById('word-display');
+      const feedbackMessage = document.getElementById('feedback-message');
+      const letterContainer = document.getElementById('letter-container');
+      const deleteBtn = document.getElementById('delete-btn');
+      const shuffleBtn = document.getElementById('shuffle-btn');
+      const confirmBtn = document.getElementById('confirm-btn');
+      const hintBtn = document.getElementById('hint-btn');
+      const hintCountSpan = document.getElementById('hint-count');
+      const endGameBtn = document.getElementById('end-game-btn');
+      const endGameWarning = document.getElementById('end-game-warning');
+      const helpBtn = document.getElementById('help-btn');
+      const creditsBtn = document.getElementById('credits-btn');
+      const infoModal = document.getElementById('info-modal');
+      const modalBody = document.getElementById('modal-body');
+      const modalCloseBtn = document.getElementById('modal-close-btn');
+      const progressBar = document.getElementById('progress-bar');
+      const qualificationText = document.getElementById('qualification-text');
+      const wordsFoundCount = document.getElementById('words-found-count');
+      const totalWordsCount = document.getElementById('total-words-count');
+      const foundWordsList = document.getElementById('found-words-list');
+      const scoreCount = document.getElementById('score-count');
+
+      const END_GAME_THRESHOLD = 75;
+      const STORAGE_PREFIX = 'soletra-diario-estado-';
+
+      let currentGame;
+      let currentWord = '';
+      let foundWords = [];
+      let wordPlaceholders = new Map();
+      let hintCount = 10;
+      let score = 0;
+      let gameEnded = false;
+      let placeholderOverrides = new Map();
+      let storageKey = '';
+
+      function getTodayDateString() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+
+      function showFeedback(message, type = 'info') {
+        feedbackMessage.textContent = message;
+        feedbackMessage.style.color = type === 'error' ? 'var(--error-color)' : type === 'success' ? 'var(--success-color)' : 'var(--text-dark)';
+        feedbackMessage.style.opacity = 1;
+        setTimeout(() => {
+            feedbackMessage.style.opacity = 0;
+        }, 2000);
+      }
+
+      function openModal(type) {
+        renderModalContent(type);
+        infoModal.classList.add('active');
+        infoModal.setAttribute('aria-hidden', 'false');
+        const focusTarget = modalBody.querySelector('[data-modal-action]') || modalCloseBtn;
+        focusTarget.focus();
+      }
+
+      function closeModal() {
+        infoModal.classList.remove('active');
+        infoModal.setAttribute('aria-hidden', 'true');
+        modalBody.innerHTML = '';
+      }
+
+      function renderModalContent(type) {
+        let template = '';
+
+        if (type === 'tutorial') {
+          template = `
+            <div class="modal-header">
+              <h2 id="modal-title">Como Jogar Soletra Diário</h2>
+              <p class="modal-subtitle">Descubra o máximo de palavras usando as letras do dia e faça a sua melhor pontuação!</p>
+            </div>
+            <div class="modal-section">
+              <h3>Passo a passo</h3>
+              <ul class="modal-list">
+                <li><span><strong>Monte</strong> palavras com no mínimo 4 letras, sempre incluindo a letra central.</span></li>
+                <li><span><strong>Embaralhe</strong> as letras para enxergar novas combinações.</span></li>
+                <li><span><strong>Confirme</strong> para validar e conquistar pontos equivalentes ao tamanho da palavra.</span></li>
+              </ul>
+            </div>
+            <div class="modal-section">
+              <h3>Controles úteis</h3>
+              <ul class="modal-list">
+                <li><span><strong>Teclado</strong>: digite diretamente ou use Enter para confirmar.</span></li>
+                <li><span><strong>Backspace</strong>: remove a última letra digitada.</span></li>
+                <li><span><strong>Dicas</strong>: revele letras estratégicas quando ficar preso (limitadas!).</span></li>
+              </ul>
+            </div>
+            <div class="modal-highlight">
+              <strong>Dica de ouro</strong>
+              <p>Palavras mais longas rendem mais pontos. Observe o padrão das letras externas para formar combinações maiores.</p>
+            </div>
+            <div class="modal-actions">
+              <button class="modal-action-btn" data-modal-action="primary">Entendi, vamos jogar!</button>
+            </div>
+          `;
+        } else if (type === 'credits') {
+          template = `
+            <div class="modal-header">
+              <h2 id="modal-title">Créditos</h2>
+            </div>
+            <div class="modal-section">
+              <h3>Sobre</h3>
+              <p class="modal-subtitle">Soletra Diário é um desafio de vocabulário em que você forma palavras usando as letras do dia.</p>
+              <ul class="modal-list">
+                <li><span><strong>Concepção &amp; Desenvolvimento:</strong> João Jr</span></li>
+              </ul>
+            </div>
+            <div class="modal-actions">
+              <button class="modal-action-btn secondary" data-modal-action="secondary">Fechar</button>
+            </div>
+          `;
+        }
+
+        modalBody.innerHTML = template;
+        modalBody.querySelectorAll('[data-modal-action]').forEach(btn => {
+          btn.addEventListener('click', closeModal);
+        });
+      }
+
+      function initGame() {
+        const todayDate = getTodayDateString();
+        currentGame = jogosDiarios.find(jogo => jogo.data === todayDate);
+
+        if (!currentGame) {
+          document.querySelector('.game-wrapper').innerHTML = '<h1>Nenhum jogo para hoje. Volte amanhã!</h1>';
+          return;
+        }
+
+        storageKey = `${STORAGE_PREFIX}${currentGame.data}`;
+        placeholderOverrides.clear();
+        
+        foundWords = [];
+        wordPlaceholders.clear();
+        hintCount = 10;
+        score = 0;
+        gameEnded = false;
+        scoreCount.textContent = score;
+        hintCountSpan.textContent = hintCount;
+        hintBtn.disabled = false;
+        endGameWarning.textContent = '';
+        endGameBtn.disabled = false;
+        confirmBtn.disabled = false;
+        deleteBtn.disabled = false;
+        shuffleBtn.disabled = false;
+        wordDisplay.textContent = '';
+
+        renderLetters();
+        renderWordPlaceholders();
+        totalWordsCount.textContent = currentGame.palavras.length;
+
+        const savedState = loadGameState();
+        if (savedState) {
+          if (Array.isArray(savedState.foundWords)) {
+            foundWords = [...savedState.foundWords];
+            foundWords.forEach(word => revealFoundWord(word, { scroll: false }));
+          }
+          if (typeof savedState.score === 'number') {
+            score = savedState.score;
+            scoreCount.textContent = score;
+          }
+          if (typeof savedState.hintCount === 'number') {
+            hintCount = savedState.hintCount;
+            hintCountSpan.textContent = hintCount;
+          }
+          if (Array.isArray(savedState.placeholderOverrides)) {
+            placeholderOverrides = new Map(savedState.placeholderOverrides);
+          }
+          gameEnded = !!savedState.gameEnded;
+
+          if (gameEnded) {
+            revealAllWords();
+            disableLetterButtons();
+            confirmBtn.disabled = true;
+            shuffleBtn.disabled = true;
+            hintBtn.disabled = true;
+            deleteBtn.disabled = true;
+            endGameBtn.disabled = true;
+            placeholderOverrides.clear();
+          } else {
+            applyPlaceholderOverrides();
+            hintBtn.disabled = hintCount <= 0;
+          }
+        }
+
+        updateProgress();
+        saveGameState();
+      }
+      
+      function renderLetters(shuffledLetters) {
+          letterContainer.innerHTML = '';
+          const outerLetters = shuffledLetters || currentGame.letras.filter(l => l !== currentGame.central);
+          const radius = letterContainer.offsetWidth / 2 - 50;
+          const angleStep = (2 * Math.PI) / outerLetters.length;
+
+          outerLetters.forEach((letter, i) => {
+              const angle = i * angleStep - (Math.PI / 2);
+              const x = radius * Math.cos(angle) + (letterContainer.offsetWidth / 2) - 40;
+              const y = radius * Math.sin(angle) + (letterContainer.offsetHeight / 2) - 40;
+              
+              const btn = document.createElement('button');
+              btn.className = 'letter-btn';
+              btn.textContent = letter;
+              btn.dataset.letter = letter;
+              btn.style.left = `${x}px`;
+              btn.style.top = `${y}px`;
+              letterContainer.appendChild(btn);
+          });
+
+          const centralBtn = document.createElement('button');
+          centralBtn.className = 'letter-btn central';
+          centralBtn.textContent = currentGame.central;
+          centralBtn.dataset.letter = currentGame.central;
+          letterContainer.appendChild(centralBtn);
+          
+          attachLetterListeners();
+      }
+
+      function renderWordPlaceholders() {
+        foundWordsList.innerHTML = '';
+        wordPlaceholders.clear();
+        const sortedWords = [...currentGame.palavras].sort((a, b) => a.length - b.length || a.localeCompare(b));
+
+        sortedWords.forEach(word => {
+            const li = document.createElement('li');
+            li.className = 'placeholder';
+            li.textContent = '_ '.repeat(word.length).trim();
+            li.dataset.word = word;
+            foundWordsList.appendChild(li);
+            wordPlaceholders.set(word, li);
+        });
+      }
+
+      function attachLetterListeners() {
+        document.querySelectorAll('.letter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (gameEnded) return;
+                currentWord += btn.dataset.letter;
+                wordDisplay.textContent = currentWord;
+            });
+        });
+      }
+
+      function shuffleLetters() {
+        if (gameEnded) return;
+        const outerLetters = currentGame.letras.filter(l => l !== currentGame.central);
+        for (let i = outerLetters.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [outerLetters[i], outerLetters[j]] = [outerLetters[j], outerLetters[i]];
+        }
+        renderLetters(outerLetters);
+      }
+
+      function confirmWord() {
+        if (gameEnded) {
+            showFeedback('A partida já foi encerrada.', 'info');
+            return;
+        }
+        const word = currentWord.toLowerCase();
+
+        if (word.length < 4) {
+            showFeedback('A palavra deve ter no mínimo 4 letras.', 'error');
+            return;
+        }
+        if (!word.includes(currentGame.central.toLowerCase())) {
+            showFeedback('A palavra deve conter a letra central.', 'error');
+            return;
+        }
+        if (foundWords.includes(word)) {
+            showFeedback('Palavra já encontrada!', 'info');
+            clearCurrentWord();
+            return;
+        }
+        if (currentGame.palavras.includes(word)) {
+            foundWords.push(word);
+            revealFoundWord(word);
+            addScore(word.length);
+            updateProgress();
+            saveGameState();
+            showFeedback('Boa!', 'success');
+        } else {
+            showFeedback('Palavra inválida.', 'error');
+        }
+        clearCurrentWord();
+      }
+      
+      function clearCurrentWord() {
+        currentWord = '';
+        wordDisplay.textContent = '';
+      }
+
+      function revealFoundWord(word, { scroll = true } = {}) {
+        const li = wordPlaceholders.get(word);
+        if (li) {
+            li.textContent = word.toUpperCase();
+            li.classList.remove('placeholder', 'hinted', 'revealed');
+            li.classList.add('found');
+            if (scroll) {
+              li.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+        placeholderOverrides.delete(word);
+      }
+
+      function provideHint() {
+        if (gameEnded) return;
+        if (hintCount <= 0) {
+            showFeedback('Você não tem mais dicas!', 'error');
+            return;
+        }
+
+        const unFoundWords = currentGame.palavras.filter(p => !foundWords.includes(p));
+        const unHintedWords = unFoundWords.filter(word => {
+            const li = wordPlaceholders.get(word);
+            return li && !li.classList.contains('hinted');
+        });
+
+        if (unHintedWords.length === 0) {
+            showFeedback('Nenhuma dica nova disponível.', 'info');
+            return;
+        }
+
+        const wordToHint = unHintedWords[Math.floor(Math.random() * unHintedWords.length)];
+        const li = wordPlaceholders.get(wordToHint);
+
+        if (!li) return;
+
+        const word = wordToHint;
+        let numToReveal = 2;
+        if (word.length >= 8) {
+            numToReveal = 3;
+        }
+
+        const wordAsArray = Array(word.length).fill('_');
+        let indicesToReveal = new Set();
+        while(indicesToReveal.size < numToReveal) {
+            indicesToReveal.add(Math.floor(Math.random() * word.length));
+        }
+
+        for(let i = 0; i < word.length; i++) {
+            if(indicesToReveal.has(i)) {
+                wordAsArray[i] = word[i].toUpperCase();
+            }
+        }
+
+        li.textContent = wordAsArray.join(' ');
+        li.classList.add('hinted');
+
+        hintCount--;
+        hintCountSpan.textContent = hintCount;
+        if (hintCount <= 0) {
+            hintBtn.disabled = true;
+        }
+        placeholderOverrides.set(wordToHint, li.textContent);
+        saveGameState();
+      }
+
+      function updateProgress() {
+        const foundCount = foundWords.length;
+        const totalCount = currentGame.palavras.length;
+        const percentage = totalCount > 0 ? (foundCount / totalCount) * 100 : 0;
+
+        wordsFoundCount.textContent = foundCount;
+        progressBar.style.width = `${percentage}%`;
+        if (percentage >= END_GAME_THRESHOLD) {
+            endGameWarning.textContent = '';
+        }
+        
+        updateQualification(percentage);
+      }
+
+      function addScore(points) {
+        score += points;
+        scoreCount.textContent = score;
+      }
+
+      function applyPlaceholderOverrides() {
+        if (!placeholderOverrides.size) return;
+        const toRemove = [];
+        placeholderOverrides.forEach((text, word) => {
+          if (foundWords.includes(word)) {
+            toRemove.push(word);
+            return;
+          }
+          const li = wordPlaceholders.get(word);
+          if (li) {
+            li.textContent = text;
+            li.classList.add('hinted');
+          }
+        });
+        toRemove.forEach(word => placeholderOverrides.delete(word));
+      }
+
+      function saveGameState() {
+        if (!storageKey) return;
+        try {
+          const state = {
+            foundWords,
+            hintCount,
+            score,
+            gameEnded,
+            placeholderOverrides: Array.from(placeholderOverrides.entries()),
+          };
+          localStorage.setItem(storageKey, JSON.stringify(state));
+        } catch (error) {
+          console.error('Não foi possível salvar o estado do jogo.', error);
+        }
+      }
+
+      function loadGameState() {
+        if (!storageKey) return null;
+        try {
+          const stored = localStorage.getItem(storageKey);
+          if (!stored) return null;
+          return JSON.parse(stored);
+        } catch (error) {
+          console.error('Não foi possível carregar o estado do jogo.', error);
+          return null;
+        }
+      }
+
+      function handleEndGame() {
+        if (!currentGame || gameEnded) return;
+        const totalCount = currentGame.palavras.length;
+        const percentage = totalCount > 0 ? (foundWords.length / totalCount) * 100 : 0;
+
+        if (percentage < END_GAME_THRESHOLD) {
+            endGameWarning.textContent = `Você precisa encontrar pelo menos ${END_GAME_THRESHOLD}% das palavras para encerrar.`;
+            setTimeout(() => {
+              if (!gameEnded) {
+                endGameWarning.textContent = '';
+              }
+            }, 2000);
+            return;
+        }
+
+        endGameWarning.textContent = '';
+        gameEnded = true;
+        showFeedback('Partida encerrada! Confira todas as palavras.', 'success');
+        revealAllWords();
+        disableLetterButtons();
+        clearCurrentWord();
+        confirmBtn.disabled = true;
+        shuffleBtn.disabled = true;
+        hintBtn.disabled = true;
+        deleteBtn.disabled = true;
+        endGameBtn.disabled = true;
+        placeholderOverrides.clear();
+        saveGameState();
+      }
+
+      function revealAllWords() {
+        wordPlaceholders.forEach((li, word) => {
+            li.textContent = word.toUpperCase();
+            li.classList.remove('placeholder', 'hinted', 'found', 'revealed');
+            if (foundWords.includes(word)) {
+                li.classList.add('found');
+            } else {
+                li.classList.add('revealed');
+            }
+        });
+      }
+
+      function disableLetterButtons() {
+        document.querySelectorAll('.letter-btn').forEach(btn => {
+            btn.disabled = true;
+        });
+      }
+      
+      function updateQualification(percentage) {
+          let text = 'Iniciante';
+          if (percentage >= 100) text = 'Genial!';
+          else if (percentage >= 80) text = 'Fantástico!';
+          else if (percentage >= 60) text = 'Excelente!';
+          else if (percentage >= 40) text = 'Muito Bom!';
+          else if (percentage >= 20) text = 'Bom Trabalho!';
+          else if (percentage > 0) text = 'Continue Assim!';
+          qualificationText.textContent = text;
+      }
+
+      // Event Listeners
+      deleteBtn.addEventListener('click', () => {
+        if (gameEnded) return;
+        currentWord = currentWord.slice(0, -1);
+        wordDisplay.textContent = currentWord;
+      });
+
+      shuffleBtn.addEventListener('click', shuffleLetters);
+      confirmBtn.addEventListener('click', confirmWord);
+      hintBtn.addEventListener('click', provideHint);
+      endGameBtn.addEventListener('click', handleEndGame);
+      helpBtn.addEventListener('click', () => openModal('tutorial'));
+      creditsBtn.addEventListener('click', () => openModal('credits'));
+      modalCloseBtn.addEventListener('click', closeModal);
+      infoModal.addEventListener('click', (e) => {
+        if (e.target === infoModal) {
+          closeModal();
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (infoModal.classList.contains('active')) {
+          if (e.key === 'Escape') {
+            closeModal();
+          }
+          return;
+        }
+        if (gameEnded) return;
+        const key = e.key.toUpperCase();
+        if (currentGame && (currentGame.letras.includes(key) || currentGame.central === key) ) {
+            currentWord += key;
+            wordDisplay.textContent = currentWord;
+        } else if (e.key === 'Backspace') {
+            currentWord = currentWord.slice(0, -1);
+            wordDisplay.textContent = currentWord;
+        } else if (e.key === 'Enter') {
+            confirmBtn.click(); // Trigger click to handle disabled state etc.
+        }
+      });
+
+      initGame();
+      openModal('tutorial');
+    });
+  </script>
+</body>
+</html>
