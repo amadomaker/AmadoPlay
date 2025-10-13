@@ -116,19 +116,19 @@
 
     .letter-container {
       position: relative;
-      width: 320px;
-      height: 320px;
-      margin: 1rem 0;
+      width: clamp(220px, 55vw, 340px);
+      height: clamp(220px, 55vw, 340px);
+      margin: 1rem auto;
     }
 
     .letter-btn {
-      width: 80px;
-      height: 80px;
+      width: clamp(56px, 14vw, 84px);
+      height: clamp(56px, 14vw, 84px);
       border-radius: 50%;
       border: 2px solid #d1d5db;
       background: var(--bg-white);
       color: var(--text-dark);
-      font-size: 2.5rem;
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
       font-weight: bold;
       cursor: pointer;
       transition: var(--transition);
@@ -399,10 +399,114 @@
       color: #312e81;
     }
 
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      padding: 1rem 1.25rem;
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--secondary-color);
+    }
+
+    .recent-section h3 {
+      margin: 0 0 0.75rem;
+      font-size: 1.1rem;
+    }
+
+    .recent-games {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .recent-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      padding: 0.75rem 1rem;
+    }
+
+    .recent-letter {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: rgba(124, 58, 237, 0.12);
+      color: var(--secondary-color);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .recent-body {
+      flex: 1;
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    .recent-date {
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    .recent-status {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.18);
+      color: #047857;
+      font-size: 0.85rem;
+    }
+
+    .recent-meta {
+      text-align: right;
+      font-size: 0.85rem;
+      color: #475569;
+      display: grid;
+      gap: 0.3rem;
+    }
+
+    .recent-empty {
+      color: #94a3b8;
+      font-style: italic;
+    }
+
     .modal-actions {
       display: flex;
       justify-content: center;
-      margin-top: 1.5rem;
+      margin-top: 1.25rem;
     }
 
     .modal-action-btn {
@@ -559,8 +663,22 @@
       background: #6b7280;
     }
 
+    @media (max-width: 1024px) {
+      .game-wrapper {
+        gap: 1.35rem;
+        padding: 2rem 1.5rem;
+      }
+      .game-main, .sidebar-container {
+        flex: 1 1 50%;
+      }
+      .letter-container {
+        width: clamp(240px, 50vw, 320px);
+        height: clamp(240px, 50vw, 320px);
+      }
+    }
+
     /*=== RESPONSIVIDADE ===*/
-    @media (max-width: 768px) {
+    @media (max-width: 640px) {
       body {
         padding: 0;
         align-items: flex-start;
@@ -578,13 +696,13 @@
         order: -1; /* Move a sidebar para cima */
       }
       .letter-container {
-        width: 240px;
-        height: 240px;
+        width: clamp(200px, 70vw, 260px);
+        height: clamp(200px, 70vw, 260px);
       }
       .letter-btn {
-        width: 70px;
-        height: 70px;
-        font-size: 2rem;
+        width: clamp(52px, 18vw, 70px);
+        height: clamp(52px, 18vw, 70px);
+        font-size: clamp(1.6rem, 8vw, 2.1rem);
       }
       .word-display {
         font-size: 1.8rem;
@@ -610,6 +728,46 @@
         width: 38px;
         height: 38px;
         font-size: 1.2rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .modal-backdrop {
+        align-items: center;
+        justify-content: center;
+        padding: max(1.2rem, env(safe-area-inset-top, 0.9rem))
+                 max(1rem, env(safe-area-inset-right, 0.9rem))
+                 max(1.1rem, env(safe-area-inset-bottom, 0.9rem))
+                 max(1rem, env(safe-area-inset-left, 0.9rem));
+        overflow-y: auto;
+      }
+      .modal-content {
+        width: min(94vw, 420px);
+        max-height: calc(90vh - max(2rem, env(safe-area-inset-top, 1rem)) - max(1.2rem, env(safe-area-inset-bottom, 1rem)));
+        padding: 1.35rem 1.1rem 1.6rem;
+        transform: none;
+      }
+      .modal-backdrop.active .modal-content {
+        transform: none;
+      }
+      .modal-close {
+        top: 0.75rem;
+        right: 0.95rem;
+        width: 32px;
+        height: 32px;
+        font-size: 1.3rem;
+      }
+      .modal-action-btn {
+        width: 100%;
+        padding: 0.9rem 1.2rem;
+      }
+      @supports (height: 100dvh) {
+        .modal-backdrop {
+          min-height: 100dvh;
+        }
+        .modal-content {
+          max-height: calc(100dvh - max(2rem, env(safe-area-inset-top, 1rem)) - max(1.2rem, env(safe-area-inset-bottom, 1rem)));
+        }
       }
     }
 
@@ -658,6 +816,7 @@
             <div class="end-game-actions">
                 <button id="end-game-btn" class="game-btn end">Encerrar Partida</button>
                 <button id="help-btn" class="icon-btn" title="Como jogar" aria-label="Como jogar">?</button>
+                <button id="stats-btn" class="icon-btn" title="Estatísticas" aria-label="Estatísticas">📊</button>
                 <button id="credits-btn" class="icon-btn" title="Créditos" aria-label="Créditos">&#8505;</button>
             </div>
         </div>
@@ -691,6 +850,7 @@
       const endGameBtn = document.getElementById('end-game-btn');
       const endGameWarning = document.getElementById('end-game-warning');
       const helpBtn = document.getElementById('help-btn');
+      const statsBtn = document.getElementById('stats-btn');
       const creditsBtn = document.getElementById('credits-btn');
       const infoModal = document.getElementById('info-modal');
       const modalBody = document.getElementById('modal-body');
@@ -704,6 +864,7 @@
 
       const END_GAME_THRESHOLD = 75;
       const STORAGE_PREFIX = 'soletra-diario-estado-';
+      const RECENT_GAMES_LIMIT = 7;
 
       let currentGame;
       let currentWord = '';
@@ -714,6 +875,8 @@
       let gameEnded = false;
       let placeholderOverrides = new Map();
       let storageKey = '';
+      let elapsedMsBase = 0;
+      let sessionStartTime = null;
 
       function getTodayDateString() {
         const today = new Date();
@@ -738,12 +901,14 @@
         infoModal.setAttribute('aria-hidden', 'false');
         const focusTarget = modalBody.querySelector('[data-modal-action]') || modalCloseBtn;
         focusTarget.focus();
+        document.body.style.overflow = 'hidden';
       }
 
       function closeModal() {
         infoModal.classList.remove('active');
         infoModal.setAttribute('aria-hidden', 'true');
         modalBody.innerHTML = '';
+        document.body.style.overflow = '';
       }
 
       async function loadJogos() {
@@ -766,6 +931,200 @@
             wrapper.innerHTML = '<h1>Não foi possível carregar os jogos de hoje.</h1>';
           }
         }
+      }
+
+      const getElapsedMs = () => elapsedMsBase + (sessionStartTime ? Date.now() - sessionStartTime : 0);
+
+      const numberFormatter = new Intl.NumberFormat('pt-BR', {
+        maximumFractionDigits: 1,
+        minimumFractionDigits: 0,
+      });
+
+      const integerFormatter = new Intl.NumberFormat('pt-BR');
+
+      const formatDuration = (ms) => {
+        if (!ms || ms <= 0) return '--:--';
+        const totalSeconds = Math.round(ms / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      };
+
+      const getISODateString = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+
+      const getWeekdayLetter = (dateStr) => {
+        const letters = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+        const date = new Date(`${dateStr}T00:00:00`);
+        if (Number.isNaN(date.getTime())) return '-';
+        return letters[date.getDay()] || '-';
+      };
+
+      const formatDateShort = (dateStr) => {
+        const [year, month, day] = dateStr.split('-');
+        if (!year || !month || !day) return dateStr;
+        return `${day}/${month}`;
+      };
+
+      const getQualificationLabel = (percentage) => {
+        if (percentage >= 100) return 'Genial!';
+        if (percentage >= 80) return 'Fantástico!';
+        if (percentage >= 60) return 'Excelente!';
+        if (percentage >= 40) return 'Muito Bom!';
+        if (percentage >= 20) return 'Bom Trabalho!';
+        if (percentage > 0) return 'Continue Assim!';
+        return 'Não jogado';
+      };
+
+      function calculateStats() {
+        const stats = {
+          gamesPlayed: 0,
+          totalWords: 0,
+          totalScore: 0,
+          totalTimeMs: 0,
+          gamesWithTime: 0,
+          recent: [],
+        };
+
+        const stateByDate = new Map();
+
+        for (let i = 0; i < localStorage.length; i += 1) {
+          const key = localStorage.key(i);
+          if (!key || !key.startsWith(STORAGE_PREFIX)) continue;
+          try {
+            const state = JSON.parse(localStorage.getItem(key));
+            if (!state) continue;
+            const date = key.slice(STORAGE_PREFIX.length);
+            stateByDate.set(date, state);
+
+            const foundCount = Array.isArray(state.foundWords) ? state.foundWords.length : 0;
+            const played = state.gameEnded || foundCount > 0 || (state.score && state.score > 0);
+
+            if (played) {
+              stats.gamesPlayed += 1;
+              stats.totalWords += foundCount;
+              stats.totalScore += Number(state.score) || 0;
+              if (typeof state.elapsedMs === 'number' && state.elapsedMs > 0) {
+                stats.totalTimeMs += state.elapsedMs;
+                stats.gamesWithTime += 1;
+              }
+            }
+          } catch (error) {
+            console.warn('Não foi possível interpretar estado salvo:', error);
+          }
+        }
+
+        const today = new Date();
+        today.setHours(12, 0, 0, 0);
+        const gameByDate = new Map(jogosDiarios.map((game) => [game.data, game]));
+        stats.recent = [];
+
+        for (let offset = 1; offset <= RECENT_GAMES_LIMIT; offset += 1) {
+          const target = new Date(today);
+          target.setDate(today.getDate() - offset);
+          const isoDate = getISODateString(target);
+          const game = gameByDate.get(isoDate);
+          const state = stateByDate.get(isoDate);
+          const total = game && Array.isArray(game.palavras) ? game.palavras.length : 0;
+          const found = state && Array.isArray(state.foundWords) ? state.foundWords.length : 0;
+          const percentage = total > 0 ? (found / total) * 100 : 0;
+          const status = found > 0 ? getQualificationLabel(percentage) : 'Não jogado';
+          const score = state && typeof state.score === 'number' ? state.score : 0;
+
+          stats.recent.push({
+            date: isoDate,
+            central: game && game.central ? game.central.toUpperCase() : '',
+            status,
+            found,
+            total,
+            score,
+            percentage,
+          });
+        }
+
+        stats.avgWords = stats.gamesPlayed ? stats.totalWords / stats.gamesPlayed : 0;
+        stats.avgScore = stats.gamesPlayed ? stats.totalScore / stats.gamesPlayed : 0;
+        stats.avgTimeMs = stats.gamesWithTime ? stats.totalTimeMs / stats.gamesWithTime : 0;
+
+        return stats;
+      }
+
+      function generateStatsMarkup() {
+        if (!jogosDiarios.length) {
+          return `
+            <div class="modal-header">
+              <h2 id="modal-title">Estatísticas</h2>
+            </div>
+            <p style="margin:0;">Carregue os jogos para visualizar as estatísticas.</p>
+          `;
+        }
+
+        const stats = calculateStats();
+        const jogosValor = integerFormatter.format(stats.gamesPlayed);
+        const mediaPalavras = stats.gamesPlayed ? numberFormatter.format(stats.avgWords) : '0';
+        const mediaPontos = stats.gamesPlayed ? numberFormatter.format(stats.avgScore) : '0';
+        const mediaTempo = formatDuration(stats.avgTimeMs);
+
+        const recentItems = stats.recent.length
+          ? stats.recent.map((item) => {
+              const statusHtml = item.status === 'Não jogado'
+                ? `<span class="recent-status">${item.status}</span>`
+                : `<span class="badge">${item.status}</span>`;
+              const progressText = item.total > 0
+                ? `${item.found}/${item.total} palavras`
+                : '--/--';
+              const scoreText = item.total > 0
+                ? `${integerFormatter.format(item.score || 0)} pts`
+                : '--';
+              return `
+                <li class="recent-item">
+                  <div class="recent-letter">${getWeekdayLetter(item.date)}</div>
+                  <div class="recent-body">
+                    <div class="recent-date">${formatDateShort(item.date)}</div>
+                    ${statusHtml}
+                  </div>
+                  <div class="recent-meta">
+                    <span class="recent-progress">${progressText}</span>
+                    <span class="recent-score">${scoreText}</span>
+                  </div>
+                </li>
+              `;
+            }).join('')
+          : '<li class="recent-empty">Nenhum histórico registrado.</li>';
+
+        return `
+          <div class="modal-header">
+            <h2 id="modal-title">Estatísticas</h2>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-label">Jogos</span>
+              <span class="stat-value">${jogosValor}</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Média de palavras</span>
+              <span class="stat-value">${mediaPalavras}</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Média de pontos</span>
+              <span class="stat-value">${mediaPontos}</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Média de tempo</span>
+              <span class="stat-value">${mediaTempo}</span>
+            </div>
+          </div>
+          <div class="recent-section">
+            <h3>Últimos jogos</h3>
+            <ul class="recent-games">
+              ${recentItems}
+            </ul>
+          </div>
+        `;
       }
 
       function renderModalContent(type) {
@@ -817,12 +1176,18 @@
               <button class="modal-action-btn secondary" data-modal-action="secondary">Fechar</button>
             </div>
           `;
+        } else if (type === 'stats') {
+          template = generateStatsMarkup();
         }
 
         modalBody.innerHTML = template;
         modalBody.querySelectorAll('[data-modal-action]').forEach(btn => {
           btn.addEventListener('click', closeModal);
         });
+        const modalContentEl = modalBody.closest('.modal-content');
+        if (modalContentEl) {
+          modalContentEl.scrollTop = 0;
+        }
       }
 
       function initGame() {
@@ -842,6 +1207,8 @@
         hintCount = 10;
         score = 0;
         gameEnded = false;
+        elapsedMsBase = 0;
+        sessionStartTime = Date.now();
         scoreCount.textContent = score;
         hintCountSpan.textContent = hintCount;
         hintBtn.disabled = false;
@@ -873,7 +1240,12 @@
           if (Array.isArray(savedState.placeholderOverrides)) {
             placeholderOverrides = new Map(savedState.placeholderOverrides);
           }
-          gameEnded = !!savedState.gameEnded;
+          const savedGameEnded = !!savedState.gameEnded;
+          if (typeof savedState.elapsedMs === 'number') {
+            elapsedMsBase = savedState.elapsedMs;
+            sessionStartTime = savedGameEnded ? null : Date.now();
+          }
+          gameEnded = savedGameEnded;
 
           if (gameEnded) {
             revealAllWords();
@@ -884,6 +1256,7 @@
             deleteBtn.disabled = true;
             endGameBtn.disabled = true;
             placeholderOverrides.clear();
+            sessionStartTime = null;
           } else {
             applyPlaceholderOverrides();
             hintBtn.disabled = hintCount <= 0;
@@ -897,13 +1270,26 @@
       function renderLetters(shuffledLetters) {
           letterContainer.innerHTML = '';
           const outerLetters = shuffledLetters || currentGame.letras.filter(l => l !== currentGame.central);
-          const radius = letterContainer.offsetWidth / 2 - 50;
+          const tempBtn = document.createElement('button');
+          tempBtn.className = 'letter-btn';
+          tempBtn.style.visibility = 'hidden';
+          tempBtn.style.pointerEvents = 'none';
+          tempBtn.style.left = '50%';
+          tempBtn.style.top = '50%';
+          letterContainer.appendChild(tempBtn);
+          const btnRect = tempBtn.getBoundingClientRect();
+          const buttonDiameter = btnRect.width || 70;
+          tempBtn.remove();
+
+          const containerSize = Math.min(letterContainer.offsetWidth, letterContainer.offsetHeight);
+          const rawRadius = containerSize / 2 - buttonDiameter / 2 - 6;
+          const radius = Math.max(rawRadius, 0);
           const angleStep = (2 * Math.PI) / outerLetters.length;
 
           outerLetters.forEach((letter, i) => {
               const angle = i * angleStep - (Math.PI / 2);
-              const x = radius * Math.cos(angle) + (letterContainer.offsetWidth / 2) - 40;
-              const y = radius * Math.sin(angle) + (letterContainer.offsetHeight / 2) - 40;
+              const x = radius * Math.cos(angle) + (letterContainer.offsetWidth / 2) - (buttonDiameter / 2);
+              const y = radius * Math.sin(angle) + (letterContainer.offsetHeight / 2) - (buttonDiameter / 2);
               
               const btn = document.createElement('button');
               btn.className = 'letter-btn';
@@ -1101,14 +1487,18 @@
       function saveGameState() {
         if (!storageKey) return;
         try {
+          const elapsedMs = Math.max(0, Math.floor(getElapsedMs()));
           const state = {
             foundWords,
             hintCount,
             score,
             gameEnded,
             placeholderOverrides: Array.from(placeholderOverrides.entries()),
+            elapsedMs,
           };
           localStorage.setItem(storageKey, JSON.stringify(state));
+          elapsedMsBase = elapsedMs;
+          sessionStartTime = gameEnded ? null : Date.now();
         } catch (error) {
           console.error('Não foi possível salvar o estado do jogo.', error);
         }
@@ -1197,6 +1587,9 @@
       hintBtn.addEventListener('click', provideHint);
       endGameBtn.addEventListener('click', handleEndGame);
       helpBtn.addEventListener('click', () => openModal('tutorial'));
+      if (statsBtn) {
+        statsBtn.addEventListener('click', () => openModal('stats'));
+      }
       creditsBtn.addEventListener('click', () => openModal('credits'));
       modalCloseBtn.addEventListener('click', closeModal);
       infoModal.addEventListener('click', (e) => {
