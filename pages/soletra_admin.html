@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Soletra Diário</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f4f5;
+      --surface: #ffffff;
+      --primary: #7c3aed;
+      --primary-dark: #5b21b6;
+      --border: #e4e4e7;
+      --text: #1f2937;
+      --text-muted: #6b7280;
+      --error: #dc2626;
+      --success: #16a34a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 3rem;
+    }
+
+    main {
+      width: min(1080px, 100%);
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    h1 {
+      margin: 0 0 0.5rem;
+      font-size: clamp(1.8rem, 3vw, 2.3rem);
+      text-align: center;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: clamp(1rem, 2vw, 1.5rem);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    }
+
+    .status {
+      margin: 0.25rem 0 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    thead {
+      background: rgba(124, 58, 237, 0.08);
+      color: var(--primary-dark);
+    }
+
+    th, td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tbody tr:hover {
+      background: rgba(124, 58, 237, 0.05);
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    button, .button-link {
+      border: none;
+      border-radius: 999px;
+      padding: 0.55rem 1.3rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--primary);
+      color: white;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button.secondary {
+      background: #1f2937;
+    }
+
+    button.danger {
+      background: #dc2626;
+    }
+
+    button:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 15px rgba(124, 58, 237, 0.2);
+    }
+
+    form {
+      display: grid;
+      gap: 1rem;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    input, textarea {
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 0.6rem 0.75rem;
+      font-size: 1rem;
+      font-family: inherit;
+      background: #f9fafb;
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    .hint {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .json-output {
+      min-height: 260px;
+      width: 100%;
+      font-family: "Fira Code", "Courier New", monospace;
+      font-size: 0.9rem;
+      background: #0f172a;
+      color: #f8fafc;
+      border-radius: 12px;
+      border: none;
+      padding: 1rem;
+      line-height: 1.4;
+      overflow: auto;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .message {
+      font-size: 0.95rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: 10px;
+      background: rgba(124, 58, 237, 0.1);
+      color: var(--primary-dark);
+    }
+
+    .message.error {
+      background: rgba(220, 38, 38, 0.12);
+      color: var(--error);
+    }
+
+    @media (max-width: 768px) {
+      th, td {
+        padding: 0.6rem 0.5rem;
+      }
+      .actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="card">
+      <h1>Painel de Jogos – Soletra Diário</h1>
+      <p class="status" id="status-text">Carregando jogos...</p>
+    </header>
+
+    <section class="card">
+      <h2>Jogos cadastrados</h2>
+      <div class="hint" style="margin-bottom:0.75rem;">Selecione um jogo para editar ou use o formulário abaixo para adicionar um novo dia.</div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Letras</th>
+              <th>Central</th>
+              <th>Total de Palavras</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="games-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 id="form-title">Adicionar novo jogo</h2>
+      <form id="game-form">
+        <input type="hidden" id="game-index" value="">
+        <label>
+          Data (YYYY-MM-DD)
+          <input type="date" id="game-date" required>
+        </label>
+        <label>
+          Letras (7 letras, sem acentos – separe por espaço ou vírgula)
+          <input type="text" id="game-letters" placeholder="Ex.: P R A T I C O" required>
+        </label>
+        <label>
+          Letra central
+          <input type="text" id="game-central" maxlength="1" required>
+        </label>
+        <label>
+          Palavras (mínimo 4 letras, separadas por linha ou vírgula)
+          <textarea id="game-words" placeholder="Digite uma palavra por linha"></textarea>
+        </label>
+        <div class="actions">
+          <button type="submit" id="submit-btn">Salvar jogo</button>
+          <button type="button" class="secondary" id="cancel-edit" style="display:none;">Cancelar edição</button>
+        </div>
+        <p class="hint">Dica: o jogo será ordenado pela data automaticamente. Depois de salvar, baixe o novo JSON e substitua o arquivo em <code>data/soletra_jogos.json</code>.</p>
+      </form>
+      <p class="message" id="feedback-panel" style="display:none;"></p>
+    </section>
+
+    <section class="card">
+      <h2>Exportar JSON</h2>
+      <div class="toolbar">
+        <button type="button" id="download-json">Baixar JSON</button>
+        <button type="button" class="secondary" id="copy-json">Copiar JSON</button>
+        <span class="hint">Após baixar, substitua o arquivo atual em <code>data/soletra_jogos.json</code> e publique.</span>
+      </div>
+      <textarea id="json-output" class="json-output" readonly></textarea>
+    </section>
+  </main>
+
+  <script>
+    const requestAccess = () => {
+      const expected = atob('c29sZXRyYV9hZG1pbg==');
+      for (let attempts = 0; attempts < 3; attempts += 1) {
+        const input = prompt('Senha do painel:');
+        if (input === null) {
+          break;
+        }
+        if (input === expected) {
+          return true;
+        }
+        alert('Senha incorreta. Tente novamente.');
+      }
+      document.body.innerHTML = '<main class="card"><h1>Acesso negado</h1><p style="color:#dc2626;">Senha inválida ou acesso cancelado.</p></main>';
+      return false;
+    };
+
+    if (!requestAccess()) {
+      throw new Error('Painel bloqueado.');
+    }
+
+    const dataUrl = '../data/soletra_jogos.json';
+    const statusText = document.getElementById('status-text');
+    const tableBody = document.getElementById('games-table-body');
+    const formTitle = document.getElementById('form-title');
+    const feedbackPanel = document.getElementById('feedback-panel');
+    const gameForm = document.getElementById('game-form');
+    const dateInput = document.getElementById('game-date');
+    const lettersInput = document.getElementById('game-letters');
+    const centralInput = document.getElementById('game-central');
+    const wordsInput = document.getElementById('game-words');
+    const hiddenIndex = document.getElementById('game-index');
+    const cancelEditBtn = document.getElementById('cancel-edit');
+    const jsonOutput = document.getElementById('json-output');
+    const downloadBtn = document.getElementById('download-json');
+    const copyBtn = document.getElementById('copy-json');
+
+    let jogos = [];
+    let editingIndex = null;
+
+    const normalizeLetters = (value) => {
+      const raw = value
+        .toUpperCase()
+        .replace(/[^A-ZÇÃÕÂÊÎÔÛÁÉÍÓÚÀÜ]/g, ' ')
+        .split(/\s+/)
+        .filter(Boolean);
+      const letters = raw.length === 1 && raw[0].length > 1
+        ? raw[0].split('')
+        : raw;
+      return Array.from(new Set(letters.map((l) => l.trim()))).filter(Boolean);
+    };
+
+    const parseWords = (value) => {
+      return value
+        .split(/[\n,;]+/)
+        .map((word) => word.trim())
+        .filter(Boolean);
+    };
+
+    const updateStatus = (message, type = 'info') => {
+      statusText.textContent = message;
+      statusText.style.color = type === 'error' ? 'var(--error)' : 'var(--text-muted)';
+    };
+
+    const showFormFeedback = (message, type = 'info') => {
+      feedbackPanel.textContent = message;
+      feedbackPanel.className = type === 'error' ? 'message error' : 'message';
+      feedbackPanel.style.display = 'block';
+      setTimeout(() => {
+        feedbackPanel.style.display = 'none';
+      }, 4000);
+    };
+
+    const renderTable = () => {
+      tableBody.innerHTML = '';
+      jogos.forEach((jogo, index) => {
+        const row = document.createElement('tr');
+        const letras = jogo.letras.join(' ');
+        const palavrasCount = jogo.palavras.length;
+
+        row.innerHTML = `
+          <td>${jogo.data}</td>
+          <td>${letras}</td>
+          <td>${jogo.central}</td>
+          <td>${palavrasCount}</td>
+          <td>
+            <div class="actions">
+              <button type="button" data-action="edit" data-index="${index}">Editar</button>
+              <button type="button" class="danger" data-action="remove" data-index="${index}">Remover</button>
+            </div>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    };
+
+    const updateJsonPreview = () => {
+      jsonOutput.value = JSON.stringify({ jogos }, null, 2);
+    };
+
+    const resetForm = () => {
+      gameForm.reset();
+      editingIndex = null;
+      hiddenIndex.value = '';
+      formTitle.textContent = 'Adicionar novo jogo';
+      document.getElementById('submit-btn').textContent = 'Salvar jogo';
+      cancelEditBtn.style.display = 'none';
+    };
+
+    const populateForm = (jogo, index) => {
+      editingIndex = index;
+      hiddenIndex.value = index;
+      dateInput.value = jogo.data;
+      lettersInput.value = jogo.letras.join(' ');
+      centralInput.value = jogo.central;
+      wordsInput.value = jogo.palavras.join('\n');
+      formTitle.textContent = `Editar jogo – ${jogo.data}`;
+      document.getElementById('submit-btn').textContent = 'Atualizar jogo';
+      cancelEditBtn.style.display = 'inline-flex';
+    };
+
+    const sortJogos = () => {
+      jogos.sort((a, b) => a.data.localeCompare(b.data));
+    };
+
+    const validateGame = ({ data, letras, central, palavras }) => {
+      const errors = [];
+      if (!data) {
+        errors.push('Informe a data.');
+      }
+      if (letras.length !== 7) {
+        errors.push('Forneça exatamente 7 letras.');
+      }
+      if (!central || central.length !== 1) {
+        errors.push('Informe a letra central (apenas 1 caractere).');
+      }
+      const centralUpper = central.toUpperCase();
+      const lettersSet = new Set(letras.map((l) => l.toUpperCase()));
+      if (!lettersSet.has(centralUpper)) {
+        errors.push('A letra central precisa estar na lista de letras.');
+      }
+      if (!palavras.length) {
+        errors.push('Informe pelo menos uma palavra.');
+      }
+      return errors;
+    };
+
+    const handleTableClick = (event) => {
+      const button = event.target.closest('button');
+      if (!button) return;
+      const index = Number(button.dataset.index);
+      if (Number.isNaN(index)) return;
+
+      if (button.dataset.action === 'edit') {
+        populateForm(jogos[index], index);
+      } else if (button.dataset.action === 'remove') {
+        if (confirm('Deseja realmente remover este jogo?')) {
+          jogos.splice(index, 1);
+          sortJogos();
+          renderTable();
+          updateJsonPreview();
+          showFormFeedback('Jogo removido. Não esqueça de baixar o novo JSON.', 'info');
+        }
+      }
+    };
+
+    const handleFormSubmit = (event) => {
+      event.preventDefault();
+      const data = dateInput.value.trim();
+      const letras = normalizeLetters(lettersInput.value);
+      const central = centralInput.value.trim().toUpperCase();
+      const palavras = parseWords(wordsInput.value);
+
+      const newGame = { data, letras, central, palavras };
+      const errors = validateGame(newGame);
+      if (errors.length) {
+        showFormFeedback(errors.join(' '), 'error');
+        return;
+      }
+
+      if (editingIndex !== null) {
+        jogos[editingIndex] = newGame;
+        showFormFeedback('Jogo atualizado. Baixe o JSON para salvar as alterações.', 'info');
+      } else {
+        jogos.push(newGame);
+        showFormFeedback('Jogo adicionado. Baixe o JSON para salvar as alterações.', 'info');
+      }
+
+      sortJogos();
+      renderTable();
+      updateJsonPreview();
+      resetForm();
+    };
+
+    const handleDownload = () => {
+      const blob = new Blob([jsonOutput.value], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'soletra_jogos.json';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    };
+
+    const handleCopy = async () => {
+      try {
+        await navigator.clipboard.writeText(jsonOutput.value);
+        showFormFeedback('JSON copiado para a área de transferência.', 'info');
+      } catch (error) {
+        console.error(error);
+        showFormFeedback('Não foi possível copiar o JSON.', 'error');
+      }
+    };
+
+    const loadJogos = async () => {
+      try {
+        const response = await fetch(dataUrl, { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const payload = await response.json();
+        jogos = Array.isArray(payload) ? payload : payload?.jogos || [];
+        sortJogos();
+        renderTable();
+        updateJsonPreview();
+        updateStatus(`Foram carregados ${jogos.length} jogos.`);
+      } catch (error) {
+        console.error(error);
+        updateStatus('Erro ao carregar jogos. Verifique o arquivo JSON.', 'error');
+      }
+    };
+
+    tableBody.addEventListener('click', handleTableClick);
+    gameForm.addEventListener('submit', handleFormSubmit);
+    cancelEditBtn.addEventListener('click', resetForm);
+    downloadBtn.addEventListener('click', handleDownload);
+    copyBtn.addEventListener('click', handleCopy);
+
+    loadJogos();
+  </script>
+</body>
+</html>
