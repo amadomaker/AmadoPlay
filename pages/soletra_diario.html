@@ -675,102 +675,133 @@
     document.addEventListener('DOMContentLoaded', () => {
       const jogosDiarios = [
         { data: '2025-10-10', letras: ['A','C','O','R','L','E','N'], central: 'A', palavras: [
-          'acne','aceno','acenar','aclarar','acelerar','arear','aerar','arar',
-          'anel','areal','areia','arena','arca','arco','arcano','oral','orla','nora',
-          'cara','caro','cera','cela','cena','cana','canoa','canal','canela','carne',
-          'coral','coroa','calar','colar','corar','clarear','cancelar','coroar','alocar',
-          'lacre','lacrar','real','renal'
+          'acne','aceno','acenar','aclarar','alocar','anelar','areal','arear','areia','arena',
+          'arca','arcar','arco','cala','calar','calor','cana','canal','canoa','cara','caro',
+          'cera','cena','cela','clara','claro','colar','coral','corar','lacra','laca','lacre',
+          'lacrar','nora','oral','orla','real','realar','renal','acaro','calar','carona','carne'
         ] },
-        { data: '2025-10-11', letras: ['M', 'O', 'C', 'A', 'L', 'N', 'T'], central: 'A', palavras: ['calma', 'canal', 'canto', 'clama', 'conta', 'local', 'manta', 'natal', 'taco', 'toca', 'lona', 'coma', 'nato', 'malta', 'mato', 'talco', 'alto', 'lata', 'calo', 'cola'] },
-        { data: '2025-10-12', letras: ['P', 'E', 'R', 'I', 'S', 'T', 'O'], central: 'S', palavras: ['piso', 'resto', 'setor', 'sorte', 'sopro', 'serio', 'pasto', 'pesto', 'pires', 'prosa', 'poste', 'peso', 'sites', 'pores', 'seis', 'perto', 'pastor'] },
-        { data: '2025-10-13', letras: ['B', 'L', 'I', 'G', 'A', 'E', 'V'], central: 'A', palavras: ['bela', 'giba', 'lava', 'vale', 'vela', 'viga', 'alga', 'baile', 'legal', 'alega', 'bagel', 'gala', 'bale', 'agave'] },
-        { data: '2025-10-14', letras: ['F', 'O', 'R', 'M', 'A', 'Ç', 'Ã'], central: 'A', palavras: ['forma', 'força', 'fação', 'fama', 'fora', 'maçã', 'março', 'moça', 'raça', 'ramo', 'roça', 'arma', 'amor', 'amar', 'maça', 'faço', 'farão', 'ração', 'marco'] },
-        { data: '2025-10-15', letras: ['D', 'O', 'B', 'A', 'S', 'U', 'M'], central: 'A', palavras: ['duas', 'soma', 'damas', 'samba', 'amado', 'muda', 'abuso', 'boas', 'ambos', 'doma', 'baus'] },
-        { data: '2025-10-16', letras: ['T', 'E', 'R', 'I', 'S', 'U', 'A'], central: 'I', palavras: ['tirar', 'sair', 'site', 'iris', 'tira', 'ires', 'rias', 'sira', 'situa', 'tuira'] },
-        { data: '2025-10-17', letras: ['C', 'O', 'L', 'E', 'A', 'R', 'P'], central: 'A', palavras: ['calor', 'coral', 'palco', 'copa', 'arco', 'clara', 'roca', 'parca', 'polar', 'colar', 'parco', 'loca', 'apelo'] },
-        { data: '2025-10-18', letras: ['M', 'I', 'L', 'A', 'E', 'R', 'O'], central: 'I', palavras: ['mira', 'limar', 'mario', 'rima', 'mirar', 'miar', 'lira', 'remi', 'moira', 'reima', 'ramie', 'meiar', 'liame'] },
-        { data: '2025-10-19', letras: ['C', 'E', 'R', 'I', 'N', 'U', 'O'], central: 'E', palavras: ['cure', 'reino', 'cine', 'urine', 'cerio', 'neuro', 'once', 'reine', 'curei', 'recuo'] },
-        { data: '2025-10-20', letras: ['S', 'A', 'G', 'U', 'R', 'I', 'O'], central: 'U', palavras: ['sugar', 'guria', 'guri', 'sagui', 'usura', 'surgi', 'rugir', 'argui', 'suor', 'ruga'] },
-        { data: '2025-10-21', letras: ['C', 'L', 'A', 'R', 'I', 'D', 'O'], central: 'A', palavras: ['clara', 'carla', 'lara', 'arida', 'cair', 'raci', 'calor', 'colar', 'dali', 'clari', 'laico'] },
-        { data: '2025-10-22', letras: ['V', 'O', 'L', 'E', 'R', 'I', 'S'], central: 'O', palavras: ['veio', 'roles', 'viole', 'rose', 'oleiro', 'sobre', 'loser', 'resol', 'orel', 'voles'] },
-        { data: '2025-10-23', letras: ['M', 'I', 'D', 'A', 'R', 'T', 'O'], central: 'A', palavras: ['tirada', 'amido', 'mataria', 'tardia', 'radia', 'atirado', 'tirado', 'matador', 'maior', 'domar', 'radio', 'arida'] },
-        { data: '2025-10-24', letras: ['P', 'E', 'S', 'A', 'M', 'O', 'R'], central: 'A', palavras: ['pesar', 'mora', 'parar', 'somar', 'amores', 'ramas', 'mapa', 'aspar', 'masar', 'maras', 'pomas', 'sopra', 'opera', 'ramos'] },
-        { data: '2025-10-25', letras: ['B', 'A', 'R', 'C', 'O', 'U', 'I'], central: 'A', palavras: ['barco', 'abriu', 'arco', 'barca', 'acuri', 'caria', 'rubia', 'baiuca', 'cariba', 'raio', 'cairo'] },
-        { data: '2025-10-26', letras: ['D', 'O', 'M', 'A', 'I', 'U', 'F'], central: 'A', palavras: ['fado', 'fama', 'domai', 'maio', 'maia', 'adia', 'audio'] },
-        { data: '2025-10-27', letras: ['P', 'A', 'S', 'C', 'O', 'U', 'E'], central: 'A', palavras: ['pausa', 'causa', 'casou', 'pesca', 'seca', 'pouca', 'acesa', 'copas', 'pecas'] },
-        { data: '2025-10-28', letras: ['B', 'L', 'U', 'A', 'R', 'I', 'S'], central: 'U', palavras: ['abriu', 'brusa', 'lusa', 'buris', 'rubai', 'bulas', 'usiar', 'sular'] },
-        { data: '2025-10-29', letras: ['G', 'O', 'R', 'A', 'S', 'E', 'M'], central: 'A', palavras: ['soma', 'mar', 'agora', 'goma', 'mesa', 'mega', 'rogar', 'gare', 'soar', 'mares', 'romas'] },
-        { data: '2025-10-30', letras: ['V', 'E', 'I', 'S', 'A', 'U', 'R'], central: 'A', palavras: ['suave', 'vai', 'varias', 'seria', 'vare', 'avisar', 'vias', 'save', 'usar', 'aura', 'raiva', 'avias', 'viras'] },
-        { data: '2025-10-31', letras: ['M', 'A', 'N', 'O', 'R', 'I', 'E'], central: 'A', palavras: ['amora', 'amino', 'maior', 'maria', 'marie', 'minora', 'minar', 'rima', 'ramon', 'arena'] },
-        { data: '2025-11-01', letras: ['C', 'O', 'N', 'A', 'S', 'E', 'L'], central: 'A', palavras: ['canoa', 'casal', 'anel', 'escola', 'cale', 'sola', 'lanes', 'aceno', 'nasce', 'acne'] },
-        { data: '2025-11-02', letras: ['V', 'A', 'R', 'I', 'O', 'L', 'E'], central: 'A', palavras: ['vela', 'vale', 'vario', 'valer', 'real', 'leira', 'alvo', 'rival', 'ovario', 'ariel'] },
-        { data: '2025-11-03', letras: ['B', 'A', 'T', 'E', 'I', 'R', 'O'], central: 'A', palavras: ['bater', 'baite', 'rato', 'iate', 'raio', 'beira', 'abate', 'tabor', 'atira'] },
-        { data: '2025-11-04', letras: ['M', 'I', 'S', 'A', 'N', 'O', 'E'], central: 'A', palavras: ['mesa', 'menos', 'mina', 'anime', 'senai', 'maio', 'manei', 'animo'] },
-        { data: '2025-11-05', letras: ['F', 'O', 'G', 'A', 'R', 'I', 'U'], central: 'A', palavras: ['fora', 'figura', 'agira', 'gira', 'raio', 'rifa', 'gaio', 'girau', 'furai', 'argui'] },
-        { data: '2025-11-06', letras: ['C', 'U', 'A', 'R', 'S', 'E', 'M'], central: 'A', palavras: ['mare', 'cursa', 'case', 'masar', 'cura', 'mares', 'marca', 'casar', 'cresa'] },
-        { data: '2025-11-07', letras: ['P', 'O', 'A', 'S', 'U', 'I', 'M'], central: 'A', palavras: ['pausa', 'mais', 'pousa', 'maius', 'pumas', 'poias'] },
-        { data: '2025-11-08', letras: ['N', 'A', 'R', 'O', 'I', 'E', 'S'], central: 'A', palavras: ['raso', 'arena', 'raio', 'rai', 'seira', 'anise', 'senao', 'reais', 'asneira'] },
-        { data: '2025-11-09', letras: ['B', 'E', 'R', 'A', 'I', 'O', 'G'], central: 'A', palavras: ['bagio', 'gaio', 'beira', 'rabia', 'abrio', 'brega', 'abri'] },
-        { data: '2025-11-10', letras: ['D', 'E', 'I', 'R', 'O', 'A', 'M'], central: 'A', palavras: ['deira', 'maior', 'arde', 'maio', 'mediar', 'remado', 'arido'] },
-        { data: '2025-11-11', letras: ['F', 'A', 'N', 'I', 'S', 'O', 'R'], central: 'A', palavras: ['afinar', 'sofia', 'safira', 'aroso', 'faisao', 'afiar', 'rais', 'afina', 'risar'] },
-        { data: '2025-11-12', letras: ['I', 'A', 'R', 'T', 'E', 'S', 'C'], central: 'A', palavras: ['ariste', 'teras', 'risa', 'teira', 'acts', 'cariste', 'riste'] },
-        { data: '2025-11-13', letras: ['M', 'E', 'R', 'A', 'O', 'L', 'U'], central: 'A', palavras: ['maure', 'mauro', 'maura', 'mural', 'orla', 'maio', 'rama', 'reuma', 'maior', 'molar', 'laura'] },
-        { data: '2025-11-14', letras: ['C', 'O', 'L', 'E', 'R', 'I', 'A'], central: 'A', palavras: ['caro', 'calor', 'clareia', 'recai', 'carie', 'lorica', 'arco'] },
-        { data: '2025-11-15', letras: ['T', 'A', 'S', 'I', 'R', 'E', 'M'], central: 'A', palavras: ['maia', 'maria', 'maira', 'rames', 'teira', 'mais', 'arte'] },
-        { data: '2025-11-16', letras: ['C', 'A', 'P', 'O', 'U', 'E', 'L'], central: 'A', palavras: ['capela', 'pouca', 'paulo', 'caule', 'colpa', 'paule'] },
-        { data: '2025-11-17', letras: ['B', 'O', 'A', 'R', 'I', 'U', 'S'], central: 'A', palavras: ['abriu', 'rubia', 'baiuca', 'bario', 'brusa', 'sabio', 'subia', 'bausa', 'ribas'] },
-        { data: '2025-11-18', letras: ['V', 'A', 'R', 'O', 'M', 'E', 'I'], central: 'A', palavras: ['amor', 'mario', 'vario', 'mar', 'maior', 'raio', 'vira', 'moira', 'aroma'] },
-        { data: '2025-11-19', letras: ['D', 'I', 'O', 'A', 'T', 'R', 'E'], central: 'A', palavras: ['diario', 'arde', 'teira', 'adire', 'redia', 'maria', 'mediar'] },
-        { data: '2025-11-20', letras: ['L', 'O', 'A', 'S', 'R', 'E', 'P'], central: 'A', palavras: ['solar', 'posar', 'lares', 'raso', 'orla', 'sola', 'perla', 'aspero'] },
-        { data: '2025-11-21', letras: ['B', 'A', 'T', 'O', 'R', 'E', 'S'], central: 'A', palavras: ['bater', 'abate', 'aberto', 'bares', 'arbo', 'baste', 'arte'] },
-        { data: '2025-11-22', letras: ['P', 'A', 'S', 'O', 'I', 'U', 'R'], central: 'A', palavras: ['pausa', 'parou', 'apois', 'ruas', 'pai', 'ripa', 'paria', 'pau'] },
-        { data: '2025-11-23', letras: ['C', 'O', 'L', 'A', 'R', 'I', 'S'], central: 'A', palavras: ['solar', 'calor', 'rosal', 'arco', 'claro', 'rias', 'corais'] },
-        { data: '2025-11-24', letras: ['B', 'A', 'T', 'O', 'I', 'U', 'S'], central: 'A', palavras: ['baio', 'batia', 'abito', 'abuso', 'abiu', 'subita', 'tabia', 'abita', 'baios'] },
-        { data: '2025-11-25', letras: ['D', 'A', 'S', 'E', 'O', 'M', 'R'], central: 'A', palavras: ['seam', 'ramas', 'adeao', 'amos', 'arda', 'desam'] },
-        { data: '2025-11-26', letras: ['V', 'O', 'L', 'A', 'E', 'R', 'C'], central: 'A', palavras: ['vela', 'calor', 'vale', 'alvear', 'claro', 'arco', 'cora', 'care', 'aleva'] },
-        { data: '2025-11-27', letras: ['F', 'I', 'A', 'L', 'R', 'M', 'E'], central: 'A', palavras: ['falar', 'firme', 'frame', 'ariel', 'alma', 'fatal', 'falem', 'falir', 'maria', 'mariel'] },
-        { data: '2025-11-28', letras: ['G', 'A', 'N', 'I', 'H', 'O', 'S'], central: 'A', palavras: ['ganho', 'agasoalho', 'oshanig', 'sionha'] },
-        { data: '2025-11-29', letras: ['P', 'I', 'R', 'A', 'C', 'E', 'M'], central: 'A', palavras: ['prima', 'caipira', 'impar', 'premia'] },
-        { data: '2025-11-30', letras: ['T', 'O', 'A', 'L', 'H', 'E', 'S'], central: 'A', palavras: ['toalha', 'saleto', 'hostel'] },
-        { data: '2025-12-01', letras: ['D', 'U', 'E', 'L', 'A', 'R', 'S'], central: 'A', palavras: ['duela', 'saldar', 'ladres', 'suadel'] },
-        { data: '2025-12-02', letras: ['C', 'A', 'M', 'P', 'O', 'I', 'S'], central: 'A', palavras: ['campo', 'ampios', 'compais'] },
-        { data: '2025-12-03', letras: ['V', 'I', 'A', 'J', 'R', 'E', 'M'], central: 'A', palavras: ['viaje', 'viajem', 'jarme'] },
-        { data: '2025-12-04', letras: ['B', 'O', 'L', 'A', 'D', 'I', 'N'], central: 'A', palavras: ['bola', 'boladi', 'bolina'] },
-        { data: '2025-12-05', letras: ['F', 'R', 'A', 'S', 'E', 'O', 'C'], central: 'A', palavras: ['frase', 'forca', 'safero', 'cafres'] },
-        { data: '2025-12-06', letras: ['M', 'U', 'A', 'R', 'L', 'H', 'O'], central: 'A', palavras: ['mural', 'alohar', 'holmar'] },
-        { data: '2025-12-07', letras: ['T', 'E', 'A', 'R', 'M', 'O', 'S'], central: 'A', palavras: ['artes', 'mostar', 'remato'] },
-        { data: '2025-12-08', letras: ['P', 'L', 'A', 'N', 'T', 'O', 'E'], central: 'A', palavras: ['planta', 'platno', 'paleto', 'panelo'] },
-        { data: '2025-12-09', letras: ['C', 'H', 'A', 'V', 'E', 'S', 'I'], central: 'A', palavras: ['chaves', 'achive', 'vasiche'] },
-        { data: '2025-12-10', letras: ['J', 'O', 'A', 'G', 'R', 'D', 'U'], central: 'A', palavras: ['jogar', 'jaguar', 'jogard'] },
-        { data: '2025-12-11', letras: ['Q', 'U', 'A', 'R', 'T', 'O', 'E'], central: 'A', palavras: ['quarto', 'quareto', 'toquear'] },
-        { data: '2025-12-12', letras: ['N', 'O', 'A', 'T', 'E', 'S', 'R'], central: 'A', palavras: ['notas', 'soante', 'rantos', 'sarone'] },
-        { data: '2025-12-13', letras: ['L', 'I', 'A', 'V', 'R', 'S', 'O'], central: 'A', palavras: ['livra', 'ovais', 'salivo', 'virolas'] },
-        { data: '2025-12-14', letras: ['M', 'O', 'A', 'D', 'E', 'L', 'R'], central: 'A', palavras: ['moeda', 'modelo', 'aromed', 'realmo'] },
-        { data: '2025-12-15', letras: ['P', 'E', 'A', 'D', 'L', 'S', 'R'], central: 'A', palavras: ['pedal', 'prelas', 'padres', 'saldre'] },
-        { data: '2025-12-16', letras: ['C', 'U', 'A', 'D', 'R', 'N', 'O'], central: 'A', palavras: ['quadra', 'curado', 'cardon'] },
-        { data: '2025-12-17', letras: ['F', 'E', 'A', 'S', 'T', 'I', 'V'], central: 'A', palavras: ['festa', 'festiva', 'faiste'] },
-        { data: '2025-12-18', letras: ['B', 'R', 'A', 'S', 'I', 'L', 'E'], central: 'A', palavras: ['brasil', 'isabrel', 'bailers'] },
-        { data: '2025-12-19', letras: ['J', 'A', 'N', 'E', 'L', 'I', 'R'], central: 'A', palavras: ['jane', 'janeli', 'jaliner'] },
-        { data: '2025-12-20', letras: ['G', 'R', 'A', 'D', 'E', 'U', 'S'], central: 'A', palavras: ['grade', 'gradeu', 'ragudes'] },
-        { data: '2025-12-21', letras: ['V', 'E', 'A', 'R', 'D', 'O', 'S'], central: 'A', palavras: ['verde', 'avesor', 'doveras'] },
-        { data: '2025-12-22', letras: ['M', 'A', 'T', 'E', 'R', 'I', 'L'], central: 'A', palavras: ['mater', 'material', 'almiter'] },
-        { data: '2025-12-23', letras: ['P', 'R', 'A', 'I', 'S', 'C', 'O'], central: 'A', palavras: ['praia', 'caprio', 'rapicos'] },
-        { data: '2025-12-24', letras: ['S', 'A', 'L', 'V', 'O', 'E', 'R'], central: 'A', palavras: ['salvar', 'resalvo', 'solvare'] },
-        { data: '2025-12-25', letras: ['C', 'O', 'A', 'Z', 'I', 'N', 'H'], central: 'A', palavras: ['coazin', 'cachoiz'] },
-        { data: '2025-12-26', letras: ['T', 'R', 'A', 'B', 'L', 'H', 'O'], central: 'A', palavras: ['trabalho', 'holbrat'] },
-        { data: '2025-12-27', letras: ['F', 'L', 'A', 'M', 'E', 'G', 'O'], central: 'A', palavras: ['flam', 'flamego', 'megalfo'] },
-        { data: '2025-12-28', letras: ['D', 'E', 'A', 'S', 'F', 'I', 'O'], central: 'A', palavras: ['deafio', 'desafio', 'ofiades'] },
-        { data: '2025-12-29', letras: ['M', 'E', 'A', 'D', 'L', 'H', 'O'], central: 'A', palavras: ['medal', 'medalho', 'holmead'] },
-        { data: '2025-12-30', letras: ['R', 'E', 'A', 'C', 'I', 'O', 'N'], central: 'A', palavras: ['reacao', 'creiona', 'anoreci'] },
-        { data: '2025-12-31', letras: ['V', 'I', 'A', 'G', 'E', 'M', 'S'], central: 'A', palavras: ['viagem', 'viages', 'gavimes'] },
-        { data: '2026-01-01', letras: ['P', 'E', 'A', 'S', 'O', 'L', 'M'], central: 'A', palavras: ['pasmo', 'paleos', 'moelas'] },
-        { data: '2026-01-02', letras: ['C', 'R', 'A', 'N', 'I', 'O', 'S'], central: 'A', palavras: ['cranio', 'carison', 'riconsa'] },
-        { data: '2026-01-03', letras: ['B', 'A', 'N', 'D', 'E', 'I', 'R'], central: 'A', palavras: ['banda', 'bander', 'bandeira'] },
-        { data: '2026-01-04', letras: ['H', 'O', 'R', 'A', 'I', 'S', 'T'], central: 'A', palavras: ['historia', 'ratos', 'horais'] },
-        { data: '2026-01-05', letras: ['L', 'E', 'A', 'T', 'R', 'O', 'S'], central: 'A', palavras: ['lateral', 'toaleras', 'salter'] },
-        { data: '2026-01-06', letras: ['M', 'I', 'A', 'N', 'G', 'O', 'S'], central: 'A', palavras: ['mago', 'mangos', 'gomas', 'anagos'] },
-        { data: '2026-01-07', letras: ['P', 'O', 'A', 'R', 'T', 'L', 'E'], central: 'A', palavras: ['portal', 'rapeto', 'paleto'] }
+        { data: '2025-10-11', letras: ['M','O','C','A','L','N','T'], central: 'A', palavras: [
+          'calma','canal','canto','clama','conta','local','manta','natal','taco','toca',
+          'lona','coma','nato','malta','mato','talco','alto','lata','calo','cola','anota',
+          'macio','macao','mata','maloca','camal','lamar','tala','toma','manca','malta',
+          'clona','molca','manca','manta','clama','tamanco','amanco'
+        ] },
+        { data: '2025-10-12', letras: ['P','E','R','I','S','T','O'], central: 'S', palavras: [
+          'piso','resto','setor','sorte','sopro','sério','pasto','pesto','pires','prosa',
+          'poste','peso','pores','seis','perto','pastor','sério','sorri','sorriso','sorteio',
+          'piste','risco','topes','terso','tripes','sepia','preso','soror','sopro','persio'
+        ] },
+        { data: '2025-10-13', letras: ['B','L','I','G','A','E','V'], central: 'A', palavras: [
+          'bala','bela','baile','biela','baga','alga','gala','ágil',
+          'balela', 'avalia', 'alivia', 
+          'agave','aveia','valia','vale','vila','viela','vaga','viga','vela','alva', 'vigia',
+          'geleia','belga','leiga','liga', 'lava', 'leal', 'leva', 'viva', 'alega', 'aveia', 'baile', 'vivia'
+        ] },
+
+        { data: '2025-10-14', letras: ['F','O','R','M','A','C','a'], central: 'A', palavras: [
+          'forma','fama','fora','arma','amor','amar','ramo',,'marco','amora','aroma','amarra',
+          'morar','armar','forrar','arar','marrom','mofar','arar','arco','caco', 'fama','faro','fofa',
+          'foca','maca','rara','amora', 'arcar', 'carro', 'coroa', 'focar', 'fraca', 'fraco', 'marcar', 'morar',
+          'amarra','farofa', 'fofoca', 'formar', 'ocorrar','focaram','coroaram','marcaram', 'amarraram','foforaram', 
+        ] },
+
+
+        { data: '2025-10-15', letras: ['D','O','R','A','S','U','M'], central: 'A', palavras: [
+          'amor','amar','arma','aroma','amora','armar','armada','amassar','massa','moda',
+          'dado','adorar','ardor','rasa','raso','rosa','roda','rodar','radar','morsa',
+          'mudar','somar','soma','soda','sarau','sarda','sardo','suado','suar','usar',
+          'usura','rumar','maduro','madura','marrom','rodada'
+        ] },
+        { data: '2025-10-16', letras: ['T','E','R','I','S','L','A'], central: 'E', palavras: [
+          'arte','areia','areal','aresta','alerta','laser','leite','leira','letra','leste',
+          'letal','lareira','atelier','atrelar','estrela','estelar','estrelar','esteira',
+          'seita','serra','serrar','resistir','retirar','reter','triste','estreita',
+          'estreitar','relatar','retesar','saltear','série','séria','telar','reler','terral'
+        ] },
+        { data: '2025-10-17', letras: ['C','O','R','T','E','S','A'], central: 'O', palavras: [
+          'corte','coroa','coar','coro','coser','costa','corar','corta','ator',
+          ,'rosto','rosa','rota','sorte','soco','setor',
+          'toco','tocar','tosca','rosca','tora','toca','trocar',
+        ] },
+
+        { data: '2025-10-18', letras: ['M','A','R','I','N','H','O'], central: 'M', palavras: [
+          'mar','mara','mano','manha','mina','minar','morar','mora','morna','morro',
+          'maior','amor','amar','amora','aroma','moinho',
+          'marinho','marinha','harmonia','mimar','marrom','moinho',
+        ] },
+
+        { data: '2025-10-19', letras: ['P','A','L','V','R','O','S'], central: 'P', palavras: [
+          'palavra','palpar','parar','parra','parva','parvo','papo','papar','pavor','polar',
+          'polpa','polvo','porca','porco','posar','prazo',
+          'prosa','prova','provar','povo','povoar','sapo','sopa','soprar','sopro','vapor',
+        ] },
+
+        { data: '2025-10-20', letras: ['V','I','D','A','R','E','O'], central: 'V', palavras: [
+          'avaria','avariar','avivar','averia','aveia','vida',
+          'vidrar','vidro','vira','virar','viver','voar','varia','variar','vedar',
+          'vedado','veio','dever','deriva','derivar','devorar','evitar','reavivar','rever',
+          'reviver','revoar','revirar'
+        ] },
+
+        { data: '2025-10-21', letras: ['B','R','A','N','C','O','S'], central: 'B', palavras: [
+          'abaco','abonar','abono','banca','banco','barca','barco',
+          'barra','barro','boca','brabo','branca','branco','brasa','bronca','broca',
+          'brocar','cabana','cabra','carbono','cobrar','cobra','sobra','sobrar',
+        ] },
+
+        { data: '2025-10-22', letras: ['F','L','O','R','E','S','T'], central: 'F', palavras: [
+          'afeto','afetar','aflorar','faro','farta','fator',
+          'ferro','flor','floresta','fresta','frete','fretar',
+          'floral','forro','forte','fosse','fosso','fossa','frota','ofertar',
+        ] },
+
+        { data: '2025-10-23', letras: ['J','O','G','A','R','D','I'], central: 'J', palavras: [
+          'jarda','jardim','jarra','jarro','jogada','jogado','jogador','jogar','jogo','joia',
+          'joio','jogaria','jorra','jorrar',
+        ] },
+        { data: '2025-10-24', letras: ['B','O','L','A','R','E','I'], central: 'A', palavras: [
+          'bola','abre','abrir','barra','ralo','areia', 'arriar','bailar','abalaram','arar',
+          'lar','rei','real','raio','ralo','lareira',
+          'raia','raiar','bala','baile', 'abalar','aliar',
+        ] },
+        { data: '2025-10-25', letras: ['N','O','V','I','D','A','E'], central: 'N', palavras: [
+          'nove','nova','navio','noiva','nado','nadar','nada','nave','ando','andar','aonde',
+          'nevoa','nevar','dona','dono','nano','venda','vendo','danado','nevada','navio','inova',
+          'invadir', 'inveja','vindo', 'vendida', 'vendido', 
+        ] },
+        { data: '2025-10-26', letras: ['P','E','I','X','A','R','S'], central: 'E', palavras: [
+          'peixe','pesar','seria','sera','seara','sepia','aspera','espiar', 'separa', 'separe',
+          'resa','presa','prear','parei','pires','reais','serio','espera','apesar','expira','existe',
+          'expiar', 'reprise', 'apresse', 'respirar'
+        ] },
+        { data: '2025-10-27', letras: ['S','A','B','O','R','E','I'], central: 'R', palavras: [
+          'sabor','saber','sabre','obra','abre','abrir','raio','raso','rasa','rosa',
+          'riso','roer','raro','rara', 'serra','sereia','sobra','saborear', 'seriado','orar', 'resina', 
+        ] },
+        { data: '2025-10-28', letras: ['T','U','N','E','L','A','R'], central: 'A', palavras: [
+          'tela','alerta','altar','natural','natura','aura', 'alertar','anelar',
+          'neural','altura','luar','lunar','anular','lateral', 'alterar', 'aturar', 'arretada', 'antenar',
+        ] },
+        { data: '2025-10-29', letras: ['C','A','M','I','N','H','O'], central: 'M', palavras: [
+          'caminho','caminha','cama','macho','manco','mancha','maio','mina','minha','moinho',
+          'manha','manco','macio','chama','concha', 'comigo', 'mico', 'mimo', 'amido', 'animo', 'anima',
+        ] },
+        { data: '2025-10-30', letras: ['P','R','A','T','I','C','O'], central: 'I', palavras: [
+          'partir','rica','rico','raio','cria','criar','cair','trio', 'citar','cita', 'pipa','raia',
+          'tira', 'atrai', 'praia', 'tripa', 'atrito', 'traria', 'arcaica', 'caipira', 'pratica', 'atacaria','partiria', 'patriarca',
+          'tirar','optica','patio','pirata','partir','irrita','picar', 'participar'
+        ] },
+
+        { data: '2025-10-31', letras: ['M','U','B','R','D','T','O'], central: 'O', palavras: [
+          'bobo','boto','domo','duro','modo','moro','muro','ouro','rodo','tudo','rumo', 'tudo',
+          'bordo','broto','bruto','dobro','motor','mudou','tombo','ombro','torto','turbo','tutor',
+          'bombom','doutor','murmuro','outubro','mordomo',
+        ] },
+
+       
+
       ];
+
 
 
       const wordDisplay = document.getElementById('word-display');
