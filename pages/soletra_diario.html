@@ -1598,6 +1598,28 @@
         }
       });
 
+      // Blur pointer-activated buttons to avoid repeated activation on Enter.
+      const pointerButtons = [
+        hintBtn,
+        deleteBtn,
+        shuffleBtn,
+        confirmBtn,
+        endGameBtn,
+        helpBtn,
+        statsBtn,
+        creditsBtn,
+      ].filter(Boolean);
+
+      const blurAfterPointerClick = (event) => {
+        if (event.detail > 0) {
+          event.currentTarget.blur();
+        }
+      };
+
+      pointerButtons.forEach((btn) => {
+        btn.addEventListener('click', blurAfterPointerClick);
+      });
+
       document.addEventListener('keydown', (e) => {
         if (infoModal.classList.contains('active')) {
           if (e.key === 'Escape') {
