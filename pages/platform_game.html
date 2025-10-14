@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Game</title>
+    <link rel="stylesheet" href="../src/css/platform_game.css">
+</head>
+<body>
+    <div id="game-shell">
+        <div id="main-menu" class="screen visible">
+            <div class="menu-card">
+                <h1>Escalada das Palavras</h1>
+                <p class="menu-subtitle">Ajude o robozinho a subir digitando as sílabas e palavras corretamente.</p>
+                <div class="menu-actions">
+                    <button id="menu-start-button" class="menu-button primary">Começar</button>
+                    <button id="menu-howto-button" class="menu-button secondary">Como jogar</button>
+                </div>
+                <div class="menu-section-title">Escolha um cenário</div>
+                <div id="theme-selector" class="theme-selector"></div>
+                <div id="menu-howto-panel" class="menu-panel hidden">
+                    <ul>
+                        <li>Escolha o melhor momento e digite as letras na ordem certa.</li>
+                        <li>Cada acerto faz o personagem pular para a próxima plataforma.</li>
+                        <li>Você tem 3 corações: erros ou demora demais consomem uma vida.</li>
+                        <li>Complete todas as plataformas para abrir a porta e avançar de nível.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="game-container" class="theme-neon">
+            <div id="hud-left">
+                <div id="hud-lives" class="life-display"></div>
+            </div>
+            <div id="hud-timer">--</div>
+            <div id="hud-right">
+                <div class="hud-pill">Nível <span id="hud-level">1</span></div>
+                <div class="hud-pill">Pontuação <span id="hud-score">0</span></div>
+                <div id="hud-word" class="hud-word">
+                    <span id="hud-word-typed">_</span><span id="hud-word-remaining"></span>
+                </div>
+            </div>
+            <div id="parallax">
+                <div class="parallax-layer layer-far" data-speed="0.2"></div>
+                <div class="parallax-layer layer-mid" data-speed="0.45"></div>
+                <div class="parallax-layer layer-near" data-speed="0.75"></div>
+                <div class="ambient-orb orb-1"></div>
+                <div class="ambient-orb orb-2"></div>
+                <div class="ambient-orb orb-3"></div>
+            </div>
+            <div id="game-world">
+                <div class="ground"></div>
+                <div class="decoration deco-bug" style="bottom: 260px; left: 68px;"></div>
+                <div class="decoration deco-bug" style="bottom: 680px; left: 520px;"></div>
+                <div class="decoration deco-blade" style="bottom: 1020px; left: 180px;"></div>
+                <div class="decoration deco-blade flipped" style="bottom: 420px; left: 520px;"></div>
+                <div id="player" class="game-object"></div>
+                <div class="platform game-object variant-1" style="bottom: 140px; left: 120px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object variant-2" style="bottom: 260px; left: 320px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object variant-3" style="bottom: 380px; left: 540px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object variant-4" style="bottom: 520px; left: 360px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object variant-2" style="bottom: 660px; left: 160px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object variant-3" style="bottom: 800px; left: 420px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object variant-4" style="bottom: 940px; left: 220px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object variant-1" style="bottom: 1080px; left: 500px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object variant-3" style="bottom: 1220px; left: 320px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div id="goal-door" class="decoration goal-door hidden"></div>
+            </div>
+            <div id="start-overlay" class="hidden">
+                <h1>Pronto para subir?</h1>
+                <p>Clique em começar ou pressione espaço para iniciar.</p>
+                <button id="start-button">Começar</button>
+            </div>
+        </div>
+    </div>
+    <script src="../src/js/platform_game.js"></script>
+</body>
+</html>
