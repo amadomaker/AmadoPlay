@@ -21,8 +21,8 @@
       ],
       tags: ['ingles', 'wh-questions', 'question words', 'simple present', 'to be', 'auxiliares', 'oralidade', 'escrita', 'EF06LI02', 'EF06LI11', 'EF07LI01'],
       popular: false,
-      novo: true,
-      acessos: 0
+      novo: false,
+      acessos: 86
     },
      {
       id: 'abaco',
@@ -40,9 +40,9 @@
         { codigo: 'EF03MA02', descricao: 'Identificar características do sistema de numeração decimal, utilizando a composição e a decomposição de número natural de até quatro ordens.' }
       ],
       tags: ['ábaco', 'aritmética', 'valor posicional', 'sistema decimal', 'EF01MA07', 'EF02MA01', 'EF03MA02'],
-      popular: true,
+      popular: false,
       novo: false,
-      acessos: 15000
+      acessos: 95
     },
     {
       id: 'material-dourado',
@@ -61,9 +61,9 @@
         { codigo: 'EF03MA02', descricao: 'Identificar características do sistema de numeração decimal, utilizando a composição e a decomposição de número natural de até quatro ordens.'},
       ],
       tags: ['material dourado', 'base 10', 'sistema decimal', 'EF01MA07', 'EF02MA04', 'EF02MA06', 'EF03MA02'],
-      popular: true,
+      popular: false,
       novo: false,
-      acessos: 13200
+      acessos: 94
     },
     {
       id: 'alfabeto-movel',
@@ -85,7 +85,7 @@
       tags: ['alfabetização', 'consciência fonêmica', 'letras', 'formação de palavras', 'EI03EF09', 'EF01LP02', 'EF01LP05', 'EF02LP02'],
       popular: false,
       novo: false,
-      acessos: 8900
+      acessos: 93
     },
     {
       id: 'piramide-alimentar',
@@ -104,7 +104,7 @@
       tags: ['alimentação', 'nutrição', 'saúde', 'hábitos saudáveis', 'EF04CI03', 'EF05CI08'],
       popular: false,
       novo: false,
-      acessos: 6200
+      acessos: 92
     },
     {
       id: 'mapa-brasil',
@@ -124,7 +124,7 @@
       tags: ['mapa', 'estados', 'regiões', 'cartografia', 'EF03GE03', 'EF03GE07'],
       popular: false,
       novo: false,
-      acessos: 7700
+      acessos: 91
     },
     {
       id: 'tres-poderes',
@@ -143,7 +143,7 @@
       tags: ['cidadania', 'constituição', 'poderes', 'poderes', 'EF09HI28', 'EF05GE12'],
       popular: false,
       novo: false,
-      acessos: 5400
+      acessos: 90
     },
     
     {
@@ -162,7 +162,7 @@
 
       popular: false, 
       novo: false,      
-      acessos: 9100
+      acessos: 87
     },
     {
       id: 'conta-bolhas',
@@ -179,8 +179,8 @@
         { codigo: 'EF01MA02', descricao: 'Contar de maneira exata ou aproximada, utilizando diferentes estratégias como o pareamento e outros agrupamentos.' }
       ],
       popular: false,
-      novo: true,
-      acessos: 0,
+      novo: false,
+      acessos: 89,
       interno: 'pages/conta_bolhas.html' 
     },
     {
@@ -200,8 +200,8 @@
         { codigo: 'EF03LP02', descricao: 'Ler e escrever corretamente palavras com sílabas CV, V, CVC, CCV, VC, VV, CVV, identificando que existem vogais em todas as sílabas.' }
       ],
       popular: false,
-      novo: true,
-      acessos: 0,
+      novo: false,
+      acessos: 88,
       interno: 'pages/separar_silabas.html'
     },
     {
@@ -220,12 +220,32 @@
         { codigo: 'EF35LP05', descricao: 'Inferir o sentido de palavras ou expressões desconhecidas em textos, com base no contexto da frase ou do texto.' },
       ],
       tags: ['conexo', 'conexão', 'grupos', 'palavras', 'vocabulário', 'raciocínio', 'semântica', 'lógica', 'EF05LP02', 'EF06LP03', 'EF35LP05', 'EF69LP47'],
-      popular: false,
-      novo: true,
-      acessos: 0
-    }
-
-    ,{
+      popular: true,
+      novo: false,
+      acessos: 100
+    },
+    {
+      id: 'palavreando',
+      titulo: 'Palavreando',
+      descricao: 'Monte o máximo de palavras possível com as letras do dia e aprimore vocabulário, ortografia e consciência morfológica de forma divertida.',
+      imagem: 'src/assets/images/soletra_diario.png',
+      interno: 'pages/soletra_diario.html',
+      materia: 'portugues',
+      series: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      tipo: ['interativo', 'ludico', 'vocabulario'],
+      dificuldade: 'intermediario',
+      bncc: [
+        { codigo: 'EF15LP07', descricao: 'Reconhecer e compreender regras de formação de palavras, como prefixos, sufixos e radicais.' },
+        { codigo: 'EF15LP02', descricao: 'Ampliar o repertório de palavras, reconhecer significados.' },
+        { codigo: 'EF12LP07', descricao: 'Identificar regularidades e irregularidades ortográficas.' },
+        { codigo: 'EF15LP10', descricao: 'Manipular e formar palavras por meio de jogos e brincadeiras, analisando significados e usos.' }
+      ],
+      tags: ['palavreando', 'soletra diário', 'palavras', 'vocabulario', 'ortografia', 'prefixos', 'sufixos', 'radicais', 'EF15LP07', 'EF15LP02', 'EF12LP07', 'EF15LP10'],
+      popular: true,
+      novo: false,
+      acessos: 99
+    },
+    {
       id: 'jogo-memoria',
       titulo: 'Jogo da Memória - Animais',
       descricao: 'Treine sua memória! Encontre os pares de animais e pratique a leitura dos nomes enquanto se diverte.',
@@ -243,7 +263,7 @@
       tags: ['memória', 'animais', 'atenção', 'jogo'],
       popular: false,
       novo: true,
-      acessos: 0
+      acessos: 97
     },
     {
       id: 'meses-ano',
@@ -261,8 +281,8 @@
       ],
       tags: ['meses', 'ano', 'calendário', 'estações', 'sequência', 'tempo', 'EF01CI05', 'EF02CI02'],
       popular: false,
-      novo: true,
-      acessos: 0
+      novo: false,
+      acessos: 96
     },
     {
       id: 'desafio-blocos',
@@ -280,9 +300,9 @@
         { codigo: 'EF05MA15', descricao: 'Interpretar, descrever e representar a localização ou movimentação de objetos no plano cartesiano (primeiro quadrante), utilizando coordenadas cartesianas e indicando mudanças de direção, sentido e giros.' }
       ],
       tags: ['puzzle', 'blocos deslizantes', 'planejamento', 'pensamento computacional', 'plano cartesiano', 'raciocínio lógico', 'EF03CO03', 'EF05CO04', 'EF05MA15'],
-      popular: false,
-      novo: true,
-      acessos: 0
+      popular: true,
+      novo: false,
+      acessos: 98
     }
 
 
