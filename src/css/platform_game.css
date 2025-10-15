@@ -84,6 +84,12 @@ body {
     box-shadow: 0 14px 28px rgba(255, 0, 212, 0.35);
 }
 
+.menu-button.primary.alt {
+    background: linear-gradient(90deg, #04d9ff, #07f49e);
+    color: #011d2b;
+    box-shadow: 0 14px 28px rgba(7, 244, 158, 0.35);
+}
+
 .menu-button.secondary {
     background: rgba(255, 255, 255, 0.12);
     color: #fff;
@@ -467,6 +473,141 @@ body {
 
 #game-container.theme-sunset .goal-door {
     filter: drop-shadow(0 12px 0 rgba(50, 10, 30, 0.6));
+}
+
+#challenge-world {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 24px;
+    gap: 12px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+#challenge-world.hidden {
+    display: none;
+}
+
+#challenge-track {
+    position: relative;
+    width: 1800px;
+    max-width: 1800px;
+    height: 320px;
+    overflow: hidden;
+    border-radius: 28px;
+    background: linear-gradient(180deg, rgba(8, 2, 28, 0.85) 0%, rgba(4, 0, 14, 0.92) 60%, rgba(10, 2, 22, 0.98) 100%);
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.45);
+}
+
+.challenge-background {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(180deg, rgba(20, 36, 120, 0.45) 0%, rgba(10, 4, 40, 0.85) 70%, rgba(6, 2, 20, 0.95) 100%),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0, rgba(255, 255, 255, 0.05) 3px, transparent 3px, transparent 60px);
+    background-size: cover;
+    z-index: 1;
+}
+
+.challenge-ground {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 2000px;
+    height: 90px;
+    background-image: url('../assets/images/generic-png/decoration/floor_2.png');
+    background-repeat: repeat-x;
+    background-size: contain;
+    z-index: 2;
+}
+
+#challenge-player {
+    position: absolute;
+    bottom: 84px;
+    left: 120px;
+    width: 96px;
+    height: 96px;
+    background-image: url('../assets/images/generic-png/characters/enemy_bot.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 4;
+    filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.45));
+}
+
+#challenge-obstacles,
+#challenge-checkpoints {
+    position: absolute;
+    left: 0;
+    bottom: 84px;
+    height: 90px;
+    z-index: 3;
+}
+
+.challenge-obstacle {
+    position: absolute;
+    bottom: 0;
+    width: 60px;
+    height: 60px;
+    background-image: url('../assets/images/generic-png/obstacles/small_spikes.png');
+    background-size: contain;
+}
+
+.challenge-obstacle.cleared {
+    opacity: 0.25;
+    filter: grayscale(0.6);
+}
+
+.challenge-checkpoint {
+    position: absolute;
+    bottom: 90px;
+    width: 160px;
+    height: 120px;
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 18px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 8px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.challenge-checkpoint.cleared {
+    opacity: 0.35;
+}
+
+#challenge-phrase {
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+    padding: 12px 18px;
+    border-radius: 18px;
+    background: rgba(0, 0, 0, 0.35);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+    display: inline-flex;
+    gap: 8px;
+    pointer-events: none;
+}
+
+#challenge-phrase .word-completed {
+    color: #7cff9c;
+}
+
+#challenge-phrase .word-active {
+    color: #ffe600;
+}
+
+#challenge-phrase .typed {
+    color: #87f3ff;
+}
+
+#challenge-phrase .remaining {
+    color: rgba(255, 255, 255, 0.4);
 }
 
 #game-world {

@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dom = {
         container: document.getElementById('game-container'),
         world: document.getElementById('game-world'),
+        parallax: document.getElementById('parallax'),
         player: document.getElementById('player'),
         platforms: Array.from(document.querySelectorAll('.platform')),
         overlay: document.getElementById('start-overlay'),
@@ -18,13 +19,21 @@ document.addEventListener('DOMContentLoaded', () => {
         goalDoor: document.getElementById('goal-door'),
         platformLabels: Array.from(document.querySelectorAll('.platform-label')),
         mainMenu: document.getElementById('main-menu'),
-        menuStartButton: document.getElementById('menu-start-button'),
+        menuStartProgressive: document.getElementById('menu-start-progressive'),
+        menuStartChallenge: document.getElementById('menu-start-challenge'),
         menuHowToButton: document.getElementById('menu-howto-button'),
         menuHowToPanel: document.getElementById('menu-howto-panel'),
         menuBestLevel: document.getElementById('menu-best-level'),
         menuBestScore: document.getElementById('menu-best-score'),
         menuAudioToggle: document.getElementById('menu-audio-toggle'),
         audioToggle: document.getElementById('audio-toggle'),
+        challengeWorld: document.getElementById('challenge-world'),
+        challengeTrack: document.getElementById('challenge-track'),
+        challengePlayer: document.getElementById('challenge-player'),
+        challengeObstacles: document.getElementById('challenge-obstacles'),
+        challengeCheckpoints: document.getElementById('challenge-checkpoints'),
+        challengePhrase: document.getElementById('challenge-phrase'),
+        challengeGround: document.getElementById('challenge-ground'),
     };
 
     if (
@@ -118,6 +127,325 @@ document.addEventListener('DOMContentLoaded', () => {
         audioEnabled: true,
     };
 
+    const CHALLENGE_CONFIG = {
+        phraseWords: [
+            'Jogos', 'educacionais', 'inspiram', 'curiosidade', 'e', 'transformam', 'futuro', 'do', 'aprendizado',
+        ],
+        baseSpeed: 140,
+        maxSpeed: 240,
+        spacing: 480,
+        startOffset: 500,
+        lives: 3,
+        gravity: 1.5,
+        jumpVelocity: 25,
+        groundY: 84,
+    };
+
+    const resetChallengeState = () => {
+        const challenge = state.challenge;
+        challenge.phraseWords = CHALLENGE_CONFIG.phraseWords.slice();
+        challenge.wordStates = challenge.phraseWords.map(() => 'pending');
+        challenge.currentWordIndex = 0;
+        challenge.typed = '';
+        challenge.playerX = 120;
+        challenge.playerY = CHALLENGE_CONFIG.groundY;
+        challenge.playerVelocityY = 0;
+        challenge.isJumping = false;
+        challenge.baseSpeed = CHALLENGE_CONFIG.baseSpeed;
+        challenge.speed = CHALLENGE_CONFIG.baseSpeed;
+        challenge.maxSpeed = CHALLENGE_CONFIG.maxSpeed;
+        challenge.trackLength = CHALLENGE_CONFIG.startOffset + challenge.phraseWords.length * CHALLENGE_CONFIG.spacing + 600;
+        challenge.obstacles = challenge.phraseWords.map((_word, index) => ({
+            x: CHALLENGE_CONFIG.startOffset + index * CHALLENGE_CONFIG.spacing,
+            cleared: false,
+            element: null,
+            checkpointElement: null,
+        }));
+        challenge.playing = false;
+        challenge.fail = false;
+        challenge.scrollX = 0;
+    };
+
+    const updateChallengePhrase = () => {
+        if (!dom.challengePhrase) {
+            return;
+        }
+        const challenge = state.challenge;
+        dom.challengePhrase.innerHTML = '';
+        challenge.phraseWords.forEach((word, index) => {
+            const span = document.createElement('span');
+            if (index < challenge.currentWordIndex) {
+                span.className = 'word-completed';
+                span.textContent = word;
+            } else if (index === challenge.currentWordIndex) {
+                span.className = 'word-active';
+                const typed = challenge.typed.toUpperCase();
+                const remaining = word.slice(typed.length).toUpperCase();
+                span.innerHTML = `<span class="typed">${typed}</span><span class="remaining">${remaining}</span>`;
+                dom.challengePhrase.appendChild(span);
+                return;
+            }
+            if (!span.textContent) {
+                span.textContent = word;
+            }
+            dom.challengePhrase.appendChild(span);
+        });
+
+        if (dom.hudWordTyped && dom.hudWordRemaining && state.gameMode === 'challenge') {
+            const activeWord = challenge.phraseWords[challenge.currentWordIndex] || '';
+            const typed = challenge.typed.toUpperCase();
+            const remaining = activeWord.slice(typed.length).toUpperCase();
+            dom.hudWordTyped.textContent = typed || '_';
+            dom.hudWordRemaining.textContent = remaining;
+        }
+    };
+
+    const updateChallengePositions = () => {
+        const challenge = state.challenge;
+        const scroll = Math.max(0, challenge.playerX - 360);
+        challenge.scrollX = scroll;
+        const relative = (x) => `${x - scroll}px`;
+
+        if (dom.challengePlayer) {
+            dom.challengePlayer.style.left = relative(challenge.playerX);
+            dom.challengePlayer.style.bottom = `${challenge.playerY}px`;
+        }
+
+        challenge.obstacles.forEach((obstacle, index) => {
+            if (!obstacle.element && !obstacle.checkpointElement) {
+                return;
+            }
+            const position = obstacle.x - scroll;
+            if (obstacle.element) {
+                obstacle.element.style.left = `${position}px`;
+                obstacle.element.classList.toggle('cleared', obstacle.cleared);
+            }
+            if (obstacle.checkpointElement) {
+                obstacle.checkpointElement.style.left = `${position - 40}px`;
+                obstacle.checkpointElement.classList.toggle('cleared', obstacle.cleared);
+            }
+        });
+
+        if (dom.challengeGround) {
+            dom.challengeGround.style.transform = `translateX(${-scroll}px)`;
+        }
+    };
+
+    const buildChallengeScene = () => {
+        const challenge = state.challenge;
+        if (dom.challengeObstacles) {
+            dom.challengeObstacles.innerHTML = '';
+        }
+        if (dom.challengeCheckpoints) {
+            dom.challengeCheckpoints.innerHTML = '';
+        }
+
+        challenge.obstacles.forEach((obstacle, index) => {
+            if (dom.challengeObstacles) {
+                const obstacleEl = document.createElement('div');
+                obstacleEl.className = 'challenge-obstacle';
+                obstacleEl.style.left = `${obstacle.x}px`;
+                dom.challengeObstacles.appendChild(obstacleEl);
+                obstacle.element = obstacleEl;
+                if (index === 0) {
+                    obstacleEl.classList.add('start');
+                }
+            }
+            if (dom.challengeCheckpoints) {
+                const checkpoint = document.createElement('div');
+                checkpoint.className = 'challenge-checkpoint';
+                checkpoint.style.left = `${obstacle.x - 40}px`;
+                checkpoint.textContent = challenge.phraseWords[index];
+                dom.challengeCheckpoints.appendChild(checkpoint);
+                obstacle.checkpointElement = checkpoint;
+            }
+        });
+
+        if (dom.challengeGround) {
+            dom.challengeGround.style.width = `${challenge.trackLength}px`;
+        }
+
+        updateChallengePhrase();
+        updateChallengePositions();
+    };
+
+    const handleWordSuccess = () => {
+        const challenge = state.challenge;
+        challenge.jumpReady = true; // Set player as ready to jump
+
+        state.score += 150;
+        updateHUD();
+        playSuccessSound();
+        updateChallengePhrase();
+    };
+
+    const failChallenge = (reason = 'Você não tem mais vidas!') => {
+        const challenge = state.challenge;
+        if (!challenge.playing) {
+            return;
+        }
+        challenge.playing = false;
+        state.running = false;
+        state.mode = 'idle';
+        challenge.fail = true;
+        challenge.typed = '';
+        progress.bestScore = Math.max(progress.bestScore, state.score);
+        saveProgress();
+        updateMenuStats();
+        showOverlay({
+            title: 'Fim de jogo!',
+            description: reason,
+            button: 'Tentar novamente',
+            action: 'retry-challenge',
+        });
+    };
+
+    const handleChallengeMistake = (reason) => {
+        const challenge = state.challenge;
+        if (!challenge.playing) {
+            return;
+        }
+
+        state.lives -= 1;
+        updateHUD();
+        playErrorSound();
+
+        if (state.lives > 0) {
+            challenge.typed = '';
+            updateChallengePhrase();
+        } else {
+            failChallenge(reason);
+        }
+    };
+
+    const completeChallenge = () => {
+        const challenge = state.challenge;
+        if (!challenge.playing) {
+            return;
+        }
+        challenge.playing = false;
+        state.running = false;
+        state.mode = 'idle';
+        challenge.typed = '';
+        state.score += 500;
+        updateHUD();
+        progress.bestScore = Math.max(progress.bestScore, state.score);
+        saveProgress();
+        updateMenuStats();
+        showOverlay({
+            title: 'Desafio concluído!',
+            description: 'Você digitou toda a frase, parabéns!',
+            button: 'Voltar ao menu',
+            action: 'return-menu',
+        });
+    };
+
+    const updateChallenge = (delta) => {
+        const challenge = state.challenge;
+        if (!challenge.playing) {
+            return;
+        }
+
+        // Horizontal movement
+        challenge.playerX += (challenge.speed * delta) / 1000;
+        if (challenge.playerX >= challenge.trackLength) {
+            completeChallenge();
+            return;
+        }
+
+        // Auto-jump when ready and near obstacle
+        if (challenge.jumpReady && !challenge.isJumping) {
+            const obstacle = challenge.obstacles[challenge.currentWordIndex];
+            const JUMP_TRIGGER_DISTANCE = 150; // Distance in pixels to trigger the jump
+            if (obstacle && obstacle.x - challenge.playerX <= JUMP_TRIGGER_DISTANCE) {
+                challenge.isJumping = true;
+                challenge.playerVelocityY = CHALLENGE_CONFIG.jumpVelocity;
+                playJumpSound();
+                challenge.jumpReady = false; // Consume the jump readiness
+            }
+        }
+
+        // Jump physics
+        if (challenge.isJumping) {
+            challenge.playerY += challenge.playerVelocityY;
+            challenge.playerVelocityY -= CHALLENGE_CONFIG.gravity;
+
+            // Check for landing
+            if (challenge.playerY <= CHALLENGE_CONFIG.groundY) {
+                challenge.playerY = CHALLENGE_CONFIG.groundY;
+                challenge.isJumping = false;
+                challenge.playerVelocityY = 0;
+
+                // After a successful jump, advance the game state
+                const obstacle = challenge.obstacles[challenge.currentWordIndex];
+                if (obstacle && !obstacle.cleared) {
+                     obstacle.cleared = true;
+
+                    const index = challenge.currentWordIndex;
+                    challenge.wordStates[index] = 'completed';
+                    challenge.typed = '';
+
+                    challenge.currentWordIndex += 1;
+                    challenge.speed = Math.min(challenge.maxSpeed, challenge.speed + 12);
+                    updateChallengePhrase();
+
+                    if (challenge.currentWordIndex >= challenge.phraseWords.length) {
+                        completeChallenge();
+                        return; // End update if challenge is complete
+                    }
+                }
+            }
+        }
+
+        updateChallengePositions();
+
+        // Collision detection
+        const obstacle = challenge.obstacles[challenge.currentWordIndex];
+        if (obstacle && !obstacle.cleared) {
+            const playerFront = challenge.playerX + 60;
+            if (playerFront >= obstacle.x && !challenge.isJumping) {
+                handleChallengeMistake('Você não digitou a palavra a tempo!');
+            }
+        }
+    };
+
+    const handleChallengeTyping = (event) => {
+        const challenge = state.challenge;
+        if (!state.running || !challenge.playing) {
+            return;
+        }
+
+        if (event.key === 'Backspace') {
+            event.preventDefault();
+            challenge.typed = challenge.typed.slice(0, -1);
+            updateChallengePhrase();
+            return;
+        }
+
+        if (event.key.length !== 1) {
+            return;
+        }
+
+        const letter = event.key.toLowerCase();
+        if (!letter.match(/[a-záàãâéêíóôõúç]/)) {
+            return;
+        }
+
+        const targetWord = challenge.phraseWords[challenge.currentWordIndex] || '';
+        const nextInput = (challenge.typed + letter).toLowerCase();
+        if (!targetWord.toLowerCase().startsWith(nextInput)) {
+            handleChallengeMistake('Letra incorreta!');
+            return;
+        }
+
+        challenge.typed = nextInput;
+        updateChallengePhrase();
+
+        if (challenge.typed.length === targetWord.length) {
+            handleWordSuccess();
+        }
+    };
+
     const loadProgress = () => {
         try {
             if (typeof window === 'undefined' || !window.localStorage) {
@@ -199,6 +527,27 @@ document.addEventListener('DOMContentLoaded', () => {
         nextPlatformIndex: 1,
         platformWords: Array(dom.platforms.length).fill(''),
         mode: 'menu',
+        gameMode: 'progressive',
+        challenge: {
+            phraseWords: [],
+            wordStates: [],
+            currentWordIndex: 0,
+            typed: '',
+            playerX: 120,
+            playerY: 84,
+            playerVelocityY: 0,
+            isJumping: false,
+            jumpReady: false,
+            speed: 140,
+            baseSpeed: 140,
+            maxSpeed: 220,
+            acceleration: 5,
+            trackLength: 1600,
+            obstacles: [],
+            playing: false,
+            fail: false,
+            scrollX: 0,
+        },
     };
 
     loadProgress();
@@ -226,6 +575,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const getPlatformVariantForLevel = (level) => level.platformVariant || 'variant-1';
 
     const applyLevelSkin = () => {
+        if (state.gameMode !== 'progressive') {
+            return;
+        }
         const level = currentLevel();
         const theme = findThemeById(level.theme);
 
@@ -239,6 +591,19 @@ document.addEventListener('DOMContentLoaded', () => {
             PLATFORM_VARIANT_CLASSES.forEach((cls) => platform.classList.remove(cls));
             platform.classList.add(variant);
         });
+    };
+
+    const setWorldVisibility = () => {
+        const progressive = state.gameMode === 'progressive';
+        if (dom.world) {
+            dom.world.classList.toggle('hidden', !progressive);
+        }
+        if (dom.parallax) {
+            dom.parallax.classList.toggle('hidden', !progressive);
+        }
+        if (dom.challengeWorld) {
+            dom.challengeWorld.classList.toggle('hidden', progressive);
+        }
     };
 
     const updateMenuStats = () => {
@@ -503,7 +868,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const updateHUD = () => {
         if (dom.hudLevel) {
-            dom.hudLevel.textContent = String(currentLevel().id);
+            if (state.gameMode === 'progressive') {
+                dom.hudLevel.textContent = String(currentLevel().id);
+            } else {
+                dom.hudLevel.textContent = 'Desafio';
+            }
         }
         if (dom.hudScore) {
             dom.hudScore.textContent = String(state.score);
@@ -512,6 +881,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const updateChallengeUI = () => {
+        if (state.gameMode !== 'progressive') {
+            return;
+        }
         if (dom.hudWordTyped && dom.hudWordRemaining) {
             if (!state.challengeTarget) {
                 dom.hudWordTyped.textContent = '_';
@@ -921,6 +1293,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const update = (delta) => {
+        if (state.gameMode === 'challenge') {
+            updateChallenge(delta);
+            return;
+        }
+
         if (state.phase === 'penalty') {
             state.penaltyTimer -= delta;
             if (state.penaltyTimer <= 0) {
@@ -993,6 +1370,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const enterMenu = () => {
         state.running = false;
         state.mode = 'menu';
+        state.gameMode = 'progressive';
+        setWorldVisibility();
+        state.challenge.playing = false;
         if (dom.overlay) {
             dom.overlay.classList.add('hidden');
         }
@@ -1060,7 +1440,10 @@ document.addEventListener('DOMContentLoaded', () => {
         beginCurrentLevel();
     };
 
-    const startFromMenu = () => {
+    const startProgressiveFromMenu = () => {
+        state.gameMode = 'progressive';
+        state.mode = 'menu';
+        setWorldVisibility();
         if (state.mode === 'menu') {
             if (dom.mainMenu) {
                 dom.mainMenu.classList.remove('visible');
@@ -1071,6 +1454,7 @@ document.addEventListener('DOMContentLoaded', () => {
             state.phase = 'idle';
             state.running = false;
             state.mode = 'idle';
+            state.allowTyping = false;
             applyLevelSkin();
             updateHUD();
             repositionForLevelStart();
@@ -1086,6 +1470,54 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         } else {
             beginCurrentLevel();
+        }
+    };
+
+    const prepareChallengeMode = () => {
+        state.gameMode = 'challenge';
+        state.mode = 'menu';
+        setWorldVisibility();
+        resetChallengeState();
+        buildChallengeScene();
+        state.score = 0;
+        state.lives = CHALLENGE_CONFIG.lives;
+        state.maxLives = CHALLENGE_CONFIG.lives;
+        state.running = false;
+        state.allowTyping = false;
+        state.challengeTarget = '';
+        state.challengeInput = '';
+        updateHUD();
+        updateMenuStats();
+        updateAudioUI();
+        dom.mainMenu?.classList.remove('visible');
+        showOverlay({
+            title: 'Modo Desafio',
+            description: 'Digite cada palavra da frase antes dos obstáculos. Use Backspace para corrigir.',
+            button: 'Começar desafio',
+            action: 'start-challenge',
+        });
+    };
+
+    const beginChallengeRun = () => {
+        hideOverlay();
+        state.running = true;
+        state.mode = 'challenge-playing';
+        state.challenge.playing = true;
+        state.challenge.fail = false;
+        state.challenge.typed = '';
+        state.challenge.currentWordIndex = 0;
+        state.allowTyping = false;
+        updateChallengePhrase();
+        updateChallengePositions();
+        state.lastTime = performance.now();
+        requestAnimationFrame(gameLoop);
+    };
+
+    const selectGameMode = (mode) => {
+        if (mode === 'challenge') {
+            prepareChallengeMode();
+        } else {
+            startProgressiveFromMenu();
         }
     };
 
@@ -1105,6 +1537,12 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'restart-game':
                 restartGame();
                 break;
+            case 'start-challenge':
+                beginChallengeRun();
+                break;
+            case 'retry-challenge':
+                prepareChallengeMode();
+                break;
             case 'return-menu':
                 enterMenu();
                 break;
@@ -1115,6 +1553,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const handleTypingInput = (event) => {
+        if (state.gameMode === 'challenge') {
+            handleChallengeTyping(event);
+            return;
+        }
+
         if (!state.running || !state.allowTyping || state.phase !== 'awaiting-input') {
             return;
         }
@@ -1157,8 +1600,12 @@ document.addEventListener('DOMContentLoaded', () => {
         handleStartAction();
     });
 
-    dom.menuStartButton?.addEventListener('click', () => {
-        startFromMenu();
+    dom.menuStartProgressive?.addEventListener('click', () => {
+        selectGameMode('progressive');
+    });
+
+    dom.menuStartChallenge?.addEventListener('click', () => {
+        selectGameMode('challenge');
     });
 
     dom.menuHowToButton?.addEventListener('click', () => {
@@ -1189,7 +1636,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dom.mainMenu && dom.mainMenu.classList.contains('visible')) {
             if (event.code === 'Space' || event.key === 'Enter') {
                 event.preventDefault();
-                startFromMenu();
+                selectGameMode('progressive');
             }
             return;
         }

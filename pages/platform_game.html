@@ -13,7 +13,8 @@
                 <h1>Escalada das Palavras</h1>
                 <p class="menu-subtitle">Ajude o robozinho a subir digitando as sílabas e palavras corretamente.</p>
                 <div class="menu-actions">
-                    <button id="menu-start-button" class="menu-button primary">Começar</button>
+                    <button id="menu-start-progressive" class="menu-button primary">Modo Progressivo</button>
+                    <button id="menu-start-challenge" class="menu-button primary alt">Modo Desafio</button>
                     <button id="menu-howto-button" class="menu-button secondary">Como jogar</button>
                 </div>
                 <div id="menu-howto-panel" class="menu-panel hidden">
@@ -89,6 +90,16 @@
                     <span class="platform-label"></span>
                 </div>
                 <div id="goal-door" class="decoration goal-door hidden"></div>
+            </div>
+            <div id="challenge-world" class="hidden">
+                <div id="challenge-track">
+                    <div class="challenge-background"></div>
+                    <div id="challenge-ground" class="challenge-ground"></div>
+                    <div id="challenge-player" class="challenge-entity"></div>
+                    <div id="challenge-obstacles"></div>
+                    <div id="challenge-checkpoints"></div>
+                </div>
+                <div id="challenge-phrase"></div>
             </div>
             <div id="start-overlay" class="hidden">
                 <h1>Pronto para subir?</h1>
