@@ -21,7 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
         menuStartButton: document.getElementById('menu-start-button'),
         menuHowToButton: document.getElementById('menu-howto-button'),
         menuHowToPanel: document.getElementById('menu-howto-panel'),
-        themeSelector: document.getElementById('theme-selector'),
+        menuBestLevel: document.getElementById('menu-best-level'),
+        menuBestScore: document.getElementById('menu-best-score'),
+        menuAudioToggle: document.getElementById('menu-audio-toggle'),
+        audioToggle: document.getElementById('audio-toggle'),
     };
 
     if (
@@ -49,64 +52,70 @@ document.addEventListener('DOMContentLoaded', () => {
         cameraLead: 220,
         maxLives: 3,
         levels: [
-            {
-                id: 1,
-                label: 'Sílabas fáceis',
-                timeLimit: 6000,
-                scoreReward: 120,
-                sequence: ['ba', 'be', 'bi', 'bo', 'bu', 'da', 'de', 'di', 'du', 'fa', 'fe', 'fu'],
-            },
-            {
-                id: 2,
-                label: 'Palavras de 3 letras',
-                timeLimit: 7000,
-                scoreReward: 180,
-                sequence: ['sol', 'lua', 'mel', 'paz', 'voz', 'fio', 'mar', 'luz', 'bar', 'rio', 'dom', 'fim'],
-            },
-            {
-                id: 3,
-                label: 'Palavras de 4 letras',
-                timeLimit: 8000,
-                scoreReward: 220,
-                sequence: ['casa', 'fada', 'gato', 'pena', 'lago', 'vela', 'foco', 'bola', 'muro', 'nave', 'flor', 'viva'],
-            },
-            {
-                id: 4,
-                label: 'Palavras maiores',
-                timeLimit: 9000,
-                scoreReward: 300,
-                sequence: ['navio', 'amigo', 'fruta', 'caminho', 'nuvem', 'janela', 'trilho', 'tesouro', 'pirata', 'estilo'],
-            },
+        {
+            id: 1,
+            label: 'Sílabas fáceis',
+            theme: 'neon',
+            platformVariant: 'variant-2',
+            timeLimit: 6000,
+            scoreReward: 120,
+            baseSequence: ['ba', 'be', 'bi', 'bo', 'bu', 'da', 'de', 'di', 'du', 'fa', 'fe', 'fu'],
+            sequence: ['ba', 'be', 'bi', 'bo', 'bu', 'da', 'de', 'di', 'du', 'fa', 'fe', 'fu'],
+        },
+        {
+            id: 2,
+            label: 'Palavras de 3 letras',
+            theme: 'forest',
+            platformVariant: 'variant-3',
+            timeLimit: 7000,
+            scoreReward: 180,
+            baseSequence: [
+                'sol', 'lua', 'mel', 'paz', 'voz', 'fio', 'mar', 'luz',
+                'bar', 'rio', 'dom', 'fim', 'dia', 'céu', 'lar', 'mãe',
+            ],
+            sequence: [
+                'sol', 'lua', 'mel', 'paz', 'voz', 'fio', 'mar', 'luz',
+                'bar', 'rio', 'dom', 'fim', 'dia', 'céu', 'lar', 'mãe',
+            ],
+        },
+        {
+            id: 3,
+            label: 'Palavras de 4 letras',
+            theme: 'sunset',
+            platformVariant: 'variant-4',
+            timeLimit: 8000,
+            scoreReward: 220,
+            baseSequence: ['casa', 'fada', 'gato', 'pena', 'lago', 'vela', 'foco', 'bola', 'muro', 'nave', 'flor', 'viva'],
+            sequence: ['casa', 'fada', 'gato', 'pena', 'lago', 'vela', 'foco', 'bola', 'muro', 'nave', 'flor', 'viva'],
+        },
+        {
+            id: 4,
+            label: 'Palavras maiores',
+            theme: 'neon',
+            platformVariant: 'variant-2',
+            timeLimit: 9000,
+            scoreReward: 300,
+            baseSequence: ['navio', 'amigo', 'fruta', 'caminho', 'nuvem', 'janela', 'trilho', 'tesouro', 'pirata', 'estilo'],
+            sequence: ['navio', 'amigo', 'fruta', 'caminho', 'nuvem', 'janela', 'trilho', 'tesouro', 'pirata', 'estilo'],
+        },
         ],
     };
 
     const THEMES = [
-        {
-            id: 'neon',
-            label: 'Neon',
-            className: 'theme-neon',
-        },
-        {
-            id: 'forest',
-            label: 'Floresta',
-            className: 'theme-forest',
-        },
-        {
-            id: 'sunset',
-            label: 'Pôr do Sol',
-            className: 'theme-sunset',
-        },
+        { id: 'neon', label: 'Neon', className: 'theme-neon' },
+        { id: 'forest', label: 'Floresta', className: 'theme-forest' },
+        { id: 'sunset', label: 'Pôr do Sol', className: 'theme-sunset' },
     ];
 
     const THEME_CLASS_LIST = THEMES.map((theme) => theme.className);
-    const themeButtons = new Map();
+    const PLATFORM_VARIANT_CLASSES = ['variant-1', 'variant-2', 'variant-3', 'variant-4'];
 
     const STORAGE_KEY = 'platformGameProgress:v1';
 
     const progress = {
-        highestLevel: 1,
+        highestLevel: 0,
         bestScore: 0,
-        themeId: THEMES[0]?.id ?? 'neon',
+        audioEnabled: true,
     };
 
     const loadProgress = () => {
@@ -121,13 +130,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const parsed = JSON.parse(saved);
             if (typeof parsed === 'object' && parsed) {
                 if (typeof parsed.highestLevel === 'number') {
-                    progress.highestLevel = parsed.highestLevel;
+                    progress.highestLevel = Math.min(
+                        GAME_CONFIG.levels.length,
+                        Math.max(0, parsed.highestLevel),
+                    );
                 }
                 if (typeof parsed.bestScore === 'number') {
-                    progress.bestScore = parsed.bestScore;
+                    progress.bestScore = Math.max(0, parsed.bestScore);
                 }
-                if (typeof parsed.themeId === 'string' && THEMES.some((theme) => theme.id === parsed.themeId)) {
-                    progress.themeId = parsed.themeId;
+                if (typeof parsed.audioEnabled === 'boolean') {
+                    progress.audioEnabled = parsed.audioEnabled;
                 }
             }
         } catch (error) {
@@ -187,11 +199,9 @@ document.addEventListener('DOMContentLoaded', () => {
         nextPlatformIndex: 1,
         platformWords: Array(dom.platforms.length).fill(''),
         mode: 'menu',
-        themeId: THEMES[0]?.id ?? 'neon',
     };
 
     loadProgress();
-    state.themeId = progress.themeId;
 
     const lerp = (start, end, t) => start + (end - start) * t;
     const formatTime = (ms) => `${Math.max(0, Math.ceil(ms / 1000))}s`;
@@ -211,49 +221,76 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const setThemeButtonState = () => {
-        themeButtons.forEach((button, id) => {
-            button.classList.toggle('active', id === state.themeId);
-        });
-    };
+    const findThemeById = (id) => THEMES.find((item) => item.id === id) ?? THEMES[0];
 
-    const applyTheme = (themeId) => {
-        const theme = THEMES.find((item) => item.id === themeId) ?? THEMES[0];
-        state.themeId = theme.id;
+    const getPlatformVariantForLevel = (level) => level.platformVariant || 'variant-1';
+
+    const applyLevelSkin = () => {
+        const level = currentLevel();
+        const theme = findThemeById(level.theme);
+
         if (dom.container) {
-            THEME_CLASS_LIST.forEach((className) => {
-                dom.container.classList.remove(className);
-            });
+            THEME_CLASS_LIST.forEach((className) => dom.container.classList.remove(className));
             dom.container.classList.add(theme.className);
         }
-        setThemeButtonState();
-        progress.themeId = state.themeId;
-        saveProgress();
+
+        const variant = getPlatformVariantForLevel(level);
+        dom.platforms.forEach((platform) => {
+            PLATFORM_VARIANT_CLASSES.forEach((cls) => platform.classList.remove(cls));
+            platform.classList.add(variant);
+        });
     };
 
-    const renderThemeOptions = () => {
-        if (!dom.themeSelector) {
-            return;
+    const updateMenuStats = () => {
+        if (dom.menuBestLevel) {
+            dom.menuBestLevel.textContent = progress.highestLevel > 0
+                ? String(progress.highestLevel)
+                : '--';
         }
-
-        dom.themeSelector.innerHTML = '';
-        themeButtons.clear();
-
-        THEMES.forEach((theme) => {
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = 'theme-pill';
-            button.textContent = theme.label;
-            button.addEventListener('click', () => applyTheme(theme.id));
-            dom.themeSelector.appendChild(button);
-            themeButtons.set(theme.id, button);
-        });
-
-        setThemeButtonState();
+        if (dom.menuBestScore) {
+            const formattedScore = progress.bestScore > 0
+                ? progress.bestScore.toLocaleString('pt-BR')
+                : '0';
+            dom.menuBestScore.textContent = formattedScore;
+        }
     };
 
     const audioState = {
         context: null,
+        muted: false,
+    };
+    audioState.muted = !progress.audioEnabled;
+
+    const updateAudioUI = () => {
+        const audioOn = !audioState.muted;
+        if (dom.menuAudioToggle) {
+            dom.menuAudioToggle.textContent = audioOn ? 'Som: ligado' : 'Som: desligado';
+            dom.menuAudioToggle.setAttribute('aria-pressed', audioOn ? 'false' : 'true');
+            dom.menuAudioToggle.setAttribute('aria-label', audioOn ? 'Desligar som' : 'Ligar som');
+        }
+        if (dom.audioToggle) {
+            dom.audioToggle.textContent = audioOn ? '🔊' : '🔇';
+            dom.audioToggle.classList.toggle('off', !audioOn);
+            dom.audioToggle.setAttribute('aria-pressed', audioOn ? 'false' : 'true');
+            dom.audioToggle.setAttribute('aria-label', audioOn ? 'Desligar som' : 'Ligar som');
+        }
+    };
+
+    const setAudioMuted = (muted) => {
+        audioState.muted = muted;
+        progress.audioEnabled = !muted;
+        saveProgress();
+        updateAudioUI();
+        if (!muted && !audioState.context) {
+            initAudio();
+        }
+        if (audioState.context) {
+            if (muted && audioState.context.state === 'running') {
+                audioState.context.suspend().catch(() => {});
+            } else if (!muted && audioState.context.state === 'suspended') {
+                audioState.context.resume().catch(() => {});
+            }
+        }
     };
 
     const initAudio = () => {
@@ -274,6 +311,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const playTone = (frequency, duration, options = {}) => {
+        if (audioState.muted) {
+            return;
+        }
         const ctx = initAudio();
         if (!ctx) {
             return;
@@ -388,10 +428,39 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!level) {
                 return;
             }
-            const selection = getWordsByLengths(lengths, desiredCount || level.sequence.length || 12);
-            if (selection.length > 0) {
-                level.sequence = selection;
+
+            const fallback = Array.isArray(level.baseSequence) ? level.baseSequence : level.sequence;
+            const targetCount = desiredCount || fallback.length || 12;
+            const selection = getWordsByLengths(lengths, targetCount);
+
+            const seen = new Set();
+            const combined = [];
+            const pushWord = (word, forceDuplicate = false) => {
+                if (!word || typeof word !== 'string') {
+                    return;
+                }
+                const key = word.toLowerCase();
+                if (!forceDuplicate && seen.has(key)) {
+                    return;
+                }
+                seen.add(key);
+                combined.push(word);
+            };
+
+            selection.forEach(pushWord);
+            fallback.forEach(pushWord);
+
+            if (combined.length < targetCount) {
+                if (fallback.length > 0) {
+                    let index = 0;
+                    while (combined.length < targetCount) {
+                        pushWord(fallback[index % fallback.length], true);
+                        index += 1;
+                    }
+                }
             }
+
+            level.sequence = combined.slice(0, targetCount);
         };
 
         updateLevelSequence(2, [3], 18);
@@ -399,6 +468,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateLevelSequence(4, [5, 6], 20);
 
         if (state.mode === 'menu' && !state.running) {
+            applyLevelSkin();
             assignPlatformWordsForLevel();
             clearChallenge();
         }
@@ -500,6 +570,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const assignPlatformWordsForLevel = () => {
+        applyLevelSkin();
         const level = currentLevel();
         const maxSteps = Math.min(level.sequence.length, dom.platforms.length - 1);
         state.stepsPerLevel = maxSteps;
@@ -759,6 +830,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const level = currentLevel();
         state.running = false;
         state.phase = 'idle';
+        state.mode = 'idle';
         state.allowTyping = false;
         state.challengeIndex = 0;
         state.jump = null;
@@ -769,12 +841,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const isLastLevel = state.levelIndex >= GAME_CONFIG.levels.length - 1;
 
-        progress.highestLevel = Math.max(progress.highestLevel, Math.min(level.id + 1, GAME_CONFIG.levels.length));
+        progress.highestLevel = Math.max(progress.highestLevel, level.id);
         progress.bestScore = Math.max(progress.bestScore, state.score);
         saveProgress();
+        updateMenuStats();
 
         if (!isLastLevel) {
-            state.levelIndex += 1;
+            state.levelIndex = Math.min(state.levelIndex + 1, GAME_CONFIG.levels.length - 1);
+            applyLevelSkin();
+            repositionForLevelStart();
+            assignPlatformWordsForLevel();
+            clearChallenge();
             updateHUD();
             showOverlay({
                 title: `Nível ${level.id} concluído!`,
@@ -796,6 +873,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const level = currentLevel();
         state.running = false;
         state.phase = 'idle';
+        state.mode = 'idle';
         state.allowTyping = false;
         state.jump = null;
         clearChallenge();
@@ -804,6 +882,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         progress.bestScore = Math.max(progress.bestScore, state.score);
         saveProgress();
+        updateMenuStats();
         showOverlay({
             title: 'Ops! Acabaram as vidas',
             description: `Tente novamente o nível ${level.id}. Pontuação atual: ${state.score}`,
@@ -930,9 +1009,13 @@ document.addEventListener('DOMContentLoaded', () => {
         state.levelIndex = 0;
         state.score = 0;
         state.lives = state.maxLives;
-        renderLives();
+        applyLevelSkin();
         updateHUD();
-        setThemeButtonState();
+        updateMenuStats();
+        updateAudioUI();
+        repositionForLevelStart();
+        assignPlatformWordsForLevel();
+        clearChallenge();
     };
 
     const repositionForLevelStart = () => {
@@ -951,6 +1034,7 @@ document.addEventListener('DOMContentLoaded', () => {
         state.lives = state.maxLives;
         state.penaltyTimer = 0;
         state.mode = 'playing';
+        applyLevelSkin();
         repositionForLevelStart();
         assignPlatformWordsForLevel();
         clearChallenge();
@@ -981,16 +1065,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if (dom.mainMenu) {
                 dom.mainMenu.classList.remove('visible');
             }
-            applyTheme(state.themeId);
             state.score = 0;
             state.levelIndex = 0;
             state.lives = state.maxLives;
             state.phase = 'idle';
             state.running = false;
+            state.mode = 'idle';
+            applyLevelSkin();
             updateHUD();
             repositionForLevelStart();
             assignPlatformWordsForLevel();
             clearChallenge();
+            updateMenuStats();
+            updateAudioUI();
             showOverlay({
                 title: 'Pronto para subir?',
                 description: 'Clique em começar ou pressione espaço para iniciar.',
@@ -1085,6 +1172,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    const toggleAudio = () => {
+        setAudioMuted(!audioState.muted);
+    };
+
+    dom.menuAudioToggle?.addEventListener('click', toggleAudio);
+    dom.audioToggle?.addEventListener('click', toggleAudio);
+
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
             event.preventDefault();
@@ -1116,11 +1210,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     updateHUD();
-    repositionForLevelStart();
-    assignPlatformWordsForLevel();
-    clearChallenge();
-    renderThemeOptions();
-    applyTheme(state.themeId);
     loadVocabulary();
     enterMenu();
 });
