@@ -475,21 +475,30 @@ body {
     filter: drop-shadow(0 12px 0 rgba(50, 10, 30, 0.6));
 }
 
-#challenge-world {
+#challenge-world::before {
+    content: '';
     position: absolute;
     inset: 0;
-    pointer-events: none;
-    z-index: 1; /* Lower z-index to be behind HUD */
-    overflow: hidden;
-    background-image:
-        /* Orbs */
-        radial-gradient(circle at 15% 25%, rgba(120, 0, 255, 0.2), transparent 40%),
-        radial-gradient(circle at 85% 60%, rgba(0, 220, 255, 0.15), transparent 50%),
-        /* Main Gradient */
-        linear-gradient(180deg, rgba(20, 36, 120, 0.45) 0%, rgba(10, 4, 40, 0.85) 70%, rgba(6, 2, 20, 0.95) 100%),
-        /* Grid lines */
-        repeating-linear-gradient(90deg, rgba(0, 180, 255, 0.1) 0, rgba(0, 180, 255, 0.1) 1px, transparent 1px, transparent 80px);
-    background-size: cover;
+    background-image: url('../assets/images/generic-png/decoration/blade_2.png'),
+        url('../assets/images/generic-png/decoration/blade_2.png');
+    background-size: 96px, 128px;
+    background-repeat: no-repeat;
+    background-position: 10% 20%, 90% 80%;
+    opacity: 0.15;
+    animation: slow-spin 12s linear infinite, slow-spin 18s linear infinite reverse;
+    animation-composition: add;
+}
+
+#challenge-world::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('../assets/images/generic-png/decoration/bug.png');
+    background-size: 82px;
+    background-repeat: no-repeat;
+    background-position: 80% 15%;
+    opacity: 0.2;
+    animation: slow-spin 22s linear infinite;
 }
 
 #challenge-world.hidden {
@@ -498,16 +507,15 @@ body {
 
 #challenge-track {
     position: absolute;
-    bottom: 24px; /* Respect original padding */
-    left: 24px; /* Respect original padding */
-    right: 24px; /* Respect original padding */
-    height: 320px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 344px; /* Cover the old padding area */
     overflow: hidden;
-    border-radius: 28px;
-    background: transparent; /* Make track transparent */
-    /* Add a subtle border to define the track area */
-    border: 1px solid rgba(120, 200, 255, 0.15);
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
 }
 
 .challenge-background {
