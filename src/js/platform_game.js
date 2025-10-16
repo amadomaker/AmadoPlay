@@ -122,9 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const STORAGE_KEY = 'platformGameProgress:v1';
 
     const ITEMS_CONFIG = {
-        gear: { src: '../assets/generic-png/items/gear.png' },
-        battery: { src: '../assets/generic-png/items/battery.png' },
-        heart: { src: '../assets/generic-png/items/heart.png' },
+        heart: {},
     };
 
 
@@ -141,7 +139,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Nível 2: 4 letras
             'gato', 'casa', 'bola', 'doce', 'flor', 'pato', 'fogo', 'lago', 'amor', 'vida', 'dedo', 'frio',
             // Nível 3: 5 letras
-            'feliz', 'festa', 'livro', 'verde', 'porta', 'letra', 'magia', 'jogar', 'comer', 'beber', 'amigo', 'terra'
+            'feliz', 'festa', 'livro', 'verde', 'porta', 'letra', 'magia', 'jogar', 'comer', 'beber', 'amigo', 'terra',
+            // Nível 4: 6-8 letras
+            'escola', 'planeta', 'objeto', 'risada', 'brincar', 'amarelo',
+            'floresta', 'aventura', 'lanterna', 'mochila', 'explorar', 'desafio'
         ],
         baseSpeed: 110, // Reduzido para um início mais lento
         maxSpeed: 240,
@@ -210,45 +211,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const updateChallengePhrase = () => {
-        if (!dom.challengePhrase) {
-            return;
-        }
-        const challenge = state.challenge;
-        dom.challengePhrase.innerHTML = '';
-        challenge.phraseWords.forEach((word, index) => {
-            const span = document.createElement('span');
-            if (index < challenge.currentWordIndex) {
-                span.className = 'word-completed';
-                span.textContent = word;
-                const obstacle = challenge.obstacles[index];
-                if (obstacle && obstacle.wordElement) {
-                    obstacle.wordElement.textContent = word.toUpperCase();
-                }
-            } else if (index === challenge.currentWordIndex) {
-                span.className = 'word-active';
-                const typed = challenge.typed.toUpperCase();
-                const remaining = word.slice(typed.length).toUpperCase();
-                span.innerHTML = `<span class="typed">${typed}</span><span class="remaining">${remaining}</span>`;
-                dom.challengePhrase.appendChild(span);
-                const obstacle = challenge.obstacles[index];
-                if (obstacle && obstacle.wordElement) {
-                    obstacle.wordElement.innerHTML = `<span class="typed">${typed}</span><span class="remaining">${remaining}</span>`;
-                }
-                return;
-            }
-            if (!span.textContent) {
-                span.textContent = word;
-            }
-            dom.challengePhrase.appendChild(span);
-            const obstacle = challenge.obstacles[index];
-            if (obstacle && obstacle.wordElement) {
-                obstacle.wordElement.textContent = word.toUpperCase();
-            }
-        });
-
         if (dom.hudWordTyped && dom.hudWordRemaining && state.gameMode === 'challenge') {
-            const activeWord = challenge.phraseWords[challenge.currentWordIndex] || '';
-            const typed = challenge.typed.toUpperCase();
+            const activeWord = state.challenge.phraseWords[state.challenge.currentWordIndex] || '';
+            const typed = state.challenge.typed.toUpperCase();
             const remaining = activeWord.slice(typed.length).toUpperCase();
             dom.hudWordTyped.textContent = typed || '_';
             dom.hudWordRemaining.textContent = remaining;
@@ -333,7 +298,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const element = document.createElement('div');
         element.className = 'challenge-item';
-        element.style.backgroundImage = `url(${config.src})`;
+        element.classList.add(`item-${type}`);
+        element.style.width = '64px';
+        element.style.height = '64px';
         
         const item = {
             id: Date.now() + Math.random(),
@@ -357,12 +324,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const applyItemEffect = (item) => {
         const challenge = state.challenge;
         switch (item.type) {
-            case 'gear':
-                challenge.effects.speedBoost = 5000; // 5 segundos
-                break;
-            case 'battery':
-                challenge.effects.speedSlow = 8000; // 8 segundos
-                break;
             case 'heart':
                 state.lives = Math.min(GAME_CONFIG.maxLives, state.lives + 1);
                 updateHUD();
@@ -415,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
         challenge.typed = '';
         challenge.wordStates[obstacle.index] = 'completed';
         challenge.currentWordIndex = obstacle.index + 1;
-        challenge.speed = Math.min(challenge.maxSpeed, challenge.speed + 4);
+        challenge.speed = Math.min(challenge.maxSpeed, challenge.speed + 6);
 
         challenge.streak++;
 
@@ -423,10 +384,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const spawnX = nextObstacle ? (obstacle.x + nextObstacle.x) / 2 : obstacle.x + 300;
         const spawnY = 100;
 
-        if (challenge.streak > 0 && challenge.streak % 10 === 0) {
+        if (challenge.streak > 0 && challenge.streak % 15 === 0) {
             spawnItem('heart', spawnX, spawnY);
-        } else if (challenge.streak > 0 && challenge.streak % 5 === 0) {
-            spawnItem('battery', spawnX, spawnY);
         }
 
         if (challenge.currentWordIndex >= challenge.phraseWords.length) {
@@ -505,9 +464,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const obstacle = challenge.obstacles[challenge.currentWordIndex];
             if (obstacle) {
-                const spawnX = obstacle.x + 100;
-                spawnItem('gear', spawnX, 80);
-                
                 obstacle.cleared = true; 
                 if (obstacle.wordElement) {
                     obstacle.wordElement.classList.add('failed');
@@ -557,14 +513,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const dt = Math.min(delta / 1000, 0.05);
 
         let currentSpeed = challenge.speed;
-        if (challenge.effects.speedBoost > 0) {
-            currentSpeed *= 1.4; // 40% mais rápido
-            challenge.effects.speedBoost -= delta;
-        }
-        if (challenge.effects.speedSlow > 0) {
-            currentSpeed *= 0.75; // 25% mais lento
-            challenge.effects.speedSlow -= delta;
-        }
 
         challenge.playerX += currentSpeed * dt;
 

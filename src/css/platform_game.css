@@ -563,7 +563,7 @@ body {
     bottom: 0;
     width: 100%;
     height: 100%;
-    z-index: 5;
+    z-index: 100;
     pointer-events: none;
 }
 
@@ -578,20 +578,8 @@ body {
     filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
 }
 
-.challenge-item.collected {
-    transform: scale(1.6) rotate(360deg);
-    opacity: 0;
-}
-
-.challenge-item {
-    position: absolute;
-    width: 64px;
-    height: 64px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+.challenge-item.item-heart {
+    background-image: url('/src/assets/images/generic-png/items/heart.png');
 }
 
 .challenge-item.collected {
@@ -624,9 +612,9 @@ body {
     justify-content: center;
     padding: 6px 12px;
     color: rgba(255, 255, 255, 0.7);
-    font-size: 0.95rem;
+    font-size: 1.5rem;
     letter-spacing: 1px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
     text-shadow: 0 4px 12px rgba(0, 0, 0, 0.55);
     pointer-events: none;
@@ -635,6 +623,8 @@ body {
 
 .challenge-word.active {
     color: #ffe600;
+    transform: translate(-60%, 0) scale(1.1);
+    text-shadow: 0 0 10px #ffe600, 0 0 20px #fff;
 }
 
 .challenge-word.collected {
@@ -657,17 +647,7 @@ body {
 }
 
 #challenge-phrase {
-    font-size: 1.2rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.75);
-    padding: 12px 18px;
-    border-radius: 18px;
-    background: rgba(0, 0, 0, 0.35);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
-    display: inline-flex;
-    gap: 8px;
-    pointer-events: none;
+    display: none;
 }
 
 #challenge-phrase .word-completed {
