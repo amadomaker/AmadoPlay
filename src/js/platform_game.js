@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         challengeTrack: document.getElementById('challenge-track'),
         challengePlayer: document.getElementById('challenge-player'),
         challengeObstacles: document.getElementById('challenge-obstacles'),
-        challengeCheckpoints: document.getElementById('challenge-checkpoints'),
+        challengeWords: document.getElementById('challenge-words'),
         challengePhrase: document.getElementById('challenge-phrase'),
         challengeGround: document.getElementById('challenge-ground'),
     };
@@ -129,16 +129,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const CHALLENGE_CONFIG = {
         phraseWords: [
-            'Jogos', 'educacionais', 'inspiram', 'curiosidade', 'e', 'transformam', 'futuro', 'do', 'aprendizado',
+            'sol', 'lua', 'gato', 'casa', 'bola', 'doce', 'flor', 'pato', 'fogo', 'rei', 'lago', 'feliz'
         ],
         baseSpeed: 140,
         maxSpeed: 240,
-        spacing: 480,
-        startOffset: 500,
-        lives: 3,
-        gravity: 1.5,
-        jumpVelocity: 25,
+        startOffset: 500, // Espaço antes do primeiro obstáculo
+        spacing_base: 400, // Distância mínima entre obstáculos
+        spacing_per_char: 45, // Acréscimo de distância por letra da palavra
+        approachDistance: 80,
+        jumpVelocity: 520,
+        gravity: 980,
         groundY: 84,
+        scorePerWord: 150,
+        completionBonus: 500,
+        mistakeKnockback: 140,
     };
 
     const resetChallengeState = () => {
@@ -154,16 +158,40 @@ document.addEventListener('DOMContentLoaded', () => {
         challenge.baseSpeed = CHALLENGE_CONFIG.baseSpeed;
         challenge.speed = CHALLENGE_CONFIG.baseSpeed;
         challenge.maxSpeed = CHALLENGE_CONFIG.maxSpeed;
-        challenge.trackLength = CHALLENGE_CONFIG.startOffset + challenge.phraseWords.length * CHALLENGE_CONFIG.spacing + 600;
-        challenge.obstacles = challenge.phraseWords.map((_word, index) => ({
-            x: CHALLENGE_CONFIG.startOffset + index * CHALLENGE_CONFIG.spacing,
-            cleared: false,
-            element: null,
-            checkpointElement: null,
-        }));
+
+        const obstacles = [];
+        let lastX = 0;
+        for (let i = 0; i < challenge.phraseWords.length; i++) {
+            const word = challenge.phraseWords[i];
+            const wordLength = word.length || 5;
+
+            let spacing;
+            if (i === 0) {
+                spacing = CHALLENGE_CONFIG.startOffset;
+            } else {
+                // O espaço antes do obstáculo `i` depende do comprimento da palavra `i`
+                spacing = CHALLENGE_CONFIG.spacing_base + wordLength * CHALLENGE_CONFIG.spacing_per_char;
+            }
+            const currentX = lastX + spacing;
+
+            obstacles.push({
+                index: i,
+                x: currentX,
+                cleared: false,
+                element: null,
+                wordElement: null,
+            });
+            lastX = currentX;
+        }
+        challenge.obstacles = obstacles;
+        challenge.trackLength = lastX + 600;
+
         challenge.playing = false;
         challenge.fail = false;
         challenge.scrollX = 0;
+        challenge.jumpQueue = null;
+        challenge.isJumping = false;
+        challenge.playerVelocityY = 0;
     };
 
     const updateChallengePhrase = () => {
@@ -177,18 +205,30 @@ document.addEventListener('DOMContentLoaded', () => {
             if (index < challenge.currentWordIndex) {
                 span.className = 'word-completed';
                 span.textContent = word;
+                const obstacle = challenge.obstacles[index];
+                if (obstacle && obstacle.wordElement) {
+                    obstacle.wordElement.textContent = word.toUpperCase();
+                }
             } else if (index === challenge.currentWordIndex) {
                 span.className = 'word-active';
                 const typed = challenge.typed.toUpperCase();
                 const remaining = word.slice(typed.length).toUpperCase();
                 span.innerHTML = `<span class="typed">${typed}</span><span class="remaining">${remaining}</span>`;
                 dom.challengePhrase.appendChild(span);
+                const obstacle = challenge.obstacles[index];
+                if (obstacle && obstacle.wordElement) {
+                    obstacle.wordElement.innerHTML = `<span class="typed">${typed}</span><span class="remaining">${remaining}</span>`;
+                }
                 return;
             }
             if (!span.textContent) {
                 span.textContent = word;
             }
             dom.challengePhrase.appendChild(span);
+            const obstacle = challenge.obstacles[index];
+            if (obstacle && obstacle.wordElement) {
+                obstacle.wordElement.textContent = word.toUpperCase();
+            }
         });
 
         if (dom.hudWordTyped && dom.hudWordRemaining && state.gameMode === 'challenge') {
@@ -212,17 +252,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         challenge.obstacles.forEach((obstacle, index) => {
-            if (!obstacle.element && !obstacle.checkpointElement) {
-                return;
-            }
             const position = obstacle.x - scroll;
             if (obstacle.element) {
                 obstacle.element.style.left = `${position}px`;
                 obstacle.element.classList.toggle('cleared', obstacle.cleared);
             }
-            if (obstacle.checkpointElement) {
-                obstacle.checkpointElement.style.left = `${position - 40}px`;
-                obstacle.checkpointElement.classList.toggle('cleared', obstacle.cleared);
+            if (obstacle.wordElement) {
+                obstacle.wordElement.style.left = `${position}px`;
+                obstacle.wordElement.classList.toggle('active', index === challenge.currentWordIndex && !obstacle.cleared);
+                obstacle.wordElement.classList.toggle('collected', obstacle.cleared);
             }
         });
 
@@ -236,8 +274,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dom.challengeObstacles) {
             dom.challengeObstacles.innerHTML = '';
         }
-        if (dom.challengeCheckpoints) {
-            dom.challengeCheckpoints.innerHTML = '';
+        if (dom.challengeWords) {
+            dom.challengeWords.innerHTML = '';
         }
 
         challenge.obstacles.forEach((obstacle, index) => {
@@ -247,22 +285,54 @@ document.addEventListener('DOMContentLoaded', () => {
                 obstacleEl.style.left = `${obstacle.x}px`;
                 dom.challengeObstacles.appendChild(obstacleEl);
                 obstacle.element = obstacleEl;
-                if (index === 0) {
-                    obstacleEl.classList.add('start');
-                }
             }
-            if (dom.challengeCheckpoints) {
-                const checkpoint = document.createElement('div');
-                checkpoint.className = 'challenge-checkpoint';
-                checkpoint.style.left = `${obstacle.x - 40}px`;
-                checkpoint.textContent = challenge.phraseWords[index];
-                dom.challengeCheckpoints.appendChild(checkpoint);
-                obstacle.checkpointElement = checkpoint;
+            if (dom.challengeWords) {
+                const word = document.createElement('div');
+                word.className = 'challenge-word';
+                word.style.left = `${obstacle.x}px`;
+                word.textContent = challenge.phraseWords[index].toUpperCase();
+                dom.challengeWords.appendChild(word);
+                obstacle.wordElement = word;
             }
         });
 
         if (dom.challengeGround) {
             dom.challengeGround.style.width = `${challenge.trackLength}px`;
+        }
+        if (dom.challengeTrack) {
+            dom.challengeTrack.style.width = `${challenge.trackLength}px`;
+        }
+
+        updateChallengePhrase();
+        updateChallengePositions();
+    };
+
+    const finalizeChallengeJump = () => {
+        const challenge = state.challenge;
+        const obstacle = challenge.jumpQueue || challenge.obstacles[challenge.currentWordIndex];
+        if (!obstacle) {
+            completeChallenge();
+            return;
+        }
+
+        obstacle.cleared = true;
+        if (obstacle.wordElement) {
+            obstacle.wordElement.classList.add('collected');
+        }
+        if (obstacle.element) {
+            obstacle.element.classList.add('cleared');
+        }
+        challenge.jumpQueue = null;
+        challenge.typed = '';
+        challenge.wordStates[obstacle.index] = 'completed';
+        challenge.currentWordIndex = obstacle.index + 1;
+        challenge.speed = Math.min(challenge.maxSpeed, challenge.speed + 16);
+
+        if (challenge.currentWordIndex >= challenge.phraseWords.length) {
+            updateChallengePhrase();
+            updateChallengePositions();
+            completeChallenge();
+            return;
         }
 
         updateChallengePhrase();
@@ -271,9 +341,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleWordSuccess = () => {
         const challenge = state.challenge;
-        challenge.jumpReady = true; // Set player as ready to jump
+        if (challenge.jumpQueue) {
+            return;
+        }
+        const obstacle = challenge.obstacles[challenge.currentWordIndex];
+        if (!obstacle) {
+            completeChallenge();
+            return;
+        }
 
-        state.score += 150;
+        challenge.jumpQueue = obstacle;
+        challenge.wordStates[challenge.currentWordIndex] = 'queued';
+        challenge.typed = '';
+        state.score += CHALLENGE_CONFIG.scorePerWord;
         updateHUD();
         playSuccessSound();
         updateChallengePhrase();
@@ -289,6 +369,11 @@ document.addEventListener('DOMContentLoaded', () => {
         state.mode = 'idle';
         challenge.fail = true;
         challenge.typed = '';
+        challenge.jumpQueue = null;
+        challenge.isJumping = false;
+        challenge.playerVelocityY = 0;
+        challenge.playerY = CHALLENGE_CONFIG.groundY;
+        state.allowTyping = false;
         progress.bestScore = Math.max(progress.bestScore, state.score);
         saveProgress();
         updateMenuStats();
@@ -306,15 +391,36 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        state.lives -= 1;
+        state.lives = Math.max(0, state.lives - 1);
         updateHUD();
         playErrorSound();
 
-        if (state.lives > 0) {
-            challenge.typed = '';
-            updateChallengePhrase();
-        } else {
+        challenge.typed = '';
+        challenge.jumpQueue = null;
+
+        if (state.lives <= 0) {
             failChallenge(reason);
+            return;
+        }
+
+        // Penalidade de velocidade
+        challenge.speed = Math.max(challenge.baseSpeed, challenge.speed - 30);
+
+        // Marca o obstáculo como falho e avança para o próximo
+        const obstacle = challenge.obstacles[challenge.currentWordIndex];
+        if (obstacle) {
+            obstacle.cleared = true; // Trata como 'passado' para não haver nova colisão
+            if (obstacle.wordElement) {
+                obstacle.wordElement.classList.add('failed');
+            }
+            challenge.wordStates[challenge.currentWordIndex] = 'failed';
+        }
+
+        challenge.currentWordIndex++;
+        updateChallengePhrase();
+
+        if (challenge.currentWordIndex >= challenge.phraseWords.length) {
+            completeChallenge();
         }
     };
 
@@ -327,8 +433,13 @@ document.addEventListener('DOMContentLoaded', () => {
         state.running = false;
         state.mode = 'idle';
         challenge.typed = '';
-        state.score += 500;
+        challenge.jumpQueue = null;
+        challenge.isJumping = false;
+        challenge.playerVelocityY = 0;
+        challenge.playerY = CHALLENGE_CONFIG.groundY;
+        state.score += CHALLENGE_CONFIG.completionBonus;
         updateHUD();
+        state.allowTyping = false;
         progress.bestScore = Math.max(progress.bestScore, state.score);
         saveProgress();
         updateMenuStats();
@@ -345,65 +456,51 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!challenge.playing) {
             return;
         }
+        const dt = Math.min(delta / 1000, 0.05);
 
-        // Horizontal movement
-        challenge.playerX += (challenge.speed * delta) / 1000;
+        challenge.playerX += challenge.speed * dt;
+
+        if (challenge.jumpQueue && !challenge.isJumping) {
+            const obstacle = challenge.jumpQueue;
+            if (challenge.playerX + CHALLENGE_CONFIG.approachDistance >= obstacle.x) {
+                challenge.isJumping = true;
+                challenge.playerVelocityY = CHALLENGE_CONFIG.jumpVelocity;
+                playJumpSound();
+            }
+        }
+
         if (challenge.playerX >= challenge.trackLength) {
             completeChallenge();
             return;
         }
 
-        // Auto-jump when ready and near obstacle
-        if (challenge.jumpReady && !challenge.isJumping) {
-            const obstacle = challenge.obstacles[challenge.currentWordIndex];
-            const JUMP_TRIGGER_DISTANCE = 150; // Distance in pixels to trigger the jump
-            if (obstacle && obstacle.x - challenge.playerX <= JUMP_TRIGGER_DISTANCE) {
-                challenge.isJumping = true;
-                challenge.playerVelocityY = CHALLENGE_CONFIG.jumpVelocity;
-                playJumpSound();
-                challenge.jumpReady = false; // Consume the jump readiness
-            }
-        }
-
-        // Jump physics
         if (challenge.isJumping) {
-            challenge.playerY += challenge.playerVelocityY;
-            challenge.playerVelocityY -= CHALLENGE_CONFIG.gravity;
-
-            // Check for landing
+            challenge.playerVelocityY -= CHALLENGE_CONFIG.gravity * dt;
+            challenge.playerY += challenge.playerVelocityY * dt;
             if (challenge.playerY <= CHALLENGE_CONFIG.groundY) {
                 challenge.playerY = CHALLENGE_CONFIG.groundY;
-                challenge.isJumping = false;
                 challenge.playerVelocityY = 0;
-
-                // After a successful jump, advance the game state
-                const obstacle = challenge.obstacles[challenge.currentWordIndex];
-                if (obstacle && !obstacle.cleared) {
-                     obstacle.cleared = true;
-
-                    const index = challenge.currentWordIndex;
-                    challenge.wordStates[index] = 'completed';
-                    challenge.typed = '';
-
-                    challenge.currentWordIndex += 1;
-                    challenge.speed = Math.min(challenge.maxSpeed, challenge.speed + 12);
-                    updateChallengePhrase();
-
-                    if (challenge.currentWordIndex >= challenge.phraseWords.length) {
-                        completeChallenge();
-                        return; // End update if challenge is complete
-                    }
+                challenge.isJumping = false;
+                finalizeChallengeJump();
+                if (!challenge.playing) {
+                    updateChallengePositions();
+                    return;
                 }
             }
+        } else {
+            challenge.playerY = CHALLENGE_CONFIG.groundY;
         }
 
         updateChallengePositions();
 
-        // Collision detection
+        if (!challenge.playing) {
+            return;
+        }
+
         const obstacle = challenge.obstacles[challenge.currentWordIndex];
-        if (obstacle && !obstacle.cleared) {
-            const playerFront = challenge.playerX + 60;
-            if (playerFront >= obstacle.x && !challenge.isJumping) {
+        if (obstacle && !obstacle.cleared && !challenge.jumpQueue && !challenge.isJumping) {
+            const playerFront = challenge.playerX + 48;
+            if (playerFront >= obstacle.x) {
                 handleChallengeMistake('Você não digitou a palavra a tempo!');
             }
         }
@@ -412,6 +509,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleChallengeTyping = (event) => {
         const challenge = state.challenge;
         if (!state.running || !challenge.playing) {
+            return;
+        }
+
+        if (challenge.jumpQueue || challenge.isJumping) {
             return;
         }
 
@@ -534,13 +635,13 @@ document.addEventListener('DOMContentLoaded', () => {
             currentWordIndex: 0,
             typed: '',
             playerX: 120,
-            playerY: 84,
+            playerY: CHALLENGE_CONFIG.groundY,
             playerVelocityY: 0,
             isJumping: false,
-            jumpReady: false,
-            speed: 140,
-            baseSpeed: 140,
-            maxSpeed: 220,
+            jumpQueue: null,
+            speed: CHALLENGE_CONFIG.baseSpeed,
+            baseSpeed: CHALLENGE_CONFIG.baseSpeed,
+            maxSpeed: CHALLENGE_CONFIG.maxSpeed,
             acceleration: 5,
             trackLength: 1600,
             obstacles: [],
@@ -1449,8 +1550,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 dom.mainMenu.classList.remove('visible');
             }
             state.score = 0;
-            state.levelIndex = 0;
             state.lives = state.maxLives;
+            renderLives();
+            state.levelIndex = 0;
             state.phase = 'idle';
             state.running = false;
             state.mode = 'idle';
@@ -1480,19 +1582,19 @@ document.addEventListener('DOMContentLoaded', () => {
         resetChallengeState();
         buildChallengeScene();
         state.score = 0;
-        state.lives = CHALLENGE_CONFIG.lives;
-        state.maxLives = CHALLENGE_CONFIG.lives;
+        state.lives = state.maxLives;
         state.running = false;
         state.allowTyping = false;
         state.challengeTarget = '';
         state.challengeInput = '';
+        renderLives();
         updateHUD();
         updateMenuStats();
         updateAudioUI();
         dom.mainMenu?.classList.remove('visible');
         showOverlay({
             title: 'Modo Desafio',
-            description: 'Digite cada palavra da frase antes dos obstáculos. Use Backspace para corrigir.',
+            description: 'Digite cada palavra da frase antes dos obstáculos. Use Backspace para corrigir. Você tem 3 vidas.',
             button: 'Começar desafio',
             action: 'start-challenge',
         });
@@ -1506,7 +1608,7 @@ document.addEventListener('DOMContentLoaded', () => {
         state.challenge.fail = false;
         state.challenge.typed = '';
         state.challenge.currentWordIndex = 0;
-        state.allowTyping = false;
+        state.allowTyping = true;
         updateChallengePhrase();
         updateChallengePositions();
         state.lastTime = performance.now();
