@@ -121,6 +121,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const STORAGE_KEY = 'platformGameProgress:v1';
 
+    const ITEMS_CONFIG = {
+        gear: { src: '../assets/generic-png/items/gear.png' },
+        battery: { src: '../assets/generic-png/items/battery.png' },
+        heart: { src: '../assets/generic-png/items/heart.png' },
+    };
+
+
     const progress = {
         highestLevel: 0,
         bestScore: 0,
@@ -129,13 +136,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const CHALLENGE_CONFIG = {
         phraseWords: [
-            'sol', 'lua', 'gato', 'casa', 'bola', 'doce', 'flor', 'pato', 'fogo', 'rei', 'lago', 'feliz'
+            // Nível 1: 3 letras
+            'sol', 'lua', 'rei', 'paz', 'luz', 'cor', 'mar', 'ceu', 'ver', 'sal', 'som', 'pai',
+            // Nível 2: 4 letras
+            'gato', 'casa', 'bola', 'doce', 'flor', 'pato', 'fogo', 'lago', 'amor', 'vida', 'dedo', 'frio',
+            // Nível 3: 5 letras
+            'feliz', 'festa', 'livro', 'verde', 'porta', 'letra', 'magia', 'jogar', 'comer', 'beber', 'amigo', 'terra'
         ],
-        baseSpeed: 140,
+        baseSpeed: 110, // Reduzido para um início mais lento
         maxSpeed: 240,
-        startOffset: 500, // Espaço antes do primeiro obstáculo
-        spacing_base: 400, // Distância mínima entre obstáculos
-        spacing_per_char: 45, // Acréscimo de distância por letra da palavra
+        startOffset: 500, 
+        spacing_base: 400, 
+        spacing_per_char: 45, 
         approachDistance: 80,
         jumpVelocity: 520,
         gravity: 980,
@@ -169,7 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (i === 0) {
                 spacing = CHALLENGE_CONFIG.startOffset;
             } else {
-                // O espaço antes do obstáculo `i` depende do comprimento da palavra `i`
                 spacing = CHALLENGE_CONFIG.spacing_base + wordLength * CHALLENGE_CONFIG.spacing_per_char;
             }
             const currentX = lastX + spacing;
@@ -192,6 +203,10 @@ document.addEventListener('DOMContentLoaded', () => {
         challenge.jumpQueue = null;
         challenge.isJumping = false;
         challenge.playerVelocityY = 0;
+        challenge.streak = 0;
+        challenge.items.forEach(item => item.element?.remove());
+        challenge.items = [];
+        challenge.effects = { speedBoost: 0, speedSlow: 0 };
     };
 
     const updateChallengePhrase = () => {
@@ -251,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.challengePlayer.style.bottom = `${challenge.playerY}px`;
         }
 
-        challenge.obstacles.forEach((obstacle, index) => {
+        challenge.obstacles.forEach((obstacle) => {
             const position = obstacle.x - scroll;
             if (obstacle.element) {
                 obstacle.element.style.left = `${position}px`;
@@ -259,8 +274,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (obstacle.wordElement) {
                 obstacle.wordElement.style.left = `${position}px`;
-                obstacle.wordElement.classList.toggle('active', index === challenge.currentWordIndex && !obstacle.cleared);
+                obstacle.wordElement.classList.toggle('active', obstacle.index === challenge.currentWordIndex && !obstacle.cleared);
                 obstacle.wordElement.classList.toggle('collected', obstacle.cleared);
+            }
+        });
+
+        challenge.items.forEach(item => {
+            if (item.element) {
+                item.element.style.left = relative(item.x);
             }
         });
 
@@ -271,14 +292,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const buildChallengeScene = () => {
         const challenge = state.challenge;
-        if (dom.challengeObstacles) {
-            dom.challengeObstacles.innerHTML = '';
-        }
-        if (dom.challengeWords) {
-            dom.challengeWords.innerHTML = '';
-        }
+        if (dom.challengeObstacles) dom.challengeObstacles.innerHTML = '';
+        if (dom.challengeWords) dom.challengeWords.innerHTML = '';
 
-        challenge.obstacles.forEach((obstacle, index) => {
+        if (!dom.challengeItemsContainer) {
+            dom.challengeItemsContainer = document.createElement('div');
+            dom.challengeItemsContainer.id = 'challenge-items';
+            dom.challengeWorld.appendChild(dom.challengeItemsContainer);
+        }
+        dom.challengeItemsContainer.innerHTML = '';
+
+        challenge.obstacles.forEach((obstacle) => {
             if (dom.challengeObstacles) {
                 const obstacleEl = document.createElement('div');
                 obstacleEl.className = 'challenge-obstacle';
@@ -290,43 +314,120 @@ document.addEventListener('DOMContentLoaded', () => {
                 const word = document.createElement('div');
                 word.className = 'challenge-word';
                 word.style.left = `${obstacle.x}px`;
-                word.textContent = challenge.phraseWords[index].toUpperCase();
+                word.textContent = challenge.phraseWords[obstacle.index].toUpperCase();
                 dom.challengeWords.appendChild(word);
                 obstacle.wordElement = word;
             }
         });
 
-        if (dom.challengeGround) {
-            dom.challengeGround.style.width = `${challenge.trackLength}px`;
-        }
-        if (dom.challengeTrack) {
-            dom.challengeTrack.style.width = `${challenge.trackLength}px`;
-        }
+        if (dom.challengeGround) dom.challengeGround.style.width = `${challenge.trackLength}px`;
+        if (dom.challengeTrack) dom.challengeTrack.style.width = `${challenge.trackLength}px`;
 
         updateChallengePhrase();
         updateChallengePositions();
     };
 
+    const spawnItem = (type, x, y) => {
+        const config = ITEMS_CONFIG[type];
+        if (!config) return;
+
+        const element = document.createElement('div');
+        element.className = 'challenge-item';
+        element.style.backgroundImage = `url(${config.src})`;
+        
+        const item = {
+            id: Date.now() + Math.random(),
+            type,
+            x,
+            y,
+            width: 64,
+            height: 64,
+            element,
+            collected: false,
+        };
+
+        state.challenge.items.push(item);
+        dom.challengeItemsContainer.appendChild(element);
+        
+        const scroll = state.challenge.scrollX;
+        element.style.left = `${x - scroll}px`;
+        element.style.bottom = `${y}px`;
+    };
+
+    const applyItemEffect = (item) => {
+        const challenge = state.challenge;
+        switch (item.type) {
+            case 'gear':
+                challenge.effects.speedBoost = 5000; // 5 segundos
+                break;
+            case 'battery':
+                challenge.effects.speedSlow = 8000; // 8 segundos
+                break;
+            case 'heart':
+                state.lives = Math.min(GAME_CONFIG.maxLives, state.lives + 1);
+                updateHUD();
+                break;
+        }
+    };
+
+    const updateItems = (delta) => {
+        const { items, playerX, playerY, scrollX } = state.challenge;
+        const playerWidth = GAME_CONFIG.playerWidth;
+
+        for (let i = items.length - 1; i >= 0; i--) {
+            const item = items[i];
+            if (item.collected) continue;
+
+            item.element.style.left = `${item.x - scrollX}px`;
+
+            const playerRect = { x: playerX, y: playerY, width: playerWidth, height: 96 };
+            const itemRect = { x: item.x, y: item.y, width: item.width, height: item.height };
+
+            if (
+                playerRect.x < itemRect.x + itemRect.width &&
+                playerRect.x + playerRect.width > itemRect.x &&
+                playerRect.y < itemRect.y + itemRect.height &&
+                playerRect.y + playerRect.height > itemRect.y
+            ) {
+                item.collected = true;
+                item.element.classList.add('collected');
+                applyItemEffect(item);
+                setTimeout(() => {
+                    item.element?.remove();
+                    state.challenge.items = state.challenge.items.filter(it => it.id !== item.id);
+                }, 300);
+            }
+        }
+    };
+
     const finalizeChallengeJump = () => {
         const challenge = state.challenge;
-        const obstacle = challenge.jumpQueue || challenge.obstacles[challenge.currentWordIndex];
+        const obstacle = challenge.jumpQueue;
         if (!obstacle) {
-            completeChallenge();
             return;
         }
 
         obstacle.cleared = true;
-        if (obstacle.wordElement) {
-            obstacle.wordElement.classList.add('collected');
-        }
-        if (obstacle.element) {
-            obstacle.element.classList.add('cleared');
-        }
+        if (obstacle.wordElement) obstacle.wordElement.classList.add('collected');
+        if (obstacle.element) obstacle.element.classList.add('cleared');
+        
         challenge.jumpQueue = null;
         challenge.typed = '';
         challenge.wordStates[obstacle.index] = 'completed';
         challenge.currentWordIndex = obstacle.index + 1;
-        challenge.speed = Math.min(challenge.maxSpeed, challenge.speed + 16);
+        challenge.speed = Math.min(challenge.maxSpeed, challenge.speed + 4);
+
+        challenge.streak++;
+
+        const nextObstacle = challenge.obstacles[challenge.currentWordIndex];
+        const spawnX = nextObstacle ? (obstacle.x + nextObstacle.x) / 2 : obstacle.x + 300;
+        const spawnY = 100;
+
+        if (challenge.streak > 0 && challenge.streak % 10 === 0) {
+            spawnItem('heart', spawnX, spawnY);
+        } else if (challenge.streak > 0 && challenge.streak % 5 === 0) {
+            spawnItem('battery', spawnX, spawnY);
+        }
 
         if (challenge.currentWordIndex >= challenge.phraseWords.length) {
             updateChallengePhrase();
@@ -341,9 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleWordSuccess = () => {
         const challenge = state.challenge;
-        if (challenge.jumpQueue) {
-            return;
-        }
+        if (challenge.jumpQueue) return;
         const obstacle = challenge.obstacles[challenge.currentWordIndex];
         if (!obstacle) {
             completeChallenge();
@@ -361,9 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const failChallenge = (reason = 'Você não tem mais vidas!') => {
         const challenge = state.challenge;
-        if (!challenge.playing) {
-            return;
-        }
+        if (!challenge.playing) return;
         challenge.playing = false;
         state.running = false;
         state.mode = 'idle';
@@ -385,50 +482,53 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const handleChallengeMistake = (reason) => {
+    const processChallengeFailure = (type, reason) => {
         const challenge = state.challenge;
-        if (!challenge.playing) {
-            return;
-        }
+        if (!challenge.playing) return;
 
-        state.lives = Math.max(0, state.lives - 1);
-        updateHUD();
         playErrorSound();
-
+        challenge.streak = 0;
         challenge.typed = '';
-        challenge.jumpQueue = null;
-
-        if (state.lives <= 0) {
-            failChallenge(reason);
-            return;
+        
+        if (challenge.jumpQueue) {
+            challenge.jumpQueue = null;
         }
 
-        // Penalidade de velocidade
-        challenge.speed = Math.max(challenge.baseSpeed, challenge.speed - 30);
+        if (type === 'collision') {
+            state.lives = Math.max(0, state.lives - 1);
+            updateHUD();
 
-        // Marca o obstáculo como falho e avança para o próximo
-        const obstacle = challenge.obstacles[challenge.currentWordIndex];
-        if (obstacle) {
-            obstacle.cleared = true; // Trata como 'passado' para não haver nova colisão
-            if (obstacle.wordElement) {
-                obstacle.wordElement.classList.add('failed');
+            if (state.lives <= 0) {
+                failChallenge(reason);
+                return;
             }
-            challenge.wordStates[challenge.currentWordIndex] = 'failed';
-        }
+            
+            const obstacle = challenge.obstacles[challenge.currentWordIndex];
+            if (obstacle) {
+                const spawnX = obstacle.x + 100;
+                spawnItem('gear', spawnX, 80);
+                
+                obstacle.cleared = true; 
+                if (obstacle.wordElement) {
+                    obstacle.wordElement.classList.add('failed');
+                }
+                challenge.wordStates[challenge.currentWordIndex] = 'failed';
+            }
 
-        challenge.currentWordIndex++;
-        updateChallengePhrase();
+            challenge.currentWordIndex++;
+            updateChallengePhrase();
 
-        if (challenge.currentWordIndex >= challenge.phraseWords.length) {
-            completeChallenge();
+            if (challenge.currentWordIndex >= challenge.phraseWords.length) {
+                completeChallenge();
+            }
+        } else if (type === 'typing') {
+            updateChallengePhrase();
         }
     };
 
     const completeChallenge = () => {
         const challenge = state.challenge;
-        if (!challenge.playing) {
-            return;
-        }
+        if (!challenge.playing) return;
         challenge.playing = false;
         state.running = false;
         state.mode = 'idle';
@@ -453,12 +553,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const updateChallenge = (delta) => {
         const challenge = state.challenge;
-        if (!challenge.playing) {
-            return;
-        }
+        if (!challenge.playing) return;
         const dt = Math.min(delta / 1000, 0.05);
 
-        challenge.playerX += challenge.speed * dt;
+        let currentSpeed = challenge.speed;
+        if (challenge.effects.speedBoost > 0) {
+            currentSpeed *= 1.4; // 40% mais rápido
+            challenge.effects.speedBoost -= delta;
+        }
+        if (challenge.effects.speedSlow > 0) {
+            currentSpeed *= 0.75; // 25% mais lento
+            challenge.effects.speedSlow -= delta;
+        }
+
+        challenge.playerX += currentSpeed * dt;
 
         if (challenge.jumpQueue && !challenge.isJumping) {
             const obstacle = challenge.jumpQueue;
@@ -491,17 +599,16 @@ document.addEventListener('DOMContentLoaded', () => {
             challenge.playerY = CHALLENGE_CONFIG.groundY;
         }
 
+        updateItems(delta);
         updateChallengePositions();
 
-        if (!challenge.playing) {
-            return;
-        }
+        if (!challenge.playing) return;
 
         const obstacle = challenge.obstacles[challenge.currentWordIndex];
         if (obstacle && !obstacle.cleared && !challenge.jumpQueue && !challenge.isJumping) {
             const playerFront = challenge.playerX + 48;
             if (playerFront >= obstacle.x) {
-                handleChallengeMistake('Você não digitou a palavra a tempo!');
+                processChallengeFailure('collision', 'Você não digitou a palavra a tempo!');
             }
         }
     };
@@ -535,7 +642,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetWord = challenge.phraseWords[challenge.currentWordIndex] || '';
         const nextInput = (challenge.typed + letter).toLowerCase();
         if (!targetWord.toLowerCase().startsWith(nextInput)) {
-            handleChallengeMistake('Letra incorreta!');
+            processChallengeFailure('typing', 'Letra incorreta!');
             return;
         }
 
@@ -648,6 +755,9 @@ document.addEventListener('DOMContentLoaded', () => {
             playing: false,
             fail: false,
             scrollX: 0,
+            streak: 0, // Contador de acertos seguidos
+            items: [], // Itens ativos na tela
+            effects: { speedBoost: 0, speedSlow: 0 }, // Timers para efeitos ativos
         },
     };
 

@@ -557,6 +557,48 @@ body {
     z-index: 3;
 }
 
+#challenge-items {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.challenge-item {
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+}
+
+.challenge-item.collected {
+    transform: scale(1.6) rotate(360deg);
+    opacity: 0;
+}
+
+.challenge-item {
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+}
+
+.challenge-item.collected {
+    transform: scale(1.6) rotate(360deg);
+    opacity: 0;
+}
+
 .challenge-obstacle {
     position: absolute;
     bottom: 0;
