@@ -7,8 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
         platforms: Array.from(document.querySelectorAll('.platform')),
         overlay: document.getElementById('start-overlay'),
         startButton: document.getElementById('start-button'),
+        startButtonSecondary: document.getElementById('overlay-secondary-button'),
         overlayTitle: document.querySelector('#start-overlay h1'),
         overlayText: document.querySelector('#start-overlay p'),
+        overlayDetails: document.getElementById('overlay-details'),
         hudLevel: document.getElementById('hud-level'),
         hudScore: document.getElementById('hud-score'),
         livesContainer: document.getElementById('hud-lives'),
@@ -21,10 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
         menuStartChallenge: document.getElementById('menu-start-challenge'),
         menuHowToButton: document.getElementById('menu-howto-button'),
         menuHowToPanel: document.getElementById('menu-howto-panel'),
-        menuBestLevel: document.getElementById('menu-best-level'),
-        menuBestScore: document.getElementById('menu-best-score'),
         menuAudioToggle: document.getElementById('menu-audio-toggle'),
+        menuOpenStats: document.getElementById('menu-open-stats'),
         audioToggle: document.getElementById('audio-toggle'),
+        homeButton: document.getElementById('home-button'),
         challengeWorld: document.getElementById('challenge-world'),
         challengeTrack: document.getElementById('challenge-track'),
         challengePlayer: document.getElementById('challenge-player'),
@@ -32,6 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
         challengeWords: document.getElementById('challenge-words'),
         challengePhrase: document.getElementById('challenge-phrase'),
         challengeGround: document.getElementById('challenge-ground'),
+        statsModal: document.getElementById('stats-modal'),
+        statsClose: document.getElementById('stats-close'),
+        statsTabs: Array.from(document.querySelectorAll('.stats-tab')),
+        statsPaneProgressive: document.getElementById('stats-progressive'),
+        statsPaneChallenge: document.getElementById('stats-challenge'),
+        deviceWarning: document.getElementById('device-warning'),
     };
 
     if (
@@ -155,6 +163,11 @@ document.addEventListener('DOMContentLoaded', () => {
         highestLevel: 0,
         bestScore: 0,
         audioEnabled: true,
+        currentLevelIndex: 0,
+        stats: {
+            progressive: [],
+            challenge: [],
+        },
     };
 
     const CHALLENGE_CONFIG = {
@@ -185,8 +198,420 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const CHALLENGE_WORD_OFFSET = 40;
 
+    const MAX_STATS_HISTORY = 10;
+
+    const preciseNow = () => (typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now());
+    const createAttemptId = (mode) => `${mode}-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+
+    const dedupeStatsList = (list) => {
+        if (!Array.isArray(list)) {
+            return [];
+        }
+        const seen = new Set();
+        return list.filter((entry) => {
+            const key = [
+                entry?.attemptId ?? '',
+                entry?.mode ?? '',
+                entry?.timestamp ?? '',
+                entry?.durationMs ?? '',
+                entry?.scoreDelta ?? '',
+            ].join('|');
+            if (seen.has(key)) {
+                return false;
+            }
+            seen.add(key);
+            return true;
+        });
+    };
+
+    const clampHistory = (list) => {
+        const normalized = dedupeStatsList(Array.isArray(list) ? list.slice() : []);
+        if (normalized.length > MAX_STATS_HISTORY) {
+            return normalized.slice(0, MAX_STATS_HISTORY);
+        }
+        return normalized;
+    };
+
+    const ensureStatsStructure = () => {
+        if (!progress.stats || typeof progress.stats !== 'object') {
+            progress.stats = { progressive: [], challenge: [] };
+        }
+        if (!Array.isArray(progress.stats.progressive)) {
+            progress.stats.progressive = [];
+        }
+        if (!Array.isArray(progress.stats.challenge)) {
+            progress.stats.challenge = [];
+        }
+        progress.stats.progressive = clampHistory(progress.stats.progressive);
+        progress.stats.challenge = clampHistory(progress.stats.challenge);
+    };
+
+    ensureStatsStructure();
+
+    const formatDuration = (ms) => {
+        const totalSeconds = Math.max(0, Math.round(ms / 1000));
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        const minutesLabel = minutes.toLocaleString('pt-BR');
+        const secondsLabel = seconds.toString().padStart(2, '0');
+        return `${minutesLabel}:${secondsLabel}`;
+    };
+
+    const formatTimestamp = (ts) => {
+        try {
+            return new Date(ts).toLocaleString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                day: '2-digit',
+                month: '2-digit',
+            });
+        } catch (error) {
+            return '';
+        }
+    };
+
+    const formatNumber = (value, fractionDigits = 0) => {
+        return Number(value || 0).toLocaleString('pt-BR', {
+            minimumFractionDigits: fractionDigits,
+            maximumFractionDigits: fractionDigits,
+        });
+    };
+
+    function recordStatsEntry(mode, summary) {
+        ensureStatsStructure();
+        if (!summary) {
+            return;
+        }
+        if (!Array.isArray(progress.stats[mode])) {
+            progress.stats[mode] = [];
+        }
+        const updated = clampHistory([summary, ...progress.stats[mode]]);
+        progress.stats[mode] = updated;
+        saveProgress();
+        renderStatsPanel();
+    }
+
+    const buildProgressiveSummaryLines = (summary) => {
+        if (!summary) {
+            return [];
+        }
+        const lines = [];
+        lines.push(`Tempo: <strong>${summary.durationLabel}</strong>`);
+        lines.push(`Palavras: <strong>${summary.wordsCompleted}</strong> de <strong>${summary.wordsTotal}</strong>`);
+        if (summary.wordsFailed > 0) {
+            lines.push(`Palavras não concluídas: <strong>${formatNumber(summary.wordsFailed)}</strong>`);
+        }
+        lines.push(`Velocidade: <strong>${formatNumber(summary.wordsPerMinute, 1)} palavras/min</strong>`);
+        lines.push(`Precisão: <strong>${formatNumber(summary.accuracy, 1)}%</strong>`);
+        if (summary.typingErrors > 0) {
+            lines.push(`Erros de digitação: <strong>${summary.typingErrors}</strong>`);
+        }
+        if (summary.timeoutErrors > 0) {
+            lines.push(`Tempo esgotado: <strong>${summary.timeoutErrors}</strong>`);
+        }
+        if (summary.livesLost > 0) {
+            lines.push(`Vidas perdidas: <strong>${summary.livesLost}</strong>`);
+        }
+        if (summary.maxStreak > 0) {
+            lines.push(`Maior sequência correta: <strong>${summary.maxStreak}</strong>`);
+        }
+        lines.push(`Pontuação nesta tentativa: <strong>${formatNumber(summary.scoreDelta)}</strong>`);
+        return lines;
+    };
+
+    const buildChallengeSummaryLines = (summary) => {
+        if (!summary) {
+            return [];
+        }
+        const lines = [];
+        lines.push(`Tempo: <strong>${summary.durationLabel}</strong>`);
+        lines.push(`Velocidade: <strong>${formatNumber(summary.wordsPerMinute, 1)} palavras/min</strong>`);
+        lines.push(`Precisão: <strong>${formatNumber(summary.accuracy, 1)}%</strong>`);
+        lines.push(`Pontuação nesta tentativa: <strong>${formatNumber(summary.scoreDelta)}</strong>`);
+        lines.push(`Erros de digitação: <strong>${formatNumber(summary.typingErrors || 0)}</strong>`);
+        return lines;
+    };
+
+    const startProgressiveAttempt = () => {
+        state.attemptStats.progressive = {
+            attemptId: createAttemptId('progressive'),
+            levelId: currentLevel().id,
+            startTime: preciseNow(),
+            startedAt: Date.now(),
+            scoreAtStart: state.score,
+            keystrokesTotal: 0,
+            invalidKeystrokes: 0,
+            lettersTyped: 0,
+            wordsCompleted: 0,
+            wordsFailed: 0,
+            typingErrors: 0,
+            timeoutErrors: 0,
+            collisionErrors: 0,
+            livesLost: 0,
+            currentStreak: 0,
+            maxStreak: 0,
+            wordsTotal: Math.max(0, state.stepsPerLevel || 0),
+        };
+        progress.currentLevelIndex = state.levelIndex;
+        saveProgress();
+    };
+
+    const finalizeProgressiveAttempt = (result, extra = {}) => {
+        const metrics = state.attemptStats.progressive;
+        if (!metrics) {
+            return null;
+        }
+        const endTime = preciseNow();
+        const durationMs = Math.max(0, endTime - metrics.startTime);
+        const wordsTotal = metrics.wordsTotal ?? state.stepsPerLevel ?? (metrics.wordsCompleted + metrics.wordsFailed);
+        const keystrokesTotal = metrics.keystrokesTotal;
+        const invalidKeystrokes = metrics.invalidKeystrokes;
+        const validKeystrokes = Math.max(0, keystrokesTotal - invalidKeystrokes);
+        const accuracy = keystrokesTotal > 0 ? (validKeystrokes / keystrokesTotal) * 100 : 100;
+        const wordsPerMinute = durationMs > 0 ? metrics.wordsCompleted / (durationMs / 60000) : 0;
+        const keystrokesPerMinute = durationMs > 0 ? validKeystrokes / (durationMs / 60000) : 0;
+        const scoreDelta = state.score - metrics.scoreAtStart;
+
+        const summary = {
+            mode: 'progressive',
+            attemptId: metrics.attemptId,
+            result,
+            levelId: metrics.levelId,
+            timestamp: Date.now(),
+            durationMs,
+            durationLabel: formatDuration(durationMs),
+            wordsCompleted: metrics.wordsCompleted,
+            wordsFailed: metrics.wordsFailed,
+            wordsTotal,
+            typingErrors: metrics.typingErrors,
+            timeoutErrors: metrics.timeoutErrors,
+            collisionErrors: metrics.collisionErrors,
+            livesLost: metrics.livesLost,
+            wordsPerMinute,
+            keystrokesPerMinute,
+            keystrokesTotal,
+            accuracy,
+            maxStreak: metrics.maxStreak,
+            scoreDelta,
+            ...extra,
+        };
+
+        state.attemptStats.progressive = null;
+        recordStatsEntry('progressive', summary);
+        return summary;
+    };
+
+    const startChallengeAttempt = () => {
+        state.attemptStats.challenge = {
+            attemptId: createAttemptId('challenge'),
+            startTime: preciseNow(),
+            startedAt: Date.now(),
+            scoreAtStart: state.score,
+            wordsTotal: Math.max(0, state.challenge.phraseWords.length || 0),
+            wordsCompleted: 0,
+            wordsFailed: 0,
+            typingErrors: 0,
+            collisionErrors: 0,
+            livesLost: 0,
+            keystrokesTotal: 0,
+            invalidKeystrokes: 0,
+            lettersTyped: 0,
+        };
+    };
+
+    const finalizeChallengeAttempt = (result, extra = {}) => {
+        const metrics = state.attemptStats.challenge;
+        if (!metrics) {
+            return null;
+        }
+        const endTime = preciseNow();
+        const durationMs = Math.max(0, endTime - metrics.startTime);
+        const keystrokesTotal = metrics.keystrokesTotal;
+        const invalidKeystrokes = metrics.invalidKeystrokes;
+        const validKeystrokes = Math.max(0, keystrokesTotal - invalidKeystrokes);
+        const accuracy = keystrokesTotal > 0 ? (validKeystrokes / keystrokesTotal) * 100 : 100;
+        const wordsPerMinute = durationMs > 0 ? metrics.wordsCompleted / (durationMs / 60000) : 0;
+        const keystrokesPerMinute = durationMs > 0 ? validKeystrokes / (durationMs / 60000) : 0;
+        const scoreDelta = state.score - metrics.scoreAtStart;
+
+        const inferredWordsFailed = Math.max(0, (metrics.wordsTotal || 0) - metrics.wordsCompleted);
+        const totalWordsFailed = Math.max(Number(metrics.wordsFailed || 0), inferredWordsFailed);
+
+        const summary = {
+            mode: 'challenge',
+            attemptId: metrics.attemptId,
+            result,
+            timestamp: Date.now(),
+            durationMs,
+            durationLabel: formatDuration(durationMs),
+            wordsCompleted: metrics.wordsCompleted,
+            wordsFailed: totalWordsFailed,
+            wordsTotal: metrics.wordsTotal,
+            typingErrors: metrics.typingErrors,
+            collisionErrors: metrics.collisionErrors,
+            livesLost: metrics.livesLost,
+            wordsPerMinute,
+            keystrokesPerMinute,
+            keystrokesTotal,
+            accuracy,
+            scoreDelta,
+            ...extra,
+        };
+
+        state.attemptStats.challenge = null;
+        recordStatsEntry('challenge', summary);
+        return summary;
+    };
+
+    const computeAggregateStats = (entries) => {
+        if (!entries || entries.length === 0) {
+            return null;
+        }
+        const totalAttempts = entries.length;
+        let totalWords = 0;
+        let totalTime = 0;
+        let totalWpm = 0;
+        let totalAccuracy = 0;
+        let totalScore = 0;
+        entries.forEach((entry) => {
+            totalWords += Number(entry.wordsCompleted || 0);
+            totalTime += Number(entry.durationMs || 0);
+            totalWpm += Number(entry.wordsPerMinute || 0);
+            totalAccuracy += Number(entry.accuracy || 0);
+            totalScore += Number(entry.scoreDelta || 0);
+        });
+        return {
+            attempts: totalAttempts,
+            words: totalWords,
+            averageTime: totalTime / totalAttempts,
+            averageWpm: totalWpm / totalAttempts,
+            averageAccuracy: totalAccuracy / totalAttempts,
+            totalScore,
+        };
+    };
+
+    function renderStatsPane(entries, container, modeLabel) {
+        if (!container) {
+            return;
+        }
+        if (!entries || entries.length === 0) {
+            container.innerHTML = '<p class="stats-empty">Ainda não há registros.</p>';
+            return;
+        }
+        const summary = computeAggregateStats(entries);
+        const summaryHtml = summary
+            ? `<div class="stats-summary">
+                    <div class="summary-card"><span class="summary-value">${formatNumber(summary.attempts)}</span><span class="summary-label">Tentativas</span></div>
+                    <div class="summary-card"><span class="summary-value">${formatNumber(summary.words)}</span><span class="summary-label">Palavras concluídas</span></div>
+                    <div class="summary-card"><span class="summary-value">${formatDuration(summary.averageTime || 0)}</span><span class="summary-label">Tempo médio</span></div>
+                    <div class="summary-card"><span class="summary-value">${formatNumber(summary.averageWpm || 0, 1)}</span><span class="summary-label">Velocidade média</span></div>
+                    <div class="summary-card"><span class="summary-value">${formatNumber(summary.averageAccuracy || 0, 1)}%</span><span class="summary-label">Precisão média</span></div>
+                </div>`
+            : '';
+
+        const entriesForDisplay = Array.isArray(entries)
+            ? entries.slice(0, MAX_STATS_HISTORY)
+            : [];
+        const itemsHtml = entriesForDisplay
+            .map((entry) => {
+                const header = modeLabel === 'progressive'
+                    ? `Nível ${entry.levelId}`
+                    : entry.result === 'success' ? 'Frase concluída' : 'Tentativa do desafio';
+
+                const metricsSegments = [`Tempo ${entry.durationLabel}`];
+
+                if (modeLabel === 'progressive') {
+                    metricsSegments.push(`Palavras ${formatNumber(entry.wordsCompleted)}/${formatNumber(entry.wordsTotal)}`);
+                    metricsSegments.push(`Velocidade ${formatNumber(entry.wordsPerMinute || 0, 1)} wpm`);
+                    metricsSegments.push(`Precisão ${formatNumber(entry.accuracy || 0, 1)}%`);
+                    metricsSegments.push(`Pontuação ${formatNumber(entry.scoreDelta || 0)}`);
+                    const totalErrors = Number(entry.typingErrors || 0) + Number(entry.timeoutErrors || 0);
+                    if (totalErrors > 0) {
+                        metricsSegments.push(`Erros ${formatNumber(totalErrors)}`);
+                    }
+                    if (Number(entry.maxStreak || 0) > 0) {
+                        metricsSegments.push(`Maior sequência ${formatNumber(entry.maxStreak || 0)}`);
+                    }
+                    if (Number(entry.wordsFailed || 0) > 0) {
+                        metricsSegments.push(`Palavras com erro ${formatNumber(entry.wordsFailed || 0)}`);
+                    }
+                } else {
+                    metricsSegments.push(`Velocidade ${formatNumber(entry.wordsPerMinute || 0, 1)} wpm`);
+                    metricsSegments.push(`Precisão ${formatNumber(entry.accuracy || 0, 1)}%`);
+                    metricsSegments.push(`Pontuação ${formatNumber(entry.scoreDelta || 0)}`);
+                    metricsSegments.push(`Erros digitação ${formatNumber(entry.typingErrors || 0)}`);
+                }
+
+                const metricsHtml = metricsSegments.map((text) => `<span>${text}</span>`).join('');
+
+                return `<div class="stat-entry">
+                    <div class="stat-entry-header">
+                        <span>${header}</span>
+                        <span>${formatTimestamp(entry.timestamp)}</span>
+                    </div>
+                    <div class="stat-entry-metrics">
+                        ${metricsHtml}
+                    </div>
+                </div>`;
+            })
+            .join('');
+
+        const entryListHtml = itemsHtml ? `<div class="stats-entry-list">${itemsHtml}</div>` : '';
+        container.innerHTML = `${summaryHtml}${entryListHtml}`;
+    }
+
+    function renderStatsPanel() {
+        if (!dom.statsPaneProgressive || !dom.statsPaneChallenge) {
+            return;
+        }
+        ensureStatsStructure();
+        renderStatsPane(progress.stats.progressive, dom.statsPaneProgressive, 'progressive');
+        renderStatsPane(progress.stats.challenge, dom.statsPaneChallenge, 'challenge');
+    }
+
+    function setStatsTab(tab = 'progressive') {
+        if (!dom.statsTabs) {
+            return;
+        }
+        dom.statsTabs.forEach((button) => {
+            const target = button.dataset.tab;
+            const isActive = target === tab;
+            button.classList.toggle('active', isActive);
+        });
+        if (dom.statsPaneProgressive) {
+            dom.statsPaneProgressive.classList.toggle('active', tab === 'progressive');
+        }
+        if (dom.statsPaneChallenge) {
+            dom.statsPaneChallenge.classList.toggle('active', tab === 'challenge');
+        }
+    }
+
+    function openStatsModal(tab = 'progressive') {
+        if (!dom.statsModal) {
+            return;
+        }
+        renderStatsPanel();
+        setStatsTab(tab);
+        dom.statsModal.classList.remove('hidden');
+    }
+
+    function closeStatsModal() {
+        if (!dom.statsModal) {
+            return;
+        }
+        dom.statsModal.classList.add('hidden');
+    }
+
+    const clampLevelIndex = (value) => {
+        if (Number.isNaN(value)) {
+            return 0;
+        }
+        return Math.min(Math.max(Math.floor(value ?? 0), 0), GAME_CONFIG.levels.length - 1);
+    };
+
     const resetChallengeState = () => {
         const challenge = state.challenge;
+        state.attemptStats.challenge = null;
         challenge.phraseWords = CHALLENGE_CONFIG.phraseWords.slice();
         challenge.wordStates = challenge.phraseWords.map(() => 'pending');
         challenge.currentWordIndex = 0;
@@ -407,6 +832,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             challenge.pendingJumps.push(obstacle);
         }
+        const challengeMetrics = state.attemptStats.challenge;
+        if (challengeMetrics) {
+            challengeMetrics.wordsCompleted += 1;
+        }
         challenge.wordStates[currentIndex] = 'queued';
         const nextIndex = currentIndex + 1;
         challenge.currentWordIndex = nextIndex;
@@ -436,11 +865,15 @@ document.addEventListener('DOMContentLoaded', () => {
         saveProgress();
         updateActiveChallengeWordDisplay();
         updateMenuStats();
+        const challengeSummary = finalizeChallengeAttempt('fail', { reason });
         showOverlay({
             title: 'Fim de jogo!',
             description: reason,
             button: 'Tentar novamente',
             action: 'retry-challenge',
+            secondaryButton: 'Menu principal',
+            secondaryAction: 'return-menu',
+            details: buildChallengeSummaryLines(challengeSummary),
         });
     };
 
@@ -450,14 +883,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         playErrorSound();
         challenge.typed = '';
-        
+
         if (challenge.jumpQueue) {
             challenge.jumpQueue = null;
             challenge.pendingJumps = [];
         }
 
+        const challengeMetrics = state.attemptStats.challenge;
+        if (challengeMetrics) {
+            if (type === 'typing') {
+                challengeMetrics.typingErrors += 1;
+                challengeMetrics.invalidKeystrokes += 1;
+            } else if (type === 'collision') {
+                challengeMetrics.collisionErrors += 1;
+            }
+        }
+
         if (type === 'collision') {
+            const previousLives = state.lives;
             state.lives = Math.max(0, state.lives - 1);
+            if (challengeMetrics && previousLives > state.lives) {
+                challengeMetrics.livesLost += previousLives - state.lives;
+                challengeMetrics.wordsFailed += 1;
+            }
             updateHUD();
 
             if (state.lives <= 0) {
@@ -504,11 +952,15 @@ document.addEventListener('DOMContentLoaded', () => {
         saveProgress();
         updateActiveChallengeWordDisplay();
         updateMenuStats();
+        const challengeSummary = finalizeChallengeAttempt('success');
         showOverlay({
             title: 'Desafio concluído!',
             description: 'Você digitou toda a frase, parabéns!',
             button: 'Voltar ao menu',
             action: 'return-menu',
+            secondaryButton: 'Jogar novamente',
+            secondaryAction: 'start-challenge',
+            details: buildChallengeSummaryLines(challengeSummary),
         });
     };
 
@@ -592,10 +1044,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const challengeMetrics = state.attemptStats.challenge;
+        if (challengeMetrics) {
+            challengeMetrics.keystrokesTotal += 1;
+        }
+
         const nextInput = (challenge.typed + letter).toLowerCase();
         if (!targetWord.toLowerCase().startsWith(nextInput)) {
             processChallengeFailure('typing', 'Letra incorreta!');
             return;
+        }
+
+        if (challengeMetrics) {
+            challengeMetrics.lettersTyped += 1;
         }
 
         challenge.typed = nextInput;
@@ -629,7 +1090,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (typeof parsed.audioEnabled === 'boolean') {
                     progress.audioEnabled = parsed.audioEnabled;
                 }
+                if (typeof parsed.currentLevelIndex === 'number') {
+                    progress.currentLevelIndex = clampLevelIndex(parsed.currentLevelIndex);
+                }
+                if (parsed.stats && typeof parsed.stats === 'object') {
+                    progress.stats = parsed.stats;
+                }
             }
+            ensureStatsStructure();
+            progress.stats.progressive = clampHistory(progress.stats.progressive);
+            progress.stats.challenge = clampHistory(progress.stats.challenge);
         } catch (error) {
             console.warn('Não foi possível carregar o progresso salvo:', error);
         }
@@ -640,6 +1110,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof window === 'undefined' || !window.localStorage) {
                 return;
             }
+            ensureStatsStructure();
+            progress.stats.progressive = clampHistory(progress.stats.progressive);
+            progress.stats.challenge = clampHistory(progress.stats.challenge);
             const payload = JSON.stringify(progress);
             window.localStorage.setItem(STORAGE_KEY, payload);
         } catch (error) {
@@ -673,6 +1146,7 @@ document.addEventListener('DOMContentLoaded', () => {
         challengeInput: '',
         challengeTimer: 0,
         pendingAction: 'start-game',
+        pendingSecondaryAction: null,
         score: 0,
         maxLives: GAME_CONFIG.maxLives,
         lives: GAME_CONFIG.maxLives,
@@ -688,6 +1162,10 @@ document.addEventListener('DOMContentLoaded', () => {
         platformWords: Array(dom.platforms.length).fill(''),
         mode: 'menu',
         gameMode: 'progressive',
+        attemptStats: {
+            progressive: null,
+            challenge: null,
+        },
         challenge: {
             phraseWords: [],
             wordStates: [],
@@ -711,7 +1189,38 @@ document.addEventListener('DOMContentLoaded', () => {
         },
     };
 
+    const pointerMediaQuery =
+        typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+            ? window.matchMedia('(pointer: coarse)')
+            : null;
+
+    const shouldShowDeviceWarning = () => {
+        const coarsePointer = pointerMediaQuery ? pointerMediaQuery.matches : false;
+        const smallViewport = typeof window !== 'undefined'
+            ? window.innerWidth < 900 || window.innerHeight < 600
+            : false;
+        return coarsePointer || smallViewport;
+    };
+
+    const updateDeviceWarning = () => {
+        if (!dom.deviceWarning) {
+            return;
+        }
+        const showWarning = shouldShowDeviceWarning();
+        dom.deviceWarning.classList.toggle('hidden', !showWarning);
+        if (typeof document !== 'undefined' && document.body) {
+            document.body.classList.toggle('device-warning-active', showWarning);
+        }
+        if (showWarning) {
+            state.running = false;
+            state.allowTyping = false;
+        }
+    };
+
     loadProgress();
+
+    state.levelIndex = clampLevelIndex(progress.currentLevelIndex);
+    progress.currentLevelIndex = state.levelIndex;
 
     const lerp = (start, end, t) => start + (end - start) * t;
     const formatTime = (ms) => `${Math.max(0, Math.ceil(ms / 1000))}s`;
@@ -767,19 +1276,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const updateMenuStats = () => {
-        if (dom.menuBestLevel) {
-            dom.menuBestLevel.textContent = progress.highestLevel > 0
-                ? String(progress.highestLevel)
-                : '--';
-        }
-        if (dom.menuBestScore) {
-            const formattedScore = progress.bestScore > 0
-                ? progress.bestScore.toLocaleString('pt-BR')
-                : '0';
-            dom.menuBestScore.textContent = formattedScore;
-        }
-    };
+    const updateMenuStats = () => {};
 
     const audioState = {
         context: null,
@@ -1205,6 +1702,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleChallengeSuccess = () => {
         const level = currentLevel();
+        const progressMetrics = state.attemptStats.progressive;
+        if (progressMetrics) {
+            progressMetrics.wordsCompleted += 1;
+            progressMetrics.currentStreak += 1;
+            progressMetrics.maxStreak = Math.max(progressMetrics.maxStreak, progressMetrics.currentStreak);
+        }
+        const challengeMetrics = state.attemptStats.challenge;
+        if (challengeMetrics) {
+            challengeMetrics.wordsCompleted += 1;
+        }
         state.score += level.scoreReward;
         updateHUD();
         playSuccessSound();
@@ -1212,12 +1719,36 @@ document.addEventListener('DOMContentLoaded', () => {
         startSuccessJump();
     };
 
-    const handleChallengeFailure = () => {
+    const handleChallengeFailure = (reason = 'Você não tem mais vidas!', errorType = 'typing', meta = {}) => {
         if (state.phase !== 'awaiting-input') {
             return;
         }
 
+        const metrics = state.attemptStats.progressive;
+        if (metrics) {
+            metrics.wordsFailed += 1;
+            metrics.currentStreak = 0;
+            switch (errorType) {
+                case 'timeout':
+                    metrics.timeoutErrors += 1;
+                    break;
+                case 'collision':
+                    metrics.collisionErrors += 1;
+                    break;
+                default:
+                    metrics.typingErrors += 1;
+                    break;
+            }
+            if (meta && Number(meta.invalidKeystrokes) > 0) {
+                metrics.invalidKeystrokes += Number(meta.invalidKeystrokes);
+            }
+        }
+
+        const previousLives = state.lives;
         state.lives = Math.max(0, state.lives - 1);
+        if (metrics && previousLives > state.lives) {
+            metrics.livesLost += previousLives - state.lives;
+        }
         updateHUD();
         markPlatformFailed(state.nextPlatformIndex, state.challengeInput);
         updateChallengeUI();
@@ -1249,21 +1780,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
         progress.highestLevel = Math.max(progress.highestLevel, level.id);
         progress.bestScore = Math.max(progress.bestScore, state.score);
-        saveProgress();
-        updateMenuStats();
 
         if (!isLastLevel) {
-            state.levelIndex = Math.min(state.levelIndex + 1, GAME_CONFIG.levels.length - 1);
+            state.levelIndex = clampLevelIndex(state.levelIndex + 1);
+            progress.currentLevelIndex = state.levelIndex;
             applyLevelSkin();
             repositionForLevelStart();
             assignPlatformWordsForLevel();
             clearChallenge();
             updateHUD();
+        } else {
+            progress.currentLevelIndex = state.levelIndex;
+        }
+
+        saveProgress();
+        updateMenuStats();
+
+        const summary = finalizeProgressiveAttempt('success');
+        const details = buildProgressiveSummaryLines(summary);
+
+        if (!isLastLevel) {
             showOverlay({
                 title: `Nível ${level.id} concluído!`,
                 description: `Pontuação: ${state.score} pontos.`,
                 button: 'Próximo nível',
                 action: 'start-level',
+                secondaryButton: 'Menu principal',
+                secondaryAction: 'return-menu',
+                details,
             });
         } else {
             showOverlay({
@@ -1271,6 +1815,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 description: `Pontuação final: ${state.score} pontos.`,
                 button: 'Voltar ao menu',
                 action: 'return-menu',
+                secondaryButton: 'Estatísticas',
+                secondaryAction: 'open-stats',
+                details,
             });
         }
     };
@@ -1287,6 +1834,8 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.goalDoor.classList.remove('open');
         }
         progress.bestScore = Math.max(progress.bestScore, state.score);
+        progress.currentLevelIndex = state.levelIndex;
+        const failSummary = finalizeProgressiveAttempt('fail');
         saveProgress();
         updateMenuStats();
         showOverlay({
@@ -1294,6 +1843,9 @@ document.addEventListener('DOMContentLoaded', () => {
             description: `Tente novamente o nível ${level.id}. Pontuação atual: ${state.score}`,
             button: 'Tentar de novo',
             action: 'retry-level',
+            secondaryButton: 'Menu principal',
+            secondaryAction: 'return-menu',
+            details: buildProgressiveSummaryLines(failSummary),
         });
     };
 
@@ -1348,7 +1900,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (state.phase === 'awaiting-input' && state.challengeTarget) {
             state.challengeTimer -= delta;
             if (state.challengeTimer <= 0) {
-                handleChallengeFailure();
+                handleChallengeFailure('Tempo esgotado!', 'timeout');
             }
         }
 
@@ -1378,9 +1930,17 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.overlay.classList.add('hidden');
         }
         state.pendingAction = null;
+        state.pendingSecondaryAction = null;
+        if (dom.overlayDetails) {
+            dom.overlayDetails.innerHTML = '';
+            dom.overlayDetails.classList.add('hidden');
+        }
+        if (dom.startButtonSecondary) {
+            dom.startButtonSecondary.classList.add('hidden');
+        }
     };
 
-    const showOverlay = ({ title, description, button, action }) => {
+    const showOverlay = ({ title, description, button, action, secondaryButton, secondaryAction, details }) => {
         if (!dom.overlay) {
             return;
         }
@@ -1393,11 +1953,40 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.overlayText.textContent = description;
         }
 
-        if (dom.startButton && button) {
-            dom.startButton.textContent = button;
+        if (dom.startButton) {
+            if (button) {
+                dom.startButton.textContent = button;
+                dom.startButton.classList.remove('hidden');
+            } else {
+                dom.startButton.classList.add('hidden');
+            }
         }
 
-        state.pendingAction = action;
+        if (dom.startButtonSecondary) {
+            if (secondaryButton) {
+                dom.startButtonSecondary.textContent = secondaryButton;
+                dom.startButtonSecondary.classList.remove('hidden');
+            } else {
+                dom.startButtonSecondary.classList.add('hidden');
+            }
+        }
+
+        if (dom.overlayDetails) {
+            if (Array.isArray(details) && details.length > 0) {
+                const listItems = details.map((line) => `<li>${line}</li>`).join('');
+                dom.overlayDetails.innerHTML = `<ul>${listItems}</ul>`;
+                dom.overlayDetails.classList.remove('hidden');
+            } else if (typeof details === 'string' && details.trim().length > 0) {
+                dom.overlayDetails.innerHTML = `<div>${details}</div>`;
+                dom.overlayDetails.classList.remove('hidden');
+            } else {
+                dom.overlayDetails.innerHTML = '';
+                dom.overlayDetails.classList.add('hidden');
+            }
+        }
+
+        state.pendingAction = action || null;
+        state.pendingSecondaryAction = secondaryAction || null;
         dom.overlay.classList.remove('hidden');
     };
 
@@ -1411,6 +2000,16 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.overlay.classList.add('hidden');
         }
         state.pendingAction = null;
+        state.pendingSecondaryAction = null;
+        state.attemptStats.progressive = null;
+        state.attemptStats.challenge = null;
+        if (dom.overlayDetails) {
+            dom.overlayDetails.innerHTML = '';
+            dom.overlayDetails.classList.add('hidden');
+        }
+        if (dom.statsModal) {
+            dom.statsModal.classList.add('hidden');
+        }
         if (dom.mainMenu) {
             dom.mainMenu.classList.add('visible');
         }
@@ -1420,13 +2019,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dom.menuHowToButton) {
             dom.menuHowToButton.textContent = 'Como jogar';
         }
-        state.levelIndex = 0;
+        const targetLevelIndex = clampLevelIndex(progress.currentLevelIndex);
+        state.levelIndex = targetLevelIndex;
+        progress.currentLevelIndex = targetLevelIndex;
+        saveProgress();
         state.score = 0;
         state.lives = state.maxLives;
         applyLevelSkin();
         updateHUD();
         updateMenuStats();
         updateAudioUI();
+        renderStatsPanel();
         repositionForLevelStart();
         assignPlatformWordsForLevel();
         clearChallenge();
@@ -1439,6 +2042,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const prepareLevelRun = () => {
+        progress.currentLevelIndex = state.levelIndex;
+        saveProgress();
         state.challengeIndex = 0;
         state.phase = 'awaiting-input';
         state.challengeTarget = '';
@@ -1451,6 +2056,7 @@ document.addEventListener('DOMContentLoaded', () => {
         applyLevelSkin();
         repositionForLevelStart();
         assignPlatformWordsForLevel();
+        startProgressiveAttempt();
         clearChallenge();
         updateHUD();
         prepareChallenge();
@@ -1470,6 +2076,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const restartGame = () => {
         state.score = 0;
         state.levelIndex = 0;
+        progress.currentLevelIndex = state.levelIndex;
+        saveProgress();
         updateHUD();
         beginCurrentLevel();
     };
@@ -1485,7 +2093,9 @@ document.addEventListener('DOMContentLoaded', () => {
             state.score = 0;
             state.lives = state.maxLives;
             renderLives();
-            state.levelIndex = 0;
+            state.levelIndex = clampLevelIndex(progress.currentLevelIndex);
+            progress.currentLevelIndex = state.levelIndex;
+            saveProgress();
             state.phase = 'idle';
             state.running = false;
             state.mode = 'idle';
@@ -1497,6 +2107,7 @@ document.addEventListener('DOMContentLoaded', () => {
             clearChallenge();
             updateMenuStats();
             updateAudioUI();
+            renderStatsPanel();
             showOverlay({
                 title: 'Pronto para subir?',
                 description: 'Clique em começar ou pressione espaço para iniciar.',
@@ -1544,6 +2155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         state.allowTyping = true;
         updateChallengePhrase();
         updateChallengePositions();
+        startChallengeAttempt();
         state.lastTime = performance.now();
         requestAnimationFrame(gameLoop);
     };
@@ -1556,35 +2168,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const handleStartAction = () => {
-        if (!state.pendingAction) {
-            return;
-        }
-
-        switch (state.pendingAction) {
+    const executeOverlayAction = (action) => {
+        switch (action) {
             case 'start-game':
             case 'start-level':
                 beginCurrentLevel();
-                break;
+                return;
             case 'retry-level':
                 beginCurrentLevel();
-                break;
+                return;
             case 'restart-game':
                 restartGame();
-                break;
+                return;
             case 'start-challenge':
                 beginChallengeRun();
-                break;
+                return;
             case 'retry-challenge':
                 prepareChallengeMode();
-                break;
+                return;
             case 'return-menu':
                 enterMenu();
-                break;
+                return;
+            case 'open-stats':
+                hideOverlay();
+                openStatsModal();
+                return;
             default:
-                beginCurrentLevel();
-                break;
+                if (action) {
+                    beginCurrentLevel();
+                }
         }
+    };
+
+    const handleOverlayAction = (action) => {
+        if (!action) {
+            return;
+        }
+        executeOverlayAction(action);
+    };
+
+    const handleStartAction = () => {
+        handleOverlayAction(state.pendingAction);
     };
 
     const handleTypingInput = (event) => {
@@ -1617,10 +2241,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const progressMetrics = state.attemptStats.progressive;
+        if (progressMetrics) {
+            progressMetrics.keystrokesTotal += 1;
+        }
+
         const nextInput = state.challengeInput + letter;
         if (!state.challengeTarget.startsWith(nextInput)) {
-            handleChallengeFailure();
+            handleChallengeFailure('Letra incorreta!', 'typing', { invalidKeystrokes: 1 });
             return;
+        }
+
+        if (progressMetrics) {
+            progressMetrics.lettersTyped += 1;
         }
 
         state.challengeInput = nextInput;
@@ -1633,6 +2266,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     dom.startButton?.addEventListener('click', () => {
         handleStartAction();
+    });
+
+    dom.startButtonSecondary?.addEventListener('click', () => {
+        handleOverlayAction(state.pendingSecondaryAction);
     });
 
     dom.menuStartProgressive?.addEventListener('click', () => {
@@ -1660,11 +2297,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
     dom.menuAudioToggle?.addEventListener('click', toggleAudio);
     dom.audioToggle?.addEventListener('click', toggleAudio);
+    dom.homeButton?.addEventListener('click', () => {
+        enterMenu();
+    });
+
+    dom.menuOpenStats?.addEventListener('click', () => {
+        openStatsModal('progressive');
+    });
+
+    dom.statsClose?.addEventListener('click', () => {
+        closeStatsModal();
+    });
+
+    dom.statsModal?.addEventListener('click', (event) => {
+        if (event.target === dom.statsModal) {
+            closeStatsModal();
+        }
+    });
+
+    dom.statsTabs?.forEach((tab) => {
+        tab.addEventListener('click', () => {
+            setStatsTab(tab.dataset.tab || 'progressive');
+        });
+    });
+
+    window.addEventListener('resize', updateDeviceWarning);
+    window.addEventListener('orientationchange', updateDeviceWarning);
+    if (pointerMediaQuery) {
+        const pointerListener = () => updateDeviceWarning();
+        if (typeof pointerMediaQuery.addEventListener === 'function') {
+            pointerMediaQuery.addEventListener('change', pointerListener);
+        } else if (typeof pointerMediaQuery.addListener === 'function') {
+            pointerMediaQuery.addListener(pointerListener);
+        }
+    }
 
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
             event.preventDefault();
+            if (dom.statsModal && !dom.statsModal.classList.contains('hidden')) {
+                closeStatsModal();
+                return;
+            }
             enterMenu();
+            return;
+        }
+
+        if (dom.statsModal && !dom.statsModal.classList.contains('hidden')) {
             return;
         }
 
@@ -1691,6 +2370,8 @@ document.addEventListener('DOMContentLoaded', () => {
         applyCamera(true);
     });
 
+    updateDeviceWarning();
     updateHUD();
+    renderStatsPanel();
     enterMenu();
 });
