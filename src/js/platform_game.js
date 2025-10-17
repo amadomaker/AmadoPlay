@@ -325,6 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const lines = [];
         lines.push(`Tempo: <strong>${summary.durationLabel}</strong>`);
+        lines.push(`Palavras: <strong>${summary.wordsCompleted}</strong> de <strong>${summary.wordsTotal}</strong>`);
         lines.push(`Velocidade: <strong>${formatNumber(summary.wordsPerMinute, 1)} palavras/min</strong>`);
         lines.push(`Precisão: <strong>${formatNumber(summary.accuracy, 1)}%</strong>`);
         lines.push(`Pontuação nesta tentativa: <strong>${formatNumber(summary.scoreDelta)}</strong>`);
@@ -536,6 +537,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         metricsSegments.push(`Palavras com erro ${formatNumber(entry.wordsFailed || 0)}`);
                     }
                 } else {
+                    metricsSegments.push(`Palavras ${formatNumber(entry.wordsCompleted || 0)}/${formatNumber(entry.wordsTotal || 0)}`);
                     metricsSegments.push(`Velocidade ${formatNumber(entry.wordsPerMinute || 0, 1)} wpm`);
                     metricsSegments.push(`Precisão ${formatNumber(entry.accuracy || 0, 1)}%`);
                     metricsSegments.push(`Pontuação ${formatNumber(entry.scoreDelta || 0)}`);
