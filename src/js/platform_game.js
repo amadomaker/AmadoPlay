@@ -13,8 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
         hudScore: document.getElementById('hud-score'),
         livesContainer: document.getElementById('hud-lives'),
         hudTimer: document.getElementById('hud-timer'),
-        hudWordTyped: document.getElementById('hud-word-typed'),
-        hudWordRemaining: document.getElementById('hud-word-remaining'),
         parallaxLayers: Array.from(document.querySelectorAll('.parallax-layer')),
         goalDoor: document.getElementById('goal-door'),
         platformLabels: Array.from(document.querySelectorAll('.platform-label')),
@@ -68,8 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
             platformVariant: 'variant-2',
             timeLimit: 6000,
             scoreReward: 120,
-            baseSequence: ['ba', 'be', 'bi', 'bo', 'bu', 'da', 'de', 'di', 'du', 'fa', 'fe', 'fu'],
-            sequence: ['ba', 'be', 'bi', 'bo', 'bu', 'da', 'de', 'di', 'du', 'fa', 'fe', 'fu'],
+            baseSequence: ['ba', 'be', 'bi', 'bo', 'bu', 'da', 'de', 'di', 'do', 'du', 'fa', 'fe', 'fu'],
+            sequence: ['ba', 'be', 'bi', 'bo', 'bu', 'da', 'de', 'di', 'do', 'du', 'fa', 'fe', 'fu'],
         },
         {
             id: 2,
@@ -80,11 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
             scoreReward: 180,
             baseSequence: [
                 'sol', 'lua', 'mel', 'paz', 'voz', 'fio', 'mar', 'luz',
-                'bar', 'rio', 'dom', 'fim', 'dia', 'céu', 'lar', 'mãe',
+                'bar', 'rio', 'dom', 'fim', 'dia', 'foz', 'lar', 'tia',
             ],
             sequence: [
                 'sol', 'lua', 'mel', 'paz', 'voz', 'fio', 'mar', 'luz',
-                'bar', 'rio', 'dom', 'fim', 'dia', 'céu', 'lar', 'mãe',
+                'bar', 'rio', 'dom', 'fim', 'dia', 'foz', 'lar', 'tia',
             ],
         },
         {
@@ -107,6 +105,38 @@ document.addEventListener('DOMContentLoaded', () => {
             baseSequence: ['navio', 'amigo', 'fruta', 'caminho', 'nuvem', 'janela', 'trilho', 'tesouro', 'pirata', 'estilo'],
             sequence: ['navio', 'amigo', 'fruta', 'caminho', 'nuvem', 'janela', 'trilho', 'tesouro', 'pirata', 'estilo'],
         },
+        {
+            id: 5,
+            label: 'Palavras curtas com acento',
+            theme: 'sunset',
+            platformVariant: 'variant-1',
+            timeLimit: 9500,
+            scoreReward: 360,
+            baseSequence: [
+                'pão', 'avó', 'avô', 'vão', 'três', 'café',
+                'júri', 'país', 'baú', 'céu', 'íris', 'área',
+            ],
+            sequence: [
+                'pão', 'avó', 'avô', 'vão', 'três', 'café',
+                'júri', 'país', 'baú', 'céu', 'íris', 'área',
+            ],
+        },
+        {
+            id: 6,
+            label: 'Palavras longas com acento',
+            theme: 'forest',
+            platformVariant: 'variant-4',
+            timeLimit: 11000,
+            scoreReward: 450,
+            baseSequence: [
+                'coração', 'campeão', 'canção', 'televisão', 'férias', 'oração',
+                'limões', 'educação', 'árvore', 'proteção', 'cidadão', 'compaixão',
+            ],
+            sequence: [
+                'coração', 'campeão', 'canção', 'televisão', 'férias', 'oração',
+                'limões', 'educação', 'árvore', 'proteção', 'cidadão', 'compaixão',
+            ],
+        },
         ],
     };
 
@@ -120,11 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const PLATFORM_VARIANT_CLASSES = ['variant-1', 'variant-2', 'variant-3', 'variant-4'];
 
     const STORAGE_KEY = 'platformGameProgress:v1';
-
-    const ITEMS_CONFIG = {
-        heart: {},
-    };
-
 
     const progress = {
         highestLevel: 0,
@@ -157,6 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
         completionBonus: 500,
         mistakeKnockback: 140,
     };
+
+    const CHALLENGE_WORD_OFFSET = 40;
 
     const resetChallengeState = () => {
         const challenge = state.challenge;
@@ -202,21 +229,14 @@ document.addEventListener('DOMContentLoaded', () => {
         challenge.fail = false;
         challenge.scrollX = 0;
         challenge.jumpQueue = null;
+        challenge.pendingJumps = [];
         challenge.isJumping = false;
         challenge.playerVelocityY = 0;
-        challenge.streak = 0;
-        challenge.items.forEach(item => item.element?.remove());
-        challenge.items = [];
-        challenge.effects = { speedBoost: 0, speedSlow: 0 };
     };
 
     const updateChallengePhrase = () => {
-        if (dom.hudWordTyped && dom.hudWordRemaining && state.gameMode === 'challenge') {
-            const activeWord = state.challenge.phraseWords[state.challenge.currentWordIndex] || '';
-            const typed = state.challenge.typed.toUpperCase();
-            const remaining = activeWord.slice(typed.length).toUpperCase();
-            dom.hudWordTyped.textContent = typed || '_';
-            dom.hudWordRemaining.textContent = remaining;
+        if (state.gameMode === 'challenge') {
+            updateActiveChallengeWordDisplay();
         }
     };
 
@@ -238,15 +258,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 obstacle.element.classList.toggle('cleared', obstacle.cleared);
             }
             if (obstacle.wordElement) {
-                obstacle.wordElement.style.left = `${position}px`;
-                obstacle.wordElement.classList.toggle('active', obstacle.index === challenge.currentWordIndex && !obstacle.cleared);
-                obstacle.wordElement.classList.toggle('collected', obstacle.cleared);
-            }
-        });
+                const stateName = challenge.wordStates[obstacle.index] || 'pending';
+                const isQueued = stateName === 'queued';
+                const isFailed = stateName === 'failed';
+                const isCompleted = stateName === 'completed';
+                const showCollected = isCompleted || (obstacle.cleared && !isFailed);
+                const isActive = obstacle.index === challenge.currentWordIndex
+                    && challenge.playing
+                    && !isQueued
+                    && !showCollected;
 
-        challenge.items.forEach(item => {
-            if (item.element) {
-                item.element.style.left = relative(item.x);
+                obstacle.wordElement.style.left = `${position - CHALLENGE_WORD_OFFSET}px`;
+                obstacle.wordElement.classList.toggle('active', isActive);
+                obstacle.wordElement.classList.toggle('queued', isQueued);
+                obstacle.wordElement.classList.toggle('collected', showCollected);
+                obstacle.wordElement.classList.toggle('failed', isFailed);
             }
         });
 
@@ -260,13 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dom.challengeObstacles) dom.challengeObstacles.innerHTML = '';
         if (dom.challengeWords) dom.challengeWords.innerHTML = '';
 
-        if (!dom.challengeItemsContainer) {
-            dom.challengeItemsContainer = document.createElement('div');
-            dom.challengeItemsContainer.id = 'challenge-items';
-            dom.challengeWorld.appendChild(dom.challengeItemsContainer);
-        }
-        dom.challengeItemsContainer.innerHTML = '';
-
         challenge.obstacles.forEach((obstacle) => {
             if (dom.challengeObstacles) {
                 const obstacleEl = document.createElement('div');
@@ -278,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (dom.challengeWords) {
                 const word = document.createElement('div');
                 word.className = 'challenge-word';
-                word.style.left = `${obstacle.x}px`;
+                word.style.left = `${obstacle.x - CHALLENGE_WORD_OFFSET}px`;
                 word.textContent = challenge.phraseWords[obstacle.index].toUpperCase();
                 dom.challengeWords.appendChild(word);
                 obstacle.wordElement = word;
@@ -292,73 +311,54 @@ document.addEventListener('DOMContentLoaded', () => {
         updateChallengePositions();
     };
 
-    const spawnItem = (type, x, y) => {
-        const config = ITEMS_CONFIG[type];
-        if (!config) return;
-
-        const element = document.createElement('div');
-        element.className = 'challenge-item';
-        element.classList.add(`item-${type}`);
-        element.style.width = '64px';
-        element.style.height = '64px';
-        
-        const item = {
-            id: Date.now() + Math.random(),
-            type,
-            x,
-            y,
-            width: 64,
-            height: 64,
-            element,
-            collected: false,
-        };
-
-        state.challenge.items.push(item);
-        dom.challengeItemsContainer.appendChild(element);
-        
-        const scroll = state.challenge.scrollX;
-        element.style.left = `${x - scroll}px`;
-        element.style.bottom = `${y}px`;
-    };
-
-    const applyItemEffect = (item) => {
+    const updateActiveChallengeWordDisplay = () => {
         const challenge = state.challenge;
-        switch (item.type) {
-            case 'heart':
-                state.lives = Math.min(GAME_CONFIG.maxLives, state.lives + 1);
-                updateHUD();
-                break;
-        }
-    };
-
-    const updateItems = (delta) => {
-        const { items, playerX, playerY, scrollX } = state.challenge;
-        const playerWidth = GAME_CONFIG.playerWidth;
-
-        for (let i = items.length - 1; i >= 0; i--) {
-            const item = items[i];
-            if (item.collected) continue;
-
-            item.element.style.left = `${item.x - scrollX}px`;
-
-            const playerRect = { x: playerX, y: playerY, width: playerWidth, height: 96 };
-            const itemRect = { x: item.x, y: item.y, width: item.width, height: item.height };
-
-            if (
-                playerRect.x < itemRect.x + itemRect.width &&
-                playerRect.x + playerRect.width > itemRect.x &&
-                playerRect.y < itemRect.y + itemRect.height &&
-                playerRect.y + playerRect.height > itemRect.y
-            ) {
-                item.collected = true;
-                item.element.classList.add('collected');
-                applyItemEffect(item);
-                setTimeout(() => {
-                    item.element?.remove();
-                    state.challenge.items = state.challenge.items.filter(it => it.id !== item.id);
-                }, 300);
+        challenge.obstacles.forEach((obstacle) => {
+            const wordElement = obstacle.wordElement;
+            if (!wordElement) {
+                return;
             }
-        }
+
+            const word = challenge.phraseWords[obstacle.index] || '';
+            const wordUpper = word.toUpperCase();
+            const stateName = challenge.wordStates[obstacle.index] || 'pending';
+            const isActive = obstacle.index === challenge.currentWordIndex && challenge.playing;
+
+            if (stateName !== 'pending') {
+                wordElement.textContent = wordUpper;
+                return;
+            }
+
+            if (!isActive) {
+                wordElement.textContent = wordUpper;
+                return;
+            }
+
+            const typed = challenge.typed.toUpperCase();
+            const typedLength = typed.length;
+            const before = wordUpper.slice(0, typedLength);
+            const currentChar = wordUpper[typedLength] || '';
+            const remaining = currentChar
+                ? wordUpper.slice(typedLength + 1)
+                : wordUpper.slice(typedLength);
+
+            let html = '';
+            if (before) {
+                html += `<span class="word-typed">${before}</span>`;
+            }
+            if (currentChar) {
+                html += `<span class="word-current">${currentChar}</span>`;
+            }
+            if (remaining) {
+                html += `<span class="word-remaining">${remaining}</span>`;
+            }
+
+            if (html) {
+                wordElement.innerHTML = html;
+            } else {
+                wordElement.textContent = wordUpper;
+            }
+        });
     };
 
     const finalizeChallengeJump = () => {
@@ -373,20 +373,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (obstacle.element) obstacle.element.classList.add('cleared');
         
         challenge.jumpQueue = null;
-        challenge.typed = '';
-        challenge.wordStates[obstacle.index] = 'completed';
-        challenge.currentWordIndex = obstacle.index + 1;
-        challenge.speed = Math.min(challenge.maxSpeed, challenge.speed + 6);
-
-        challenge.streak++;
-
-        const nextObstacle = challenge.obstacles[challenge.currentWordIndex];
-        const spawnX = nextObstacle ? (obstacle.x + nextObstacle.x) / 2 : obstacle.x + 300;
-        const spawnY = 100;
-
-        if (challenge.streak > 0 && challenge.streak % 15 === 0) {
-            spawnItem('heart', spawnX, spawnY);
+        if (challenge.pendingJumps.length > 0) {
+            challenge.jumpQueue = challenge.pendingJumps.shift();
         }
+        challenge.wordStates[obstacle.index] = 'completed';
+        challenge.speed = Math.min(challenge.maxSpeed, challenge.speed + 6);
 
         if (challenge.currentWordIndex >= challenge.phraseWords.length) {
             updateChallengePhrase();
@@ -401,20 +392,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleWordSuccess = () => {
         const challenge = state.challenge;
-        if (challenge.jumpQueue) return;
-        const obstacle = challenge.obstacles[challenge.currentWordIndex];
+        const currentIndex = challenge.currentWordIndex;
+        const obstacle = challenge.obstacles[currentIndex];
         if (!obstacle) {
             completeChallenge();
             return;
         }
+        if (challenge.wordStates[currentIndex] !== 'pending') {
+            return;
+        }
 
-        challenge.jumpQueue = obstacle;
-        challenge.wordStates[challenge.currentWordIndex] = 'queued';
+        if (!challenge.jumpQueue) {
+            challenge.jumpQueue = obstacle;
+        } else {
+            challenge.pendingJumps.push(obstacle);
+        }
+        challenge.wordStates[currentIndex] = 'queued';
+        const nextIndex = currentIndex + 1;
+        challenge.currentWordIndex = nextIndex;
         challenge.typed = '';
         state.score += CHALLENGE_CONFIG.scorePerWord;
         updateHUD();
         playSuccessSound();
         updateChallengePhrase();
+        updateChallengePositions();
     };
 
     const failChallenge = (reason = 'Você não tem mais vidas!') => {
@@ -426,12 +427,14 @@ document.addEventListener('DOMContentLoaded', () => {
         challenge.fail = true;
         challenge.typed = '';
         challenge.jumpQueue = null;
+        challenge.pendingJumps = [];
         challenge.isJumping = false;
         challenge.playerVelocityY = 0;
         challenge.playerY = CHALLENGE_CONFIG.groundY;
         state.allowTyping = false;
         progress.bestScore = Math.max(progress.bestScore, state.score);
         saveProgress();
+        updateActiveChallengeWordDisplay();
         updateMenuStats();
         showOverlay({
             title: 'Fim de jogo!',
@@ -446,11 +449,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!challenge.playing) return;
 
         playErrorSound();
-        challenge.streak = 0;
         challenge.typed = '';
         
         if (challenge.jumpQueue) {
             challenge.jumpQueue = null;
+            challenge.pendingJumps = [];
         }
 
         if (type === 'collision') {
@@ -490,6 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
         state.mode = 'idle';
         challenge.typed = '';
         challenge.jumpQueue = null;
+        challenge.pendingJumps = [];
         challenge.isJumping = false;
         challenge.playerVelocityY = 0;
         challenge.playerY = CHALLENGE_CONFIG.groundY;
@@ -498,6 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
         state.allowTyping = false;
         progress.bestScore = Math.max(progress.bestScore, state.score);
         saveProgress();
+        updateActiveChallengeWordDisplay();
         updateMenuStats();
         showOverlay({
             title: 'Desafio concluído!',
@@ -547,7 +552,6 @@ document.addEventListener('DOMContentLoaded', () => {
             challenge.playerY = CHALLENGE_CONFIG.groundY;
         }
 
-        updateItems(delta);
         updateChallengePositions();
 
         if (!challenge.playing) return;
@@ -567,10 +571,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (challenge.jumpQueue || challenge.isJumping) {
-            return;
-        }
-
         if (event.key === 'Backspace') {
             event.preventDefault();
             challenge.typed = challenge.typed.slice(0, -1);
@@ -582,12 +582,16 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const targetWord = challenge.phraseWords[challenge.currentWordIndex] || '';
+        if (!targetWord) {
+            return;
+        }
+
         const letter = event.key.toLowerCase();
         if (!letter.match(/[a-záàãâéêíóôõúç]/)) {
             return;
         }
 
-        const targetWord = challenge.phraseWords[challenge.currentWordIndex] || '';
         const nextInput = (challenge.typed + letter).toLowerCase();
         if (!targetWord.toLowerCase().startsWith(nextInput)) {
             processChallengeFailure('typing', 'Letra incorreta!');
@@ -703,9 +707,7 @@ document.addEventListener('DOMContentLoaded', () => {
             playing: false,
             fail: false,
             scrollX: 0,
-            streak: 0, // Contador de acertos seguidos
-            items: [], // Itens ativos na tela
-            effects: { speedBoost: 0, speedSlow: 0 }, // Timers para efeitos ativos
+            pendingJumps: [],
         },
     };
 
@@ -887,144 +889,6 @@ document.addEventListener('DOMContentLoaded', () => {
         playTone(90, 0.35, { type: 'square', volume: 0.08 });
     };
 
-    const vocabulary = {
-        wordsByLength: new Map(),
-        ready: false,
-        loadPromise: null,
-    };
-
-    const collectWord = (word) => {
-        if (!word || typeof word !== 'string') {
-            return;
-        }
-        const normalized = word.trim().toLowerCase();
-        if (!normalized) {
-            return;
-        }
-        const length = normalized.length;
-        if (!vocabulary.wordsByLength.has(length)) {
-            vocabulary.wordsByLength.set(length, new Set());
-        }
-        vocabulary.wordsByLength.get(length).add(normalized);
-    };
-
-    const ingestVocabularyPayload = (payload) => {
-        if (!payload || !Array.isArray(payload.jogos)) {
-            return;
-        }
-        payload.jogos.forEach((entry) => {
-            if (!entry || typeof entry !== 'object') {
-                return;
-            }
-            const words = Array.isArray(entry.palavras) ? entry.palavras : [];
-            words.forEach(collectWord);
-        });
-        vocabulary.ready = vocabulary.wordsByLength.size > 0;
-    };
-
-    const getWordsByLengths = (lengths = [], maximum = 12) => {
-        const bucket = new Set();
-        lengths.forEach((length) => {
-            const collection = vocabulary.wordsByLength.get(length);
-            if (!collection) {
-                return;
-            }
-            collection.forEach((word) => bucket.add(word));
-        });
-        if (bucket.size === 0) {
-            return [];
-        }
-        const combined = Array.from(bucket);
-        for (let i = combined.length - 1; i > 0; i -= 1) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [combined[i], combined[j]] = [combined[j], combined[i]];
-        }
-        return combined.slice(0, maximum);
-    };
-
-    const applyExternalVocabulary = () => {
-        if (!vocabulary.ready) {
-            return;
-        }
-
-        const updateLevelSequence = (levelId, lengths, desiredCount) => {
-            const level = GAME_CONFIG.levels.find((item) => item.id === levelId);
-            if (!level) {
-                return;
-            }
-
-            const fallback = Array.isArray(level.baseSequence) ? level.baseSequence : level.sequence;
-            const targetCount = desiredCount || fallback.length || 12;
-            const selection = getWordsByLengths(lengths, targetCount);
-
-            const seen = new Set();
-            const combined = [];
-            const pushWord = (word, forceDuplicate = false) => {
-                if (!word || typeof word !== 'string') {
-                    return;
-                }
-                const key = word.toLowerCase();
-                if (!forceDuplicate && seen.has(key)) {
-                    return;
-                }
-                seen.add(key);
-                combined.push(word);
-            };
-
-            selection.forEach(pushWord);
-            fallback.forEach(pushWord);
-
-            if (combined.length < targetCount) {
-                if (fallback.length > 0) {
-                    let index = 0;
-                    while (combined.length < targetCount) {
-                        pushWord(fallback[index % fallback.length], true);
-                        index += 1;
-                    }
-                }
-            }
-
-            level.sequence = combined.slice(0, targetCount);
-        };
-
-        updateLevelSequence(2, [3], 18);
-        updateLevelSequence(3, [4], 18);
-        updateLevelSequence(4, [5, 6], 20);
-
-        if (state.mode === 'menu' && !state.running) {
-            applyLevelSkin();
-            assignPlatformWordsForLevel();
-            clearChallenge();
-        }
-    };
-
-    const loadVocabulary = () => {
-        if (vocabulary.loadPromise) {
-            return vocabulary.loadPromise;
-        }
-        if (typeof fetch !== 'function') {
-            vocabulary.loadPromise = Promise.resolve();
-            return vocabulary.loadPromise;
-        }
-        const requestPath = '../data/soletra_jogos.json';
-        vocabulary.loadPromise = fetch(requestPath)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Requisição falhou com status ${response.status}`);
-                }
-                return response.json();
-            })
-            .then((data) => {
-                ingestVocabularyPayload(data);
-                applyExternalVocabulary();
-            })
-            .catch((error) => {
-                console.warn('Não foi possível carregar o vocabulário externo:', error);
-            });
-
-        return vocabulary.loadPromise;
-    };
-
     const updateHUD = () => {
         if (dom.hudLevel) {
             if (state.gameMode === 'progressive') {
@@ -1043,18 +907,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (state.gameMode !== 'progressive') {
             return;
         }
-        if (dom.hudWordTyped && dom.hudWordRemaining) {
-            if (!state.challengeTarget) {
-                dom.hudWordTyped.textContent = '_';
-                dom.hudWordRemaining.textContent = '';
-            } else {
-                const typed = (state.challengeInput || '').toUpperCase();
-                const remaining = state.challengeTarget.slice(typed.length).toUpperCase();
-                dom.hudWordTyped.textContent = typed || '_';
-                dom.hudWordRemaining.textContent = remaining;
-            }
-        }
-
         updateTimerIndicator();
         highlightActivePlatform();
     };
@@ -1092,9 +944,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (status === 'completed') {
-            label.innerHTML = `<span class="typed">${cleanWord}</span>`;
+            label.innerHTML = `<span class="word-typed">${cleanWord}</span>`;
+            label.classList.remove('has-caret');
         } else {
-            label.innerHTML = `<span class="typed">${typedPart}</span><span class="remaining">${remainingPart}</span>`;
+            const nextChar = remainingPart.charAt(0) || '';
+            const afterNext = remainingPart.slice(1);
+            const segments = [];
+
+            segments.push(`<span class="word-typed">${typedPart}</span>`);
+            if (nextChar) {
+                segments.push(`<span class="word-current">${nextChar}</span>`);
+            }
+            if (afterNext) {
+                segments.push(`<span class="word-remaining">${afterNext}</span>`);
+            }
+
+            label.innerHTML = segments.join('');
+            label.classList.toggle('has-caret', Boolean(nextChar));
         }
 
         label.classList.add(`status-${status}`);
@@ -1107,12 +973,16 @@ document.addEventListener('DOMContentLoaded', () => {
         state.stepsPerLevel = maxSteps;
 
         for (let index = 0; index < dom.platforms.length; index += 1) {
+            const platform = dom.platforms[index];
             if (index === 0) {
                 state.platformWords[index] = '';
                 setPlatformLabel(index, { word: '', typed: '', status: 'hidden' });
-                const label = getPlatformLabel(index);
-                if (label) {
-                    label.classList.remove('goal-target');
+                if (platform) {
+                    platform.classList.remove('unused');
+                }
+                const startLabel = getPlatformLabel(index);
+                if (startLabel) {
+                    startLabel.classList.remove('goal-target');
                 }
                 continue;
             }
@@ -1125,10 +995,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (word) {
                 setPlatformLabel(index, { word, typed: '', status: 'pending' });
+                platform?.classList.remove('unused');
             } else {
                 setPlatformLabel(index, { word: '', typed: '', status: 'hidden' });
+                platform?.classList.add('unused');
             }
 
+            if (platform) {
+                platform.classList.toggle('goal-platform', isGoalPlatform);
+            }
             if (label) {
                 label.classList.toggle('goal-target', isGoalPlatform);
             }
@@ -1817,6 +1692,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     updateHUD();
-    loadVocabulary();
     enterMenu();
 });

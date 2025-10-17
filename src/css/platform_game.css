@@ -29,7 +29,7 @@ body {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
-    z-index: 6;
+    z-index: 999;
 }
 
 #main-menu.screen.visible {
@@ -282,22 +282,6 @@ body {
     font-size: 0.95rem;
     font-weight: 700;
     color: #87f3ff;
-}
-
-.hud-word {
-    font-size: 1.2rem;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.45);
-}
-
-#hud-word-typed {
-    color: #87f3ff;
-}
-
-#hud-word-remaining {
-    margin-left: 4px;
-    color: rgba(255, 255, 255, 0.26);
 }
 
 .ambient-orb {
@@ -627,6 +611,10 @@ body {
     text-shadow: 0 0 10px #ffe600, 0 0 20px #fff;
 }
 
+.challenge-word.queued {
+    color: #87f3ff;
+}
+
 .challenge-word.collected {
     color: #7cff9c;
     animation: challenge-word-glow 0.8s ease;
@@ -638,12 +626,20 @@ body {
     opacity: 0.6;
 }
 
-.challenge-word .typed {
-    color: #87f3ff;
+.challenge-word .word-typed {
+    color: #7cff9c;
 }
 
-.challenge-word .remaining {
-    color: rgba(255, 255, 255, 0.4);
+.challenge-word .word-current {
+    color: #ffe600;
+    display: inline-block;
+    border-bottom: 3px solid currentColor;
+    padding: 0 2px;
+    margin: 0 1px;
+}
+
+.challenge-word .word-remaining {
+    color: rgba(255, 255, 255, 0.45);
 }
 
 #challenge-phrase {
@@ -702,6 +698,14 @@ body {
     z-index: 2;
 }
 
+.platform.goal-platform {
+    z-index: 15;
+}
+
+.platform.unused {
+    display: none;
+}
+
 .platform.variant-1 {
     background-image: url('../assets/images/generic-png/platforms/platform.png');
 }
@@ -734,27 +738,38 @@ body {
     pointer-events: none;
     white-space: nowrap;
     transition: transform 0.18s ease, opacity 0.18s ease;
+    z-index: 12;
 }
 
-.platform-label .typed {
-    color: #87f3ff;
+.platform-label .word-typed {
+    color: #7cff9c;
 }
 
-.platform-label .remaining {
-    color: rgba(255, 255, 255, 0.7);
+.platform-label .word-current {
+    color: #ffe600;
+    display: inline-block;
+    border-bottom: 3px solid currentColor;
+    padding: 0 2px;
+    margin: 0 1px;
 }
 
-.platform-label.status-pending .remaining {
-    color: rgba(255, 255, 255, 0.6);
+.platform-label .word-remaining {
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.platform-label.has-caret .word-current {
+    animation: caret-pulse 0.8s ease-in-out infinite alternate;
 }
 
 .platform-label.goal-target {
     padding: 4px 12px;
     border-radius: 999px;
-    background: rgba(12, 0, 38, 0.65);
+    background: rgba(12, 0, 38, 0.88);
     box-shadow: 0 10px 22px rgba(0, 0, 0, 0.4), 0 0 14px rgba(255, 255, 255, 0.35);
     position: relative;
-    z-index: 5;
+    z-index: 12;
+    transform: translate(-50%, -18px);
+    backdrop-filter: blur(4px);
     color: #fffbe6;
     text-shadow:
         0 4px 10px rgba(0, 0, 0, 0.6),
@@ -777,7 +792,7 @@ body {
     color: #ffe600;
 }
 
-.platform-label.status-active .typed {
+.platform-label.status-active .word-typed {
     color: #ffe600;
 }
 
@@ -785,7 +800,7 @@ body {
     color: #7cff9c;
 }
 
-.platform-label.status-completed .typed {
+.platform-label.status-completed .word-typed {
     color: #7cff9c;
 }
 
@@ -794,11 +809,11 @@ body {
     animation: shake-label 0.35s both;
 }
 
-.platform-label.status-failed .typed {
+.platform-label.status-failed .word-typed {
     color: #ff6f8e;
 }
 
-.platform-label.status-failed .remaining {
+.platform-label.status-failed .word-remaining {
     color: rgba(255, 255, 255, 0.35);
 }
 
@@ -808,11 +823,12 @@ body {
 
 .platform-label.goal-target.status-active,
 .platform-label.goal-target.status-completed {
+    transform: translate(-50%, -20px);
     color: inherit;
 }
 
-.platform-label.goal-target.status-active .typed,
-.platform-label.goal-target.status-completed .typed {
+.platform-label.goal-target.status-active .word-typed,
+.platform-label.goal-target.status-completed .word-typed {
     color: inherit;
 }
 
@@ -866,7 +882,7 @@ body {
     width: 110px;
     height: 140px;
     background-image: url('../assets/images/generic-png/decoration/door.png');
-    z-index: 3;
+    z-index: 2;
     filter: drop-shadow(0 12px 0 rgba(10, 0, 34, 0.6));
     transition: transform 0.4s ease, filter 0.4s ease;
 }
@@ -935,4 +951,24 @@ body {
 
 #start-overlay.hidden {
     display: none;
+}
+.challenge-word .word-current {
+    color: #ffe600;
+    display: inline-block;
+    border-bottom: 3px solid currentColor;
+    padding: 0 2px;
+    margin: 0 1px;
+}
+
+.challenge-word .word-remaining {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.challenge-word .word-typed {
+    color: #7cff9c;
+}
+
+@keyframes caret-pulse {
+    from { opacity: 1; }
+    to { opacity: 0.4; }
 }
