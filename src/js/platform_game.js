@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         overlayText: document.querySelector('#start-overlay p'),
         overlayDetails: document.getElementById('overlay-details'),
         hudLevel: document.getElementById('hud-level'),
+        hudLevelLabel: document.getElementById('hud-level-label'),
         hudScore: document.getElementById('hud-score'),
         livesContainer: document.getElementById('hud-lives'),
         hudTimer: document.getElementById('hud-timer'),
@@ -173,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const CHALLENGE_CONFIG = {
         phraseWords: [
             // Nível 1: 3 letras
-            'sol', 'lua', 'rei', 'paz', 'luz', 'cor', 'mar', 'ceu', 'ver', 'sal', 'som', 'pai',
+            'sol', 'lua', 'rei', 'paz', 'luz', 'cor', 'mar', 'mel', 'ver', 'sal', 'som', 'pai',
             // Nível 2: 4 letras
             'gato', 'casa', 'bola', 'doce', 'flor', 'pato', 'fogo', 'lago', 'amor', 'vida', 'dedo', 'frio',
             // Nível 3: 5 letras
@@ -957,11 +958,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const challengeSummary = finalizeChallengeAttempt('success');
         showOverlay({
             title: 'Desafio concluído!',
-            description: 'Você digitou toda a frase, parabéns!',
+            description: 'Você digitou todas as palavras, parabéns!',
             button: 'Voltar ao menu',
             action: 'return-menu',
             secondaryButton: 'Jogar novamente',
-            secondaryAction: 'start-challenge',
+            secondaryAction: 'retry-challenge',
             details: buildChallengeSummaryLines(challengeSummary),
         });
     };
@@ -1389,11 +1390,34 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const updateHUD = () => {
-        if (dom.hudLevel) {
+        const hasSeparateLabel = Boolean(dom.hudLevel && dom.hudLevelLabel);
+        if (hasSeparateLabel) {
             if (state.gameMode === 'progressive') {
+                dom.hudLevelLabel.textContent = 'Nível';
                 dom.hudLevel.textContent = String(currentLevel().id);
             } else {
-                dom.hudLevel.textContent = 'Desafio';
+                dom.hudLevelLabel.textContent = 'Palavra';
+                const totalWords = state.challenge?.phraseWords?.length ?? 0;
+                if (totalWords > 0) {
+                    const rawIndex = state.challenge?.currentWordIndex ?? 0;
+                    const currentPosition = Math.min(rawIndex + 1, totalWords);
+                    dom.hudLevel.textContent = `${currentPosition}/${totalWords}`;
+                } else {
+                    dom.hudLevel.textContent = '--/--';
+                }
+            }
+        } else if (dom.hudLevel) {
+            if (state.gameMode === 'progressive') {
+                dom.hudLevel.textContent = `Nível ${currentLevel().id}`;
+            } else {
+                const totalWords = state.challenge?.phraseWords?.length ?? 0;
+                if (totalWords > 0) {
+                    const rawIndex = state.challenge?.currentWordIndex ?? 0;
+                    const currentPosition = Math.min(rawIndex + 1, totalWords);
+                    dom.hudLevel.textContent = `Palavra ${currentPosition}/${totalWords}`;
+                } else {
+                    dom.hudLevel.textContent = 'Palavra --/--';
+                }
             }
         }
         if (dom.hudScore) {
@@ -2084,6 +2108,18 @@ document.addEventListener('DOMContentLoaded', () => {
         beginCurrentLevel();
     };
 
+    const restartProgressiveRun = () => {
+        state.gameMode = 'progressive';
+        state.mode = 'menu';
+        state.levelIndex = 0;
+        progress.currentLevelIndex = 0;
+        state.score = 0;
+        state.lives = state.maxLives;
+        renderLives();
+        saveProgress();
+        beginCurrentLevel();
+    };
+
     const startProgressiveFromMenu = () => {
         state.gameMode = 'progressive';
         state.mode = 'menu';
@@ -2110,18 +2146,21 @@ document.addEventListener('DOMContentLoaded', () => {
             updateMenuStats();
             updateAudioUI();
             renderStatsPanel();
+            const hasProgress = progress.currentLevelIndex > 0;
             showOverlay({
                 title: 'Pronto para subir?',
                 description: 'Clique em começar ou pressione espaço para iniciar.',
-                button: 'Começar',
+                button: hasProgress ? 'Continuar' : 'Começar',
                 action: 'start-game',
+                secondaryButton: hasProgress ? 'Começar do início' : null,
+                secondaryAction: hasProgress ? 'restart-progressive' : null,
             });
         } else {
             beginCurrentLevel();
         }
     };
 
-    const prepareChallengeMode = () => {
+    const prepareChallengeMode = (autoStart = false) => {
         state.gameMode = 'challenge';
         state.mode = 'menu';
         setWorldVisibility();
@@ -2138,9 +2177,14 @@ document.addEventListener('DOMContentLoaded', () => {
         updateMenuStats();
         updateAudioUI();
         dom.mainMenu?.classList.remove('visible');
+        if (autoStart) {
+            hideOverlay();
+            beginChallengeRun();
+            return;
+        }
         showOverlay({
             title: 'Modo Desafio',
-            description: 'Digite cada palavra da frase antes dos obstáculos. Use Backspace para corrigir. Você tem 3 vidas.',
+            description: 'Digite cada palavra antes que o robô chegue aos obstáculos. Use Backspace (apagar) para corrigir. Você tem 3 vidas!',
             button: 'Começar desafio',
             action: 'start-challenge',
         });
@@ -2186,7 +2230,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 beginChallengeRun();
                 return;
             case 'retry-challenge':
-                prepareChallengeMode();
+                prepareChallengeMode(true);
+                return;
+            case 'restart-progressive':
+                restartProgressiveRun();
                 return;
             case 'return-menu':
                 enterMenu();

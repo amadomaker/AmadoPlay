@@ -305,6 +305,17 @@ body.device-warning-active {
     color: #87f3ff;
 }
 
+#hud-level-label {
+    margin-left: 0;
+    margin-right: 6px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+#hud-level {
+    margin-left: 0;
+}
+
 .ambient-orb {
     position: absolute;
     border-radius: 50%;
