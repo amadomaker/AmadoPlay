@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digitando</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../src/css/platform_game.css">
+</head>
+<body>
+    <div id="game-shell">
+        <div id="main-menu" class="screen visible">
+            <div class="menu-card">
+                <h1>Digitando</h1>
+                <p class="menu-subtitle">Mostre sua habilidade! Digite palavras cronometradas e avance por fases cada vez mais desafiadoras.</p>
+                <div class="menu-actions">
+                    <button id="menu-start-progressive" class="menu-button primary">Modo Progressivo</button>
+                    <button id="menu-start-challenge" class="menu-button primary alt">Modo Desafio</button>
+                    <button id="menu-howto-button" class="menu-button secondary">Como jogar</button>
+                </div>
+                <div id="menu-howto-panel" class="menu-panel hidden">
+                    <ul>
+                        <li>No modo progressivo, digite cada sílaba ou palavra no momento certo para avançar de plataforma.</li>
+                        <li>No modo desafio, complete a frase digitando rápido cada palavra antes que o personagem colida.</li>
+                        <li>Use as 3 vidas com cuidado: erros de digitação, colisões ou demora zeram corações.</li>
+                        <li>Mantenha o ritmo para somar pontos, aumentar a velocidade e desbloquear novas fases.</li>
+                    </ul>
+                </div>
+                <div class="menu-extra">
+                    <button id="menu-open-stats" class="menu-button secondary" type="button">Estatísticas</button>
+                    <button id="menu-audio-toggle" class="menu-button tertiary" type="button">Som: ligado</button>
+                </div>
+            </div>
+        </div>
+        <div id="game-container">
+            <div id="hud-left">
+                <div id="hud-lives" class="life-display"></div>
+            </div>
+            <div id="hud-timer">--</div>
+            <div id="hud-right">
+                <div class="hud-icon-row">
+                    <button id="home-button" class="hud-icon-button" type="button" aria-label="Voltar ao menu principal">
+                        <svg class="hud-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 4.248 4.5 10.2a1 1 0 0 0-.376.781V20a1 1 0 0 0 1 1h5.25a.5.5 0 0 0 .5-.5v-4.5a1.5 1.5 0 0 1 3 0v4.5a.5.5 0 0 0 .5.5H20a1 1 0 0 0 1-1v-9.019a1 1 0 0 0-.382-.79L12 4.248Z" />
+                        </svg>
+                    </button>
+                    <button id="audio-toggle" class="audio-toggle" type="button" aria-label="Alternar som"></button>
+                </div>
+                <div class="hud-pill">
+                    <span id="hud-level-label">Nível</span>
+                    <span id="hud-level">1</span>
+                </div>
+                <div class="hud-pill">Pontuação <span id="hud-score">0</span></div>
+            </div>
+            <div id="parallax">
+                <div class="parallax-layer layer-far" data-speed="0.2"></div>
+                <div class="parallax-layer layer-mid" data-speed="0.45"></div>
+                <div class="parallax-layer layer-near" data-speed="0.75"></div>
+                <div class="ambient-orb orb-1"></div>
+                <div class="ambient-orb orb-2"></div>
+                <div class="ambient-orb orb-3"></div>
+            </div>
+            <div id="game-world">
+                <div class="ground"></div>
+                <div class="decoration deco-bug" style="bottom: 260px; left: 68px;"></div>
+                <div class="decoration deco-bug" style="bottom: 680px; left: 520px;"></div>
+                <div class="decoration deco-blade" style="bottom: 1020px; left: 180px;"></div>
+                <div class="decoration deco-blade flipped" style="bottom: 420px; left: 520px;"></div>
+                <div id="player" class="game-object"></div>
+                <div class="platform game-object" style="bottom: 140px; left: 120px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object" style="bottom: 260px; left: 320px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object" style="bottom: 380px; left: 540px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object" style="bottom: 520px; left: 360px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object" style="bottom: 660px; left: 160px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object" style="bottom: 800px; left: 420px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object" style="bottom: 940px; left: 220px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object" style="bottom: 1080px; left: 500px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object" style="bottom: 1220px; left: 320px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object" style="bottom: 1360px; left: 140px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object" style="bottom: 1500px; left: 420px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object" style="bottom: 1640px; left: 200px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object" style="bottom: 1780px; left: 480px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object" style="bottom: 1920px; left: 260px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object" style="bottom: 2060px; left: 540px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object" style="bottom: 2200px; left: 180px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div class="platform game-object" style="bottom: 2340px; left: 460px;">
+                    <span class="platform-label"></span>
+                </div>
+                <div id="goal-door" class="decoration goal-door hidden"></div>
+            </div>
+            <div id="challenge-world" class="hidden">
+                <div id="challenge-track">
+                    <div class="challenge-background"></div>
+                    <div id="challenge-ground" class="challenge-ground"></div>
+                    <div id="challenge-player" class="challenge-entity"></div>
+                    <div id="challenge-obstacles"></div>
+                    <div id="challenge-words"></div>
+                </div>
+                <div id="challenge-phrase"></div>
+            </div>
+            <div id="start-overlay" class="hidden">
+                <h1>Pronto para subir?</h1>
+                <p>Clique em começar ou pressione espaço para iniciar.</p>
+                <div id="overlay-details" class="overlay-details hidden"></div>
+                <div class="overlay-actions">
+                    <button id="start-button" class="overlay-button primary">Começar</button>
+                    <button id="overlay-secondary-button" class="overlay-button secondary hidden">Menu principal</button>
+                </div>
+            </div>
+        </div>
+        <div id="stats-modal" class="stats-modal hidden">
+            <div class="stats-card">
+                <div class="stats-header">
+                    <h2>Minha evolução</h2>
+                    <button id="stats-close" class="stats-close" type="button" aria-label="Fechar estatísticas">&times;</button>
+                </div>
+                <div class="stats-tabs">
+                    <button class="stats-tab active" data-tab="progressive" type="button">Modo progressivo</button>
+                    <button class="stats-tab" data-tab="challenge" type="button">Modo desafio</button>
+                </div>
+                <div class="stats-content">
+                    <div id="stats-progressive" class="stats-pane active" role="tabpanel" aria-label="Estatísticas do modo progressivo"></div>
+                    <div id="stats-challenge" class="stats-pane" role="tabpanel" aria-label="Estatísticas do modo desafio"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../src/js/platform_game.js"></script>
+    <div id="device-warning" class="device-warning hidden" role="alertdialog" aria-live="assertive" aria-modal="true">
+        <div class="device-warning-card">
+            <h2>Disponível apenas em computadores</h2>
+            <p>Esta atividade foi feita para notebooks ou computadores com teclado físico. Acesse em um desses dispositivos para aproveitar o jogo.</p>
+        </div>
+    </div>
+</body>
+</html>

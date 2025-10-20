@@ -5,6 +5,27 @@
   // Dados das ferramentas educacionais
   window.EducationalToolsData = [
     {
+      id: 'digitando',
+      titulo: 'Digitando',
+      descricao: 'Desafie-se a digitar palavras com precisão e ritmo em fases progressivas e no modo desafio de velocidade.',
+      imagem: 'src/assets/images/Digitando_card.png',
+      interno: 'pages/platform_game.html',
+      materia: 'portugues',
+      series: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      tipo: ['interativo', 'ludico', 'digitacao'],
+      dificuldade: 'intermediario',
+      bncc: [
+        { codigo: 'EF01LP02', descricao: 'Escrever, espontaneamente ou por ditado, palavras e frases de forma alfabética – usando letras/grafemas que representem fonemas.' },
+        { codigo: 'EF03CO06', descricao: 'Reconhecer que, para um computador realizar tarefas, ele se comunica com o mundo exterior com o uso de interfaces físicas (dispositivos de entrada e saída).' },
+        { codigo: 'EF03CO08', descricao: 'Usar ferramentas computacionais em situações didáticas para se expressar em diferentes formatos digitais.' },
+        { codigo: 'EF02CO02', descricao: 'Criar e simular algoritmos representados em linguagem oral, escrita ou pictográfica, construídos como sequências com repetições simples (iterações definidas) com base em instruções preestabelecidas ou criadas, analisando como a precisão da instrução impacta na execução do algoritmo.' }
+      ],
+      tags: ['digitacao', 'teclado', 'palavras', 'velocidade', 'pensamento computacional', 'EF01LP02', 'EF03CO06', 'EF03CO08', 'EF02CO02'],
+      popular: false,
+      novo: true,
+      acessos: 97
+    },
+    {
       id: 'roleta-ingles',
       titulo: 'Roleta de Perguntas em Inglês',
       descricao: 'Gire os anéis (WH + verbo auxiliar + sujeito) para formar perguntas corretas em inglês e praticar estrutura frasal, vocabulário e comunicação.',
@@ -22,7 +43,7 @@
       tags: ['ingles', 'wh-questions', 'question words', 'simple present', 'to be', 'auxiliares', 'oralidade', 'escrita', 'EF06LI02', 'EF06LI11', 'EF07LI01'],
       popular: false,
       novo: false,
-      acessos: 86
+      acessos: 85
     },
      {
       id: 'abaco',
@@ -42,7 +63,7 @@
       tags: ['ábaco', 'aritmética', 'valor posicional', 'sistema decimal', 'EF01MA07', 'EF02MA01', 'EF03MA02'],
       popular: false,
       novo: false,
-      acessos: 95
+      acessos: 94
     },
     {
       id: 'material-dourado',
@@ -63,7 +84,7 @@
       tags: ['material dourado', 'base 10', 'sistema decimal', 'EF01MA07', 'EF02MA04', 'EF02MA06', 'EF03MA02'],
       popular: false,
       novo: false,
-      acessos: 94
+      acessos: 93
     },
     {
       id: 'alfabeto-movel',
@@ -85,7 +106,7 @@
       tags: ['alfabetização', 'consciência fonêmica', 'letras', 'formação de palavras', 'EI03EF09', 'EF01LP02', 'EF01LP05', 'EF02LP02'],
       popular: false,
       novo: false,
-      acessos: 93
+      acessos: 92
     },
     {
       id: 'piramide-alimentar',
@@ -104,7 +125,7 @@
       tags: ['alimentação', 'nutrição', 'saúde', 'hábitos saudáveis', 'EF04CI03', 'EF05CI08'],
       popular: false,
       novo: false,
-      acessos: 92
+      acessos: 91
     },
     {
       id: 'mapa-brasil',
@@ -124,7 +145,7 @@
       tags: ['mapa', 'estados', 'regiões', 'cartografia', 'EF03GE03', 'EF03GE07'],
       popular: false,
       novo: false,
-      acessos: 91
+      acessos: 90
     },
     {
       id: 'tres-poderes',
@@ -143,7 +164,7 @@
       tags: ['cidadania', 'constituição', 'poderes', 'poderes', 'EF09HI28', 'EF05GE12'],
       popular: false,
       novo: false,
-      acessos: 90
+      acessos: 89
     },
     
     {
@@ -162,7 +183,7 @@
 
       popular: false, 
       novo: false,      
-      acessos: 87
+      acessos: 86
     },
     {
       id: 'conta-bolhas',
@@ -180,7 +201,7 @@
       ],
       popular: false,
       novo: false,
-      acessos: 89,
+      acessos: 88,
       interno: 'pages/conta_bolhas.html' 
     },
     {
@@ -201,7 +222,7 @@
       ],
       popular: false,
       novo: false,
-      acessos: 88,
+      acessos: 87,
       interno: 'pages/separar_silabas.html'
     },
     {
@@ -222,7 +243,7 @@
       tags: ['conexo', 'conexão', 'grupos', 'palavras', 'vocabulário', 'raciocínio', 'semântica', 'lógica', 'EF05LP02', 'EF06LP03', 'EF35LP05', 'EF69LP47'],
       popular: true,
       novo: false,
-      acessos: 100
+      acessos: 99
     },
     {
       id: 'palavreando',
@@ -243,7 +264,7 @@
       tags: ['palavreando', 'soletra diário', 'palavras', 'vocabulario', 'ortografia', 'prefixos', 'sufixos', 'radicais', 'EF15LP07', 'EF15LP02', 'EF12LP07', 'EF15LP10'],
       popular: true,
       novo: false,
-      acessos: 99
+      acessos: 98
     },
     {
       id: 'jogo-memoria',
@@ -263,7 +284,7 @@
       tags: ['memória', 'animais', 'atenção', 'jogo'],
       popular: false,
       novo: true,
-      acessos: 97
+      acessos: 96
     },
     {
       id: 'meses-ano',
@@ -282,7 +303,7 @@
       tags: ['meses', 'ano', 'calendário', 'estações', 'sequência', 'tempo', 'EF01CI05', 'EF02CI02'],
       popular: false,
       novo: false,
-      acessos: 96
+      acessos: 95
     },
     {
       id: 'desafio-blocos',
@@ -302,7 +323,7 @@
       tags: ['puzzle', 'blocos deslizantes', 'planejamento', 'pensamento computacional', 'plano cartesiano', 'raciocínio lógico', 'EF03CO03', 'EF05CO04', 'EF05MA15'],
       popular: true,
       novo: false,
-      acessos: 98
+      acessos: 97
     }
 
 
