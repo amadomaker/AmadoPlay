@@ -7,7 +7,7 @@
     {
       id: 'digitando',
       titulo: 'Digitando',
-      descricao: 'Desafie-se a digitar palavras com precisão e ritmo em fases progressivas e no modo desafio de velocidade.',
+      descricao: 'Treine sua precisão e ritmo digitando palavras em fases progressivas e no modo desafio de velocidade.',
       imagem: 'src/assets/images/Digitando_card.png',
       interno: 'pages/platform_game.html',
       materia: 'portugues',

@@ -11,6 +11,7 @@
       --surface: #ffffff;
       --primary: #7c3aed;
       --primary-dark: #5b21b6;
+      --accent: #f59e0b;
       --border: #e4e4e7;
       --text: #1f2937;
       --text-muted: #6b7280;
@@ -122,6 +123,172 @@
       gap: 1rem;
     }
 
+    .form-preview-grid {
+      display: grid;
+      gap: clamp(1rem, 2vw, 1.5rem);
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      align-items: start;
+    }
+
+    .preview-panel {
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: clamp(1rem, 2vw, 1.25rem);
+      background: #f8fafc;
+      display: grid;
+      gap: 1rem;
+      min-height: 100%;
+    }
+
+    .preview-panel h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      color: var(--primary-dark);
+    }
+
+    .preview-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 0.75rem;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .preview-meta strong {
+      display: block;
+      font-size: 1.05rem;
+      color: var(--text);
+    }
+
+    .preview-hive {
+      position: relative;
+      width: min(260px, 70vw);
+      height: min(240px, 65vw);
+      margin: 0 auto;
+    }
+
+    .preview-letter {
+      position: absolute;
+      width: clamp(58px, 16vw, 74px);
+      height: clamp(58px, 16vw, 74px);
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid #d4d4d8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      color: var(--text);
+      transition: transform 0.2s ease;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+      text-transform: uppercase;
+    }
+
+    .preview-letter[data-char=""] {
+      opacity: 0.3;
+    }
+
+    .preview-letter.central {
+      background: var(--accent, #fde68a);
+      color: #1f2937;
+      border-color: transparent;
+    }
+
+    .preview-letter.invalid {
+      border-color: rgba(220, 38, 38, 0.5);
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+    }
+
+    .preview-letter.pos-0 { top: 16%; left: 50%; transform: translate(-50%, -50%); }
+    .preview-letter.pos-1 { top: 29%; left: 13%; transform: translate(-50%, -50%); }
+    .preview-letter.pos-2 { top: 29%; left: 87%; transform: translate(-50%, -50%); }
+    .preview-letter.pos-3 { top: 58%; left: 13%; transform: translate(-50%, -50%); }
+    .preview-letter.pos-4 { top: 58%; left: 87%; transform: translate(-50%, -50%); }
+    .preview-letter.pos-5 { top: 82%; left: 50%; transform: translate(-50%, -50%); }
+    .preview-letter.central { top: 48%; left: 50%; transform: translate(-50%, -50%); }
+
+    .preview-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+    }
+
+    .preview-summary span {
+      background: rgba(124, 58, 237, 0.1);
+      color: var(--primary-dark);
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .preview-words {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .preview-words h4 {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .preview-words-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.6rem;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: clamp(220px, 45vh, 360px);
+      overflow-y: auto;
+    }
+
+    .preview-words-list li {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.7rem;
+      font-size: 0.92rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .preview-words-list li.placeholder {
+      background: transparent;
+      border-style: dashed;
+      color: var(--text-muted);
+    }
+
+    .preview-warning {
+      background: rgba(220, 38, 38, 0.08);
+      color: var(--error);
+      border: 1px solid rgba(220, 38, 38, 0.4);
+      border-radius: 10px;
+      padding: 0.6rem 0.75rem;
+      font-size: 0.9rem;
+    }
+
+    .backup-block {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #f9fafb;
+      padding: clamp(1rem, 2vw, 1.25rem);
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .backup-block h3 {
+      margin: 0;
+      font-size: 1.08rem;
+      color: var(--text);
+    }
+
+    .backup-block .hint {
+      margin: 0;
+    }
+
     label {
       display: flex;
       flex-direction: column;
@@ -130,7 +297,7 @@
       color: var(--text);
     }
 
-    input, textarea {
+    input, textarea, select {
       border-radius: 10px;
       border: 1px solid var(--border);
       padding: 0.6rem 0.75rem;
@@ -222,30 +389,66 @@
 
     <section class="card">
       <h2 id="form-title">Adicionar novo jogo</h2>
-      <form id="game-form">
-        <input type="hidden" id="game-index" value="">
-        <label>
-          Data (YYYY-MM-DD)
-          <input type="date" id="game-date" required>
-        </label>
-        <label>
-          Letras (7 letras, sem acentos – separe por espaço ou vírgula)
-          <input type="text" id="game-letters" placeholder="Ex.: P R A T I C O" required>
-        </label>
-        <label>
-          Letra central
-          <input type="text" id="game-central" maxlength="1" required>
-        </label>
-        <label>
-          Palavras (mínimo 4 letras, separadas por linha ou vírgula)
-          <textarea id="game-words" placeholder="Digite uma palavra por linha"></textarea>
-        </label>
-        <div class="actions">
-          <button type="submit" id="submit-btn">Salvar jogo</button>
-          <button type="button" class="secondary" id="cancel-edit" style="display:none;">Cancelar edição</button>
-        </div>
-        <p class="hint">Dica: o jogo será ordenado pela data automaticamente. Depois de salvar, baixe o novo JSON e substitua o arquivo em <code>data/soletra_jogos.json</code>.</p>
-      </form>
+      <div class="form-preview-grid">
+        <form id="game-form">
+          <input type="hidden" id="game-index" value="">
+          <label>
+            Data (YYYY-MM-DD)
+            <input type="date" id="game-date" required>
+          </label>
+          <label>
+            Letras (7 letras, sem acentos – separe por espaço ou vírgula)
+            <input type="text" id="game-letters" placeholder="Ex.: P R A T I C O" required>
+          </label>
+          <label>
+            Letra central
+            <input type="text" id="game-central" maxlength="1" required>
+          </label>
+          <label>
+            Palavras (mínimo 4 letras, separadas por linha ou vírgula)
+            <textarea id="game-words" placeholder="Digite uma palavra por linha"></textarea>
+          </label>
+          <div class="actions">
+            <button type="submit" id="submit-btn">Salvar jogo</button>
+            <button type="button" class="secondary" id="cancel-edit" style="display:none;">Cancelar edição</button>
+          </div>
+          <p class="hint">Dica: o jogo será ordenado pela data automaticamente. Depois de salvar, baixe o novo JSON e substitua o arquivo em <code>data/soletra_jogos.json</code>.</p>
+        </form>
+        <aside class="preview-panel" id="preview-panel" aria-live="polite">
+          <h3>Pré-visualização</h3>
+          <p class="hint" id="preview-empty">Preencha os campos para ver como o jogo ficará.</p>
+          <div id="preview-content" hidden>
+            <div class="preview-meta">
+              <div>
+                <span>Data</span>
+                <strong id="preview-date">—</strong>
+              </div>
+              <div>
+                <span>Letra central</span>
+                <strong id="preview-central">—</strong>
+              </div>
+              <div>
+                <span>Total previsto</span>
+                <strong id="preview-total">0 palavras</strong>
+              </div>
+            </div>
+            <div class="preview-hive" aria-hidden="true">
+              <div class="preview-letter pos-0" data-slot="0" data-char="">?</div>
+              <div class="preview-letter pos-1" data-slot="1" data-char="">?</div>
+              <div class="preview-letter pos-2" data-slot="2" data-char="">?</div>
+              <div class="preview-letter pos-3" data-slot="3" data-char="">?</div>
+              <div class="preview-letter pos-4" data-slot="4" data-char="">?</div>
+              <div class="preview-letter pos-5" data-slot="5" data-char="">?</div>
+              <div class="preview-letter central" data-slot="central" data-char="">?</div>
+            </div>
+            <div id="preview-warnings" class="preview-warning" style="display:none;"></div>
+            <div class="preview-words">
+              <h4>Lista completa de palavras</h4>
+              <ul class="preview-words-list" id="preview-words"></ul>
+            </div>
+          </div>
+        </aside>
+      </div>
       <p class="message" id="feedback-panel" style="display:none;"></p>
     </section>
 
@@ -257,6 +460,25 @@
         <span class="hint">Após baixar, substitua o arquivo atual em <code>data/soletra_jogos.json</code> e publique.</span>
       </div>
       <textarea id="json-output" class="json-output" readonly></textarea>
+    </section>
+
+    <section class="card">
+      <h2>Backup local rápido</h2>
+      <div class="backup-block">
+        <h3>Carregar arquivo salvo</h3>
+        <p class="hint">
+          Use esta opção para abrir um arquivo <code>soletra_jogos.json</code> salvo no computador. Os jogos atuais serão substituídos pelo conteúdo do arquivo.
+        </p>
+        <label>
+          Arquivo JSON
+          <input type="file" id="upload-json-file" accept="application/json">
+        </label>
+        <div class="actions">
+          <button type="button" class="secondary" id="load-json-file">Carregar arquivo</button>
+        </div>
+        <p class="hint">Dica: clique em "Baixar JSON" acima para salvar uma cópia antes de carregar outra.</p>
+      </div>
+      <p class="message" id="backup-feedback" style="display:none;"></p>
     </section>
   </main>
 
@@ -296,9 +518,25 @@
     const jsonOutput = document.getElementById('json-output');
     const downloadBtn = document.getElementById('download-json');
     const copyBtn = document.getElementById('copy-json');
+    const previewPanel = document.getElementById('preview-panel');
+    const previewEmpty = document.getElementById('preview-empty');
+    const previewContent = document.getElementById('preview-content');
+    const previewDate = document.getElementById('preview-date');
+    const previewCentral = document.getElementById('preview-central');
+    const previewTotal = document.getElementById('preview-total');
+    const previewWarnings = document.getElementById('preview-warnings');
+    const previewWordsList = document.getElementById('preview-words');
+    const previewLettersMap = {
+      central: previewPanel.querySelector('.preview-letter.central'),
+      outers: Array.from(previewPanel.querySelectorAll('.preview-letter[data-slot]:not([data-slot="central"])')),
+    };
+    const fileInput = document.getElementById('upload-json-file');
+    const fileLoadBtn = document.getElementById('load-json-file');
+    const backupFeedback = document.getElementById('backup-feedback');
 
     let jogos = [];
     let editingIndex = null;
+    let backupFeedbackTimeout = null;
 
     const normalizeLetters = (value) => {
       const raw = value
@@ -331,6 +569,51 @@
       setTimeout(() => {
         feedbackPanel.style.display = 'none';
       }, 4000);
+    };
+
+    const showBackupFeedback = (message, type = 'info', sticky = false) => {
+      if (!backupFeedback) {
+        return;
+      }
+      backupFeedback.textContent = message;
+      backupFeedback.className = type === 'error' ? 'message error' : 'message';
+      backupFeedback.style.display = 'block';
+      if (backupFeedbackTimeout) {
+        clearTimeout(backupFeedbackTimeout);
+      }
+      if (!sticky) {
+        backupFeedbackTimeout = setTimeout(() => {
+          backupFeedback.style.display = 'none';
+        }, 6000);
+      }
+    };
+
+    const handleFileImport = async () => {
+      if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+        showBackupFeedback('Selecione um arquivo JSON para importar.', 'error');
+        return;
+      }
+      const file = fileInput.files[0];
+      try {
+        showBackupFeedback(`Carregando "${file.name}"...`, 'info', true);
+        const fileText = await file.text();
+        const parsed = JSON.parse(fileText);
+        const importedJogos = ingestJogos(parsed);
+        jogos = importedJogos;
+        sortJogos();
+        renderTable();
+        updateJsonPreview();
+        resetForm();
+        showBackupFeedback(`Importação concluída. ${jogos.length} jogos carregados a partir de "${file.name}".`);
+        updateStatus(`Foram carregados ${jogos.length} jogos do arquivo importado.`);
+      } catch (error) {
+        console.error(error);
+        showBackupFeedback(`Erro ao importar arquivo: ${error.message}`, 'error', true);
+      } finally {
+        if (fileInput) {
+          fileInput.value = '';
+        }
+      }
     };
 
     const renderTable = () => {
@@ -367,6 +650,7 @@
       formTitle.textContent = 'Adicionar novo jogo';
       document.getElementById('submit-btn').textContent = 'Salvar jogo';
       cancelEditBtn.style.display = 'none';
+      updatePreview();
     };
 
     const populateForm = (jogo, index) => {
@@ -379,6 +663,7 @@
       formTitle.textContent = `Editar jogo – ${jogo.data}`;
       document.getElementById('submit-btn').textContent = 'Atualizar jogo';
       cancelEditBtn.style.display = 'inline-flex';
+      updatePreview();
     };
 
     const sortJogos = () => {
@@ -405,6 +690,134 @@
         errors.push('Informe pelo menos uma palavra.');
       }
       return errors;
+    };
+
+    const ingestJogos = (payload) => {
+      const rawJogos = Array.isArray(payload) ? payload : payload?.jogos;
+      if (!Array.isArray(rawJogos)) {
+        throw new Error('Estrutura inválida: era esperado um array de jogos ou um objeto com a propriedade "jogos".');
+      }
+
+      return rawJogos.map((jogo, index) => {
+        const data = typeof jogo?.data === 'string' ? jogo.data.trim() : '';
+        const letras = Array.isArray(jogo?.letras)
+          ? jogo.letras.map((letra) => String(letra || '').trim().toUpperCase()).filter(Boolean)
+          : [];
+        const central = typeof jogo?.central === 'string' ? jogo.central.trim().toUpperCase() : '';
+        const palavras = Array.isArray(jogo?.palavras)
+          ? jogo.palavras.map((palavra) => String(palavra || '').trim()).filter(Boolean)
+          : [];
+
+        const errors = validateGame({ data, letras, central, palavras });
+        if (errors.length) {
+          throw new Error(`Jogo ${index + 1} inválido: ${errors.join(' ')}`);
+        }
+
+        return { data, letras, central, palavras };
+      });
+    };
+
+    const resetPreviewBoard = () => {
+      previewLettersMap.central.textContent = '?';
+      previewLettersMap.central.dataset.char = '';
+      previewLettersMap.central.classList.remove('invalid');
+      previewLettersMap.outers.forEach((node) => {
+        node.textContent = '?';
+        node.dataset.char = '';
+        node.classList.remove('invalid');
+      });
+      previewWarnings.style.display = 'none';
+      previewWarnings.innerHTML = '';
+      previewWordsList.innerHTML = '';
+      const placeholder = document.createElement('li');
+      placeholder.className = 'placeholder';
+      placeholder.textContent = 'Sem palavras';
+      previewWordsList.appendChild(placeholder);
+      previewDate.textContent = '—';
+      previewCentral.textContent = '—';
+      previewTotal.textContent = '0 palavras';
+    };
+
+    const updatePreview = () => {
+      const data = dateInput.value.trim();
+      const letras = normalizeLetters(lettersInput.value);
+      const central = centralInput.value.trim().toUpperCase();
+      const palavras = parseWords(wordsInput.value);
+      const hasContent = Boolean(data || letras.length || central || palavras.length);
+
+      if (!hasContent) {
+        previewEmpty.style.display = 'block';
+        previewContent.hidden = true;
+        resetPreviewBoard();
+        return;
+      }
+
+      previewEmpty.style.display = 'none';
+      previewContent.hidden = false;
+
+      previewDate.textContent = data || '—';
+      previewCentral.textContent = central || '—';
+      previewTotal.textContent = `${palavras.length} ${palavras.length === 1 ? 'palavra' : 'palavras'}`;
+
+      const upperCentral = central || '';
+      const centralIndex = letras.findIndex((letter) => letter.toUpperCase() === upperCentral);
+      const outerLetters = letras
+        .filter((_, index) => index !== centralIndex)
+        .slice(0, 6);
+
+      while (outerLetters.length < 6) {
+        outerLetters.push('');
+      }
+
+      previewLettersMap.central.textContent = central || '?';
+      previewLettersMap.central.dataset.char = central || '';
+      previewLettersMap.central.classList.toggle('invalid', !central || centralIndex === -1);
+
+      previewLettersMap.outers.forEach((node, index) => {
+        const char = outerLetters[index] || '';
+        node.textContent = char || '?';
+        node.dataset.char = char;
+        node.classList.toggle('invalid', !char);
+      });
+
+      const warnings = [];
+      if (letras.length !== 7) {
+        warnings.push('Forneça exatamente 7 letras únicas.');
+      }
+      if (!central) {
+        warnings.push('Informe a letra central.');
+      } else if (centralIndex === -1) {
+        warnings.push('A letra central precisa estar entre as 7 letras digitadas.');
+      }
+      if (!palavras.length) {
+        warnings.push('Adicione pelo menos uma palavra.');
+      }
+
+      if (warnings.length) {
+        previewWarnings.style.display = 'block';
+        previewWarnings.innerHTML = warnings.map((warning) => `<div>${warning}</div>`).join('');
+      } else {
+        previewWarnings.style.display = 'none';
+        previewWarnings.innerHTML = '';
+      }
+
+      previewWordsList.innerHTML = '';
+      if (palavras.length) {
+        const orderedWords = [...palavras]
+          .map((word) => word.toUpperCase())
+          .sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+        orderedWords.forEach((word) => {
+          const item = document.createElement('li');
+          item.textContent = word;
+          previewWordsList.appendChild(item);
+        });
+      } else {
+        const placeholder = document.createElement('li');
+        placeholder.className = 'placeholder';
+        placeholder.textContent = 'Sem palavras';
+        previewWordsList.appendChild(placeholder);
+      }
     };
 
     const handleTableClick = (event) => {
@@ -483,7 +896,7 @@
           throw new Error(`HTTP ${response.status}`);
         }
         const payload = await response.json();
-        jogos = Array.isArray(payload) ? payload : payload?.jogos || [];
+        jogos = ingestJogos(payload);
         sortJogos();
         renderTable();
         updateJsonPreview();
@@ -499,8 +912,15 @@
     cancelEditBtn.addEventListener('click', resetForm);
     downloadBtn.addEventListener('click', handleDownload);
     copyBtn.addEventListener('click', handleCopy);
+    if (fileLoadBtn) {
+      fileLoadBtn.addEventListener('click', handleFileImport);
+    }
+    [dateInput, lettersInput, centralInput, wordsInput].forEach((field) => {
+      field.addEventListener('input', updatePreview);
+    });
 
     loadJogos();
+    updatePreview();
   </script>
 </body>
 </html>
