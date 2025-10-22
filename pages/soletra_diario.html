@@ -895,6 +895,55 @@
         }, 2000);
       }
 
+      const stripDiacritics = (value) => (
+        typeof value === 'string' && value.normalize
+          ? value.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          : String(value || '')
+      );
+
+      const normalizeLetters = (letters) => {
+        if (!Array.isArray(letters)) return [];
+        const sanitized = letters
+          .map((letter) => stripDiacritics(String(letter || '')).trim().toUpperCase())
+          .filter(Boolean);
+        return Array.from(new Set(sanitized));
+      };
+
+      const normalizeWord = (word) => {
+        const trimmed = String(word || '').trim();
+        if (!trimmed) return '';
+        return stripDiacritics(trimmed).toLowerCase();
+      };
+
+      const sanitizeGame = (game) => {
+        if (!game || typeof game !== 'object') {
+          return null;
+        }
+        const data = typeof game.data === 'string' ? game.data.trim() : '';
+        const letras = normalizeLetters(game.letras);
+        const central = stripDiacritics(String(game.central || '')).trim().toUpperCase();
+
+        if (central && !letras.includes(central)) {
+          letras.push(central);
+        }
+
+        const palavras = Array.isArray(game.palavras)
+          ? Array.from(new Set(
+              game.palavras
+                .map((palavra) => normalizeWord(palavra))
+                .filter(Boolean),
+            ))
+          : [];
+
+        return {
+          ...game,
+          data,
+          letras,
+          central,
+          palavras,
+        };
+      };
+
       function openModal(type) {
         renderModalContent(type);
         infoModal.classList.add('active');
@@ -922,7 +971,9 @@
           if (!Array.isArray(lista)) {
             throw new Error('Formato de dados inválido.');
           }
-          jogosDiarios = lista;
+          jogosDiarios = lista
+            .map((item) => sanitizeGame(item))
+            .filter((game) => game && Array.isArray(game.letras) && game.letras.length === 7 && game.central && Array.isArray(game.palavras) && game.palavras.length);
           initGame();
         } catch (error) {
           console.error('Erro ao carregar jogos do Soletra:', error);
@@ -1169,7 +1220,7 @@
               <h3>Sobre</h3>
               <p class="modal-subtitle">Palavreando é um desafio de vocabulário em que você forma palavras usando as letras do dia.</p>
               <ul class="modal-list">
-                <li><span><strong>Concepção &amp; Desenvolvimento:</strong> João Jr</span></li>
+                <li><span><strong>Concepção &amp; Desenvolvimento:</strong> João Jr e Ana Paula Camara</span></li>
               </ul>
             </div>
             <div class="modal-actions">

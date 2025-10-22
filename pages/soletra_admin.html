@@ -538,10 +538,16 @@
     let editingIndex = null;
     let backupFeedbackTimeout = null;
 
+    const stripDiacritics = (value) => (
+      typeof value === 'string' && value.normalize
+        ? value.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        : String(value || '')
+    );
+
     const normalizeLetters = (value) => {
-      const raw = value
-        .toUpperCase()
-        .replace(/[^A-ZÇÃÕÂÊÎÔÛÁÉÍÓÚÀÜ]/g, ' ')
+      const sanitized = stripDiacritics(String(value || '')).toUpperCase();
+      const raw = sanitized
+        .replace(/[^A-Z]/g, ' ')
         .split(/\s+/)
         .filter(Boolean);
       const letters = raw.length === 1 && raw[0].length > 1
@@ -550,11 +556,19 @@
       return Array.from(new Set(letters.map((l) => l.trim()))).filter(Boolean);
     };
 
+    const normalizeWord = (value) => {
+      const trimmed = String(value || '').trim();
+      if (!trimmed) return '';
+      const base = stripDiacritics(trimmed);
+      return base.toLowerCase();
+    };
+
     const parseWords = (value) => {
-      return value
+      const words = value
         .split(/[\n,;]+/)
-        .map((word) => word.trim())
+        .map((word) => normalizeWord(word))
         .filter(Boolean);
+      return Array.from(new Set(words));
     };
 
     const updateStatus = (message, type = 'info') => {
@@ -701,19 +715,28 @@
       return rawJogos.map((jogo, index) => {
         const data = typeof jogo?.data === 'string' ? jogo.data.trim() : '';
         const letras = Array.isArray(jogo?.letras)
-          ? jogo.letras.map((letra) => String(letra || '').trim().toUpperCase()).filter(Boolean)
+          ? jogo.letras
+            .map((letra) => stripDiacritics(String(letra || '').trim()).toUpperCase())
+            .filter(Boolean)
           : [];
-        const central = typeof jogo?.central === 'string' ? jogo.central.trim().toUpperCase() : '';
+        const central = typeof jogo?.central === 'string'
+          ? stripDiacritics(jogo.central).trim().toUpperCase()
+          : '';
         const palavras = Array.isArray(jogo?.palavras)
-          ? jogo.palavras.map((palavra) => String(palavra || '').trim()).filter(Boolean)
+          ? jogo.palavras
+            .map((palavra) => normalizeWord(palavra))
+            .filter(Boolean)
           : [];
 
-        const errors = validateGame({ data, letras, central, palavras });
+        const letrasUnique = Array.from(new Set(letras));
+        const palavrasUnique = Array.from(new Set(palavras));
+
+        const errors = validateGame({ data, letras: letrasUnique, central, palavras: palavrasUnique });
         if (errors.length) {
           throw new Error(`Jogo ${index + 1} inválido: ${errors.join(' ')}`);
         }
 
-        return { data, letras, central, palavras };
+        return { data, letras: letrasUnique, central, palavras: palavrasUnique };
       });
     };
 
@@ -741,7 +764,7 @@
     const updatePreview = () => {
       const data = dateInput.value.trim();
       const letras = normalizeLetters(lettersInput.value);
-      const central = centralInput.value.trim().toUpperCase();
+      const central = stripDiacritics(centralInput.value).trim().toUpperCase();
       const palavras = parseWords(wordsInput.value);
       const hasContent = Boolean(data || letras.length || central || palavras.length);
 
@@ -843,7 +866,7 @@
       event.preventDefault();
       const data = dateInput.value.trim();
       const letras = normalizeLetters(lettersInput.value);
-      const central = centralInput.value.trim().toUpperCase();
+      const central = stripDiacritics(centralInput.value).trim().toUpperCase();
       const palavras = parseWords(wordsInput.value);
 
       const newGame = { data, letras, central, palavras };
