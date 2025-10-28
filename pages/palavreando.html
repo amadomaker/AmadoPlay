@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Soletra Diário</title>
+  <title>Palavreando</title>
   <style>
     /*=== VARIÁVEIS DE ESTILO (TEMA CLARO) ===*/
     :root {
@@ -834,6 +834,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       const jogosDataUrl = '../data/soletra_jogos.json';
       let jogosDiarios = [];
+      let jogosOrdenados = [];
 
 
 
@@ -915,6 +916,67 @@
         return stripDiacritics(trimmed).toLowerCase();
       };
 
+      const DAY_IN_MS = 24 * 60 * 60 * 1000;
+
+      const parseISODateToUTC = (isoStr) => {
+        if (typeof isoStr !== 'string') return null;
+        const [yearStr, monthStr, dayStr] = isoStr.split('-');
+        const year = Number(yearStr);
+        const month = Number(monthStr);
+        const day = Number(dayStr);
+        if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day)) {
+          return null;
+        }
+        const date = new Date(Date.UTC(year, month - 1, day));
+        return Number.isNaN(date.getTime()) ? null : date;
+      };
+
+      const cloneGame = (game, { overrideDate, originalDate } = {}) => ({
+        ...game,
+        data: overrideDate || game.data,
+        originalData: typeof originalDate === 'string' ? originalDate : game.originalData || game.data,
+        letras: Array.isArray(game.letras) ? [...game.letras] : [],
+        palavras: Array.isArray(game.palavras) ? [...game.palavras] : [],
+        palavrasOriginais: game.palavrasOriginais ? { ...game.palavrasOriginais } : {},
+      });
+
+      const getLoopedGameForDate = (dateStr) => {
+        if (!Array.isArray(jogosOrdenados) || jogosOrdenados.length === 0) {
+          return null;
+        }
+        const targetDate = parseISODateToUTC(dateStr);
+        const firstGame = jogosOrdenados[0];
+        const firstDate = parseISODateToUTC(firstGame.data);
+        if (!targetDate || !firstDate) {
+          return null;
+        }
+        const diffMs = targetDate.getTime() - firstDate.getTime();
+        const diffDays = Math.floor(diffMs / DAY_IN_MS);
+        const index = ((diffDays % jogosOrdenados.length) + jogosOrdenados.length) % jogosOrdenados.length;
+        const baseGame = jogosOrdenados[index];
+        return {
+          game: cloneGame(baseGame, { overrideDate: dateStr, originalDate: baseGame.originalData || baseGame.data }),
+          isFallback: true,
+        };
+      };
+
+      const getGameForDate = (dateStr, { allowLoop = false } = {}) => {
+        if (!Array.isArray(jogosDiarios) || jogosDiarios.length === 0) {
+          return null;
+        }
+        const exactGame = jogosDiarios.find((game) => game.data === dateStr);
+        if (exactGame) {
+          return {
+            game: cloneGame(exactGame, { originalDate: exactGame.originalData || exactGame.data }),
+            isFallback: false,
+          };
+        }
+        if (!allowLoop) {
+          return null;
+        }
+        return getLoopedGameForDate(dateStr);
+      };
+
       const sanitizeGame = (game) => {
         if (!game || typeof game !== 'object') {
           return null;
@@ -927,21 +989,50 @@
           letras.push(central);
         }
 
-        const palavras = Array.isArray(game.palavras)
-          ? Array.from(new Set(
-              game.palavras
-                .map((palavra) => normalizeWord(palavra))
-                .filter(Boolean),
-            ))
-          : [];
+        const originalWords = Array.isArray(game.palavras) ? game.palavras : [];
+        const wordMap = new Map();
+
+        originalWords.forEach((palavra) => {
+          const trimmed = typeof palavra === 'string' ? palavra.trim() : '';
+          if (!trimmed) return;
+          const normalized = normalizeWord(trimmed);
+          if (!normalized) return;
+          if (!wordMap.has(normalized)) {
+            wordMap.set(normalized, trimmed);
+          }
+        });
+
+        const palavras = Array.from(wordMap.keys());
+        const palavrasOriginais = Object.fromEntries(wordMap);
 
         return {
           ...game,
           data,
+          originalData: data,
           letras,
           central,
           palavras,
+          palavrasOriginais,
         };
+      };
+
+      const getOriginalWord = (game, normalizedWord) => {
+        const key = typeof normalizedWord === 'string' ? normalizedWord : '';
+        if (!key) return key;
+        const source = game && game.palavrasOriginais;
+        if (source && Object.prototype.hasOwnProperty.call(source, key)) {
+          const original = source[key];
+          if (typeof original === 'string' && original.trim()) {
+            return original;
+          }
+        }
+        return key;
+      };
+
+      const getDisplayWord = (normalizedWord, { uppercase = false } = {}) => {
+        const base = getOriginalWord(currentGame, normalizedWord);
+        if (!base) return '';
+        return uppercase ? base.toUpperCase() : base;
       };
 
       function openModal(type) {
@@ -974,6 +1065,7 @@
           jogosDiarios = lista
             .map((item) => sanitizeGame(item))
             .filter((game) => game && Array.isArray(game.letras) && game.letras.length === 7 && game.central && Array.isArray(game.palavras) && game.palavras.length);
+          jogosOrdenados = [...jogosDiarios].sort((a, b) => a.data.localeCompare(b.data));
           initGame();
         } catch (error) {
           console.error('Erro ao carregar jogos do Soletra:', error);
@@ -1071,14 +1163,14 @@
 
         const today = new Date();
         today.setHours(12, 0, 0, 0);
-        const gameByDate = new Map(jogosDiarios.map((game) => [game.data, game]));
         stats.recent = [];
 
         for (let offset = 1; offset <= RECENT_GAMES_LIMIT; offset += 1) {
           const target = new Date(today);
           target.setDate(today.getDate() - offset);
           const isoDate = getISODateString(target);
-          const game = gameByDate.get(isoDate);
+          const selection = getGameForDate(isoDate, { allowLoop: true });
+          const game = selection ? selection.game : null;
           const state = stateByDate.get(isoDate);
           const total = game && Array.isArray(game.palavras) ? game.palavras.length : 0;
           const found = state && Array.isArray(state.foundWords) ? state.foundWords.length : 0;
@@ -1243,14 +1335,16 @@
 
       function initGame() {
         const todayDate = getTodayDateString();
-        currentGame = jogosDiarios.find(jogo => jogo.data === todayDate);
+        const selection = getGameForDate(todayDate, { allowLoop: true });
 
-        if (!currentGame) {
+        if (!selection || !selection.game) {
           document.querySelector('.game-wrapper').innerHTML = '<h1>Nenhum jogo para hoje. Volte amanhã!</h1>';
           return;
         }
 
-        storageKey = `${STORAGE_PREFIX}${currentGame.data}`;
+        currentGame = selection.game;
+
+        storageKey = `${STORAGE_PREFIX}${todayDate}`;
         placeholderOverrides.clear();
         
         foundWords = [];
@@ -1363,13 +1457,24 @@
       function renderWordPlaceholders() {
         foundWordsList.innerHTML = '';
         wordPlaceholders.clear();
-        const sortedWords = [...currentGame.palavras].sort((a, b) => a.length - b.length || a.localeCompare(b));
+        const sortedWords = [...currentGame.palavras].sort((a, b) => {
+            const displayA = getOriginalWord(currentGame, a);
+            const displayB = getOriginalWord(currentGame, b);
+            const lengthDiff = Array.from(displayA).length - Array.from(displayB).length;
+            if (lengthDiff !== 0) {
+              return lengthDiff;
+            }
+            return displayA.localeCompare(displayB, 'pt-BR');
+        });
 
         sortedWords.forEach(word => {
             const li = document.createElement('li');
+            const displayWord = getOriginalWord(currentGame, word);
+            const placeholder = Array.from(displayWord).map(() => '_').join(' ') || '_';
             li.className = 'placeholder';
-            li.textContent = '_ '.repeat(word.length).trim();
+            li.textContent = placeholder;
             li.dataset.word = word;
+            li.dataset.display = displayWord;
             foundWordsList.appendChild(li);
             wordPlaceholders.set(word, li);
         });
@@ -1400,25 +1505,26 @@
             showFeedback('A partida já foi encerrada.', 'info');
             return;
         }
-        const word = currentWord.toLowerCase();
+        const normalizedWord = normalizeWord(currentWord);
 
-        if (word.length < 4) {
+        if (!normalizedWord || normalizedWord.length < 4) {
             showFeedback('A palavra deve ter no mínimo 4 letras.', 'error');
             return;
         }
-        if (!word.includes(currentGame.central.toLowerCase())) {
+        if (!normalizedWord.includes(currentGame.central.toLowerCase())) {
             showFeedback('A palavra deve conter a letra central.', 'error');
             return;
         }
-        if (foundWords.includes(word)) {
+        if (foundWords.includes(normalizedWord)) {
             showFeedback('Palavra já encontrada!', 'info');
             clearCurrentWord();
             return;
         }
-        if (currentGame.palavras.includes(word)) {
-            foundWords.push(word);
-            revealFoundWord(word);
-            addScore(word.length);
+        if (currentGame.palavras.includes(normalizedWord)) {
+            foundWords.push(normalizedWord);
+            revealFoundWord(normalizedWord);
+            const scoringLength = Array.from(getOriginalWord(currentGame, normalizedWord)).length;
+            addScore(scoringLength);
             updateProgress();
             saveGameState();
             showFeedback('Boa!', 'success');
@@ -1436,7 +1542,8 @@
       function revealFoundWord(word, { scroll = true } = {}) {
         const li = wordPlaceholders.get(word);
         if (li) {
-            li.textContent = word.toUpperCase();
+            const displayWord = getDisplayWord(word, { uppercase: true }) || word.toUpperCase();
+            li.textContent = displayWord;
             li.classList.remove('placeholder', 'hinted', 'revealed');
             li.classList.add('found');
             if (scroll) {
@@ -1469,25 +1576,27 @@
 
         if (!li) return;
 
-        const word = wordToHint;
-        let numToReveal = 2;
-        if (word.length >= 8) {
-            numToReveal = 3;
+        const displayChars = Array.from(getDisplayWord(wordToHint, { uppercase: true }));
+        if (!displayChars.length) {
+            return;
+        }
+        let numToReveal = displayChars.length >= 8 ? 3 : 2;
+        numToReveal = Math.min(numToReveal, displayChars.length);
+
+        const placeholderChars = displayChars.map(() => '_');
+        const indicesToReveal = new Set();
+
+        while (indicesToReveal.size < numToReveal) {
+            indicesToReveal.add(Math.floor(Math.random() * displayChars.length));
         }
 
-        const wordAsArray = Array(word.length).fill('_');
-        let indicesToReveal = new Set();
-        while(indicesToReveal.size < numToReveal) {
-            indicesToReveal.add(Math.floor(Math.random() * word.length));
-        }
-
-        for(let i = 0; i < word.length; i++) {
-            if(indicesToReveal.has(i)) {
-                wordAsArray[i] = word[i].toUpperCase();
+        for (let i = 0; i < displayChars.length; i++) {
+            if (indicesToReveal.has(i)) {
+                placeholderChars[i] = displayChars[i];
             }
         }
 
-        li.textContent = wordAsArray.join(' ');
+        li.textContent = placeholderChars.join(' ');
         li.classList.add('hinted');
 
         hintCount--;
@@ -1599,7 +1708,8 @@
 
       function revealAllWords() {
         wordPlaceholders.forEach((li, word) => {
-            li.textContent = word.toUpperCase();
+            const displayWord = getDisplayWord(word, { uppercase: true }) || word.toUpperCase();
+            li.textContent = displayWord;
             li.classList.remove('placeholder', 'hinted', 'found', 'revealed');
             if (foundWords.includes(word)) {
                 li.classList.add('found');
