@@ -544,6 +544,13 @@
         : String(value || '')
     );
 
+    const sanitizeOriginalWord = (value) => {
+      const raw = typeof value === 'string' ? value.trim() : '';
+      if (!raw) return '';
+      const normalized = raw.normalize ? raw.normalize('NFC') : raw;
+      return normalized.toLowerCase();
+    };
+
     const normalizeLetters = (value) => {
       const sanitized = stripDiacritics(String(value || '')).toUpperCase();
       const raw = sanitized
@@ -557,18 +564,30 @@
     };
 
     const normalizeWord = (value) => {
-      const trimmed = String(value || '').trim();
-      if (!trimmed) return '';
-      const base = stripDiacritics(trimmed);
+      const sanitized = sanitizeOriginalWord(value);
+      if (!sanitized) return '';
+      const base = stripDiacritics(sanitized);
       return base.toLowerCase();
     };
 
+    const buildWordMap = (values) => {
+      const map = new Map();
+      values.forEach((entry) => {
+        const original = sanitizeOriginalWord(entry);
+        if (!original) return;
+        const key = normalizeWord(original);
+        if (!key || map.has(key)) return;
+        map.set(key, original);
+      });
+      return map;
+    };
+
     const parseWords = (value) => {
-      const words = value
+      const rawWords = String(value || '')
         .split(/[\n,;]+/)
-        .map((word) => normalizeWord(word))
         .filter(Boolean);
-      return Array.from(new Set(words));
+      const wordMap = buildWordMap(rawWords);
+      return Array.from(wordMap.values());
     };
 
     const updateStatus = (message, type = 'info') => {
@@ -722,21 +741,17 @@
         const central = typeof jogo?.central === 'string'
           ? stripDiacritics(jogo.central).trim().toUpperCase()
           : '';
-        const palavras = Array.isArray(jogo?.palavras)
-          ? jogo.palavras
-            .map((palavra) => normalizeWord(palavra))
-            .filter(Boolean)
-          : [];
-
+        const palavrasMap = Array.isArray(jogo?.palavras)
+          ? buildWordMap(jogo.palavras)
+          : new Map();
+        const palavras = Array.from(palavrasMap.values());
         const letrasUnique = Array.from(new Set(letras));
-        const palavrasUnique = Array.from(new Set(palavras));
-
-        const errors = validateGame({ data, letras: letrasUnique, central, palavras: palavrasUnique });
+        const errors = validateGame({ data, letras: letrasUnique, central, palavras });
         if (errors.length) {
           throw new Error(`Jogo ${index + 1} inválido: ${errors.join(' ')}`);
         }
 
-        return { data, letras: letrasUnique, central, palavras: palavrasUnique };
+        return { data, letras: letrasUnique, central, palavras };
       });
     };
 

@@ -250,7 +250,7 @@
       titulo: 'Palavreando',
       descricao: 'Monte o máximo de palavras possível com as letras do dia e aprimore vocabulário, ortografia e consciência morfológica de forma divertida.',
       imagem: 'src/assets/images/soletra_diario.png',
-      interno: 'pages/soletra_diario.html',
+      interno: 'pages/palavreando.html',
       materia: 'portugues',
       series: [1, 2, 3, 4, 5, 6, 7, 8, 9],
       tipo: ['interativo', 'ludico', 'vocabulario'],
