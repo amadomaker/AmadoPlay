@@ -42,7 +42,8 @@
         "serrar",
         "serraria",
         "sereia",
-        "seria"
+        "seria",
+        "pera"
       ]
     },
     {
@@ -86,7 +87,13 @@
         "soberba",
         "sobra",
         "sobre",
-        "sorrir"
+        "sorrir",
+        "barra",
+        "barro",
+        "barba",
+        "erro",
+        "sobrar",
+        "soro"
       ]
     },
     {
@@ -142,7 +149,6 @@
         "tala",
         "tratar",
         "tatuar",
-        "tule",
         "tutela",
         "tutelar",
         "ultra",
@@ -180,7 +186,7 @@
         "manca",
         "manco",
         "mancha",
-        "manha",
+        "manhã",
         "mania",
         "mico",
         "mimo",
@@ -188,12 +194,12 @@
         "minha",
         "minhoca",
         "moinho",
-        "mimar",
         "mímico",
         "mímica",
         "mínimo",
         "mamão",
-        "manhã"
+        "amanhã",
+        "ânimo"
       ]
     },
     {
@@ -246,17 +252,17 @@
         "trio",
         "tripa",
         "tocaia",
-        "atirar",
-        "triar",
         "tricotar",
         "patriota",
         "carioca",
         "prática",
         "prático",
-        "críticar",
+        "crítica",
+        "criticar",
         "tática",
         "ótica",
-        "pátria"
+        "pátria",
+        "apto"
       ]
     },
     {
@@ -327,7 +333,6 @@
         "arcar",
         "aula",
         "bala",
-        "balar",
         "barca",
         "barra",
         "barraca",
@@ -364,7 +369,11 @@
         "relar",
         "rural",
         "áurea",
-        "urrar"
+        "urrar",
+        "arca",
+        "aura",
+        "abalar",
+        "burlar"
       ]
     },
     {
@@ -390,7 +399,6 @@
         "freio",
         "frei",
         "fizer",
-        "forre",
         "leio",
         "refez",
         "refere",
@@ -398,7 +406,6 @@
         "refil",
         "refiro",
         "refiz",
-        "refizer",
         "reler",
         "releio",
         "roer",
@@ -407,8 +414,9 @@
         "zero",
         "feroz",
         "ferreiro",
-        "relê",
-        "rolê"
+        "filé",
+        "lero",
+        "rezo"
       ]
     },
     {
@@ -426,13 +434,11 @@
       "palavras": [
         "agir",
         "agro",
-        "gabo",
         "gago",
         "gari",
         "gata",
         "gato",
         "gibi",
-        "gira",
         "giro",
         "gota",
         "ioga",
@@ -471,7 +477,6 @@
         "irrigar",
         "gabarito",
         "gritaria",
-        "garoa",
         "gíria"
       ]
     },
@@ -525,7 +530,6 @@
         "patada",
         "pateta",
         "pedida",
-        "pedrar",
         "peitar",
         "perder",
         "perita",
@@ -541,7 +545,6 @@
         "apedrar",
         "apertar",
         "apetite",
-        "apitada",
         "deparar",
         "padaria",
         "partida",
@@ -602,14 +605,11 @@
         "cores",
         "rosca",
         "escala",
-        "escora",
+        "escorar",
         "escolar",
         "acessar",
         "escalar",
-        "calor",
-        "coração",
         "clarear",
-        "cérebro",
         "cela",
         "cera",
         "coroa",
@@ -618,10 +618,21 @@
         "casca",
         "sacola",
         "classe",
-        "calça",
-        "calço",
-        "coçar",
-        "coração"
+        "cara",
+        "caco",
+        "caracol",
+        "correr",
+        "escola",
+        "soco",
+        "calar",
+        "calo",
+        "carro",
+        "colar",
+        "crase",
+        "lacrar",
+        "lacre",
+        "acre",
+        "ecoar"
       ]
     },
     {
@@ -643,7 +654,6 @@
         "mala",
         "meia",
         "mola",
-        "mana",
         "mania",
         "anima",
         "menina",
@@ -654,13 +664,14 @@
         "limão",
         "melão",
         "ameno",
-        "amola",
-        "animo",
+        "ânimo",
         "limo",
         "mimo",
         "moela",
         "mole",
-        "ânimo"
+        "mamão",
+        "mina",
+        "lema"
       ]
     },
     {
@@ -678,21 +689,17 @@
       "palavras": [
         "arte",
         "ator",
-        "tara",
         "teia",
         "teto",
         "trio",
         "seita",
         "tosar",
         "atesta",
-        "rateio",
         "sortear",
         "aresta",
         "astro",
-        "atirar",
         "estreia",
         "estreito",
-        "estrito",
         "teoria",
         "tirar",
         "torre",
@@ -700,11 +707,27 @@
         "triste",
         "artista",
         "sátira",
-        "tetra",
         "torta",
         "trator",
         "rota",
-        "sorte"
+        "sorte",
+        "atestar",
+        "restrito",
+        "rato",
+        "atrair",
+        "otite",
+        "retiro",
+        "retirar",
+        "testa",
+        "testar",
+        "resto",
+        "restar",
+        "tato",
+        "atraso",
+        "reatar",
+        "roteiro",
+        "atrasar",
+        "esteira"
       ]
     },
     {
@@ -718,32 +741,39 @@
         "T",
         "O"
       ],
-      "central": "S",
+      "central": "O",
       "palavras": [
         "piso",
         "resto",
         "setor",
         "sorte",
         "sopro",
-        "serio",
-        "pesto",
-        "pires",
+        "sério",
         "poste",
         "peso",
-        "pores",
-        "seis",
-        "sorri",
+        "sorrir",
         "sorriso",
         "sorteio",
-        "piste",
-        "topes",
-        "terso",
-        "tripes",
         "preso",
-        "soror",
-        "persio",
-        "sopro",
-        "sites"
+        "resort",
+        "riso",
+        "esporro",
+        "estreito",
+        "protetor",
+        "oito",
+        "erro",
+        "soro",
+        "torto",
+        "térreo",
+        "repositor",
+        "repor",
+        "isopor",
+        "risoto",
+        "teto",
+        "trio",
+        "pote",
+        "preto",
+        "protesto"
       ]
     },
     {
@@ -1028,7 +1058,7 @@
         "mamãe",
         "mirar",
         "romã",
-        "animar"        
+        "animar"
       ]
     },
     {
@@ -1066,7 +1096,7 @@
         "passar",
         "pavoroso",
         "porosa",
-        "portal", 
+        "portal",
         "propor"
       ]
     },
@@ -1105,12 +1135,11 @@
         "deriva",
         "derivar",
         "devorar",
-        "reavivar ",
+        "reavivar",
         "rever",
         "reviver",
         "revoar",
-        "revirar",
-        "voar"
+        "revirar"
       ]
     },
     {
@@ -1237,7 +1266,6 @@
         "agir",
         "agrado",
         "ardor"
-
       ]
     },
     {
