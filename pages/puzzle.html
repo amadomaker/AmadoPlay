@@ -167,23 +167,28 @@
         }
 
         #levelSelectionModal .modalContent {
-            width: 600px;
+            width: min(90vw, 860px);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         #levelGrid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 14px;
             margin-top: 30px;
+            max-height: 62vh;
+            overflow-y: auto;
+            padding-right: 6px;
         }
 
         .level-select-btn {
             background: linear-gradient(145deg, #e0e0e0 0%, #f5f5f5 100%);
             border: 1px solid #ccc;
-            font-size: 2em;
+            font-size: 1.6em;
             font-weight: bold;
             color: #888;
-            height: 100px;
+            height: 78px;
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -332,6 +337,51 @@
             #playArea {
                 justify-content: center;
                 margin-top: -45px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .modalContent {
+                width: min(96vw, 640px);
+                max-width: 640px;
+                padding: 20px 22px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            #levelSelectionModal .modalContent {
+                width: min(98vw, 680px);
+                max-width: 680px;
+                padding: 18px 20px;
+            }
+            #levelGrid {
+                grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+                gap: 10px;
+            }
+            .level-select-btn {
+                height: 72px;
+                font-size: 1.5em;
+            }
+        }
+
+        @media (max-width: 1024px) and (orientation: landscape) {
+            .modalContent {
+                width: min(96vw, 780px);
+                max-width: 780px;
+                padding: 22px 24px;
+                max-height: 88vh;
+            }
+            #levelSelectionModal .modalContent {
+                width: min(98vw, 860px);
+                max-width: 860px;
+                padding: 20px 24px;
+            }
+            #levelGrid {
+                grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+                gap: 16px;
+            }
+            .level-select-btn {
+                height: 88px;
+                font-size: 1.8em;
             }
         }
 
@@ -1064,42 +1114,227 @@
             grid: { rows: 6, cols: 6 },
             exitRow: 2,
             blocks: [
-                { r: 2, c: 2, w: 2, h: 1, t: true },
+                { r: 2, c: 1, w: 2, h: 1, t: true },
                 { r: 0, c: 0, w: 2, h: 1 },
-                { r: 1, c: 0, w: 1, h: 2 },
-                { r: 0, c: 3, w: 1, h: 2 },
-                { r: 0, c: 4, w: 1, h: 3 },
-                { r: 3, c: 0, w: 1, h: 3 },
-                { r: 3, c: 1, w: 2, h: 1 },
+                { r: 1, c: 0, w: 2, h: 1 },
+                { r: 2, c: 0, w: 1, h: 3 },
+                { r: 3, c: 1, w: 3, h: 1 },
+                { r: 0, c: 2, w: 1, h: 2 },
+                { r: 0, c: 3, w: 1, h: 3 },
                 { r: 4, c: 1, w: 2, h: 1 },
-                { r: 5, c: 1, w: 2, h: 1 },
-                { r: 3, c: 4, w: 1, h: 1 },
-                { r: 4, c: 3, w: 1, h: 2 },
-                { r: 4, c: 4, w: 2, h: 1 },
-                { r: 1, c: 5, w: 1, h: 3 },
+                { r: 5, c: 0, w: 3, h: 1 },
+
             ]
         },
         {
             // Nível 19
-            grid: { rows: 6, cols: 8 },
+            grid: { rows: 6, cols: 6 },
             exitRow: 2,
             blocks: [
                 { r: 2, c: 2, w: 2, h: 1, t: true },
-                { r: 0, c: 0, w: 1, h: 3 },
-                { r: 0, c: 1, w: 2, h: 1 },
-                { r: 1, c: 4, w: 1, h: 3 },
-                { r: 0, c: 6, w: 1, h: 2 },
-                { r: 2, c: 5, w: 1, h: 3 },
-                { r: 3, c: 0, w: 2, h: 1 },
-                { r: 4, c: 0, w: 2, h: 1 },
-                { r: 5, c: 0, w: 3, h: 1 },
-                { r: 3, c: 3, w: 1, h: 3 },
-                { r: 5, c: 5, w: 2, h: 1 },
-                { r: 0, c: 4, w: 2, h: 1 },
+                { r: 0, c: 2, w: 1, h: 2 },
+                { r: 0, c: 3, w: 2, h: 1 },
+                { r: 1, c: 4, w: 1, h: 2 },
+                { r: 3, c: 4, w: 1, h: 2 },
+                { r: 3, c: 2, w: 2, h: 1 },
+                { r: 2, c: 1, w: 1, h: 2 },
+                { r: 4, c: 1, w: 3, h: 1 },
+  
             ]
         },
         {
             // Nível 20
+            grid: { rows: 6, cols: 6 },
+            exitRow: 2,
+            blocks: [
+                { r: 2, c: 0, w: 2, h: 1, t: true },
+                { r: 0, c: 0, w: 1, h: 2 },
+                { r: 0, c: 3, w: 3, h: 1 },
+                { r: 1, c: 1, w: 2, h: 1 },
+                { r: 2, c: 2, w: 1, h: 2 }, 
+                { r: 4, c: 2, w: 1, h: 2 },
+                { r: 1, c: 3, w: 1, h: 2 },
+                { r: 2, c: 5, w: 1, h: 3 },
+                { r: 4, c: 3, w: 2, h: 1 },
+                { r: 5, c: 3, w: 3, h: 1 },
+
+            ]
+        },
+        {
+            // Nível 21
+            grid: { rows: 6, cols: 6 },
+            exitRow: 2,
+            blocks: [
+                { r: 2, c: 1, w: 2, h: 1, t: true },
+                { r: 1, c: 0, w: 1, h: 3 },
+                { r: 0, c: 2, w: 1, h: 2 }, 
+                { r: 0, c: 3, w: 1, h: 3 },
+                { r: 0, c: 0, w: 2, h: 1 },
+                { r: 3, c: 1, w: 3, h: 1 },
+                { r: 5, c: 3, w: 3, h: 1 },
+
+
+            ]
+        },
+        {
+            // Nível 22
+            grid: { rows: 6, cols: 6 },
+            exitRow: 2,
+            blocks: [
+                { r: 2, c: 1, w: 2, h: 1, t: true },
+                { r: 1, c: 0, w: 1, h: 2 },
+                { r: 4, c: 0, w: 1, h: 2 },
+                { r: 3, c: 1, w: 1, h: 2 },
+                { r: 0, c: 2, w: 1, h: 2 },
+                { r: 1, c: 3, w: 1, h: 3 },
+                { r: 4, c: 5, w: 1, h: 2 },
+                { r: 0, c: 3, w: 3, h: 1 },
+                { r: 1, c: 4, w: 2, h: 1 },
+                { r: 3, c: 4, w: 2, h: 1 },
+                { r: 4, c: 2, w: 2, h: 1 },
+                { r: 5, c: 1, w: 3, h: 1 },
+
+            ]
+        },
+        {
+            // Nível 23
+            grid: { rows: 6, cols: 6 },
+            exitRow: 2,
+            blocks: [
+                { r: 2, c: 3, w: 2, h: 1, t: true },
+                { r: 0, c: 5, w: 1, h: 3 },
+                { r: 1, c: 2, w: 1, h: 2 },
+                { r: 3, c: 2, w: 1, h: 2 },
+                { r: 3, c: 3, w: 1, h: 2 },
+                { r: 0, c: 2, w: 3, h: 1 },
+                { r: 1, c: 3, w: 2, h: 1 },
+                { r: 3, c: 4, w: 2, h: 1 },
+                { r: 4, c: 4, w: 2, h: 1 },
+                { r: 5, c: 2, w: 3, h: 1 },
+
+            ]
+        },
+        {
+            // Nível 24
+            grid: { rows: 6, cols: 6 },
+            exitRow: 2,
+            blocks: [
+                { r: 2, c: 2, w: 2, h: 1, t: true },
+                { r: 0, c: 3, w: 2, h: 1 },
+                { r: 2, c: 0, w: 1, h: 2 },
+                { r: 0, c: 2, w: 1, h: 2 },
+                { r: 1, c: 1, w: 1, h: 2 },
+                { r: 4, c: 4, w: 1, h: 2 },
+                { r: 3, c: 1, w: 2, h: 1 },
+                { r: 4, c: 0, w: 3, h: 1 },
+                { r: 5, c: 0, w: 2, h: 1 },
+                { r: 2, c: 4, w: 1, h: 2 },
+            ]
+        },
+        {
+            // Nível 25
+            grid: { rows: 6, cols: 6 },
+            exitRow: 2,
+            blocks: [
+                { r: 2, c: 1, w: 2, h: 1, t: true },
+                { r: 0, c: 0, w: 2, h: 1 },
+                { r: 1, c: 0, w: 2, h: 1 },
+                { r: 0, c: 4, w: 2, h: 1 },
+                { r: 4, c: 4, w: 2, h: 1 },
+                { r: 5, c: 4, w: 2, h: 1 },
+                { r: 3, c: 1, w: 3, h: 1 },
+                { r: 2, c: 0, w: 1, h: 3 },
+                { r: 4, c: 1, w: 1, h: 2 },
+                { r: 4, c: 3, w: 1, h: 2 },
+                { r: 0, c: 2, w: 1, h: 2 },
+                { r: 2, c: 4, w: 1, h: 2 },
+                { r: 1, c: 5, w: 1, h: 3 },
+
+ 
+            ]
+        },
+        {
+            // Nível 26
+            grid: { rows: 6, cols: 6 },
+            exitRow: 2,
+            blocks: [
+                { r: 2, c: 1, w: 2, h: 1, t: true },
+
+                { r: 0, c: 1, w: 1, h: 2 },
+                { r: 1, c: 0, w: 1, h: 2 },
+                { r: 3, c: 0, w: 1, h: 2 },
+                { r: 0, c: 3, w: 3, h: 1 },
+                { r: 3, c: 1, w: 3, h: 1 },
+                { r: 5, c: 3, w: 2, h: 1 },
+                { r: 4, c: 2, w: 1, h: 2 },
+                { r: 1, c: 3, w: 1, h: 2 },
+                { r: 1, c: 4, w: 1, h: 3 },
+                { r: 2, c: 5, w: 1, h: 2 },
+                { r: 4, c: 5, w: 1, h: 2 },
+
+
+            ]
+        },
+        {
+            // Nível 27
+            grid: { rows: 6, cols: 6 },
+            exitRow: 2,
+            blocks: [
+                { r: 2, c: 0, w: 2, h: 1, t: true },
+                { r: 0, c: 0, w: 1, h: 2 },
+                { r: 0, c: 3, w: 1, h: 3 },
+                { r: 2, c: 5, w: 1, h: 3 },
+                { r: 2, c: 2, w: 1, h: 2 },
+                { r: 4, c: 2, w: 1, h: 2 },
+                { r: 0, c: 1, w: 2, h: 1 },
+                { r: 1, c: 1, w: 2, h: 1 },
+                { r: 3, c: 3, w: 2, h: 1 },
+                { r: 5, c: 3, w: 3, h: 1 },
+  
+            ]
+        },
+        {
+            // Nível 28
+            grid: { rows: 6, cols: 6 },
+            exitRow: 2,
+            blocks: [
+                { r: 2, c: 0, w: 2, h: 1, t: true },
+                { r: 0, c: 0, w: 3, h: 1 },
+                { r: 1, c: 4, w: 2, h: 1 },
+                { r: 3, c: 3, w: 2, h: 1 },
+                { r: 4, c: 2, w: 3, h: 1 },
+                { r: 5, c: 0, w: 2, h: 1 },
+                { r: 5, c: 2, w: 2, h: 1 },
+                { r: 3, c: 0, w: 1, h: 2 },
+                { r: 3, c: 1, w: 1, h: 2 },
+                { r: 1, c: 2, w: 1, h: 3 },
+                { r: 0, c: 3, w: 1, h: 2 },
+                { r: 3, c: 5, w: 1, h: 3 },
+
+            ]
+        },
+        {
+            // Nível 29
+            grid: { rows: 6, cols: 6 },
+            exitRow: 2,
+            blocks: [
+                { r: 2, c: 0, w: 2, h: 1, t: true },
+                { r: 0, c: 0, w: 3, h: 1 },
+                { r: 3, c: 3, w: 2, h: 1 },
+                { r: 3, c: 1, w: 2, h: 1 },
+                { r: 4, c: 1, w: 2, h: 1 },
+                { r: 5, c: 0, w: 3, h: 1 },
+                { r: 3, c: 0, w: 1, h: 2 },
+                { r: 1, c: 2, w: 1, h: 2 },
+                { r: 4, c: 3, w: 1, h: 2 },
+                { r: 0, c: 4, w: 1, h: 3 },
+                { r: 2, c: 5, w: 1, h: 2 },
+                { r: 4, c: 5, w: 1, h: 2 },
+
+            ]
+        },
+        {
+            // Nível 30
             grid: { rows: 6, cols: 8 },
             exitRow: 2,
             blocks: [
