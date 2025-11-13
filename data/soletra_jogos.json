@@ -972,7 +972,20 @@
         "relatar",
         "serie",
         "seria",
-        "reler"
+        "reler",
+        "sela",
+        "lisa",
+        "real",
+        "sete",
+        "testa",
+        "realista",
+        "aresta",
+        "estrelas",
+        "teste",
+        "realce",
+        "salsa",
+        "Estrear"
+
       ]
     },
     {
@@ -988,7 +1001,6 @@
       ],
       "central": "O",
       "palavras": [
-        "coorte",
         "corte",
         "coroa",
         "coar",
@@ -1010,13 +1022,26 @@
         "rosca",
         "toca",
         "trocar",
-        "escorea",
         "escora",
         "torcer",
-        "torce",
-        "trono",
         "troco",
-        "troca"
+        "troca",
+        "cores",
+        "acerto",
+        "costas",
+        "ostra",
+        "teor",
+        "cota",
+        "cerco",
+        "acerto",
+        "socorro",
+        "sortear",
+        "certo",
+        "acordo",
+        "crosta"
+
+
+
       ]
     },
     {
@@ -1054,7 +1079,19 @@
         "mamãe",
         "mirar",
         "romã",
-        "animar"
+        "animar",
+        "minha",
+        "morno",
+        "maninha",
+        "maninho",
+        "mirim",
+        "mira",
+        "minoria",
+        "ânimo",
+        "namoro",
+        "namorar",
+        "hormônio"
+
       ]
     },
     {
@@ -1093,7 +1130,16 @@
         "pavoroso",
         "porosa",
         "portal",
-        "propor"
+        "propor",
+        "popa",
+        "assoprar",
+        "aparo",
+        "passo",
+        "passa",
+        "paro",
+        "pavão"
+
+
       ]
     },
     {
@@ -1135,7 +1181,13 @@
         "rever",
         "reviver",
         "revoar",
-        "revirar"
+        "revirar",
+        "valer",
+        "voado",
+        "voando",
+        "valido",
+        "viva",
+        "vivo"
       ]
     },
     {
@@ -1173,7 +1225,23 @@
         "cobrar",
         "cobra",
         "sobra",
-        "sobrar"
+        "sobrar",
+        "abraço",
+        "bacana",
+        "bancar",
+        "barba",
+        "barco",
+        "barraca",
+        "barrar",
+        "branca",
+        "cabo",
+        "obra",
+        "cabana",
+        "broa",
+        "borra",
+        "sabão",
+        "sabor"
+
       ]
     },
     {
@@ -1214,7 +1282,15 @@
         "olfato",
         "safra",
         "sofra",
-        "sofro"
+        "sofro",
+        "falar",
+        "fala",
+        "farol",
+        "forrar",
+        "fará",
+        "aflorar",
+        "sofá"
+
       ]
     },
     {
@@ -1247,7 +1323,7 @@
         "jogar",
         "jogaria",
         "joia",
-        "jorra",
+        "joia",
         "jorrar",
         "dado",
         "dardo",
@@ -1261,7 +1337,23 @@
         "adiar",
         "agir",
         "agrado",
-        "ardor"
+        "ardor",
+        "garra",
+        "garoa",
+        "adorar",
+        "radio",
+        "radar",
+        "rodar",
+        "arado",
+        "arada",
+        "arar",
+        "arido",
+        "arida",
+        "girar",
+        "giria",
+        "orador",
+        "oradora",
+        "irado"
       ]
     },
     {
@@ -1290,7 +1382,7 @@
         "baleia",
         "barbeira",
         "barbeiro",
-        "barra",
+        "barrar",
         "barro",
         "bela",
         "beira",
@@ -1309,7 +1401,27 @@
         "relar",
         "rolar",
         "libra",
-        "orar"
+        "orar",
+        "abalo",
+        "abril",
+        "abra",
+        "aéreo",
+        "balão",
+        "balaio",
+        "barba",
+        "barbear",
+        "barbearia",
+        "barreira",
+        "boiar",
+        "borra",
+        "barril",
+        "bairro",
+        "broa",
+        "barão",
+        "orla",
+        "leiloar",
+        "leilão",
+        "ribeira"
       ]
     },
     {
@@ -1354,10 +1466,10 @@
         "vindo",
         "vinda",
         "venda",
-        "vendida",
-        "vendido",
         "vendo",
-        "veneno"
+        "andar",
+        "anexar",
+        "ninar"
       ]
     }
   ]
