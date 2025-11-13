@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisão dos Jogos do Conexo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <script src="../src/data/conexo-puzzles.js" defer></script>
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background: #f5f3ff; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <main class="max-w-6xl mx-auto py-10 px-4">
+        <header class="mb-8">
+            <p class="text-sm text-violet-500 font-semibold uppercase tracking-wide">Ferramenta interna</p>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mt-2">Revisão dos Jogos do Conexo</h1>
+            <p class="text-gray-600 mt-3 max-w-3xl">Use esta página para avaliar se cada conjunto de palavras está adequado para estudantes. Filtre por nível,
+                busque palavras específicas e marque observações enquanto revisa.</p>
+        </header>
+
+        <section class="bg-white shadow-xl rounded-2xl p-5 md:p-8 border border-violet-100">
+            <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                <div class="flex flex-wrap gap-2" id="difficulty-buttons">
+                    <button data-difficulty="all" class="filter-btn bg-violet-600 text-white px-4 py-2 rounded-lg font-semibold shadow">Todos</button>
+                    <button data-difficulty="1" class="filter-btn bg-emerald-100 text-emerald-900 px-4 py-2 rounded-lg font-semibold">Fácil</button>
+                    <button data-difficulty="2" class="filter-btn bg-amber-100 text-amber-900 px-4 py-2 rounded-lg font-semibold">Médio</button>
+                    <button data-difficulty="3" class="filter-btn bg-rose-100 text-rose-900 px-4 py-2 rounded-lg font-semibold">Difícil</button>
+                </div>
+                <div class="w-full md:w-80">
+                    <label for="search-input" class="block text-sm font-semibold text-gray-700 mb-1">Buscar palavra ou categoria</label>
+                    <input id="search-input" type="text" placeholder="Ex.: animais, esportes, Natal" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                </div>
+            </div>
+
+            <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" id="stats-summary"></div>
+
+            <div class="mt-8" id="puzzle-list"></div>
+        </section>
+    </main>
+
+    <template id="puzzle-card-template">
+        <article class="p-5 bg-violet-50 border border-violet-100 rounded-xl shadow-sm">
+            <header class="flex items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900"></h2>
+                    <p class="text-sm text-gray-500"></p>
+                </div>
+                <span class="text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-full"></span>
+            </header>
+            <ul class="mt-4 space-y-2 text-sm text-gray-800"></ul>
+        </article>
+    </template>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const puzzles = (window.conexoPuzzles || []).map((puzzle, globalIndex) => ({ ...puzzle, globalIndex }));
+            const difficultyLabels = { 1: 'Fácil', 2: 'Médio', 3: 'Difícil' };
+            const badgeClasses = { 1: 'bg-emerald-100 text-emerald-900', 2: 'bg-amber-100 text-amber-900', 3: 'bg-rose-100 text-rose-900' };
+            const summaries = { 1: 0, 2: 0, 3: 0 };
+
+            puzzles.forEach(puzzle => { puzzle.difficultyIndex = summaries[puzzle.difficulty]++; });
+
+            const statsSummary = document.getElementById('stats-summary');
+            const puzzleList = document.getElementById('puzzle-list');
+            const searchInput = document.getElementById('search-input');
+            const buttonsWrapper = document.getElementById('difficulty-buttons');
+            let activeDifficulty = 'all';
+            let query = '';
+
+            function renderStats() {
+                statsSummary.innerHTML = '';
+                const totalCard = document.createElement('div');
+                totalCard.className = 'p-4 rounded-xl border border-gray-200 bg-gray-50';
+                totalCard.innerHTML = `<p class="text-sm text-gray-500">Total</p><p class="text-2xl font-bold text-gray-900">${puzzles.length} puzzles</p>`;
+                statsSummary.appendChild(totalCard);
+                [1, 2, 3].forEach(level => {
+                    const card = document.createElement('div');
+                    card.className = 'p-4 rounded-xl border border-gray-200 bg-gray-50';
+                    card.innerHTML = `<p class="text-sm text-gray-500">${difficultyLabels[level]}</p><p class="text-2xl font-bold text-gray-900">${summaries[level]} jogos</p>`;
+                    statsSummary.appendChild(card);
+                });
+            }
+
+            function normalize(text) {
+                return text
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[^\w\s]/g, '')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .trim();
+            }
+
+            function puzzleMatches(puzzle) {
+                if (activeDifficulty !== 'all' && puzzle.difficulty !== Number(activeDifficulty)) return false;
+                if (!query) return true;
+                const haystack = puzzle.groups
+                    .map(group => `${group.category} ${group.words.join(' ')}`)
+                    .join(' ');
+                return normalize(haystack).includes(query);
+            }
+
+            function createGroupListItem(group) {
+                const item = document.createElement('li');
+                item.className = 'bg-white/70 border border-white rounded-lg px-3 py-2';
+                const words = group.words.map(word => `<span class="font-semibold text-gray-900">${word}</span>`).join(', ');
+                item.innerHTML = `<p class="text-sm font-semibold text-gray-700">${group.category}</p><p class="text-sm text-gray-600">${words}</p>`;
+                return item;
+            }
+
+            function renderList() {
+                const filtered = puzzles.filter(puzzleMatches);
+                puzzleList.innerHTML = '';
+
+                if (!filtered.length) {
+                    const empty = document.createElement('div');
+                    empty.className = 'text-center text-gray-500 py-10 border border-dashed border-gray-300 rounded-2xl bg-gray-50';
+                    empty.innerHTML = '<p class="font-semibold">Nenhum jogo encontrado.</p><p class="text-sm">Tente mudar o filtro ou a palavra-chave.</p>';
+                    puzzleList.appendChild(empty);
+                    return;
+                }
+
+                filtered.forEach(puzzle => {
+                    const template = document.getElementById('puzzle-card-template');
+                    const clone = template.content.cloneNode(true);
+                    const headerTitle = clone.querySelector('h2');
+                    const headerSubtitle = clone.querySelector('header p');
+                    const badge = clone.querySelector('span');
+                    const list = clone.querySelector('ul');
+
+                    headerTitle.textContent = `${difficultyLabels[puzzle.difficulty]} #${puzzle.difficultyIndex + 1}`;
+                    headerSubtitle.textContent = `Jogo global #${puzzle.globalIndex + 1}`;
+                    badge.textContent = `${puzzle.groups.length} categorias`;
+                    badge.className = `${badge.className} ${badgeClasses[puzzle.difficulty]}`;
+                    puzzle.groups.forEach(group => list.appendChild(createGroupListItem(group)));
+
+                    puzzleList.appendChild(clone);
+                });
+            }
+
+            buttonsWrapper.addEventListener('click', event => {
+                const btn = event.target.closest('button[data-difficulty]');
+                if (!btn) return;
+                activeDifficulty = btn.dataset.difficulty;
+                document.querySelectorAll('.filter-btn').forEach(button => {
+                    button.classList.remove('ring-2', 'ring-offset-2', 'ring-violet-500', 'shadow');
+                });
+                btn.classList.add('ring-2', 'ring-offset-2', 'ring-violet-500', 'shadow');
+                renderList();
+            });
+
+            searchInput.addEventListener('input', event => {
+                query = normalize(event.target.value);
+                renderList();
+            });
+
+            renderStats();
+            renderList();
+        });
+    </script>
+</body>
+</html>
