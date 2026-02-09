@@ -275,10 +275,21 @@
         ]
       },
       {
-        id: 'events_world',
-        title: 'Unidade 3: O Mundo dos Eventos',
-        description: 'Descubra como criar ações e reações com eventos simples.',
-        lessons: Array(10).fill({}).map((_, i) => ({id: `u3_l${i+1}`, title: 'Em Breve', activity: null}))
+        id: 'loop_circuit',
+        title: 'Unidade 3: Circuito da Fazenda',
+        description: 'Aprenda laços de repetição guiando o porquinho por caminhos abertos.',
+        lessons: [
+          { id: 'loop_l1_duas_vezes', title: 'Fase 1 – Linha', activity: 'loop_level_1' },
+          { id: 'loop_l2_tres_passos', title: 'Fase 2 – Descida', activity: 'loop_level_2' },
+          { id: 'loop_l3_corredor_longo', title: 'Fase 3 – Longo', activity: 'loop_level_3' },
+          { id: 'loop_l4_escada_dupla', title: 'Fase 4 – Escada 2x', activity: 'loop_level_4' },
+          { id: 'loop_l5_escada_tripla', title: 'Fase 5 – Escada 3x', activity: 'loop_level_5' },
+          { id: 'loop_l6_duas_repeticoes', title: 'Fase 6 – 2 Repetições', activity: 'loop_level_6' },
+          { id: 'loop_l7_para_sempre', title: 'Fase 7 – Infinita', activity: 'loop_level_7' },
+          { id: 'loop_l8_para_sempre_padrao', title: 'Fase 8 – Padrão', activity: 'loop_level_8' },
+          { id: 'loop_l9_padrao_triplo', title: 'Fase 9 – Triplo', activity: 'loop_level_9' },
+          { id: 'loop_l10_grande_final', title: 'Fase 10 – Final', activity: 'loop_level_10' }
+        ]
       }
     ];
 

@@ -1,0 +1,25 @@
+/* Tema tecnológico para Unidade 3 (laços de repetição) */
+body.maze-activity .inst-topbar {
+  background: linear-gradient(135deg, #4338ca, #7c3aed);
+}
+
+body.maze-activity .maze-stage {
+  background: linear-gradient(180deg, #e0f2fe, #f0fdf4);
+}
+
+body.maze-activity .maze-run-btn {
+  background: linear-gradient(135deg, #22c55e, #15803d);
+}
+
+body.maze-activity .maze-run-btn.is-reset {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+body.maze-activity .back-link {
+  background: rgba(34, 197, 94, 0.25);
+}
+
+body.maze-activity .progress-dot.current {
+  background: linear-gradient(135deg, #4ade80, #16a34a);
+  box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.25);
+}

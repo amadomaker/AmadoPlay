@@ -8,6 +8,7 @@
   let obstacles = [];
   let currentLevelMeta = {};
   let lastRunStats = { moves: 0, turns: 0, total: 0 };
+  let currentLoopLimit = 24;
   let interpreter = null;
   let runner = null;
   let runButton = null;
@@ -32,7 +33,7 @@
   let responsiveHandlerAttached = false;
 
   const ASSET_BASE = '../src/assets/images/AnimalsFarmAndPuzzlePack';
-  const TILE_TEXTURES = {
+  const DEFAULT_TILE_TEXTURES = {
     ground: `${ASSET_BASE}/Terrain_Flat/Grass_Light.png`,
     path: `${ASSET_BASE}/Terrain_Flat/Soil.png`,
     wall: `${ASSET_BASE}/Objects/Hedge.png`,
@@ -40,12 +41,14 @@
     goal: `${ASSET_BASE}/Objects/Flag.png`
   };
 
-  const PLAYER_SPRITES = {
+  const DEFAULT_PLAYER_SPRITES = {
     north: `${ASSET_BASE}/Characters/Fox_Up.png`,
     east: `${ASSET_BASE}/Characters/Fox_Right.png`,
     south: `${ASSET_BASE}/Characters/Fox_Down.png`,
     west: `${ASSET_BASE}/Characters/Fox_Left.png`
   };
+  let tileTextures = { ...DEFAULT_TILE_TEXTURES };
+  let playerSprites = { ...DEFAULT_PLAYER_SPRITES };
 
   // --- Game Functions ---
 
@@ -175,6 +178,7 @@
     player = { ...startConfig };
     obstacles = config.obstacles || [];
     currentLevelMeta = config.meta || {};
+    currentLoopLimit = typeof config.loopLimit === 'number' ? config.loopLimit : 24;
     currentConfigSnapshot = config;
 
     const workspaceArea = document.querySelector('.workspace-area');
@@ -184,6 +188,22 @@
     if (!mazeContainer) {
       console.error("Container do labirinto (.maze-stage) não encontrado!");
       return;
+    }
+    const theme = config.theme || null;
+    if (theme && theme.tileTextures) {
+      tileTextures = { ...DEFAULT_TILE_TEXTURES, ...theme.tileTextures };
+    } else {
+      tileTextures = { ...DEFAULT_TILE_TEXTURES };
+    }
+    if (theme && theme.playerSprites) {
+      playerSprites = { ...DEFAULT_PLAYER_SPRITES, ...theme.playerSprites };
+    } else {
+      playerSprites = { ...DEFAULT_PLAYER_SPRITES };
+    }
+    if (theme && theme.stageBackground) {
+      mazeContainer.style.background = theme.stageBackground;
+    } else {
+      mazeContainer.style.background = '';
     }
     if (playerElement && playerElement.parentNode) {
       playerElement.parentNode.removeChild(playerElement);
@@ -203,6 +223,11 @@
     grid.style.gridTemplateRows = `repeat(${maze.length}, 1fr)`;
     grid.style.width = `${maze[0].length * TILE_SIZE}px`;
     grid.style.height = `${maze.length * TILE_SIZE}px`;
+    if (theme && theme.gridBackground) {
+      grid.style.background = theme.gridBackground;
+    } else {
+      grid.style.background = '';
+    }
 
     const decorationMap = new Map();
     if (Array.isArray(config.decorations)) {
@@ -212,6 +237,16 @@
         }
       });
     }
+
+    const applyTile = (el, texture) => {
+      if (texture) {
+        el.style.backgroundImage = `url(${texture})`;
+        el.style.backgroundColor = '';
+      } else {
+        el.style.backgroundImage = 'none';
+        el.style.backgroundColor = 'transparent';
+      }
+    };
 
     maze.forEach((row, y) => {
       row.forEach((cell, x) => {
@@ -225,14 +260,16 @@
         cellDiv.style.backgroundPosition = 'center';
 
         if (cell === 1) {
-          cellDiv.style.backgroundImage = `url(${TILE_TEXTURES.ground})`;
-          addTileSprite(cellDiv, TILE_TEXTURES.wall, 0.96);
+          applyTile(cellDiv, tileTextures.ground);
+          if (tileTextures.wall) {
+            addTileSprite(cellDiv, tileTextures.wall, 0.96);
+          }
           cellDiv.dataset.type = 'wall';
         } else {
-          cellDiv.style.backgroundImage = `url(${TILE_TEXTURES.path})`;
+          applyTile(cellDiv, tileTextures.path);
 
           if (cell === 2) {
-            const goalSprite = currentLevelMeta.goalSprite || TILE_TEXTURES.goal;
+            const goalSprite = currentLevelMeta.goalSprite || tileTextures.goal;
             const goalScale = currentLevelMeta.goalScale || 0.75;
             addTileSprite(cellDiv, goalSprite, goalScale);
             cellDiv.dataset.type = 'goal';
@@ -280,7 +317,7 @@
     const playerY = player.y * TILE_SIZE + offset;
     playerElement.style.transform = `translate(${playerX}px, ${playerY}px)`;
     
-    const sprite = PLAYER_SPRITES[player.dir] || PLAYER_SPRITES.south;
+    const sprite = playerSprites[player.dir] || playerSprites.south;
     playerElement.style.backgroundImage = `url(${sprite})`;
   }
 
@@ -297,6 +334,7 @@
     interpreter.setProperty(globalObject, 'moveDown', createAsyncMoveFn(moveDown));
     interpreter.setProperty(globalObject, 'moveLeft', createAsyncMoveFn(moveLeft));
     interpreter.setProperty(globalObject, 'moveRight', createAsyncMoveFn(moveRight));
+    interpreter.setProperty(globalObject, 'goalReached', interpreter.createNativeFunction(goalReached));
   }
 
   function checkCollision() {
@@ -322,6 +360,8 @@
       console.log("Bateu na parede!");
     }
     renderPlayer(document.getElementById('maze-grid-container'));
+    lastRunStats.moves += 1;
+    lastRunStats.total += 1;
 
     if (checkCollision()) {
       if (runner) clearTimeout(runner);
@@ -335,6 +375,10 @@
   const moveLeft = () => { player.dir = 'west'; performMove(-1, 0); };
   const moveRight = () => { player.dir = 'east'; performMove(1, 0); };
 
+  function goalReached() {
+    return !!(maze && maze[player.y] && maze[player.y][player.x] === 2);
+  }
+
   function runCode() {
     setRunButtonMode('running');
 
@@ -347,7 +391,7 @@
       return;
     }
 
-    lastRunStats = compilation.stats;
+    lastRunStats = { moves: 0, turns: 0, total: 0 };
     if (compilation.unknownTypes.length) {
       console.warn('[Maze] Blocos sem gerador suportado:', compilation.unknownTypes);
     }
@@ -413,38 +457,101 @@
     const emptyResult = { code: '', stats: { moves: 0, total: 0 }, unknownTypes: [] };
     if (!ws) return emptyResult;
 
-    const lines = [];
     const stats = { moves: 0, total: 0 };
     const unknown = new Set();
+    const loopLimit = typeof currentLoopLimit === 'number' ? currentLoopLimit : 24;
+    let loopIndex = 0;
 
-    const visitChain = (block) => {
-      if (!block) return;
-      const type = block.type;
-      let move = null;
-      if (type === 'maze_move_up') move = 'moveUp';
-      else if (type === 'maze_move_down') move = 'moveDown';
-      else if (type === 'maze_move_left') move = 'moveLeft';
-      else if (type === 'maze_move_right') move = 'moveRight';
-
-      if (move) {
-        lines.push(`${move}();`);
-        stats.moves += 1;
-        stats.total += 1;
-      } else {
-        if (type) unknown.add(type);
-      }
-
-      if (typeof block.getNextBlock === 'function') {
-        visitChain(block.getNextBlock());
-      }
+    const indent = (code, spaces = 2) => {
+      const pad = ' '.repeat(spaces);
+      return code.split('\n').filter(Boolean).map(line => pad + line).join('\n') + (code.endsWith('\n') ? '\n' : '');
     };
 
-    ws.getTopBlocks(true).forEach(visitChain);
+    const compileChain = (block) => {
+      let code = '';
+      const chainStats = { moves: 0, total: 0 };
+      let current = block;
+      while (current) {
+        const result = compileBlock(current);
+        if (result && result.code) code += result.code;
+        if (result && result.stats) {
+          chainStats.moves += result.stats.moves || 0;
+          chainStats.total += result.stats.total || 0;
+        }
+        if (typeof current.getNextBlock === 'function') {
+          current = current.getNextBlock();
+        } else {
+          current = null;
+        }
+      }
+      return { code, stats: chainStats };
+    };
 
-    if (!lines.length) return emptyResult;
+    const compileBlock = (block) => {
+      if (!block) return { code: '', stats: { moves: 0, total: 0 } };
+      const type = block.type;
+
+      if (type === 'maze_move_up' || type === 'maze_move_down' || type === 'maze_move_left' || type === 'maze_move_right') {
+        const move = type === 'maze_move_up'
+          ? 'moveUp'
+          : type === 'maze_move_down'
+            ? 'moveDown'
+            : type === 'maze_move_left'
+              ? 'moveLeft'
+              : 'moveRight';
+        return { code: `${move}();\n`, stats: { moves: 1, total: 1 } };
+      }
+
+      if (type === 'maze_repeat_times') {
+        const timesRaw = block.getFieldValue('TIMES');
+        const timesNum = Number(timesRaw);
+        const times = Number.isFinite(timesNum) ? Math.max(0, Math.floor(timesNum)) : 0;
+        const bodyBlock = typeof block.getInputTargetBlock === 'function' ? block.getInputTargetBlock('DO') : null;
+        const bodyResult = compileChain(bodyBlock);
+        if (!bodyResult.code.trim() || times <= 0) return { code: '', stats: { moves: 0, total: 0 } };
+        const loopVar = `__repeat${loopIndex++}`;
+        const bodyIndented = indent(bodyResult.code);
+        return {
+          code: `for (var ${loopVar} = 0; ${loopVar} < ${times}; ${loopVar}++) {\n${bodyIndented}}\n`,
+          stats: {
+            moves: bodyResult.stats.moves * times,
+            total: bodyResult.stats.total * times
+          }
+        };
+      }
+
+      if (type === 'maze_repeat_forever') {
+        const bodyBlock = typeof block.getInputTargetBlock === 'function' ? block.getInputTargetBlock('DO') : null;
+        const bodyResult = compileChain(bodyBlock);
+        if (!bodyResult.code.trim()) return { code: '', stats: { moves: 0, total: 0 } };
+        const guard = `__forever${loopIndex++}`;
+        const bodyIndented = indent(bodyResult.code);
+        return {
+          code: `for (var ${guard} = 0; ${guard} < ${loopLimit} && !goalReached(); ${guard}++) {\n${bodyIndented}}\n`,
+          stats: {
+            moves: bodyResult.stats.moves * loopLimit,
+            total: bodyResult.stats.total * loopLimit
+          }
+        };
+      }
+
+      if (type) unknown.add(type);
+      return { code: '', stats: { moves: 0, total: 0 } };
+    };
+
+    const topBlocks = ws.getTopBlocks(true);
+    let code = '';
+    topBlocks.forEach((block) => {
+      const result = compileChain(block);
+      code += result.code;
+      stats.moves += result.stats.moves;
+      stats.total += result.stats.total;
+    });
+
+    if (!code.trim()) return emptyResult;
 
     return {
-      code: lines.join('\n') + '\n',
+      code: code.trim() + '\n',
       stats,
       unknownTypes: Array.from(unknown)
     };
