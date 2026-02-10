@@ -13,6 +13,7 @@
   let runner = null;
   let runButton = null;
   let runButtonMode = 'run';
+  let runSessionId = 0;
 
   const BASE_TILE_SIZE = 45;
   let TILE_SIZE = BASE_TILE_SIZE;
@@ -350,10 +351,15 @@
   }
 
   function performMove(dx, dy) {
+    if (!Array.isArray(maze) || !maze.length || !Array.isArray(maze[0])) return;
+
     const nextX = player.x + dx;
     const nextY = player.y + dy;
+    const maxY = maze.length;
+    const maxX = maze[0].length;
+    const insideBounds = nextX >= 0 && nextX < maxX && nextY >= 0 && nextY < maxY;
 
-    if (maze[nextY] && maze[nextY][nextX] !== 1) {
+    if (insideBounds && maze[nextY][nextX] !== 1) {
       player.x = nextX;
       player.y = nextY;
     } else {
@@ -364,9 +370,7 @@
     lastRunStats.total += 1;
 
     if (checkCollision()) {
-      if (runner) clearTimeout(runner);
-      runner = null;
-      setTimeout(() => setRunButtonMode('reset'), 100);
+      stopExecution({ showFeedback: false });
     }
   }
 
@@ -375,11 +379,25 @@
   const moveLeft = () => { player.dir = 'west'; performMove(-1, 0); };
   const moveRight = () => { player.dir = 'east'; performMove(1, 0); };
 
+  function stopExecution(options = {}) {
+    const showFeedback = options.showFeedback !== false;
+    runSessionId += 1;
+    if (runner) clearTimeout(runner);
+    runner = null;
+    interpreter = null;
+    if (showFeedback) {
+      ActivityUtils.feedback('Execucao interrompida.', false);
+    }
+    setRunButtonMode('reset');
+  }
+
   function goalReached() {
     return !!(maze && maze[player.y] && maze[player.y][player.x] === 2);
   }
 
   function runCode() {
+    const sessionId = runSessionId + 1;
+    runSessionId = sessionId;
     setRunButtonMode('running');
 
     reset({ keepButtons: true });
@@ -399,10 +417,12 @@
     interpreter = new Interpreter(compilation.code, initApi);
 
     function nextStep() {
+      if (sessionId !== runSessionId || !interpreter) return;
       try {
         if (interpreter.run()) {
           runner = setTimeout(nextStep, 10);
         } else {
+          if (sessionId !== runSessionId) return;
           runner = null;
           setRunButtonMode('reset');
           checkWinCondition();
@@ -423,7 +443,7 @@
   function checkWinCondition() {
     if (checkCollision()) return;
 
-    const reachedGoal = maze[player.y][player.x] === 2;
+    const reachedGoal = !!(maze[player.y] && maze[player.y][player.x] === 2);
     if (reachedGoal) {
       if (ActivityUtils && typeof ActivityUtils.markCompletion === 'function') {
         ActivityUtils.markCompletion();
@@ -599,9 +619,10 @@
       runButton.classList.remove('is-reset');
       runButton.onclick = runCode;
     } else if (mode === 'running') {
-      runButton.disabled = true;
-      runButton.textContent = 'Executando...';
+      runButton.disabled = false;
+      runButton.textContent = '■ Parar';
       runButton.classList.remove('is-reset');
+      runButton.onclick = () => stopExecution({ showFeedback: true });
     } else if (mode === 'reset') {
       runButton.disabled = false;
       runButton.textContent = '⟲ Recomeçar';
