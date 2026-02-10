@@ -2,6 +2,10 @@
 (function() {
   const params = new URLSearchParams(location.search);
   const activityId = window.ACTIVITY_ID || params.get('activity') || 'garden_click_turma';
+  const coursePage = params.get('course_page') || 'course_pre_reader.html';
+
+  const backLink = document.querySelector('.back-link');
+  if (backLink) backLink.setAttribute('href', coursePage);
 
   const baseBlocks = '../src/js/blockly/blocks/jardim.js';
   const lessonScript = '../src/js/blockly/activities/garden_lessons.js';
@@ -721,6 +725,285 @@
     };
   });
 
+  const world2CourseId = 'laboratorio_sequencias_decisoes';
+  const world2Theme = {
+    tileTextures: { ground: null, path: null, wall: null },
+    playerSprites: {
+      north: mazeAsset('Characters/Chick_Up.png'),
+      east: mazeAsset('Characters/Chick_Right.png'),
+      south: mazeAsset('Characters/Chick_Down.png'),
+      west: mazeAsset('Characters/Chick_Left.png')
+    },
+    stageBackground: 'linear-gradient(180deg, #f0fdf4, #dcfce7)',
+    gridBackground: 'url(../src/assets/images/cenario_mundo2.png) center / 100% 100% no-repeat',
+    playerOffset: { x: 0, y: -0.015 },
+    goalOffset: { x: 0, y: -0.02 },
+    goalScaleMultiplier: 1
+  };
+
+  const world2Items = {
+    carrot: mazeAsset('Objects/Carrot.png'),
+    beetroot: mazeAsset('Objects/Beetroot.png'),
+    onion: mazeAsset('Objects/Onion.png'),
+    tomato: mazeAsset('Objects/Tomato.png'),
+    radish: mazeAsset('Objects/Radish.png')
+  };
+
+  const world2OpenCells = [
+    { x: 0, y: 2 }, { x: 1, y: 2 }, { x: 2, y: 2 }, { x: 3, y: 2 }, { x: 4, y: 2 }, { x: 5, y: 2 },
+    { x: 6, y: 2 }, { x: 7, y: 2 }, { x: 8, y: 2 }, { x: 9, y: 2 }, { x: 10, y: 2 },
+    { x: 0, y: 3 }, { x: 1, y: 3 }, { x: 10, y: 3 },
+    { x: 1, y: 4 }, { x: 10, y: 4 },
+    { x: 1, y: 5 }, { x: 10, y: 5 },
+    { x: 1, y: 6 }, { x: 2, y: 6 }, { x: 3, y: 6 }, { x: 4, y: 6 }, { x: 5, y: 6 }, { x: 6, y: 6 },
+    { x: 7, y: 6 }, { x: 8, y: 6 }, { x: 9, y: 6 }, { x: 10, y: 6 },
+    { x: 6, y: 7 }
+  ];
+
+  const world2Levels = [
+    {
+      id: 'decision_level_1',
+      lessonId: 'd1_if_borda',
+      title: 'Fase 1 – Direita',
+      shortTitle: 'Direita',
+      size: [12, 8],
+      instructions: 'Leve o pintinho para a direita ate a cenoura.',
+      path: [{ x: 1, y: 2 }, { x: 2, y: 2 }, { x: 3, y: 2 }],
+      goalSprite: world2Items.carrot,
+      goalScale: 0.84,
+      tip: 'Comece com blocos de movimento simples.',
+      toast: 'Primeira fase concluida!'
+    },
+    {
+      id: 'decision_level_2',
+      lessonId: 'd2_if_else_curto',
+      title: 'Fase 2 – Repetir',
+      shortTitle: 'Repetir',
+      size: [12, 8],
+      instructions: 'Use repita 3 vezes com mover para a direita.',
+      path: [{ x: 3, y: 2 }, { x: 4, y: 2 }, { x: 5, y: 2 }, { x: 6, y: 2 }],
+      goalSprite: world2Items.beetroot,
+      goalScale: 0.84,
+      tip: 'Repita para reduzir blocos iguais.',
+      toast: 'Repeticao correta!',
+      required: {
+        blockTypes: ['maze_repeat_times'],
+        message: 'Nesta fase, use o bloco "repita".'
+      }
+    },
+    {
+      id: 'decision_level_3',
+      lessonId: 'd3_if_com_loop',
+      title: 'Fase 3 – Curva Simples',
+      shortTitle: 'Curva Simples',
+      size: [12, 8],
+      instructions: 'Avance pela estrada e depois desca uma casa.',
+      path: [{ x: 6, y: 2 }, { x: 7, y: 2 }, { x: 8, y: 2 }, { x: 9, y: 2 }, { x: 10, y: 2 }, { x: 10, y: 3 }],
+      goalSprite: world2Items.onion,
+      goalScale: 0.84,
+      tip: 'Use repeticao para avancar mais rapido.',
+      toast: 'Curva concluida!',
+      required: {
+        blockTypes: ['maze_repeat_times'],
+        message: 'Use repeticao para passar desta fase.'
+      }
+    },
+    {
+      id: 'decision_level_4',
+      lessonId: 'd4_alvo_a_frente',
+      title: 'Fase 4 – Primeiro Se',
+      shortTitle: 'Primeiro Se',
+      size: [12, 8],
+      instructions: 'Agora use se: se caminho livre em baixo, mova para baixo.',
+      path: [{ x: 10, y: 3 }, { x: 10, y: 4 }],
+      goalSprite: world2Items.tomato,
+      goalScale: 0.84,
+      tip: 'Preencha a parte "faca" do bloco se/senao.',
+      toast: 'Primeiro se funcionando!',
+      obstacles: [{ x: 10, y: 2, type: 'hole' }],
+      required: {
+        blockTypes: ['maze_if_else'],
+        ifElseWithThenBranch: true,
+        message: 'Use o bloco se/senao e preencha a parte "faca".'
+      }
+    },
+    {
+      id: 'decision_level_5',
+      lessonId: 'd5_else_obrigatorio',
+      title: 'Fase 5 – Se e Senao',
+      shortTitle: 'Se e Senao',
+      size: [12, 8],
+      instructions: 'Teste condicao falsa: se caminho livre em direita, va para direita; senao, desca.',
+      path: [{ x: 1, y: 4 }, { x: 1, y: 5 }],
+      goalSprite: world2Items.radish,
+      goalScale: 0.84,
+      tip: 'Nesta fase, o senao precisa ser usado.',
+      toast: 'Uso correto do senao!',
+      obstacles: [{ x: 1, y: 3, type: 'hole' }],
+      required: {
+        blockTypes: ['maze_if_else'],
+        ifElseWithBothBranches: true,
+        message: 'Nesta fase, o se/senao precisa ter acao no "faca" e no "senao".'
+      }
+    },
+    {
+      id: 'decision_level_6',
+      lessonId: 'd6_duas_decisoes',
+      title: 'Fase 6 – Duas Decisoes',
+      shortTitle: 'Duas Decisoes',
+      size: [12, 8],
+      instructions: 'Use duas decisoes em sequencia para chegar ao alvo.',
+      path: [{ x: 1, y: 5 }, { x: 1, y: 6 }, { x: 2, y: 6 }, { x: 3, y: 6 }],
+      goalSprite: world2Items.carrot,
+      goalScale: 0.84,
+      tip: 'Monte duas estruturas se/senao.',
+      toast: 'Duas decisoes completas!',
+      obstacles: [{ x: 1, y: 4, type: 'hole' }],
+      required: {
+        blockTypes: ['maze_if_else'],
+        ifElseMin: 2,
+        ifElseWithBothBranches: true,
+        message: 'Use pelo menos 2 blocos se/senao com os dois lados preenchidos.'
+      }
+    },
+    {
+      id: 'decision_level_7',
+      lessonId: 'd7_decisao_loop',
+      title: 'Fase 7 – Loop com Decisao',
+      shortTitle: 'Loop com Decisao',
+      size: [12, 8],
+      instructions: 'Use repita para sempre com se/senao para seguir a curva do caminho.',
+      path: [{ x: 1, y: 3 }, { x: 1, y: 2 }, { x: 2, y: 2 }, { x: 3, y: 2 }],
+      goalSprite: world2Items.beetroot,
+      goalScale: 0.84,
+      tip: 'Combine repeticao e decisao no mesmo programa.',
+      toast: 'Automação concluída!',
+      loopLimit: 14,
+      obstacles: [{ x: 0, y: 3, type: 'hole' }],
+      required: {
+        blockTypes: ['maze_repeat_forever', 'maze_if_else'],
+        ifElseWithBothBranches: true,
+        message: 'Combine "repita para sempre" com um se/senao completo.'
+      }
+    },
+    {
+      id: 'decision_level_8',
+      lessonId: 'd8_falso_positivo',
+      title: 'Fase 8 – Virada Final',
+      shortTitle: 'Virada Final',
+      size: [12, 8],
+      instructions: 'Use se/senao: se caminho livre em direita, mova para direita; senao, mova para cima.',
+      path: [{ x: 8, y: 5 }, { x: 9, y: 5 }, { x: 10, y: 5 }, { x: 10, y: 4 }],
+      goalSprite: world2Items.onion,
+      goalScale: 0.84,
+      tip: 'Siga para a direita ate bloquear; depois vire para cima com o senao.',
+      toast: 'Virada correta!',
+      obstacles: [{ x: 7, y: 5, type: 'hole' }],
+      required: {
+        blockTypes: ['maze_if_else'],
+        ifElseWithBothBranches: true,
+        message: 'Use um bloco se/senao completo nesta fase.'
+      }
+    },
+    {
+      id: 'decision_level_9',
+      lessonId: 'd9_trilha_longa',
+      title: 'Fase 9 – Estrada Longa',
+      shortTitle: 'Estrada Longa',
+      size: [12, 8],
+      instructions: 'No loop, use: se caminho livre em direita, va; senao, desca.',
+      path: [{ x: 2, y: 2 }, { x: 3, y: 2 }, { x: 4, y: 2 }, { x: 5, y: 2 }, { x: 6, y: 2 }, { x: 7, y: 2 }, { x: 8, y: 2 }, { x: 9, y: 2 }, { x: 10, y: 2 }, { x: 10, y: 3 }, { x: 10, y: 4 }, { x: 10, y: 5 }],
+      goalSprite: world2Items.tomato,
+      goalScale: 0.84,
+      tip: 'Use uma regra unica para percorrer a estrada inteira.',
+      toast: 'Estrada vencida!',
+      loopLimit: 16,
+      obstacles: [{ x: 10, y: 6, type: 'hole' }],
+      required: {
+        blockTypes: ['maze_repeat_forever', 'maze_if_else'],
+        ifElseWithBothBranches: true,
+        message: 'Resolva com repita para sempre + se/senao completo.'
+      }
+    },
+    {
+      id: 'decision_level_10',
+      lessonId: 'd10_final_decisoes',
+      title: 'Fase 10 – Desafio Final',
+      shortTitle: 'Desafio Final',
+      size: [12, 8],
+      instructions: 'Desafio final: no loop, se caminho livre em esquerda va; senao, suba.',
+      path: [{ x: 10, y: 6 }, { x: 9, y: 6 }, { x: 8, y: 6 }, { x: 7, y: 6 }, { x: 6, y: 6 }, { x: 5, y: 6 }, { x: 4, y: 6 }, { x: 3, y: 6 }, { x: 2, y: 6 }, { x: 1, y: 6 }, { x: 1, y: 5 }, { x: 1, y: 4 }, { x: 1, y: 3 }, { x: 1, y: 2 }],
+      goalSprite: world2Items.radish,
+      goalScale: 0.84,
+      tip: 'Revise o fluxo da decisao antes de executar.',
+      toast: 'Mundo 2 concluído!',
+      loopLimit: 18,
+      obstacles: [{ x: 10, y: 5, type: 'hole' }],
+      required: {
+        blockTypes: ['maze_repeat_forever', 'maze_if_else'],
+        ifElseWithBothBranches: true,
+        message: 'No desafio final, use repita para sempre com se/senao completo.'
+      },
+      isFinal: true,
+      extraMessage: 'Você concluiu o Laboratório das Sequências.'
+    }
+  ];
+
+  const world2Order = world2Levels.map(level => ({
+    activity: level.id,
+    lessonId: level.lessonId,
+    label: level.shortTitle || level.title
+  }));
+
+  world2Levels.forEach((level, index) => {
+    const layout = buildMazeLayout(level.size || DEFAULT_MAZE_SIZE, level.path, world2OpenCells);
+    const stats = computePathStats(level.path);
+
+    const meta = {
+      optimalBlocks: stats.moves,
+      tip: level.tip,
+      toast: level.toast,
+      heading: level.heading,
+      actionLabel: level.isFinal ? 'Voltar para o laboratório' : 'Próxima atividade',
+      actionIcon: level.isFinal ? '↩' : '➜',
+      extraMessage: level.extraMessage,
+      isFinal: !!level.isFinal,
+      goalSprite: level.goalSprite,
+      goalScale: level.goalScale,
+      required: level.required
+    };
+
+    if (level.isFinal) {
+      meta.finalActionLabel = 'Voltar para o laboratório';
+      meta.finalActionIcon = '↩';
+    }
+
+    MANIFEST[level.id] = {
+      title: level.title,
+      blocks: '../src/js/blockly/blocks/maze_decisions.js',
+      activity: '../src/js/blockly/activities/maze.js',
+      css: '../src/css/blockly_styles/loops.css',
+      layout: 'maze',
+      config: {
+        instructions: level.instructions,
+        layout,
+        start: { x: level.path[0].x, y: level.path[0].y, dir: 'east' },
+        meta,
+        theme: world2Theme,
+        tileBaseSize: 32,
+        loopLimit: typeof level.loopLimit === 'number' ? level.loopLimit : 16,
+        decorations: level.decorations || [],
+        obstacles: level.obstacles || [],
+        progress: {
+          step: index + 1,
+          total: world2Levels.length,
+          course: world2CourseId,
+          order: world2Order
+        }
+      }
+    };
+  });
+
 
 
   const activity = MANIFEST[activityId];
@@ -774,6 +1057,7 @@
     if (!modal) return;
     modal.setAttribute('aria-hidden', 'true');
     modal.classList.remove('is-visible');
+    document.body.classList.remove('modal-lock');
   }
 
   function openModal(opts){
@@ -807,6 +1091,7 @@
     };
     modal.setAttribute('aria-hidden', 'false');
     modal.classList.add('is-visible');
+    document.body.classList.add('modal-lock');
     setTimeout(() => { try { modalAction.focus(); } catch (_) {} }, 40);
   }
 
@@ -860,6 +1145,7 @@
         return;
       }
       const params = new URLSearchParams(location.search);
+      const coursePageParam = params.get('course_page');
       const step = progressConfig.step || 1;
       const total = progressConfig.total || 1;
       const order = Array.isArray(progressConfig.order) ? progressConfig.order.slice() : [];
@@ -887,6 +1173,9 @@
           lesson_id: item.lessonId,
           course_id: courseId
         });
+        if (coursePageParam) {
+          paramsChain.set('course_page', coursePageParam);
+        }
         for (let j = i + 1; j < mappedOrder.length; j++) {
           if (linkChain[j]) {
             paramsChain.set('next', linkChain[j]);
@@ -966,7 +1255,7 @@
 
       const lessonId = params.get('lesson_id');
       const courseId = params.get('course_id');
-      let target = 'course_pre_reader.html';
+      let target = params.get('course_page') || 'course_pre_reader.html';
       if (lessonId && courseId) {
         const connector = target.includes('?') ? '&' : '?';
         target += `${connector}lesson_completed=${lessonId}&course_id=${courseId}`;
@@ -995,7 +1284,7 @@
       const params = new URLSearchParams(location.search);
       const lessonId = params.get('lesson_id');
       const courseId = params.get('course_id');
-      let target = link || 'course_pre_reader.html';
+      let target = link || params.get('course_page') || 'course_pre_reader.html';
       if (lessonId && courseId) {
         const connector = target.includes('?') ? '&' : '?';
         target += `${connector}lesson_completed=${lessonId}&course_id=${courseId}`;

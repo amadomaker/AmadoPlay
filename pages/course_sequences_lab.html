@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="../src/assets/images/favicon-diyogo.png">
+  <title>Laboratório das Sequências — Mundo 2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../src/css/main.css" />
+  <link rel="stylesheet" href="../src/css/global.css" />
+  <link rel="stylesheet" href="../src/css/learn.css" />
+  <link rel="stylesheet" href="../src/css/curriculum.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body.learn-page { background: #f9fafb; }
+    .course-container { max-width: 960px; margin: 2rem auto; padding: 0 1.5rem; }
+    .unit { background: #fff; border-radius: 1rem; padding: 1rem; margin-bottom: 1.5rem; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05); }
+    .unit-header { padding-bottom: 0.75rem; border-bottom: 1px solid #e5e7eb; margin-bottom: 1rem; }
+    .unit-header h2 { font-size: 1.5rem; font-family: 'Baloo 2', cursive; color: #111827; margin: 0; }
+    .unit-header p { margin: 0.25rem 0 0; color: #6b7280; font-size: 0.9rem; }
+    .lesson-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 1rem 0.75rem; justify-content: center; }
+    .lesson-bubble { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #374151; font-weight: 600; font-size: 0.8rem; text-align: center; }
+    .lesson-bubble .bubble { width: 50px; height: 50px; border-radius: 50%; display: grid; place-items: center; font-size: 1.25rem; font-weight: 700; font-family: 'Baloo 2', cursive; margin-bottom: 0.5rem; border: 4px solid #e5e7eb; background: #fff; color: #9ca3af; transition: all 0.2s ease-in-out; }
+    .lesson-bubble:not(.disabled):hover .bubble { transform: translateY(-3px) scale(1.05); border-color: #93c5fd; }
+    .lesson-bubble.done .bubble { background: #22c55e; border-color: #16a34a; color: #fff; }
+    .lesson-bubble.current .bubble { background: #3b82f6; border-color: #2563eb; color: #fff; }
+    .lesson-bubble span { display: block; line-height: 1.3; max-width: 70px; }
+
+    .footer { width: 100%; background: linear-gradient(135deg, #1e293b, #334155); color: white; padding: 30px 20px; margin-top: 50px; text-align: center; }
+    .footer-content { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+    .footer-links { margin-bottom: 15px; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .footer-links a { color: #e2e8f0; text-decoration: none; font-weight: 500; padding: 5px 10px; border-radius: 4px; transition: all 0.3s ease; }
+    .footer-links a:hover { color: white; background: rgba(255, 255, 255, 0.1); }
+    .separator { color: #64748b; font-weight: bold; margin: 0 5px; }
+    .footer-copyright { font-size: 0.9rem; color: #94a3b8; padding-top: 15px; border-top: 1px solid #475569; }
+  </style>
+</head>
+<body class="learn-page">
+  <header class="main-header" role="banner">
+    <div class="header-top">
+      <div class="header-container">
+        <div class="logo-section">
+          <img src="../src/assets/images/Diyogo-02.png" alt="Logo AmadoPlay" width="90" height="90" loading="eager"/>
+          <div class="logo-text"><h1>AmadoPlay</h1><p>Plataforma Educacional Interativa</p></div>
+        </div>
+        <div class="nav-actions">
+          <div class="search-bar" role="search">
+            <label for="search-input" class="sr-only">Buscar</label>
+            <input type="text" id="search-input" placeholder="Buscar..." aria-label="Campo de busca" autocomplete="off"/>
+            <button type="submit" aria-label="Buscar">🔍</button>
+          </div>
+          <div class="user-menu"><button class="btn-login">Entrar</button></div>
+        </div>
+        <button class="mobile-menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="main-navigation">
+          <span class="hamburger-line"></span><span class="hamburger-line"></span><span class="hamburger-line"></span>
+        </button>
+      </div>
+    </div>
+
+    <nav class="main-nav" role="navigation" id="main-navigation" aria-label="Menu principal">
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="../index.html" class="nav-link"><span class="nav-icon" aria-hidden="true">🏠</span><span>Início</span></a></li>
+        <li class="nav-item"><a href="learn.html" class="nav-link"><span class="nav-icon" aria-hidden="true">💡</span><span>Trilhas Computação</span></a></li>
+        <li class="nav-item"><a href="quem_somos.html" class="nav-link"><span class="nav-icon" aria-hidden="true">ℹ️</span><span>Quem Somos</span></a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="course-container">
+    <div id="course-units"></div>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="footer-content">
+      <nav class="footer-links" aria-label="Links do rodapé">
+        <a href="privacidade.html">Política de Privacidade</a><span class="separator" aria-hidden="true">•</span>
+        <a href="termos_de_uso.html">Termos de Uso</a><span class="separator" aria-hidden="true">•</span>
+        <a href="contato.html">Contato</a>
+      </nav>
+      <div class="footer-copyright"><p>&copy; 2025 AMADO TECNOLOGIA LTDA (AMADOTEC). Todos os direitos reservados.</p></div>
+    </div>
+  </footer>
+
+  <script>
+    const COURSE_PAGE = 'course_sequences_lab.html';
+    const COURSE_ID = 'laboratorio_sequencias_decisoes';
+    const courseData = [
+      {
+        id: 'world2_decisions',
+        title: 'Unidade 1: Decisões com If e Else',
+        description: 'Progressão: movimento, repetição e decisões com se/senão.',
+        lessons: [
+          { id: 'd1_if_borda', title: 'Fase 1 – Direita', activity: 'decision_level_1' },
+          { id: 'd2_if_else_curto', title: 'Fase 2 – Repetir', activity: 'decision_level_2' },
+          { id: 'd3_if_com_loop', title: 'Fase 3 – Curva simples', activity: 'decision_level_3' },
+          { id: 'd4_alvo_a_frente', title: 'Fase 4 – Primeiro se', activity: 'decision_level_4' },
+          { id: 'd5_else_obrigatorio', title: 'Fase 5 – Se e senão', activity: 'decision_level_5' },
+          { id: 'd6_duas_decisoes', title: 'Fase 6 – Duas decisões', activity: 'decision_level_6' },
+          { id: 'd7_decisao_loop', title: 'Fase 7 – Loop com decisão', activity: 'decision_level_7' },
+          { id: 'd8_falso_positivo', title: 'Fase 8 – Virada final', activity: 'decision_level_8' },
+          { id: 'd9_trilha_longa', title: 'Fase 9 – Estrada longa', activity: 'decision_level_9' },
+          { id: 'd10_final_decisoes', title: 'Fase 10 – Desafio final', activity: 'decision_level_10' }
+        ]
+      }
+    ];
+
+    const progressKey = 'progress:' + COURSE_ID;
+    function getProgress(){ try { return JSON.parse(localStorage.getItem(progressKey))||{} } catch(_) { return {} } }
+    function setProgress(p){ localStorage.setItem(progressKey, JSON.stringify(p)); }
+
+    function handleCompletion() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const completedLesson = urlParams.get('lesson_completed');
+      if (completedLesson) {
+        const p = getProgress();
+        p[completedLesson] = true;
+        setProgress(p);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    }
+
+    function buildLessonLinks(lessons){
+      const links = lessons.map(() => '');
+      for (let i = lessons.length - 1; i >= 0; i--) {
+        const lesson = lessons[i];
+        if (!lesson || !lesson.activity) continue;
+        const params = new URLSearchParams({
+          activity: lesson.activity,
+          lesson_id: lesson.id,
+          course_id: COURSE_ID,
+          course_page: COURSE_PAGE
+        });
+        for (let j = i + 1; j < lessons.length; j++) {
+          if (links[j]) {
+            params.set('next', links[j]);
+            break;
+          }
+        }
+        links[i] = params.toString();
+      }
+      return links;
+    }
+
+    function render() {
+      const container = document.getElementById('course-units');
+      container.innerHTML = '';
+      const progress = getProgress();
+
+      courseData.forEach(unit => {
+        const unitEl = document.createElement('div');
+        unitEl.className = 'unit';
+
+        const lessonLinks = buildLessonLinks(unit.lessons);
+        let unitContent = `
+          <div class="unit-header">
+            <h2>${unit.title}</h2>
+            <p>${unit.description}</p>
+          </div>
+          <div class="lesson-grid">
+        `;
+
+        let isCurrentSetInUnit = false;
+
+        unit.lessons.forEach((lesson, index) => {
+          const isDone = progress[lesson.id];
+          let lessonClass = 'lesson-bubble';
+
+          if (isDone) lessonClass += ' done';
+          else if (!isCurrentSetInUnit && lesson.activity) {
+            lessonClass += ' current';
+            isCurrentSetInUnit = true;
+          }
+
+          const encodedLink = lessonLinks[index];
+          const lessonUrl = encodedLink ? `blockly.html?${encodedLink}` : '#';
+
+          unitContent += `
+            <a href="${lessonUrl}" class="${lessonClass}" title="${lesson.title}">
+              <div class="bubble">${index + 1}</div>
+              <span>${lesson.title}</span>
+            </a>
+          `;
+        });
+
+        unitContent += '</div>';
+        unitEl.innerHTML = unitContent;
+        container.appendChild(unitEl);
+      });
+    }
+
+    handleCompletion();
+    render();
+  </script>
+</body>
+</html>

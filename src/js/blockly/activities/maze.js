@@ -15,8 +15,9 @@
   let runButtonMode = 'run';
   let runSessionId = 0;
 
-  const BASE_TILE_SIZE = 45;
-  let TILE_SIZE = BASE_TILE_SIZE;
+  const DEFAULT_TILE_SIZE = 45;
+  let baseTileSize = DEFAULT_TILE_SIZE;
+  let TILE_SIZE = DEFAULT_TILE_SIZE;
   const EXECUTION_SPEED = 250; // ms per step
   const PLAYER_SCALE = 0.85;
 
@@ -41,6 +42,10 @@
     start: `${ASSET_BASE}/Terrain_Common/Arrow_Right.png`,
     goal: `${ASSET_BASE}/Objects/Flag.png`
   };
+  const DEFAULT_OBSTACLE_SPRITES = {
+    hole: `${ASSET_BASE}/Objects/Hole.png`,
+    bomb: `${ASSET_BASE}/Objects/Bomb.png`
+  };
 
   const DEFAULT_PLAYER_SPRITES = {
     north: `${ASSET_BASE}/Characters/Fox_Up.png`,
@@ -50,11 +55,17 @@
   };
   let tileTextures = { ...DEFAULT_TILE_TEXTURES };
   let playerSprites = { ...DEFAULT_PLAYER_SPRITES };
+  let playerOffset = { x: 0, y: 0 };
+  let goalOffset = { x: 0, y: 0 };
+  let goalScaleMultiplier = 1;
 
   // --- Game Functions ---
 
-  function addTileSprite(container, src, scale = 1) {
+  function addTileSprite(container, src, scale = 1, options = {}) {
     const sprite = document.createElement('img');
+    const offsetX = Number(options.offsetX || 0);
+    const offsetY = Number(options.offsetY || 0);
+    const zIndex = Number(options.zIndex || 1);
     sprite.src = src;
     sprite.alt = '';
     sprite.decoding = 'async';
@@ -63,11 +74,12 @@
     sprite.style.position = 'absolute';
     sprite.style.left = '50%';
     sprite.style.top = '50%';
-    sprite.style.transform = 'translate(-50%, -50%)';
+    sprite.style.transform = `translate(-50%, -50%) translate(${offsetX * TILE_SIZE}px, ${offsetY * TILE_SIZE}px)`;
     sprite.style.width = `${scale * 100}%`;
     sprite.style.height = `${scale * 100}%`;
     sprite.style.objectFit = 'contain';
     sprite.style.pointerEvents = 'none';
+    sprite.style.zIndex = String(zIndex);
     container.appendChild(sprite);
     return sprite;
   }
@@ -107,7 +119,7 @@
     const profileChanged = force || !currentResponsiveProfile || currentResponsiveProfile.id !== nextProfile.id;
     currentResponsiveProfile = nextProfile;
 
-    const nextTileSize = Math.round(BASE_TILE_SIZE * nextProfile.tileScale);
+    const nextTileSize = Math.round(baseTileSize * nextProfile.tileScale);
     const tileChanged = nextTileSize !== TILE_SIZE;
     TILE_SIZE = nextTileSize;
 
@@ -173,6 +185,7 @@
   }
 
   function renderMaze(config) {
+    baseTileSize = Number(config.tileBaseSize) > 0 ? Number(config.tileBaseSize) : DEFAULT_TILE_SIZE;
     applyResponsiveProfile();
     maze = config.layout;
     startConfig = { ...config.start };
@@ -201,6 +214,25 @@
     } else {
       playerSprites = { ...DEFAULT_PLAYER_SPRITES };
     }
+    if (theme && theme.playerOffset) {
+      playerOffset = {
+        x: Number(theme.playerOffset.x || 0),
+        y: Number(theme.playerOffset.y || 0)
+      };
+    } else {
+      playerOffset = { x: 0, y: 0 };
+    }
+    if (theme && theme.goalOffset) {
+      goalOffset = {
+        x: Number(theme.goalOffset.x || 0),
+        y: Number(theme.goalOffset.y || 0)
+      };
+    } else {
+      goalOffset = { x: 0, y: 0 };
+    }
+    goalScaleMultiplier = theme && Number(theme.goalScaleMultiplier) > 0
+      ? Number(theme.goalScaleMultiplier)
+      : 1;
     if (theme && theme.stageBackground) {
       mazeContainer.style.background = theme.stageBackground;
     } else {
@@ -238,6 +270,13 @@
         }
       });
     }
+    const obstacleMap = new Map();
+    if (Array.isArray(obstacles)) {
+      obstacles.forEach((obstacle) => {
+        if (!obstacle || typeof obstacle.x !== 'number' || typeof obstacle.y !== 'number') return;
+        obstacleMap.set(`${obstacle.x},${obstacle.y}`, obstacle);
+      });
+    }
 
     const applyTile = (el, texture) => {
       if (texture) {
@@ -271,8 +310,8 @@
 
           if (cell === 2) {
             const goalSprite = currentLevelMeta.goalSprite || tileTextures.goal;
-            const goalScale = currentLevelMeta.goalScale || 0.75;
-            addTileSprite(cellDiv, goalSprite, goalScale);
+            const goalScale = (currentLevelMeta.goalScale || 0.75) * goalScaleMultiplier;
+            addTileSprite(cellDiv, goalSprite, goalScale, { offsetX: goalOffset.x, offsetY: goalOffset.y, zIndex: 3 });
             cellDiv.dataset.type = 'goal';
           } else if (cell === 3) {
             cellDiv.dataset.type = 'start';
@@ -284,6 +323,15 @@
         const decoration = decorationMap.get(`${x},${y}`);
         if (decoration) {
           addTileSprite(cellDiv, decoration.sprite, decoration.scale || 1);
+        } else {
+          const obstacle = obstacleMap.get(`${x},${y}`);
+          if (obstacle) {
+            const obstacleSprite = obstacle.sprite || DEFAULT_OBSTACLE_SPRITES[obstacle.type];
+            const obstacleScale = obstacle.scale || (obstacle.type === 'bomb' ? 0.58 : 0.74);
+            if (obstacleSprite) {
+              addTileSprite(cellDiv, obstacleSprite, obstacleScale, { zIndex: 4 });
+            }
+          }
         }
 
         grid.appendChild(cellDiv);
@@ -314,8 +362,8 @@
     }
 
     const offset = (TILE_SIZE - TILE_SIZE * PLAYER_SCALE) / 2;
-    const playerX = player.x * TILE_SIZE + offset;
-    const playerY = player.y * TILE_SIZE + offset;
+    const playerX = player.x * TILE_SIZE + offset + playerOffset.x * TILE_SIZE;
+    const playerY = player.y * TILE_SIZE + offset + playerOffset.y * TILE_SIZE;
     playerElement.style.transform = `translate(${playerX}px, ${playerY}px)`;
     
     const sprite = playerSprites[player.dir] || playerSprites.south;
@@ -336,6 +384,8 @@
     interpreter.setProperty(globalObject, 'moveLeft', createAsyncMoveFn(moveLeft));
     interpreter.setProperty(globalObject, 'moveRight', createAsyncMoveFn(moveRight));
     interpreter.setProperty(globalObject, 'goalReached', interpreter.createNativeFunction(goalReached));
+    interpreter.setProperty(globalObject, 'isPathAhead', interpreter.createNativeFunction(isPathAhead));
+    interpreter.setProperty(globalObject, 'isGoalAhead', interpreter.createNativeFunction(isGoalAhead));
   }
 
   function checkCollision() {
@@ -379,6 +429,40 @@
   const moveLeft = () => { player.dir = 'west'; performMove(-1, 0); };
   const moveRight = () => { player.dir = 'east'; performMove(1, 0); };
 
+  function directionToDelta(direction) {
+    if (direction === 'up' || direction === 'north') return { dx: 0, dy: -1 };
+    if (direction === 'down' || direction === 'south') return { dx: 0, dy: 1 };
+    if (direction === 'left' || direction === 'west') return { dx: -1, dy: 0 };
+    if (direction === 'right' || direction === 'east') return { dx: 1, dy: 0 };
+    return { dx: 0, dy: 0 };
+  }
+
+  function isObstacleAt(x, y) {
+    return !!obstacles.find(obs => obs.x === x && obs.y === y);
+  }
+
+  function isInsideMaze(x, y) {
+    return !!(maze && maze[y] && typeof maze[y][x] !== 'undefined');
+  }
+
+  function isPathAhead(direction) {
+    const delta = directionToDelta(String(direction || '').toLowerCase());
+    const targetX = player.x + delta.dx;
+    const targetY = player.y + delta.dy;
+    if (!isInsideMaze(targetX, targetY)) return false;
+    if (maze[targetY][targetX] === 1) return false;
+    if (isObstacleAt(targetX, targetY)) return false;
+    return true;
+  }
+
+  function isGoalAhead(direction) {
+    const delta = directionToDelta(String(direction || '').toLowerCase());
+    const targetX = player.x + delta.dx;
+    const targetY = player.y + delta.dy;
+    if (!isInsideMaze(targetX, targetY)) return false;
+    return maze[targetY][targetX] === 2;
+  }
+
   function stopExecution(options = {}) {
     const showFeedback = options.showFeedback !== false;
     runSessionId += 1;
@@ -393,6 +477,67 @@
 
   function goalReached() {
     return !!(maze && maze[player.y] && maze[player.y][player.x] === 2);
+  }
+
+  function validateRequiredConcepts() {
+    const required = currentLevelMeta && currentLevelMeta.required ? currentLevelMeta.required : null;
+    if (!required) return { ok: true };
+    if (!workspace || typeof workspace.getAllBlocks !== 'function') return { ok: true };
+
+    const blocks = workspace.getAllBlocks(false) || [];
+    const ifElseBlocks = blocks.filter((block) => block && block.type === 'maze_if_else');
+
+    if (Array.isArray(required.blockTypes) && required.blockTypes.length) {
+      for (const type of required.blockTypes) {
+        const found = blocks.some((block) => block && block.type === type);
+        if (!found) {
+          return {
+            ok: false,
+            message: required.message || 'Use os blocos pedidos nesta fase antes de concluir.'
+          };
+        }
+      }
+    }
+
+    if (typeof required.ifElseMin === 'number') {
+      const needed = Math.max(0, Math.floor(required.ifElseMin));
+      if (ifElseBlocks.length < needed) {
+        return {
+          ok: false,
+          message: required.message || `Use pelo menos ${needed} bloco(s) se/senão nesta fase.`
+        };
+      }
+    }
+
+    if (required.ifElseWithThenBranch) {
+      const hasThenBranch = ifElseBlocks.some((block) => {
+        const thenBlock = typeof block.getInputTargetBlock === 'function' ? block.getInputTargetBlock('DO') : null;
+        return !!thenBlock;
+      });
+      if (!hasThenBranch) {
+        return {
+          ok: false,
+          message: required.message || 'Preencha a parte "faça" do bloco se/senão.'
+        };
+      }
+    }
+
+    if (required.ifElseWithBothBranches) {
+      const hasCompleteIfElse = ifElseBlocks.some((block) => {
+          const thenBlock = typeof block.getInputTargetBlock === 'function' ? block.getInputTargetBlock('DO') : null;
+          const elseBlock = typeof block.getInputTargetBlock === 'function' ? block.getInputTargetBlock('ELSE') : null;
+          return !!(thenBlock && elseBlock);
+      });
+
+      if (!hasCompleteIfElse) {
+        return {
+          ok: false,
+          message: required.message || 'Monte um bloco se/senão com ações nos dois lados.'
+        };
+      }
+    }
+
+    return { ok: true };
   }
 
   function runCode() {
@@ -445,6 +590,12 @@
 
     const reachedGoal = !!(maze[player.y] && maze[player.y][player.x] === 2);
     if (reachedGoal) {
+      const requiredValidation = validateRequiredConcepts();
+      if (!requiredValidation.ok) {
+        ActivityUtils.feedback(requiredValidation.message, false);
+        return;
+      }
+
       if (ActivityUtils && typeof ActivityUtils.markCompletion === 'function') {
         ActivityUtils.markCompletion();
       }
@@ -551,6 +702,39 @@
           stats: {
             moves: bodyResult.stats.moves * loopLimit,
             total: bodyResult.stats.total * loopLimit
+          }
+        };
+      }
+
+      if (type === 'maze_if_else') {
+        const condition = (block.getFieldValue('COND') || 'path').toLowerCase();
+        const direction = (block.getFieldValue('DIR') || 'up').toLowerCase();
+        const thenBlock = typeof block.getInputTargetBlock === 'function' ? block.getInputTargetBlock('DO') : null;
+        const elseBlock = typeof block.getInputTargetBlock === 'function' ? block.getInputTargetBlock('ELSE') : null;
+        const thenResult = compileChain(thenBlock);
+        const elseResult = compileChain(elseBlock);
+        const conditionFn = condition === 'goal' ? 'isGoalAhead' : 'isPathAhead';
+
+        if (!thenResult.code.trim()) {
+          return { code: '', stats: { moves: 0, total: 0 } };
+        }
+
+        let code = `if (${conditionFn}("${direction}")) {\n`;
+        if (thenResult.code.trim()) {
+          code += `${indent(thenResult.code)}}\n`;
+        } else {
+          code += '}\n';
+        }
+
+        if (elseResult.code.trim()) {
+          code += `else {\n${indent(elseResult.code)}}\n`;
+        }
+
+        return {
+          code,
+          stats: {
+            moves: Math.max(thenResult.stats.moves, elseResult.stats.moves),
+            total: Math.max(thenResult.stats.total, elseResult.stats.total)
           }
         };
       }

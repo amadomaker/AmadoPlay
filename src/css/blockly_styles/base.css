@@ -8,6 +8,10 @@ body.orientation-lock {
   overflow: hidden;
 }
 
+body.modal-lock {
+  overflow: hidden;
+}
+
 .activity-body {
   min-height: 100vh;
   display: flex;
@@ -221,7 +225,8 @@ body.orientation-lock {
   align-items: center;
   justify-content: center;
   padding: clamp(16px, 5vw, 40px);
-  z-index: 20;
+  z-index: 10000;
+  isolation: isolate;
 }
 
 .completion-modal.is-visible,
@@ -307,7 +312,7 @@ body.orientation-lock {
   justify-content: center;
   padding: clamp(18px, 6vw, 40px);
   background: rgba(15, 23, 42, 0.45);
-  z-index: 30;
+  z-index: 11000;
 }
 
 .orientation-prompt.is-visible,
