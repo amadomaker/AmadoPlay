@@ -8,13 +8,16 @@
   let obstacles = [];
   let currentLevelMeta = {};
   let lastRunStats = { moves: 0, turns: 0, total: 0 };
+  let currentLoopLimit = 24;
   let interpreter = null;
   let runner = null;
   let runButton = null;
   let runButtonMode = 'run';
+  let runSessionId = 0;
 
-  const BASE_TILE_SIZE = 45;
-  let TILE_SIZE = BASE_TILE_SIZE;
+  const DEFAULT_TILE_SIZE = 45;
+  let baseTileSize = DEFAULT_TILE_SIZE;
+  let TILE_SIZE = DEFAULT_TILE_SIZE;
   const EXECUTION_SPEED = 250; // ms per step
   const PLAYER_SCALE = 0.85;
 
@@ -32,25 +35,37 @@
   let responsiveHandlerAttached = false;
 
   const ASSET_BASE = '../src/assets/images/AnimalsFarmAndPuzzlePack';
-  const TILE_TEXTURES = {
+  const DEFAULT_TILE_TEXTURES = {
     ground: `${ASSET_BASE}/Terrain_Flat/Grass_Light.png`,
     path: `${ASSET_BASE}/Terrain_Flat/Soil.png`,
     wall: `${ASSET_BASE}/Objects/Hedge.png`,
     start: `${ASSET_BASE}/Terrain_Common/Arrow_Right.png`,
     goal: `${ASSET_BASE}/Objects/Flag.png`
   };
+  const DEFAULT_OBSTACLE_SPRITES = {
+    hole: `${ASSET_BASE}/Objects/Hole.png`,
+    bomb: `${ASSET_BASE}/Objects/Bomb.png`
+  };
 
-  const PLAYER_SPRITES = {
+  const DEFAULT_PLAYER_SPRITES = {
     north: `${ASSET_BASE}/Characters/Fox_Up.png`,
     east: `${ASSET_BASE}/Characters/Fox_Right.png`,
     south: `${ASSET_BASE}/Characters/Fox_Down.png`,
     west: `${ASSET_BASE}/Characters/Fox_Left.png`
   };
+  let tileTextures = { ...DEFAULT_TILE_TEXTURES };
+  let playerSprites = { ...DEFAULT_PLAYER_SPRITES };
+  let playerOffset = { x: 0, y: 0 };
+  let goalOffset = { x: 0, y: 0 };
+  let goalScaleMultiplier = 1;
 
   // --- Game Functions ---
 
-  function addTileSprite(container, src, scale = 1) {
+  function addTileSprite(container, src, scale = 1, options = {}) {
     const sprite = document.createElement('img');
+    const offsetX = Number(options.offsetX || 0);
+    const offsetY = Number(options.offsetY || 0);
+    const zIndex = Number(options.zIndex || 1);
     sprite.src = src;
     sprite.alt = '';
     sprite.decoding = 'async';
@@ -59,11 +74,12 @@
     sprite.style.position = 'absolute';
     sprite.style.left = '50%';
     sprite.style.top = '50%';
-    sprite.style.transform = 'translate(-50%, -50%)';
+    sprite.style.transform = `translate(-50%, -50%) translate(${offsetX * TILE_SIZE}px, ${offsetY * TILE_SIZE}px)`;
     sprite.style.width = `${scale * 100}%`;
     sprite.style.height = `${scale * 100}%`;
     sprite.style.objectFit = 'contain';
     sprite.style.pointerEvents = 'none';
+    sprite.style.zIndex = String(zIndex);
     container.appendChild(sprite);
     return sprite;
   }
@@ -103,7 +119,7 @@
     const profileChanged = force || !currentResponsiveProfile || currentResponsiveProfile.id !== nextProfile.id;
     currentResponsiveProfile = nextProfile;
 
-    const nextTileSize = Math.round(BASE_TILE_SIZE * nextProfile.tileScale);
+    const nextTileSize = Math.round(baseTileSize * nextProfile.tileScale);
     const tileChanged = nextTileSize !== TILE_SIZE;
     TILE_SIZE = nextTileSize;
 
@@ -169,12 +185,14 @@
   }
 
   function renderMaze(config) {
+    baseTileSize = Number(config.tileBaseSize) > 0 ? Number(config.tileBaseSize) : DEFAULT_TILE_SIZE;
     applyResponsiveProfile();
     maze = config.layout;
     startConfig = { ...config.start };
     player = { ...startConfig };
     obstacles = config.obstacles || [];
     currentLevelMeta = config.meta || {};
+    currentLoopLimit = typeof config.loopLimit === 'number' ? config.loopLimit : 24;
     currentConfigSnapshot = config;
 
     const workspaceArea = document.querySelector('.workspace-area');
@@ -184,6 +202,41 @@
     if (!mazeContainer) {
       console.error("Container do labirinto (.maze-stage) não encontrado!");
       return;
+    }
+    const theme = config.theme || null;
+    if (theme && theme.tileTextures) {
+      tileTextures = { ...DEFAULT_TILE_TEXTURES, ...theme.tileTextures };
+    } else {
+      tileTextures = { ...DEFAULT_TILE_TEXTURES };
+    }
+    if (theme && theme.playerSprites) {
+      playerSprites = { ...DEFAULT_PLAYER_SPRITES, ...theme.playerSprites };
+    } else {
+      playerSprites = { ...DEFAULT_PLAYER_SPRITES };
+    }
+    if (theme && theme.playerOffset) {
+      playerOffset = {
+        x: Number(theme.playerOffset.x || 0),
+        y: Number(theme.playerOffset.y || 0)
+      };
+    } else {
+      playerOffset = { x: 0, y: 0 };
+    }
+    if (theme && theme.goalOffset) {
+      goalOffset = {
+        x: Number(theme.goalOffset.x || 0),
+        y: Number(theme.goalOffset.y || 0)
+      };
+    } else {
+      goalOffset = { x: 0, y: 0 };
+    }
+    goalScaleMultiplier = theme && Number(theme.goalScaleMultiplier) > 0
+      ? Number(theme.goalScaleMultiplier)
+      : 1;
+    if (theme && theme.stageBackground) {
+      mazeContainer.style.background = theme.stageBackground;
+    } else {
+      mazeContainer.style.background = '';
     }
     if (playerElement && playerElement.parentNode) {
       playerElement.parentNode.removeChild(playerElement);
@@ -203,6 +256,11 @@
     grid.style.gridTemplateRows = `repeat(${maze.length}, 1fr)`;
     grid.style.width = `${maze[0].length * TILE_SIZE}px`;
     grid.style.height = `${maze.length * TILE_SIZE}px`;
+    if (theme && theme.gridBackground) {
+      grid.style.background = theme.gridBackground;
+    } else {
+      grid.style.background = '';
+    }
 
     const decorationMap = new Map();
     if (Array.isArray(config.decorations)) {
@@ -212,6 +270,23 @@
         }
       });
     }
+    const obstacleMap = new Map();
+    if (Array.isArray(obstacles)) {
+      obstacles.forEach((obstacle) => {
+        if (!obstacle || typeof obstacle.x !== 'number' || typeof obstacle.y !== 'number') return;
+        obstacleMap.set(`${obstacle.x},${obstacle.y}`, obstacle);
+      });
+    }
+
+    const applyTile = (el, texture) => {
+      if (texture) {
+        el.style.backgroundImage = `url(${texture})`;
+        el.style.backgroundColor = '';
+      } else {
+        el.style.backgroundImage = 'none';
+        el.style.backgroundColor = 'transparent';
+      }
+    };
 
     maze.forEach((row, y) => {
       row.forEach((cell, x) => {
@@ -225,16 +300,18 @@
         cellDiv.style.backgroundPosition = 'center';
 
         if (cell === 1) {
-          cellDiv.style.backgroundImage = `url(${TILE_TEXTURES.ground})`;
-          addTileSprite(cellDiv, TILE_TEXTURES.wall, 0.96);
+          applyTile(cellDiv, tileTextures.ground);
+          if (tileTextures.wall) {
+            addTileSprite(cellDiv, tileTextures.wall, 0.96);
+          }
           cellDiv.dataset.type = 'wall';
         } else {
-          cellDiv.style.backgroundImage = `url(${TILE_TEXTURES.path})`;
+          applyTile(cellDiv, tileTextures.path);
 
           if (cell === 2) {
-            const goalSprite = currentLevelMeta.goalSprite || TILE_TEXTURES.goal;
-            const goalScale = currentLevelMeta.goalScale || 0.75;
-            addTileSprite(cellDiv, goalSprite, goalScale);
+            const goalSprite = currentLevelMeta.goalSprite || tileTextures.goal;
+            const goalScale = (currentLevelMeta.goalScale || 0.75) * goalScaleMultiplier;
+            addTileSprite(cellDiv, goalSprite, goalScale, { offsetX: goalOffset.x, offsetY: goalOffset.y, zIndex: 3 });
             cellDiv.dataset.type = 'goal';
           } else if (cell === 3) {
             cellDiv.dataset.type = 'start';
@@ -246,6 +323,15 @@
         const decoration = decorationMap.get(`${x},${y}`);
         if (decoration) {
           addTileSprite(cellDiv, decoration.sprite, decoration.scale || 1);
+        } else {
+          const obstacle = obstacleMap.get(`${x},${y}`);
+          if (obstacle) {
+            const obstacleSprite = obstacle.sprite || DEFAULT_OBSTACLE_SPRITES[obstacle.type];
+            const obstacleScale = obstacle.scale || (obstacle.type === 'bomb' ? 0.58 : 0.74);
+            if (obstacleSprite) {
+              addTileSprite(cellDiv, obstacleSprite, obstacleScale, { zIndex: 4 });
+            }
+          }
         }
 
         grid.appendChild(cellDiv);
@@ -276,11 +362,11 @@
     }
 
     const offset = (TILE_SIZE - TILE_SIZE * PLAYER_SCALE) / 2;
-    const playerX = player.x * TILE_SIZE + offset;
-    const playerY = player.y * TILE_SIZE + offset;
+    const playerX = player.x * TILE_SIZE + offset + playerOffset.x * TILE_SIZE;
+    const playerY = player.y * TILE_SIZE + offset + playerOffset.y * TILE_SIZE;
     playerElement.style.transform = `translate(${playerX}px, ${playerY}px)`;
     
-    const sprite = PLAYER_SPRITES[player.dir] || PLAYER_SPRITES.south;
+    const sprite = playerSprites[player.dir] || playerSprites.south;
     playerElement.style.backgroundImage = `url(${sprite})`;
   }
 
@@ -297,6 +383,9 @@
     interpreter.setProperty(globalObject, 'moveDown', createAsyncMoveFn(moveDown));
     interpreter.setProperty(globalObject, 'moveLeft', createAsyncMoveFn(moveLeft));
     interpreter.setProperty(globalObject, 'moveRight', createAsyncMoveFn(moveRight));
+    interpreter.setProperty(globalObject, 'goalReached', interpreter.createNativeFunction(goalReached));
+    interpreter.setProperty(globalObject, 'isPathAhead', interpreter.createNativeFunction(isPathAhead));
+    interpreter.setProperty(globalObject, 'isGoalAhead', interpreter.createNativeFunction(isGoalAhead));
   }
 
   function checkCollision() {
@@ -312,21 +401,26 @@
   }
 
   function performMove(dx, dy) {
+    if (!Array.isArray(maze) || !maze.length || !Array.isArray(maze[0])) return;
+
     const nextX = player.x + dx;
     const nextY = player.y + dy;
+    const maxY = maze.length;
+    const maxX = maze[0].length;
+    const insideBounds = nextX >= 0 && nextX < maxX && nextY >= 0 && nextY < maxY;
 
-    if (maze[nextY] && maze[nextY][nextX] !== 1) {
+    if (insideBounds && maze[nextY][nextX] !== 1) {
       player.x = nextX;
       player.y = nextY;
     } else {
       console.log("Bateu na parede!");
     }
     renderPlayer(document.getElementById('maze-grid-container'));
+    lastRunStats.moves += 1;
+    lastRunStats.total += 1;
 
     if (checkCollision()) {
-      if (runner) clearTimeout(runner);
-      runner = null;
-      setTimeout(() => setRunButtonMode('reset'), 100);
+      stopExecution({ showFeedback: false });
     }
   }
 
@@ -335,7 +429,120 @@
   const moveLeft = () => { player.dir = 'west'; performMove(-1, 0); };
   const moveRight = () => { player.dir = 'east'; performMove(1, 0); };
 
+  function directionToDelta(direction) {
+    if (direction === 'up' || direction === 'north') return { dx: 0, dy: -1 };
+    if (direction === 'down' || direction === 'south') return { dx: 0, dy: 1 };
+    if (direction === 'left' || direction === 'west') return { dx: -1, dy: 0 };
+    if (direction === 'right' || direction === 'east') return { dx: 1, dy: 0 };
+    return { dx: 0, dy: 0 };
+  }
+
+  function isObstacleAt(x, y) {
+    return !!obstacles.find(obs => obs.x === x && obs.y === y);
+  }
+
+  function isInsideMaze(x, y) {
+    return !!(maze && maze[y] && typeof maze[y][x] !== 'undefined');
+  }
+
+  function isPathAhead(direction) {
+    const delta = directionToDelta(String(direction || '').toLowerCase());
+    const targetX = player.x + delta.dx;
+    const targetY = player.y + delta.dy;
+    if (!isInsideMaze(targetX, targetY)) return false;
+    if (maze[targetY][targetX] === 1) return false;
+    if (isObstacleAt(targetX, targetY)) return false;
+    return true;
+  }
+
+  function isGoalAhead(direction) {
+    const delta = directionToDelta(String(direction || '').toLowerCase());
+    const targetX = player.x + delta.dx;
+    const targetY = player.y + delta.dy;
+    if (!isInsideMaze(targetX, targetY)) return false;
+    return maze[targetY][targetX] === 2;
+  }
+
+  function stopExecution(options = {}) {
+    const showFeedback = options.showFeedback !== false;
+    runSessionId += 1;
+    if (runner) clearTimeout(runner);
+    runner = null;
+    interpreter = null;
+    if (showFeedback) {
+      ActivityUtils.feedback('Execucao interrompida.', false);
+    }
+    setRunButtonMode('reset');
+  }
+
+  function goalReached() {
+    return !!(maze && maze[player.y] && maze[player.y][player.x] === 2);
+  }
+
+  function validateRequiredConcepts() {
+    const required = currentLevelMeta && currentLevelMeta.required ? currentLevelMeta.required : null;
+    if (!required) return { ok: true };
+    if (!workspace || typeof workspace.getAllBlocks !== 'function') return { ok: true };
+
+    const blocks = workspace.getAllBlocks(false) || [];
+    const ifElseBlocks = blocks.filter((block) => block && block.type === 'maze_if_else');
+
+    if (Array.isArray(required.blockTypes) && required.blockTypes.length) {
+      for (const type of required.blockTypes) {
+        const found = blocks.some((block) => block && block.type === type);
+        if (!found) {
+          return {
+            ok: false,
+            message: required.message || 'Use os blocos pedidos nesta fase antes de concluir.'
+          };
+        }
+      }
+    }
+
+    if (typeof required.ifElseMin === 'number') {
+      const needed = Math.max(0, Math.floor(required.ifElseMin));
+      if (ifElseBlocks.length < needed) {
+        return {
+          ok: false,
+          message: required.message || `Use pelo menos ${needed} bloco(s) se/senão nesta fase.`
+        };
+      }
+    }
+
+    if (required.ifElseWithThenBranch) {
+      const hasThenBranch = ifElseBlocks.some((block) => {
+        const thenBlock = typeof block.getInputTargetBlock === 'function' ? block.getInputTargetBlock('DO') : null;
+        return !!thenBlock;
+      });
+      if (!hasThenBranch) {
+        return {
+          ok: false,
+          message: required.message || 'Preencha a parte "faça" do bloco se/senão.'
+        };
+      }
+    }
+
+    if (required.ifElseWithBothBranches) {
+      const hasCompleteIfElse = ifElseBlocks.some((block) => {
+          const thenBlock = typeof block.getInputTargetBlock === 'function' ? block.getInputTargetBlock('DO') : null;
+          const elseBlock = typeof block.getInputTargetBlock === 'function' ? block.getInputTargetBlock('ELSE') : null;
+          return !!(thenBlock && elseBlock);
+      });
+
+      if (!hasCompleteIfElse) {
+        return {
+          ok: false,
+          message: required.message || 'Monte um bloco se/senão com ações nos dois lados.'
+        };
+      }
+    }
+
+    return { ok: true };
+  }
+
   function runCode() {
+    const sessionId = runSessionId + 1;
+    runSessionId = sessionId;
     setRunButtonMode('running');
 
     reset({ keepButtons: true });
@@ -347,7 +554,7 @@
       return;
     }
 
-    lastRunStats = compilation.stats;
+    lastRunStats = { moves: 0, turns: 0, total: 0 };
     if (compilation.unknownTypes.length) {
       console.warn('[Maze] Blocos sem gerador suportado:', compilation.unknownTypes);
     }
@@ -355,10 +562,12 @@
     interpreter = new Interpreter(compilation.code, initApi);
 
     function nextStep() {
+      if (sessionId !== runSessionId || !interpreter) return;
       try {
         if (interpreter.run()) {
           runner = setTimeout(nextStep, 10);
         } else {
+          if (sessionId !== runSessionId) return;
           runner = null;
           setRunButtonMode('reset');
           checkWinCondition();
@@ -379,8 +588,14 @@
   function checkWinCondition() {
     if (checkCollision()) return;
 
-    const reachedGoal = maze[player.y][player.x] === 2;
+    const reachedGoal = !!(maze[player.y] && maze[player.y][player.x] === 2);
     if (reachedGoal) {
+      const requiredValidation = validateRequiredConcepts();
+      if (!requiredValidation.ok) {
+        ActivityUtils.feedback(requiredValidation.message, false);
+        return;
+      }
+
       if (ActivityUtils && typeof ActivityUtils.markCompletion === 'function') {
         ActivityUtils.markCompletion();
       }
@@ -413,38 +628,134 @@
     const emptyResult = { code: '', stats: { moves: 0, total: 0 }, unknownTypes: [] };
     if (!ws) return emptyResult;
 
-    const lines = [];
     const stats = { moves: 0, total: 0 };
     const unknown = new Set();
+    const loopLimit = typeof currentLoopLimit === 'number' ? currentLoopLimit : 24;
+    let loopIndex = 0;
 
-    const visitChain = (block) => {
-      if (!block) return;
-      const type = block.type;
-      let move = null;
-      if (type === 'maze_move_up') move = 'moveUp';
-      else if (type === 'maze_move_down') move = 'moveDown';
-      else if (type === 'maze_move_left') move = 'moveLeft';
-      else if (type === 'maze_move_right') move = 'moveRight';
-
-      if (move) {
-        lines.push(`${move}();`);
-        stats.moves += 1;
-        stats.total += 1;
-      } else {
-        if (type) unknown.add(type);
-      }
-
-      if (typeof block.getNextBlock === 'function') {
-        visitChain(block.getNextBlock());
-      }
+    const indent = (code, spaces = 2) => {
+      const pad = ' '.repeat(spaces);
+      return code.split('\n').filter(Boolean).map(line => pad + line).join('\n') + (code.endsWith('\n') ? '\n' : '');
     };
 
-    ws.getTopBlocks(true).forEach(visitChain);
+    const compileChain = (block) => {
+      let code = '';
+      const chainStats = { moves: 0, total: 0 };
+      let current = block;
+      while (current) {
+        const result = compileBlock(current);
+        if (result && result.code) code += result.code;
+        if (result && result.stats) {
+          chainStats.moves += result.stats.moves || 0;
+          chainStats.total += result.stats.total || 0;
+        }
+        if (typeof current.getNextBlock === 'function') {
+          current = current.getNextBlock();
+        } else {
+          current = null;
+        }
+      }
+      return { code, stats: chainStats };
+    };
 
-    if (!lines.length) return emptyResult;
+    const compileBlock = (block) => {
+      if (!block) return { code: '', stats: { moves: 0, total: 0 } };
+      const type = block.type;
+
+      if (type === 'maze_move_up' || type === 'maze_move_down' || type === 'maze_move_left' || type === 'maze_move_right') {
+        const move = type === 'maze_move_up'
+          ? 'moveUp'
+          : type === 'maze_move_down'
+            ? 'moveDown'
+            : type === 'maze_move_left'
+              ? 'moveLeft'
+              : 'moveRight';
+        return { code: `${move}();\n`, stats: { moves: 1, total: 1 } };
+      }
+
+      if (type === 'maze_repeat_times') {
+        const timesRaw = block.getFieldValue('TIMES');
+        const timesNum = Number(timesRaw);
+        const times = Number.isFinite(timesNum) ? Math.max(0, Math.floor(timesNum)) : 0;
+        const bodyBlock = typeof block.getInputTargetBlock === 'function' ? block.getInputTargetBlock('DO') : null;
+        const bodyResult = compileChain(bodyBlock);
+        if (!bodyResult.code.trim() || times <= 0) return { code: '', stats: { moves: 0, total: 0 } };
+        const loopVar = `__repeat${loopIndex++}`;
+        const bodyIndented = indent(bodyResult.code);
+        return {
+          code: `for (var ${loopVar} = 0; ${loopVar} < ${times}; ${loopVar}++) {\n${bodyIndented}}\n`,
+          stats: {
+            moves: bodyResult.stats.moves * times,
+            total: bodyResult.stats.total * times
+          }
+        };
+      }
+
+      if (type === 'maze_repeat_forever') {
+        const bodyBlock = typeof block.getInputTargetBlock === 'function' ? block.getInputTargetBlock('DO') : null;
+        const bodyResult = compileChain(bodyBlock);
+        if (!bodyResult.code.trim()) return { code: '', stats: { moves: 0, total: 0 } };
+        const guard = `__forever${loopIndex++}`;
+        const bodyIndented = indent(bodyResult.code);
+        return {
+          code: `for (var ${guard} = 0; ${guard} < ${loopLimit} && !goalReached(); ${guard}++) {\n${bodyIndented}}\n`,
+          stats: {
+            moves: bodyResult.stats.moves * loopLimit,
+            total: bodyResult.stats.total * loopLimit
+          }
+        };
+      }
+
+      if (type === 'maze_if_else') {
+        const condition = (block.getFieldValue('COND') || 'path').toLowerCase();
+        const direction = (block.getFieldValue('DIR') || 'up').toLowerCase();
+        const thenBlock = typeof block.getInputTargetBlock === 'function' ? block.getInputTargetBlock('DO') : null;
+        const elseBlock = typeof block.getInputTargetBlock === 'function' ? block.getInputTargetBlock('ELSE') : null;
+        const thenResult = compileChain(thenBlock);
+        const elseResult = compileChain(elseBlock);
+        const conditionFn = condition === 'goal' ? 'isGoalAhead' : 'isPathAhead';
+
+        if (!thenResult.code.trim()) {
+          return { code: '', stats: { moves: 0, total: 0 } };
+        }
+
+        let code = `if (${conditionFn}("${direction}")) {\n`;
+        if (thenResult.code.trim()) {
+          code += `${indent(thenResult.code)}}\n`;
+        } else {
+          code += '}\n';
+        }
+
+        if (elseResult.code.trim()) {
+          code += `else {\n${indent(elseResult.code)}}\n`;
+        }
+
+        return {
+          code,
+          stats: {
+            moves: Math.max(thenResult.stats.moves, elseResult.stats.moves),
+            total: Math.max(thenResult.stats.total, elseResult.stats.total)
+          }
+        };
+      }
+
+      if (type) unknown.add(type);
+      return { code: '', stats: { moves: 0, total: 0 } };
+    };
+
+    const topBlocks = ws.getTopBlocks(true);
+    let code = '';
+    topBlocks.forEach((block) => {
+      const result = compileChain(block);
+      code += result.code;
+      stats.moves += result.stats.moves;
+      stats.total += result.stats.total;
+    });
+
+    if (!code.trim()) return emptyResult;
 
     return {
-      code: lines.join('\n') + '\n',
+      code: code.trim() + '\n',
       stats,
       unknownTypes: Array.from(unknown)
     };
@@ -492,9 +803,10 @@
       runButton.classList.remove('is-reset');
       runButton.onclick = runCode;
     } else if (mode === 'running') {
-      runButton.disabled = true;
-      runButton.textContent = 'Executando...';
+      runButton.disabled = false;
+      runButton.textContent = '■ Parar';
       runButton.classList.remove('is-reset');
+      runButton.onclick = () => stopExecution({ showFeedback: true });
     } else if (mode === 'reset') {
       runButton.disabled = false;
       runButton.textContent = '⟲ Recomeçar';
