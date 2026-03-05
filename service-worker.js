@@ -1,4 +1,5 @@
-const CACHE_NAME = 'amado-cache-v2';
+const SW_VERSION = '3';
+const CACHE_NAME = 'amado-cache-v' + SW_VERSION;
 const urlsToCache = [
   '/',
   '/index.html',
@@ -37,14 +38,23 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('activate', (event) => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
-    caches.keys().then((keyList) =>
-      Promise.all(
-        keyList.map((key) => {
-          if (!cacheWhitelist.includes(key)) {
-            return caches.delete(key);
-          }
-        })
-      )
-    )
+    caches.keys().then((keyList) => {
+      const deletePromises = keyList.map((key) => {
+        if (!cacheWhitelist.includes(key)) {
+          return caches.delete(key);
+        }
+      });
+
+      // Notificar clientes sobre atualização se houve mudança de cache
+      if (keyList.length > 0 && !keyList.includes(CACHE_NAME)) {
+        self.clients.matchAll().then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({ type: 'SW_UPDATE_AVAILABLE', version: SW_VERSION });
+          });
+        });
+      }
+
+      return Promise.all(deletePromises);
+    })
   );
 });

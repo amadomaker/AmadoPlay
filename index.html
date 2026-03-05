@@ -47,6 +47,17 @@
   <link rel="preload" href="src/assets/images/Diyogo-02.png" as="image" type="image/png" />
 </head>
 <body>
+  <!-- Banner de atualização do Service Worker -->
+  <div id="sw-update-banner" class="sw-update-banner" style="display: none;">
+    <div class="sw-update-content">
+      <span>Nova versão disponível! Clique para atualizar.</span>
+      <div class="sw-update-buttons">
+        <button id="sw-update-btn" class="sw-update-btn-primary">Atualizar</button>
+        <button id="sw-dismiss-btn" class="sw-update-btn-dismiss">Depois</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Formas flutuantes otimizadas -->
   <div class="floating-shapes" aria-hidden="true">
     <div class="shape" role="presentation"></div>
