@@ -22,7 +22,7 @@ class ServiceWorkerManager {
 
   async registerServiceWorker() {
     try {
-      const registration = await navigator.serviceWorker.register('/AmadoPlay/service-worker.js');
+      const registration = await navigator.serviceWorker.register('/service-worker.js');
       console.log('Service Worker registrado:', registration);
 
       // Escuta atualizações do SW

@@ -582,11 +582,13 @@
 
       container.style.display = 'grid';
       emptyState?.classList.add('hidden');
-      container.innerHTML = this.filteredTools.map(t => this.renderToolCard(t)).join('');
+      const history = JSON.parse(localStorage.getItem('amadoplay_history') || '{}');
+      const today = new Date().toISOString().split('T')[0];
+      container.innerHTML = this.filteredTools.map(t => this.renderToolCard(t, history, today)).join('');
       this.setupCardListeners();
     }
 
-    renderToolCard(tool) {
+    renderToolCard(tool, history, today) {
       const highlight = (text) => {
         if (!this.state.search) return text;
         const regex = new RegExp(`(${this.state.search})`, 'gi');
@@ -596,9 +598,7 @@
       const badges = [];
       if (tool.popular) badges.push('<span class="card-badge">Popular</span>');
       if (tool.novo) badges.push('<span class="card-badge new">Novo</span>');
-      const _history = JSON.parse(localStorage.getItem('amadoplay_history') || '{}');
-      const _today = new Date().toISOString().split('T')[0];
-      if (_history[tool.id]?.lastPlayed === _today) badges.push('<span class="card-badge played">Jogado hoje</span>');
+      if (history[tool.id]?.lastPlayed === today) badges.push('<span class="card-badge played">Jogado hoje</span>');
 
       const tags = [
         { text: this.getMateriaLabel(tool.materia), class: 'materia' }
