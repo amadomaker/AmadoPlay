@@ -937,6 +937,9 @@
                 const isAllGamesFinished = dailyProgress.completed.every(c => c === true);
 
                 if (isAllGamesFinished) {
+                    const history = JSON.parse(localStorage.getItem('amadoplay_history') || '{}');
+                    history['conexo'] = { lastPlayed: dateString };
+                    localStorage.setItem('amadoplay_history', JSON.stringify(history));
                     showSubmitScoreModal();
                 } else if (isWin) {
                     showModal('Parabéns!', 'Você resolveu o quebra-cabeça!');

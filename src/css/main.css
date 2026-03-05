@@ -1349,7 +1349,10 @@ body::before {
 }
 
 .card-badge.new {
-  background: #0dcaf0;   
+  background: #0dcaf0;
+}
+.card-badge.played {
+  background: #22c55e;
 }
 /* Tags nos Cards */
 .card-tags {

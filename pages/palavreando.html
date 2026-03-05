@@ -1694,6 +1694,10 @@
 
         endGameWarning.textContent = '';
         gameEnded = true;
+        const _today = new Date().toISOString().split('T')[0];
+        const _history = JSON.parse(localStorage.getItem('amadoplay_history') || '{}');
+        _history['palavreando'] = { lastPlayed: _today };
+        localStorage.setItem('amadoplay_history', JSON.stringify(_history));
         showFeedback('Partida encerrada! Confira todas as palavras.', 'success');
         revealAllWords();
         disableLetterButtons();
